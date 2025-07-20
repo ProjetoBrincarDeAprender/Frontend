@@ -1,17 +1,18 @@
 import "./Header.css";
 import logo from "../../assets/brincardeaprender.svg";
+import profile from "../../assets/astronauta-profile.svg";
 import { BiHome } from "react-icons/bi";
 import { FaRegQuestionCircle } from "react-icons/fa";
 import { MdOutlinePersonAddAlt1 } from "react-icons/md";
 import { FiLogIn } from "react-icons/fi";
 
 interface HeaderProps {
-  isLoggedIn?: boolean;
+  username?: string;
 }
 
-export function Header({ isLoggedIn = false }: HeaderProps) {
+export function Header({ username = "" }: HeaderProps) {
   return (
-    <header className="bg-slate-200 flex items-center justify-between px-10 py-4">
+    <header className="bg-slate-200 flex items-center justify-between px-28 py-4 shadow-xl font-bold">
       <div>
         <a href="/">
           <img
@@ -22,39 +23,41 @@ export function Header({ isLoggedIn = false }: HeaderProps) {
         </a>
       </div>
       <nav aria-label="Navegação Principal">
-        <ul className="flex gap-4 text-base">
-          <li className="rounded-2xl bg-yellow px-5 py-2 shadow-lg">
+        <ul className="flex gap-4 items-center text-base text-gray-900">
+          <li className="button-nav rounded-2xl bg-yellow px-5 py-2 shadow-lg">
             <a href="/" className="flex gap-2 items-center">
               <BiHome /> <span>Inicio</span>
             </a>
           </li>
-          <li className="rounded-2xl bg-yellow px-5 py-2 shadow-lg">
+          <li className="button-nav rounded-2xl bg-yellow px-5 py-2 shadow-lg">
             <a href="/about" className="flex gap-2 items-center">
               <FaRegQuestionCircle /> <span>Sobre</span>
             </a>
           </li>
-          {isLoggedIn == true ? (
+          {username !== "" ? (
             <>
-              <li className="rounded-2xl bg-yellow px-5 py-2 shadow-lg">
-                <a href="/register" className="flex gap-2 items-center">
-                  <MdOutlinePersonAddAlt1 /> <span>Cadastrar-se</span>
-                </a>
-              </li>
-              <li className="rounded-2xl bg-yellow px-5 py-2 shadow-lg">
-                <a href="/login" className="flex gap-2 items-center">
-                  <FiLogIn />
-                  <span>Entrar</span>
-                </a>
-              </li>
+              <a
+                href="/dashboard"
+                className="profile-nav flex items-center gap-5 bg-am1 rounded-full"
+              >
+                <span className="block px-5 ml-4">{username}</span>
+                <div className="bg-yellow rounded-full w-14 h-14 overflow-hidden p-2 border border-am2">
+                  <img
+                    src={profile}
+                    alt="profile image"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              </a>
             </>
           ) : (
             <>
-              <li className="rounded-2xl bg-yellow px-5 py-2 shadow-lg">
+              <li className="button-nav rounded-2xl bg-yellow px-5 py-2 shadow-lg">
                 <a href="/register" className="flex gap-2 items-center">
                   <MdOutlinePersonAddAlt1 /> <span>Cadastrar-se</span>
                 </a>
               </li>
-              <li className="rounded-2xl bg-yellow px-5 py-2 shadow-lg">
+              <li className="button-nav rounded-2xl bg-yellow px-5 py-2 shadow-lg">
                 <a href="/login" className="flex gap-2 items-center">
                   <FiLogIn />
                   <span>Entrar</span>

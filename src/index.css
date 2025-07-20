@@ -1,14 +1,37 @@
 @import "tailwindcss";
 
 @theme {
+  /* Cores */
+
   --color-yellow: #fecb32; /* Amarelo */
   --color-purplish-blue: #302579; /* Azul arroxeado */
-  --color-am0: #d9a321; /* AM0 */
-  --color-az0: #1f435f; /* AZ0 */
+
+  --color-am0: #d9a321; /* Cores AM */
+  --color-am1: #f6d980;
+  --color-am2: #ebba4a;
+  --color-am3: #b6841b;
+  --color-am4: #8e6615;
+
+  --color-az0: #1f435f; /* Cores AZ */
+  --color-az1: #6177a6;
+  --color-az2: #3b5080;
+  --color-az3: #19294c;
+  --color-az4: #121d33;
+
+  /* Fontes */
+
+  --font-1: "Baloo Bhai 2";
+  --font-2: "Roboto";
 }
 
 .logo {
   /* Tamanho da Logo no Header */
   height: 5rem;
   width: auto;
+}
+
+body {
+  background-color: var(--color-purplish-blue);
+  color: var(--color-blue-100);
+  font-family: var(--font-2);
 }
