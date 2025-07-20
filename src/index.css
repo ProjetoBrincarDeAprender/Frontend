@@ -1,1 +1,14 @@
 @import "tailwindcss";
+
+@theme {
+  --color-yellow: #fecb32; /* Amarelo */
+  --color-purplish-blue: #302579; /* Azul arroxeado */
+  --color-am0: #d9a321; /* AM0 */
+  --color-az0: #1f435f; /* AZ0 */
+}
+
+.logo {
+  /* Tamanho da Logo no Header */
+  height: 5rem;
+  width: auto;
+}
