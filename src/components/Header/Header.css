@@ -9,7 +9,8 @@ header {
 }
 
 .button-nav:hover {
-  background-color: var(--color-yellow-500);
+  background-color: var(--color-purplish-blue);
+  color: var(--color-yellow);
   translate: 0px 2px;
 }
 
