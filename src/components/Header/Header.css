@@ -6,6 +6,7 @@ header {
 
 .button-nav {
   transition: all ease-in 0.2s;
+  color: var(--color-purplish-blue);
 }
 
 .button-nav:hover {
@@ -16,6 +17,7 @@ header {
 
 .profile-nav {
   transition: all ease-in 0.2s;
+  color: var(--color-purplish-blue);
 }
 
 .profile-nav:hover {
