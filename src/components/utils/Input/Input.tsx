@@ -19,14 +19,14 @@ const variantText = {
   primary:
     "text-slate-900 border border-yellow-300 focus:border-yellow-500 focus:ring-2 focus:ring-yellow-200",
   light:
-    "text-slate-900 border border-slate-200 focus:border-yellow-400 focus:ring-2 focus:ring-yellow-100",
-  dark: "text-yellow-100 border border-slate-800 focus:border-yellow-600 focus:ring-2 focus:ring-yellow-900",
+    "text-slate-900 border border-slate-200 focus:border-yellow-400 focus:ring-2 focus:ring-yellow-200",
+  dark: "text-yellow-100 border border-slate-800 focus:border-yellow-600 focus:ring-2 focus:ring-yellow-600",
 };
 
 const variantBg = {
   primary: { background: "var(--color-yellow)" },
-  light: { background: "#f9fafb" },
-  dark: { background: "#232323" },
+  light: { background: "var(--color-gray-300)" },
+  dark: { background: "var(--color-gray-800)" },
 };
 
 export function Input({
