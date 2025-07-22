@@ -5,6 +5,7 @@ interface LinkProps {
   children: React.ReactNode;
   href: string;
   className?: string;
+  target?: string;
 }
 
 export function Link({
@@ -12,9 +13,10 @@ export function Link({
   variant = "primary",
   href,
   className = "",
+  target = "",
 }: LinkProps) {
   return (
-    <a href={href} className={`link-${variant} ${className}`}>
+    <a href={href} target={target} className={`link-${variant} ${className}`}>
       {children}
     </a>
   );
