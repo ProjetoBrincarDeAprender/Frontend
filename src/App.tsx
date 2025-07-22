@@ -3,6 +3,7 @@ import { Header } from "./components/Header/Header";
 import { Button } from "./components/utils/Button/Button";
 import { Link } from "./components/utils/Link/Link";
 import { Input } from "./components/utils/Input/Input";
+import { Footer } from "./components/Footer/Footer";
 function App() {
   return (
     <>
@@ -49,6 +50,7 @@ function App() {
         variant="dark"
         label="Seu Email Aqui"
       />
+      <Footer />
     </>
   );
 }
