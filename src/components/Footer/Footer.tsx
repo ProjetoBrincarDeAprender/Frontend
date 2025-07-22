@@ -1,12 +1,39 @@
 import "./Footer.css";
 
 import logo from "../../assets/brincardeaprender_blackandwhite.svg";
+import star from "../../assets/star.svg";
+import pipa from "../../assets/pipa.svg";
+import laco from "../../assets/laco.svg";
 import { Link } from "../utils/Link/Link";
 import { FaFacebook, FaInstagram } from "react-icons/fa";
 
 export function Footer() {
   return (
-    <footer className="bg-az4 shadow-2xl flex flex-col font-2 font-semibold text-xl py-8">
+    <footer className="footer-pseudo bg-az4 shadow-2xl flex flex-col font-2 font-semibold text-xl py-8">
+      {/* Pipa/Constelação */}
+      <img
+        src={pipa}
+        alt="Constelação"
+        className="footer-pipa-decoration"
+        aria-hidden="true"
+      />
+      {/* Estrela central superior */}
+      <img
+        src={star}
+        alt="Estrela"
+        className="footer-star-center"
+        aria-hidden="true"
+      />
+      {/* Estrela inferior direita */}
+      <img
+        src={star}
+        alt="Estrela"
+        className="footer-star-bottom"
+        aria-hidden="true"
+      />
+      {/* Laço inferior direita */}
+      <img src={laco} alt="Laço" className="footer-laco" aria-hidden="true" />
+      {/* Conteúdo original */}
       <div className="flex justify-around items-start">
         <div>
           <div className="max-w-48">
@@ -63,7 +90,7 @@ export function Footer() {
         </div>
       </div>
       <div className="self-center mt-12">
-        <h1 className="text-sm font-normal">
+        <h1 className="text-sm font-normal text-blue-200">
           © 2025. Todos os direitos reservados
         </h1>
       </div>
