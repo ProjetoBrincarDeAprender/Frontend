@@ -16,7 +16,7 @@ export function Card({
 }: CardProps) {
   return (
     <div
-      className={`card-${variant} z-2 max-w-80 p-2 font-2 font-medium text-center m-auto flex flex-col gap-6 rounded-4xl`}
+      className={`card-${variant} z-2 max-w-80 p-2 font-2 font-medium text-center m-auto flex flex-col gap-6 rounded-4xl shadow-2xl`}
     >
       <header className="rounded-3xl overflow-hidden">
         <img src={image} alt="game logo" />
