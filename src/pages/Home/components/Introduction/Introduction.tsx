@@ -4,9 +4,15 @@ import girl from "../../../../assets/girlmainpage.svg";
 
 import "./Introduction.css";
 
-export function Introduction() {
+interface IntroductionProps {
+  className?: string;
+}
+
+export function Introduction({ className = "" }: IntroductionProps) {
   return (
-    <section className="container flex justify-around self-center font-1">
+    <section
+      className={`${className} container flex justify-around self-center font-1`}
+    >
       <div className="flex flex-col gap-8 self-center">
         <h1 className="font-bold text-5xl">
           Plataforma de Jogos
