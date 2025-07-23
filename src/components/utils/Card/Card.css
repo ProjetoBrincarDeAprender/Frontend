@@ -1,0 +1,27 @@
+.card-game {
+  background-color: var(--color-gray-100);
+  color: var(--color-gray-800);
+
+  & > main > a {
+    background-color: var(--color-az2);
+    color: var(--color-gray-100);
+
+    &:hover {
+      background-color: var(--color-az1);
+    }
+  }
+}
+
+.card-skill {
+  background-color: var(--color-az4);
+  color: var(--color-gray-100);
+
+  & > main > a {
+    background-color: var(--color-am0);
+    color: var(--color-gray-800);
+
+    &:hover {
+      background-color: var(--color-am1);
+    }
+  }
+}

@@ -6,8 +6,8 @@ import "./Introduction.css";
 
 export function Introduction() {
   return (
-    <section className="flex justify-around items-center font-1">
-      <div className="flex flex-col gap-8">
+    <section className="container flex justify-around self-center font-1">
+      <div className="flex flex-col gap-8 self-center">
         <h1 className="font-bold text-5xl">
           Plataforma de Jogos
           <br />
@@ -22,7 +22,7 @@ export function Introduction() {
           <BiJoystick className="inline-block text-purplish-blue" /> Jogar
         </Link>
       </div>
-      <div>
+      <div className="self-center">
         <img src={girl} alt="" className="block max-h-[31.25rem]" />
       </div>
     </section>
