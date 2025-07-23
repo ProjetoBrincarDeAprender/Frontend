@@ -6,7 +6,7 @@ export default function Form() {
   return (
     <>
       <Header />
-      <main>
+      <main className="mt-38 mb-10 grid justify-items-center">
         <SignUpForm
           title="Sign Up"
           fields={[
