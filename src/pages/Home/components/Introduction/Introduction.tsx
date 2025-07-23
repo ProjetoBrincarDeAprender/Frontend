@@ -11,7 +11,7 @@ interface IntroductionProps {
 export function Introduction({ className = "" }: IntroductionProps) {
   return (
     <section
-      className={`${className} container flex justify-around self-center font-1`}
+      className={`${className} pt-32 container flex justify-around self-center font-1`}
     >
       <div className="flex flex-col gap-8 self-center">
         <h1 className="font-bold text-5xl">
