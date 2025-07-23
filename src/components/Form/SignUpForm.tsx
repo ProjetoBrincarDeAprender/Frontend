@@ -1,67 +1,79 @@
-import React, { useState } from 'react';
-import styles from './Form.module.css';
+import React, { useState } from "react";
+import styles from "./Form.module.css";
 
 interface Field {
-  name: string; 
-  label: string; 
-  type: 'email' | 'text' | 'date' | 'url' | 'password'; 
-  placeholder?: string; 
+  name: string;
+  label: string;
+  type: "email" | "text" | "date" | "url" | "password";
+  placeholder?: string;
 }
 
 interface DynamicFormProps {
   title: string;
   fields: readonly Field[];
   buttonText: string;
-  onSubmit: (formData: Record<string, string>) => void; 
-  footerLink?: { 
+  onSubmit: (formData: Record<string, string>) => void;
+  footerLink?: {
     text: string;
     linkText: string;
     href: string;
   };
 }
 
-export function Form({ title, fields, buttonText, onSubmit, footerLink }: DynamicFormProps) {
-  
-  const initialState = fields.reduce((acc, field) => {
-    acc[field.name] = '';
-    return acc;
-  }, {} as Record<string, string>);
+export function SignUpForm({
+  title,
+  fields,
+  buttonText,
+  onSubmit,
+  footerLink,
+}: DynamicFormProps) {
+  const initialState = fields.reduce(
+    (acc, field) => {
+      acc[field.name] = "";
+      return acc;
+    },
+    {} as Record<string, string>
+  );
 
   const [formData, setFormData] = useState(initialState);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData(prevState => ({
+    setFormData((prevState) => ({
       ...prevState,
       [name]: value,
     }));
   };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault(); 
-    onSubmit(formData); 
+    e.preventDefault();
+    onSubmit(formData);
   };
 
   return (
     <div className={styles.formContainer}>
       <h2 className={styles.title}>{title}</h2>
       <form onSubmit={handleSubmit}>
-        {fields.map(field => (
+        {fields.map((field) => (
           <div key={field.name} className={styles.formGroup}>
-            <label htmlFor={field.name} className={styles.label}>{field.label}</label>
+            <label htmlFor={field.name} className={styles.label}>
+              {field.label}
+            </label>
             <input
               type={field.type}
               id={field.name}
               name={field.name}
               value={formData[field.name]}
               onChange={handleChange}
-              placeholder={field.placeholder || ''}
+              placeholder={field.placeholder || ""}
               className={styles.input}
               required
             />
           </div>
         ))}
-        <button type="submit" className={styles.submitButton}>{buttonText}</button>
+        <button type="submit" className={styles.submitButton}>
+          {buttonText}
+        </button>
       </form>
 
       {footerLink && (
