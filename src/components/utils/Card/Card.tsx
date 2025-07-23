@@ -12,7 +12,7 @@ export function Card({
   gameIdUrl,
   title,
   image = defaultImage,
-  variant,
+  variant = "game",
 }: CardProps) {
   return (
     <div
