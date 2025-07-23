@@ -11,7 +11,7 @@ export function Home() {
       <Header />
       <main className="flex flex-col m-auto py-16">
         <Introduction />
-        <Card gameIdUrl="/12" title="Jogo da Velha" variant="skill" />
+        <Card gameIdUrl="/12" title="Jogo da Velha" />
       </main>
       <Footer />
     </>
