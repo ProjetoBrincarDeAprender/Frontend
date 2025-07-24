@@ -1,5 +1,5 @@
 .menuContainer {
-  background-color: #0aaf86;
+  background-color: var(--color-purplish-blue);
   display: flex;
   flex-direction: column;
 
@@ -36,11 +36,11 @@
 }
 
 .itens li:hover {
-  background: #0aaa00;
+  background: #150e45;
 }
 
 .itens li:hover::before {
-  background: yellow;
+  background: var(--color-am2);
   content: "";
   display: inline-block;
   height: 100%;
