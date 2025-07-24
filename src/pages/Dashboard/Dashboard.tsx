@@ -6,7 +6,9 @@ export default function dashboard() {
   return (
     <>
       <Header />
-      <main className="mt-28">{<LateralMenu />}</main>
+      <main className="mt-28">
+        {<LateralMenu />}
+      </main>
       <Footer />
     </>
   );
