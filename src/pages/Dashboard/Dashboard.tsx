@@ -6,7 +6,7 @@ export default function dashboard() {
   return (
     <>
       <Header />
-      <main className="mt-28">
+      <main className="mt-28 bg-slate-100">
         {<LateralMenu />}
       </main>
       <Footer />
