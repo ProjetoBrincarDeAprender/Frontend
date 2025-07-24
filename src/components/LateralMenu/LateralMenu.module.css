@@ -8,6 +8,7 @@
 }
 
 .menuContainer img {
+  border-radius: 50%;
   margin: 60px auto;
   margin-bottom: 10px;
   width: 100px;
