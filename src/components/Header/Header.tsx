@@ -12,7 +12,7 @@ interface HeaderProps {
 
 export function Header({ username = "" }: HeaderProps) {
   return (
-    <header className="bg-slate-200 flex items-center justify-between px-28 py-4 shadow-xl font-bold">
+    <header className="bg-slate-200 flex items-center justify-between px-28 py-4 shadow-xl font-bold fixed top-0 left-0 right-0 z-1000">
       <div>
         <a href="/">
           <img
