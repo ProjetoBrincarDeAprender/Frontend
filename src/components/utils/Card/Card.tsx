@@ -1,7 +1,7 @@
 import "./Card.css";
 import defaultImage from "../../../assets/cardplaceholder.svg";
 
-interface CardProps {
+export interface CardProps {
   title: string;
   gameIdUrl: string;
   image?: string;
