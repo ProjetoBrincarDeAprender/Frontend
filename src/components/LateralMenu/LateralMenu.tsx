@@ -7,7 +7,7 @@ export function LateralMenu() {
       <div className={styles.user}>
         <img
           src={profile}
-          className="border-4 border-transparent outline-2 outline-am0"
+          className="border-8 border-transparent outline-3 outline"
           alt=""
         />
         <span className={styles.username}>Usuario Usuario</span>
