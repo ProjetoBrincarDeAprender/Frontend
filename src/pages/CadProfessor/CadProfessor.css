@@ -1,0 +1,15 @@
+.page-with-header {
+  display: flex;
+  flex-direction: column; 
+  min-height: 100vh; 
+  background-color: #302579; 
+}
+
+.page-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-grow: 1;
+  padding: 1rem;
+  background-color: #302579; 
+}

@@ -1,12 +1,11 @@
-import { Header } from "./components/Header/Header";
-import { Footer } from "./components/Footer/Footer";
+import { Route, Routes } from "react-router";
+import { Home } from "./pages/Home/Home";
+
 function App() {
   return (
-    <>
-      <Header username="Deivid" />
-
-      <Footer />
-    </>
+    <Routes>
+      <Route index element={<Home />} />
+    </Routes>
   );
 }
 
