@@ -15,16 +15,16 @@ export function LateralMenu() {
 
       <ul className={styles.itens}>
         <li>
-          <a href="">Logística</a>
+          <a href="dashboard/logistics">Logística</a>
         </li>
         <li>
-          <a href="">Alunos</a>
+          <a href="dashboard/students">Alunos</a>
         </li>
         <li>
-          <a href="">Professores</a>
+          <a href="dashboard/teachers">Professores</a>
         </li>
         <li>
-          <a href="">Escolas</a>
+          <a href="dashboard/schools">Escolas</a>
         </li>
       </ul>
     </div>
