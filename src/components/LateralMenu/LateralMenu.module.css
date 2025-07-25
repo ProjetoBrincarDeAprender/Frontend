@@ -34,6 +34,20 @@
   padding: 20px 0px;
   position: relative;
   text-align: center;
+  transition: all 0.2s ease-in;
+}
+
+.itens li::before {
+  background: var(--color-am2);
+  content: "";
+  display: inline-block;
+  height: 100%;
+  width: 0px;
+  transition: all 0.2s ease-in;
+
+  position: absolute;
+  left: 0;
+  top: 0;
 }
 
 .itens li:hover {
@@ -41,13 +55,5 @@
 }
 
 .itens li:hover::before {
-  background: var(--color-am2);
-  content: "";
-  display: inline-block;
-  height: 100%;
   width: 6px;
-
-  position: absolute;
-  left: 0;
-  top: 0;
 }
