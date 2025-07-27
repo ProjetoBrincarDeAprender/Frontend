@@ -1,4 +1,4 @@
-import { Form } from '../../components/Form/Form';
+import { SignUpForm } from '../../components/Form/SignUpForm';
 import './CadProfessor.css'; 
 import { Header } from '../../components/Header/Header';
 
@@ -26,7 +26,7 @@ export function RegisterProfessorPage() {
 
         <div className="page-container">
             
-        <Form
+        <SignUpForm
             title="Cadastrar Novo(a) Professor(a)"
             fields={professorFields}
             buttonText="Cadastrar"
