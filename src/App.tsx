@@ -3,6 +3,10 @@ import Form from "./pages/Form/Form";
 import { Home } from "./pages/Home/Home";
 import { Games } from "./pages/Games/Games";
 import { RegisterProfessorPage } from './pages/CadProfessor/CadProfessor';
+import { RegisterStudentPage } from './pages/CadAluno/CadAluno';
+import { RegisterSchoolPage } from './pages/CadEscola/CadEscola';
+
+
 
 function App() {
   return (
@@ -12,7 +16,12 @@ function App() {
 
       <Route path="/games" element={<Games />} />
       
-      <Route path="/cadprofessor" element={<RegisterProfessorPage/>}/>
+      <Route path="/cadastrar-professor" element={<RegisterProfessorPage/>}/>
+      
+      <Route path="/cadastrar-aluno" element={<RegisterStudentPage/>}/>
+      
+      <Route path="/cadastrar-escola" element={<RegisterSchoolPage/>}/>
+
     </Routes>
   );
 }
