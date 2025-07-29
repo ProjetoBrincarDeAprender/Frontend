@@ -52,7 +52,7 @@ export function LateralMenu() {
         <div className="flex flex-col items-center py-10">
           <img
             src={profile}
-            className="rounded-full mb-2 w-28 h-28 object-cover border-4 border-transparent outline outline-3 outline-yellow-400"
+            className="rounded-full mb-2 w-28 h-28 object-cover border-4 border-transparent outline-3 outline-yellow-400"
             alt="Perfil"
           />
           <span className="font-bold text-xl text-white mb-8">
