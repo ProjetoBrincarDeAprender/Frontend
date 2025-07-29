@@ -47,14 +47,18 @@ export function InfoBadge({ variant, label, value }: InfoBadgeProps) {
       {/* Conteúdo */}
       <div className="relative z-20 flex items-center justify-between w-full h-full px-4 gap-3">
         {/* Ícone dentro de círculo branco */}
-        <span className="flex items-center justify-center w-10 h-10 rounded-full border border-white">
+        <span className="flex items-center justify-center h-10 aspect-square rounded-full border border-white">
           {style.icon}
         </span>
 
         {/* Texto e valor */}
-        <div className="flex flex-col justify-center text-white font-semibold text-sm leading-tight">
-          <span className="uppercase tracking-wide">{label}</span>
-          <span className="text-lg font-bold tracking-widest">{value}</span>
+        <div className="flex flex-col justify-center text-white font-semibold text-sm leading-tight w-full">
+          <span className="uppercase tracking-wide text-left w-full">
+            {label}
+          </span>
+          <span className="text-lg font-bold tracking-widest text-center w-full">
+            {value}
+          </span>
         </div>
       </div>
     </div>
