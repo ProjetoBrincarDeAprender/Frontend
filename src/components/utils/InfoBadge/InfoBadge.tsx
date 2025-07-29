@@ -32,7 +32,7 @@ export function InfoBadge({ variant, label, value }: InfoBadgeProps) {
   const style = variantStyles[variant];
   return (
     <div
-      className={`relative flex items-center rounded-full shadow-md ${style.bg}`}
+      className={`relative flex items-center rounded-full shadow-md ${style.bg} shadow`}
       style={{ width: 240, height: 80 }}
     >
       {/* Círculo decorativo à direita */}
