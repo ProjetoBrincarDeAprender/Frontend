@@ -2,7 +2,11 @@ import { useState, useRef, useEffect } from "react";
 import { FiMenu } from "react-icons/fi";
 import profile from "../../assets/astronauta-profile.svg";
 
-export function LateralMenu() {
+interface LateralMenuProps {
+  username: string;
+}
+
+export function LateralMenu({ username }: LateralMenuProps) {
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -55,9 +59,7 @@ export function LateralMenu() {
             className="rounded-full mb-2 w-28 h-28 object-cover border-4 border-transparent outline-3 outline-yellow-400"
             alt="Perfil"
           />
-          <span className="font-bold text-xl text-white mb-8">
-            Usuário Usuário
-          </span>
+          <span className="font-bold text-xl text-white mb-8">{username}</span>
         </div>
         <ul className="flex flex-col gap-2 px-4">
           <li>
