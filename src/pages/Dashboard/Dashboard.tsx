@@ -3,6 +3,7 @@ import { Header } from "../../components/Header/Header";
 import { LateralMenu } from "../../components/LateralMenu/LateralMenu";
 
 import saturn from "../../assets/saturn.svg";
+import graphic from "../../assets/graphic.svg";
 
 import "./Dashboard.css";
 import { InfoBadge } from "../../components/utils/InfoBadge/InfoBadge";
@@ -49,6 +50,49 @@ export default function dashboard() {
             >
               Cadastrar Escola
             </a>
+          </div>
+          <div className="bg-slate-300 mt-16 flex justify-around rounded-2xl py-8 shadow-2xl">
+            <div className="bg-purplish-blue-dark rounded-2xl">
+              <div className="text-gray-100 font-1 font-bold text-lg bg-purplish-blue m-3 text-center p-1 rounded-md">
+                <h1>Alunos por Maestria</h1>
+              </div>
+              <img src={graphic} alt="grafico" />
+              <div className="flex gap-2 items-center justify-center text-gray-100 font-1 font-bold text-md bg-purplish-blue m-3 text-center p-1 rounded-md uppercase">
+                <span className="text-white">Não Iniciado</span>
+                <span className="text-yellow">Iniciante</span>
+                <span className="text-green-600">Avançado</span>
+                <span className="text-red-600">Mestre</span>
+              </div>
+            </div>
+            <div className="bg-purplish-blue-dark rounded-2xl">
+              <div className="text-gray-100 font-1 font-bold text-lg bg-purplish-blue m-3 text-center p-1 rounded-md">
+                <h1>Alunos por Maestria</h1>
+              </div>
+              <img src={graphic} alt="grafico" />
+              <div className="flex gap-2 items-center justify-center text-gray-100 font-1 font-bold text-md bg-purplish-blue m-3 text-center p-1 rounded-md uppercase">
+                <span className="text-white">Não Iniciado</span>
+                <span className="text-yellow">Iniciante</span>
+                <span className="text-green-600">Avançado</span>
+                <span className="text-red-600">Mestre</span>
+              </div>
+            </div>
+          </div>
+          <h1 className="font-1 font-bold text-2xl mt-16 mb-4">
+            Atividades Recentes
+          </h1>
+          <div className="flex flex-col w-max py-4 px-8 pl-12 rounded-3xl border-2 border-purplish-blue font-semibold text-lg font-1 text-red-900">
+            <ul className="list-disc flex flex-col gap-4">
+              <li>
+                Professora ‘ana lima’ foi cadastrada no sistema. (há 3 min)
+              </li>
+              <li>
+                Aluno ‘joão silva guedes’ foi cadastrada no sistema. (há 8 min)
+              </li>
+              <li>
+                A escola ‘Sebastião Guedes da Silva’ foi cadastrada no sistema.
+                (há 15 min)
+              </li>
+            </ul>
           </div>
         </section>
       </main>
