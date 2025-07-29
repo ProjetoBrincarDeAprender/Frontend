@@ -53,10 +53,10 @@ export function InfoBadge({ variant, label, value }: InfoBadgeProps) {
 
         {/* Texto e valor */}
         <div className="flex flex-col justify-center text-white font-semibold text-sm leading-tight w-full">
-          <span className="uppercase tracking-wide text-left w-full">
+          <span className="uppercase tracking-wide text-left w-full stroke-2 stroke-black text-outline">
             {label}
           </span>
-          <span className="text-lg font-bold tracking-widest text-center w-full">
+          <span className="text-lg font-bold tracking-widest text-center w-full text-outline">
             {value}
           </span>
         </div>
