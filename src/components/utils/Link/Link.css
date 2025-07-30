@@ -1,0 +1,29 @@
+.link-primary {
+  color: var(--color-yellow);
+  transition: all ease-in 0.1s;
+  display: block;
+
+  &:hover {
+    color: var(--color-yellow-500);
+  }
+}
+
+.link-light {
+  color: var(--color-gray-200);
+  transition: all ease-in 0.1s;
+  display: block;
+
+  &:hover {
+    color: var(--color-gray-300);
+  }
+}
+
+.link-dark {
+  color: var(--color-gray-900);
+  transition: all ease-in 0.1s;
+  display: block;
+
+  &:hover {
+    color: var(--color-gray-950);
+  }
+}
