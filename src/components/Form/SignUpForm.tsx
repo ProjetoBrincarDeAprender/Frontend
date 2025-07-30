@@ -32,7 +32,7 @@ export function SignUpForm({
       acc[field.name] = "";
       return acc;
     },
-    {} as Record<string, string>
+    {} as Record<string, string>,
   );
 
   const [formData, setFormData] = useState(initialState);
@@ -47,6 +47,7 @@ export function SignUpForm({
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    console.log(formData);
     onSubmit(formData);
   };
 
