@@ -1,0 +1,38 @@
+[
+  {
+    "title": "Jogo da Velha",
+    "gameIdUrl": "1"
+  },
+  {
+    "title": "Sudoku",
+    "gameIdUrl": "2"
+  },
+  {
+    "title": "Bomberman",
+    "gameIdUrl": "3"
+  },
+  {
+    "title": "Top Gear",
+    "gameIdUrl": "4"
+  },
+  {
+    "title": "Counter Strike",
+    "gameIdUrl": "5"
+  },
+  {
+    "title": "Snake",
+    "gameIdUrl": "6"
+  },
+  {
+    "title": "Batman",
+    "gameIdUrl": "7"
+  },
+  {
+    "title": "Campo Minado",
+    "gameIdUrl": "8"
+  },
+  {
+    "title": "Batalha Naval",
+    "gameIdUrl": "9"
+  }
+]
