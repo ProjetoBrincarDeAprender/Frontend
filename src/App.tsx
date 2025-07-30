@@ -1,5 +1,5 @@
 import { Route, Routes } from "react-router";
-import Form from "./pages/Form/Form";
+import Form from "./pages/Login/Login";
 import { Home } from "./pages/Home/Home";
 import { Games } from "./pages/Games/Games";
 import { RegisterProfessorPage } from './pages/CadProfessor/CadProfessor';
@@ -12,15 +12,15 @@ function App() {
   return (
     <Routes>
       <Route index element={<Home />} />
-      <Route path="/cadastrar" element={<Form />} />
+      <Route path="/login" element={<Form />} />
 
       <Route path="/games" element={<Games />} />
       
-      <Route path="/cadastrar-professor" element={<RegisterProfessorPage/>}/>
+      <Route path="/cadastrar/professor" element={<RegisterProfessorPage/>}/>
       
-      <Route path="/cadastrar-aluno" element={<RegisterStudentPage/>}/>
+      <Route path="/cadastrar/aluno" element={<RegisterStudentPage/>}/>
       
-      <Route path="/cadastrar-escola" element={<RegisterSchoolPage/>}/>
+      <Route path="/cadastrar/escola" element={<RegisterSchoolPage/>}/>
 
     </Routes>
   );
