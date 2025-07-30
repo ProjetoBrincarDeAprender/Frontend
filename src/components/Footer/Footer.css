@@ -1,0 +1,84 @@
+.footer-pseudo {
+  position: relative;
+}
+
+/* Constelação / Pipa */
+.footer-pipa-decoration {
+  position: absolute;
+  top: 0%;
+  left: 0%;
+  width: 7.5rem;
+  height: 5.625rem;
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* Estrela central superior */
+.footer-star-center {
+  position: absolute;
+  top: 4%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 2.25rem;
+  height: 2.25rem;
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* Estrela inferior direita */
+.footer-star-bottom {
+  position: absolute;
+  bottom: 20%;
+  right: 25%;
+  width: 2.25rem;
+  height: 2.25rem;
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* Laço inferior direita */
+.footer-laco {
+  position: absolute;
+  bottom: 4%;
+  right: 2%;
+  width: 3.375rem;
+  height: 4.5rem;
+  pointer-events: none;
+  z-index: 2;
+}
+
+@media (max-width: 1200px) {
+  .footer-pipa-decoration {
+    width: 5rem;
+    height: 3.75rem;
+    top: 0%;
+    left: 0%;
+  }
+  .footer-star-center {
+    width: 1.5rem;
+    height: 1.5rem;
+    top: 4%;
+  }
+  .footer-star-bottom {
+    width: 1.5rem;
+    height: 1.5rem;
+    bottom: 25%;
+    right: 35%;
+  }
+  .footer-laco {
+    width: 1.75rem;
+    height: 2.5rem;
+    bottom: 8%;
+    right: 8%;
+  }
+}
+
+@media (max-width: 800px) {
+  .footer-logo-decoration,
+  .footer-star-center,
+  .footer-star-bottom,
+  .footer-pipa,
+  .footer-laco {
+    display: none;
+  }
+}
