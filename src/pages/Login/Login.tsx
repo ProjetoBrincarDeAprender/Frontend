@@ -1,6 +1,6 @@
 import { Footer } from "../../components/Footer/Footer";
-import { SignUpForm } from "../../components/Form/SignUpForm";
 import { Header } from "../../components/Header/Header";
+import { SignUpForm } from "../../components/SignUpForm/SignUpForm";
 
 export default function Form() {
   return (
