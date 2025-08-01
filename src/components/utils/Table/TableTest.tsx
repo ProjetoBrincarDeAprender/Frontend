@@ -1,4 +1,3 @@
-import React from "react";
 import { Table } from "./Table";
 
 // Interface para os dados do usuário
@@ -75,7 +74,6 @@ export function TableTest() {
   return (
     <div className="p-4">
       <h2 className="text-xl font-bold mb-4">Teste da Tabela</h2>
-      <p className="mb-4">Clique em "DETALHES" para testar a navegação</p>
       <Table data={sampleUsers} columns={columns} />
     </div>
   );
