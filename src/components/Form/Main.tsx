@@ -1,9 +1,10 @@
+import type { UseFormReturn } from "react-hook-form";
 import { twMerge } from "tailwind-merge";
-import { Form } from "../ui/form";
+import { Form, FormMessage } from "../ui/form";
 
 export type FromMainProps = {
-  form: any;
-  onSubmit: (values: any) => any;
+  form: UseFormReturn<any>;
+  onSubmit: (values: any) => void;
   className?: string;
   children?: React.ReactNode;
 };
@@ -20,6 +21,9 @@ export default function Main({
         onSubmit={form.handleSubmit(onSubmit)}
         className={twMerge("w-full", className)}
       >
+        {form.formState.errors.root && (
+          <FormMessage>{form.formState.errors.root.message}</FormMessage>
+        )}
         {children}
       </form>
     </Form>
