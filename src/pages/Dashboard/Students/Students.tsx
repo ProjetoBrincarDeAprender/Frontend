@@ -3,6 +3,7 @@ import { Header } from "../../../components/Header/Header";
 import { LateralMenu } from "../../../components/LateralMenu/LateralMenu";
 
 import saturn from "../../../assets/saturn.svg";
+import { TableTest } from "../../../components/utils/Table/TableTest";
 
 export function Students() {
   return (
@@ -40,6 +41,7 @@ export function Students() {
             </a>
           </div>
         </div>
+        <TableTest />
       </main>
       <Footer />
     </>
