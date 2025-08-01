@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import { useNavigate } from "react-router";
 import { FiMenu } from "react-icons/fi";
 import profile from "../../assets/astronauta-profile.svg";
 
@@ -9,6 +10,7 @@ interface LateralMenuProps {
 export function LateralMenu({ username }: LateralMenuProps) {
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
 
   // Fecha o menu ao clicar fora
   useEffect(() => {
@@ -63,36 +65,48 @@ export function LateralMenu({ username }: LateralMenuProps) {
         </div>
         <ul className="flex flex-col gap-2 px-4">
           <li>
-            <a
-              href="dashboard/logistics"
-              className="block text-lg font-bold text-white rounded-lg py-3 px-4 hover:bg-[var(--color-am2)] transition-colors text-center"
+            <button
+              onClick={() => {
+                navigate("/dashboard/logistics");
+                setMenuOpen(false);
+              }}
+              className="block w-full text-lg font-bold text-white rounded-lg py-3 px-4 hover:bg-[var(--color-am2)] transition-colors text-center"
             >
               Logística
-            </a>
+            </button>
           </li>
           <li>
-            <a
-              href="dashboard/students"
-              className="block text-lg font-bold text-white rounded-lg py-3 px-4 hover:bg-[var(--color-am2)] transition-colors text-center"
+            <button
+              onClick={() => {
+                navigate("/dashboard/students");
+                setMenuOpen(false);
+              }}
+              className="block w-full text-lg font-bold text-white rounded-lg py-3 px-4 hover:bg-[var(--color-am2)] transition-colors text-center"
             >
               Alunos
-            </a>
+            </button>
           </li>
           <li>
-            <a
-              href="dashboard/teachers"
-              className="block text-lg font-bold text-white rounded-lg py-3 px-4 hover:bg-[var(--color-am2)] transition-colors text-center"
+            <button
+              onClick={() => {
+                navigate("/dashboard/teachers");
+                setMenuOpen(false);
+              }}
+              className="block w-full text-lg font-bold text-white rounded-lg py-3 px-4 hover:bg-[var(--color-am2)] transition-colors text-center"
             >
               Professores
-            </a>
+            </button>
           </li>
           <li>
-            <a
-              href="dashboard/schools"
-              className="block text-lg font-bold text-white rounded-lg py-3 px-4 hover:bg-[var(--color-am2)] transition-colors text-center"
+            <button
+              onClick={() => {
+                navigate("/dashboard/schools");
+                setMenuOpen(false);
+              }}
+              className="block w-full text-lg font-bold text-white rounded-lg py-3 px-4 hover:bg-[var(--color-am2)] transition-colors text-center"
             >
               Escolas
-            </a>
+            </button>
           </li>
         </ul>
       </aside>
