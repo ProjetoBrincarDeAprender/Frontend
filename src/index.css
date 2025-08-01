@@ -4,7 +4,9 @@
   /* Cores */
 
   --color-yellow: #fecb32; /* Amarelo */
+
   --color-purplish-blue: #302579; /* Azul arroxeado */
+  --color-purplish-blue-dark: #150e45;
 
   --color-am0: #d9a321; /* Cores AM */
   --color-am1: #f6d980;
@@ -34,4 +36,13 @@ body {
   background-color: var(--color-purplish-blue);
   color: var(--color-blue-100);
   font-family: var(--font-2);
+}
+
+img {
+  display: block;
+}
+
+/* Borda para texto */
+.text-outline {
+  -webkit-text-stroke: 1px rgba(0, 0, 0, 0.2); /* Ajuste a cor e espessura */
 }
