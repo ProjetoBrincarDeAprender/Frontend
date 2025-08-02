@@ -5,11 +5,15 @@ import { AxiosError } from "axios";
 import { useForm } from "react-hook-form";
 import z from "zod";
 import { Form } from "../Form/Root";
+import { Link } from "../utils/Link/Link";
 
 const formSchema = z.object({
-  nome: z.string({ error: "Nome é obrigatório" }),
+  nome: z
+    .string({ error: "Nome é obrigatório" })
+    .max(80, { error: "O limite suportado é de 80 caracteres" })
+    .min(2, { error: "Nome da escola deve ter pelo menos 2 caracteres" }),
   descricao: z.string().optional(),
-  endereco: z.string().optional(),
+  endereco: z.string({ error: "O endereço da escola é obrigatório" }),
   telefone: z.string().optional(),
   email: z.email({ error: "Email inválido" }).optional(),
 });
@@ -70,37 +74,150 @@ export default function CreateSchoolForm() {
 
   return (
     <Form.Wrapper>
-      <Form.Title text="Criar Escola" />
-      <Form.Main onSubmit={onSubmit} form={form}>
+      <Form.Title text="Cadastrar Nova Escola" />
+      <Form.Main
+        form={{ ...form }}
+        onSubmit={onSubmit}
+        className="flex flex-col gap-4"
+      >
         <Form.Field
           form={form}
-          name="nome"
+          name="nome_escola"
           render={({ field }) => (
-            <Form.Input required label="Nome" {...field} />
+            <Form.Input
+              {...field}
+              label="Nome da Instituição"
+              placeholder="Universidade Estadual da Paraíba"
+            />
+          )}
+        />
+        <Form.Field
+          form={form}
+          name="sigla"
+          render={({ field }) => (
+            <Form.Input
+              {...field}
+              label="Sigla da Instituição"
+              placeholder="UEPB"
+            />
           )}
         />
         <Form.Field
           form={form}
           name="descricao"
-          render={({ field }) => <Form.Input label="Descrição" {...field} />}
+          render={({ field }) => (
+            <Form.Input
+              {...field}
+              label="Descrição da Instituição (Opcional)"
+              placeholder="Escreva aqui a descrição"
+            />
+          )}
         />
         <Form.Field
           form={form}
           name="endereco"
-          render={({ field }) => <Form.Input label="Endereço" {...field} />}
-        />
-        <Form.Field
-          form={form}
-          name="telefone"
-          render={({ field }) => <Form.Input label="Telefone" {...field} />}
+          render={({ field }) => (
+            <Form.Input
+              {...field}
+              label="Endereço da Instituição"
+              placeholder="Ex: Rua Manoel Mendes dos Santos, 54"
+            />
+          )}
         />
         <Form.Field
           form={form}
           name="email"
-          render={({ field }) => <Form.Input label="Email" {...field} />}
+          render={({ field }) => (
+            <Form.Input
+              {...field}
+              label="Email"
+              placeholder="exemplo@gmail.com"
+            />
+          )}
         />
-        <Form.Submit>Cadastrar</Form.Submit>
+        <Form.Field
+          form={form}
+          name="telefone"
+          render={({ field }) => (
+            <Form.Input
+              {...field}
+              label="Número da Instituição"
+              placeholder="83999399089"
+              type="tel"
+            />
+          )}
+        />
+        <Form.Field
+          form={form}
+          name="senha"
+          render={({ field }) => (
+            <Form.Input
+              {...field}
+              label="Senha"
+              placeholder="Senha"
+              type="password"
+            />
+          )}
+        />
+        <Form.Field
+          form={form}
+          name="confirmar_senha"
+          render={({ field }) => (
+            <Form.Input
+              {...field}
+              label="Confirmar Senha"
+              placeholder="Confirmar Senha"
+              type="password"
+            />
+          )}
+        />
+        <Form.Submit>Criar Conta</Form.Submit>
       </Form.Main>
+      <p className="mt-6 w-full text-center text-lg">
+        A escola já possui uma conta?{" "}
+        <Link
+          className="w-fit font-bold no-underline"
+          variant="secondary"
+          href="/login"
+        >
+          Faça Login
+        </Link>
+      </p>
     </Form.Wrapper>
   );
+
+  //    <Form.Wrapper>
+  //     <Form.Title text="Criar Escola" />
+  //     <Form.Main onSubmit={onSubmit} form={form}>
+  //       <Form.Field
+  //         form={form}
+  //         name="nome"
+  //         render={({ field }) => (
+  //           <Form.Input required label="Nome" {...field} />
+  //         )}
+  //       />
+  //       <Form.Field
+  //         form={form}
+  //         name="descricao"
+  //         render={({ field }) => <Form.Input label="Descrição" {...field} />}
+  //       />
+  //       <Form.Field
+  //         form={form}
+  //         name="endereco"
+  //         render={({ field }) => <Form.Input label="Endereço" {...field} />}
+  //       />
+  //       <Form.Field
+  //         form={form}
+  //         name="telefone"
+  //         render={({ field }) => <Form.Input label="Telefone" {...field} />}
+  //       />
+  //       <Form.Field
+  //         form={form}
+  //         name="email"
+  //         render={({ field }) => <Form.Input label="Email" {...field} />}
+  //       />
+  //       <Form.Submit>Cadastrar</Form.Submit>
+  //     </Form.Main>
+  //   </Form.Wrapper>
+  // );
 }
