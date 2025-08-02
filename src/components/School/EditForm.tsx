@@ -18,7 +18,7 @@ const formSchema = z.object({
   email: z.email({ error: "Email inválido" }).optional(),
 });
 
-export default function CreateSchoolForm() {
+export default function EditSchoolForm() {
   const { profile } = useAuth();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -74,7 +74,7 @@ export default function CreateSchoolForm() {
 
   return (
     <Form.Wrapper>
-      <Form.Title text="Cadastrar Nova Escola" />
+      <Form.Title text="Atualizar Dados da Escola" />
       <Form.Main
         form={{ ...form }}
         onSubmit={onSubmit}
@@ -171,16 +171,16 @@ export default function CreateSchoolForm() {
             />
           )}
         />
-        <Form.Submit>Criar Conta</Form.Submit>
+        <Form.Submit>Atualizar Dados</Form.Submit>
       </Form.Main>
       <p className="mt-6 w-full text-center text-lg">
-        A escola já possui uma conta?{" "}
+        Desistiu de realizar as mordificações?{" "}
         <Link
           className="w-fit font-bold no-underline"
           variant="secondary"
-          href="/login"
+          href="/home"
         >
-          Faça Login
+          Voltar
         </Link>
       </p>
     </Form.Wrapper>

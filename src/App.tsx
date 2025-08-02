@@ -7,7 +7,9 @@ import { RegisterProfessorPage } from './pages/CadProfessor/CadProfessor';
 import { RegisterResponsablePage } from './pages/CadResponsavel/CadResponsavel';
 import { RegisterSchoolPage } from './pages/CadEscola/CadEscola';
 import {EditStudentPage} from './pages/EditAluno/EditAluno';
-
+import {EditSchoolPage} from './pages/EditEscola/EditEscola';
+import {EditTeacherPage} from './pages/EditProfessor/EditProfessor';
+import {EditResponsablePage} from './pages/EditResponsavel/EditResponsavel';
 
 
 function App() {
@@ -28,11 +30,11 @@ function App() {
 
       <Route path="/editar/aluno" element={<EditStudentPage/>}/>
 
-      <Route path="/editar/escola" element={<EditStudentPage/>}/>
+      <Route path="/editar/escola" element={<EditSchoolPage/>}/>
 
-      <Route path="/editar/aluno" element={<EditStudentPage/>}/>
+      <Route path="/editar/professor" element={<EditTeacherPage/>}/>
 
-      <Route path="/editar/aluno" element={<EditStudentPage/>}/>
+      <Route path="/editar/responsavel" element={<EditResponsablePage/>}/>
 
     </Routes>
   );
