@@ -35,7 +35,7 @@ const formSchema = z
     path: ["confirmar_senha"],
   });
 
-export function ResponsableSignUpForm() {
+export function ResponsableEditForm() {
   const navigate = useNavigate();
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -88,7 +88,7 @@ export function ResponsableSignUpForm() {
 
   return (
     <Form.Wrapper>
-      <Form.Title text="Cadastrar Novo Responsável" />
+      <Form.Title text="Atualizar Dados do(a) Responsável" />
       <Form.Main
         form={{ ...form }}
         onSubmit={onSubmit}
@@ -101,7 +101,7 @@ export function ResponsableSignUpForm() {
             <Form.Input
               {...field}
               label="Nome Completo"
-              placeholder="Insira seu nome completo"
+              placeholder="Modificar nome completo"
             />
           )}
         />
@@ -164,16 +164,16 @@ export function ResponsableSignUpForm() {
             />
           )}
         />
-        <Form.Submit>Criar Conta</Form.Submit>
+        <Form.Submit>Atualizar Dados</Form.Submit>
       </Form.Main>
       <p className="mt-6 w-full text-center text-lg">
-        O responsável já possui uma conta?{" "}
+        Desistiu de realizar as mordificações?{" "}
         <Link
           className="w-fit font-bold no-underline"
           variant="secondary"
-          href="/login"
+          href="/home"
         >
-          Faça Login
+          Voltar
         </Link>
       </p>
     </Form.Wrapper>
