@@ -11,8 +11,10 @@ const formSchema = z
   .object({
     nome_completo: z
       .string({ error: "Nome completo é obrigatório" })
+      .max(80, { error: "O limite suportado é de 80 caracteres" })
       .min(2, { error: "Nome completo deve ter pelo menos 2 caracteres" }),
-    email: z.email({ error: "Email inválido" }),
+    email: z.email({ error: "Digite um email válido" }),
+    avatar_url: z.url({ error: "Insira uma URL válida" }),
     senha: z
       .string({ error: "Senha deve ter entre 8 e 32 caracteres" })
       .min(8, { error: "Senha deve ter pelo menos 8 caracteres" })
@@ -86,7 +88,7 @@ export function TeacherSignUpForm() {
 
   return (
     <Form.Wrapper>
-      <Form.Title text="Criar Conta" />
+      <Form.Title text="Cadastrar Novo Professor" />
       <Form.Main
         form={{ ...form }}
         onSubmit={onSubmit}
@@ -99,7 +101,7 @@ export function TeacherSignUpForm() {
             <Form.Input
               {...field}
               label="Nome Completo"
-              placeholder="fulaninho da silva"
+              placeholder="Insira seu nome completo"
             />
           )}
         />
@@ -111,6 +113,30 @@ export function TeacherSignUpForm() {
               {...field}
               label="Email"
               placeholder="exemplo@gmail.com"
+            />
+          )}
+        />
+        <Form.Field
+          form={form}
+          name="data_nascimento"
+          render={({ field }) => (
+            <Form.Input
+              {...field}
+              label="Data de Nascimento"
+              placeholder=""
+              type="date"
+            />
+          )}
+        />
+        <Form.Field
+          form={form}
+          name="avatar_url"
+          render={({ field }) => (
+            <Form.Input
+              {...field}
+              label="URL do Avatar Personalizado"
+              placeholder="https://urlDoAvatarPersonalizado.jpg"
+              type="url"
             />
           )}
         />
