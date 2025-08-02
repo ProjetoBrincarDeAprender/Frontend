@@ -1,5 +1,6 @@
 import React from "react";
 import { Table } from "./Table";
+import { FaCheckCircle, FaTimesCircle } from "react-icons/fa";
 
 // Interface para os dados da escola
 interface School {
@@ -63,7 +64,7 @@ const ProfilePhoto: React.FC<{ photo?: string }> = ({ photo }) => {
       <img
         src={photo}
         alt="Foto de perfil"
-        className="w-10 h-10 rounded-full border-2 border-black"
+        className="h-10 w-10 rounded-full border-2 border-black"
       />
     );
   }
@@ -71,9 +72,23 @@ const ProfilePhoto: React.FC<{ photo?: string }> = ({ photo }) => {
   return <div className="photo-placeholder"></div>;
 };
 
-// Componente para status de ativação
+// Componente para status de ativação com ícones modernos
 const ActivationStatus: React.FC<{ isActive: boolean }> = ({ isActive }) => {
-  return <span className="text-2xl">{isActive ? "✅" : "❌"}</span>;
+  return (
+    <div className="flex justify-center">
+      {isActive ? (
+        <FaCheckCircle
+          className="text-2xl text-green-500 transition-colors duration-300 hover:text-green-600"
+          title="Ativo"
+        />
+      ) : (
+        <FaTimesCircle
+          className="text-2xl text-red-500 transition-colors duration-300 hover:text-red-600"
+          title="Inativo"
+        />
+      )}
+    </div>
+  );
 };
 
 export function TableExampleSchool() {
@@ -127,7 +142,7 @@ export function TableExampleSchool() {
 
   return (
     <div className="p-4">
-      <h2 className="text-xl font-bold mb-4">Lista de Escolas</h2>
+      <h2 className="mb-4 text-xl font-bold">Lista de Escolas</h2>
       <Table
         data={sampleSchools}
         columns={columns}
