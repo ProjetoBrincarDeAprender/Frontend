@@ -5,98 +5,191 @@
 
 .custom-table {
   width: 100%;
-  border-collapse: collapse;
-  background-color: #f5f5f5; /* Cor de fundo cinza claro como na imagem */
+  border-collapse: separate;
+  border-spacing: 0;
+  background-color: #ffffff;
   font-family: var(--font-1);
-  border: 2px solid #000; /* Borda preta grossa */
+  border: 0.125rem solid #e2e8f0;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  box-shadow:
+    0 0.25rem 0.375rem -0.0625rem rgba(0, 0, 0, 0.1),
+    0 0.125rem 0.25rem -0.0625rem rgba(0, 0, 0, 0.06);
 }
 
 .custom-table thead {
-  border-bottom: 2px solid #000; /* Linha separadora grossa entre header e dados */
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 }
 
-.table-header {
-  padding: 12px 16px;
+/* Estilos para o cabeçalho da tabela */
+.custom-table thead th.table-header {
+  padding: 1rem 1.25rem;
   text-align: left;
   font-weight: bold;
-  font-size: 14px;
-  color: #000;
-  background-color: #f5f5f5;
-  border-right: 1px solid #000;
+  font-size: 0.875rem;
+  color: #ffffff;
+  background: transparent;
+  border-right: 0.0625rem solid rgba(255, 255, 255, 0.2);
+  vertical-align: middle;
+  transition: all 0.3s ease;
 }
 
-.table-header:last-child {
+.custom-table thead th.table-header:last-child {
   border-right: none;
 }
 
-.table-row {
-  border-bottom: 1px solid #000;
+.custom-table thead th.table-header:hover {
+  background-color: rgba(0, 0, 0, 0.3);
+  color: #f8fafc;
 }
 
-.table-row:last-child {
+/* Estilos para as linhas da tabela */
+.custom-table tbody tr.table-row {
+  border-bottom: 0.0625rem solid #f1f5f9;
+  transition: all 0.3s ease;
+}
+
+.custom-table tbody tr.table-row:last-child {
   border-bottom: none;
 }
 
-.table-cell {
-  padding: 12px 16px;
-  font-size: 14px;
-  color: #000;
-  background-color: #f5f5f5;
-  border-right: 1px solid #000;
-  vertical-align: middle;
+.custom-table tbody tr.table-row:nth-child(even) {
+  background-color: #f8fafc;
 }
 
-.table-cell:last-child {
+.custom-table tbody tr.table-row:nth-child(odd) {
+  background-color: #ffffff;
+}
+
+/* Estilos para as células da tabela */
+.custom-table tbody td.table-cell {
+  padding: 1rem 1.25rem;
+  font-size: 0.875rem;
+  color: #334155;
+  background: transparent;
+  border-right: 0.0625rem solid #f1f5f9;
+  vertical-align: middle;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.custom-table tbody td.table-cell:last-child {
   border-right: none;
+}
+
+.custom-table tbody td.table-cell:hover {
+  background-color: #e0e7ff;
+  color: #3730a3;
+  transform: translateY(-0.0625rem);
+  box-shadow: 0 0.125rem 0.5rem rgba(99, 102, 241, 0.15);
 }
 
 /* Estilos específicos para a coluna de foto */
 .photo-cell {
   text-align: center;
-  width: 80px;
+  width: 5rem;
+  transition: all 0.3s ease;
+}
+
+.photo-cell:hover {
+  background-color: #fef3c7;
 }
 
 .photo-placeholder {
-  width: 40px;
-  height: 40px;
-  border: 2px solid #000;
+  width: 2.5rem;
+  height: 2.5rem;
+  border: 0.125rem solid #6366f1;
   border-radius: 50%;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background-color: #fff;
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  transition: all 0.3s ease;
+}
+
+.photo-placeholder:hover {
+  border-color: #4f46e5;
+  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+  transform: scale(1.05);
 }
 
 .photo-placeholder::before {
   content: "👤";
-  font-size: 20px;
+  font-size: 1.25rem;
+  transition: transform 0.3s ease;
+}
+
+.photo-placeholder:hover::before {
+  transform: scale(1.1);
 }
 
 /* Estilos para o link de detalhes */
 .details-link {
-  color: #0066cc;
+  color: #6366f1;
   text-decoration: underline;
   cursor: pointer;
   font-weight: normal;
   user-select: none;
   display: inline-block;
-  padding: 2px 4px;
-  border-radius: 3px;
-  transition: background-color 0.2s;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.375rem;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.details-link::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(99, 102, 241, 0.1),
+    transparent
+  );
+  transition: left 0.5s ease;
+  pointer-events: none;
 }
 
 .details-link:hover {
-  color: #004499;
-  background-color: rgba(0, 102, 204, 0.1);
+  color: #4f46e5;
+  background-color: #e0e7ff;
+  transform: translateY(-0.0625rem);
+  box-shadow: 0 0.125rem 0.5rem rgba(99, 102, 241, 0.2);
+}
+
+.details-link:hover::before {
+  left: 100%;
 }
 
 /* Estilos para texto em negrito */
 .bold-text {
   font-weight: bold;
+  color: #1e293b;
+  transition: color 0.3s ease;
+}
+
+.bold-text:hover {
+  color: #3730a3;
 }
 
 /* Estilos para valores numéricos */
 .numeric-value {
   font-family: monospace;
   font-weight: bold;
+  color: #059669;
+  background-color: #ecfdf5;
+  padding: 0.125rem 0.375rem;
+  border-radius: 0.25rem;
+  transition: all 0.3s ease;
+}
+
+.numeric-value:hover {
+  background-color: #d1fae5;
+  color: #047857;
+  box-shadow: 0 0.0625rem 0.1875rem rgba(5, 150, 105, 0.2);
 }
