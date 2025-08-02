@@ -1,5 +1,5 @@
 import { Header } from "@/components/Header/Header";
-import { StudentEditForm } from "@/components/EditForms/StudentForm";
+import { TeacherEditForm } from "@/components/EditForms/TeacherForm";
 
 export function EditTeacherPage() {
   return (
@@ -7,7 +7,7 @@ export function EditTeacherPage() {
       <Header username="Usuario" />
 
       <div className="page-container">
-        <StudentEditForm />
+        <TeacherEditForm />
       </div>
     </div>
   );

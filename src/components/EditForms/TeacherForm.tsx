@@ -35,7 +35,7 @@ const formSchema = z
     path: ["confirmar_senha"],
   });
 
-export function TeacherSignUpForm() {
+export function TeacherEditForm() {
   const navigate = useNavigate();
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -88,7 +88,7 @@ export function TeacherSignUpForm() {
 
   return (
     <Form.Wrapper>
-      <Form.Title text="Cadastrar Novo Professor" />
+      <Form.Title text="Atualizar Dados do(a) Professor(a)" />
       <Form.Main
         form={{ ...form }}
         onSubmit={onSubmit}
@@ -101,7 +101,7 @@ export function TeacherSignUpForm() {
             <Form.Input
               {...field}
               label="Nome Completo"
-              placeholder="Insira seu nome completo"
+              placeholder="Mudar nome do(a) professor(a)"
             />
           )}
         />
@@ -164,16 +164,16 @@ export function TeacherSignUpForm() {
             />
           )}
         />
-        <Form.Submit>Criar Conta</Form.Submit>
+        <Form.Submit>Atualizar Dados</Form.Submit>
       </Form.Main>
       <p className="mt-6 w-full text-center text-lg">
-        O professor já possui uma conta?{" "}
+        Desistiu de realizar as mordificações?{" "}
         <Link
           className="w-fit font-bold no-underline"
           variant="secondary"
           href="/login"
         >
-          Faça Login
+          Voltar
         </Link>
       </p>
     </Form.Wrapper>
