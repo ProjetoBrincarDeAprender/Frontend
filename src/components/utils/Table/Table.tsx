@@ -2,6 +2,15 @@ import React from "react";
 import { useNavigate } from "react-router";
 import "./Table.css";
 
+import {
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+  Table as TableShadcn,
+} from "../../ui/table";
+
 interface Column<T> {
   header: string;
   accessor:
@@ -39,19 +48,22 @@ export function Table<T>({
 
   return (
     <div className={`table-container ${className ?? ""}`}>
-      <table className="custom-table">
-        <thead>
-          <tr>
+      <TableShadcn className="custom-table">
+        <TableHeader>
+          <TableRow>
             {columns.map((col, idx) => (
-              <th key={idx} className={`table-header ${col.className ?? ""}`}>
+              <TableHead
+                key={idx}
+                className={`table-header ${col.className ?? ""}`}
+              >
                 {col.header}
-              </th>
+              </TableHead>
             ))}
-          </tr>
-        </thead>
-        <tbody>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
           {data.map((row, rowIndex) => (
-            <tr key={rowIndex} className="table-row">
+            <TableRow key={rowIndex} className="table-row">
               {columns.map((col, colIndex) => {
                 const value =
                   typeof col.accessor === "function"
@@ -59,18 +71,18 @@ export function Table<T>({
                     : (row[col.accessor] as React.ReactNode);
 
                 return (
-                  <td
+                  <TableCell
                     key={colIndex}
                     className={`table-cell ${col.className ?? ""}`}
                   >
                     {value}
-                  </td>
+                  </TableCell>
                 );
               })}
-            </tr>
+            </TableRow>
           ))}
-        </tbody>
-      </table>
+        </TableBody>
+      </TableShadcn>
     </div>
   );
 }
