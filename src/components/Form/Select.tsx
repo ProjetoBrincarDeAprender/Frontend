@@ -32,28 +32,28 @@ export default function Select({
   return (
     <FormItem className={wrapperClassName}>
       <FormLabel className={labelClassName}>{label}</FormLabel>
-      <FormControl autoFocus={autofocus}>
-        <ShadcnSelect
-          defaultValue={defaultValue}
-          onValueChange={onChange}
-          {...props}
-        >
+      <ShadcnSelect
+        defaultValue={defaultValue}
+        onValueChange={onChange}
+        {...props}
+      >
+        <FormControl autoFocus={autofocus}>
           <SelectTrigger className="w-full">
             <SelectValue placeholder={placeholder} />
           </SelectTrigger>
-          <SelectContent>
-            {options.map((option) => (
-              <SelectItem
-                key={option.value}
-                value={option.value}
-                className="z-50"
-              >
-                {option.label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </ShadcnSelect>
-      </FormControl>
+        </FormControl>
+        <SelectContent>
+          {options.map((option) => (
+            <SelectItem
+              key={option.value}
+              value={option.value}
+              className="z-50"
+            >
+              {option.label}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </ShadcnSelect>
       <FormMessage />
     </FormItem>
   );

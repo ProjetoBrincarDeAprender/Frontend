@@ -1,4 +1,3 @@
-import useAuth from "@/hooks/Auth/useAuth";
 import api from "@/utils/api";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AxiosError } from "axios";
@@ -19,7 +18,6 @@ const formSchema = z.object({
 });
 
 export default function CreateSchoolForm() {
-  const { profile } = useAuth();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -33,11 +31,8 @@ export default function CreateSchoolForm() {
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     try {
-      const userProfile = await profile();
-
       const payload = {
         ...data,
-        usuariosIds: [userProfile?.id],
       };
 
       const response = await api.post("/school/register", payload);

@@ -1,67 +1,93 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import api from "@/utils/api";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AxiosError } from "axios";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router";
 import { z } from "zod";
 import { Form } from "../Form/Root";
-import { Link } from "../utils/Link/Link";
 
-const formSchema = z
-  .object({
-    nome_completo: z
-      .string({ error: "Nome completo é obrigatório" })
-      .max(80, { error: "O limite suportado é de 80 caracteres" })
-      .min(2, { error: "Nome completo deve ter pelo menos 2 caracteres" }),
-    email: z.email({ error: "Digite um email válido" }),
-    avatar_url: z.url({ error: "Insira uma URL válida" }),
-    tema_preferido: z
-      .string({ error: "Insira um tema válido" })
-      .max(20, { error: "O tema é grande demais" })
-      .min(2, { error: "O tema é muito pequeno" }),
-    senha: z
-      .string({ error: "Senha deve ter entre 8 e 32 caracteres" })
-      .min(8, { error: "Senha deve ter pelo menos 8 caracteres" })
-      .max(32, { error: "Senha deve ter no máximo 32 caracteres" }),
-    confirmar_senha: z
-      .string({
-        error: "Confirmação de senha deve ter entre 8 e 32 caracteres",
-      })
-      .min(8, {
-        error: "Confirmação de senha deve ter pelo menos 8 caracteres",
-      })
-      .max(32, {
-        error: "Confirmação de senha deve ter no máximo 32 caracteres",
-      }),
-  })
-  .refine((data) => data.senha == data.confirmar_senha, {
-    error: "As senhas devem ser iguais",
-    path: ["confirmar_senha"],
-  });
+const formSchema = z.object({
+  nome_completo: z
+    .string({ error: "Nome completo é obrigatório" })
+    .max(80, { error: "O limite suportado é de 80 caracteres" })
+    .min(2, { error: "Nome completo deve ter pelo menos 2 caracteres" }),
+  email: z.email({ error: "Digite um email válido" }),
+  avatar_url: z
+    .url({ error: "Insira uma URL válida" })
+    .optional()
+    .or(z.literal("")),
+  tema_preferido: z.string({ error: "Insira um tema válido" }),
+  data_nascimento: z.string({
+    error: "Data de nascimento é obrigatória",
+  }),
+});
 
-export function StudentEditForm() {
+type StudentFormProps = {
+  id: number;
+};
+
+export function StudentEditForm({ id }: StudentFormProps) {
   const navigate = useNavigate();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      nome_completo: "",
-      email: "",
-      senha: "",
-      confirmar_senha: "",
-    },
   });
 
-  const onSubmit = async (data: z.infer<typeof formSchema>) => {
-    const payload = {
-      ...data,
-      perfilId: 2,
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const response = await api.get(`/student/list/${id}`);
+
+        if (response.status === 200) {
+          const studentData = {
+            ...response.data,
+            avatar_url: response.data.avatar_url || "",
+            data_nascimento: response.data.data_nascimento.split("T")[0],
+          };
+          form.reset(studentData);
+          console.log(form.formState);
+        }
+      } catch (error) {
+        if (error instanceof AxiosError) {
+          console.error("Erro ao buscar dados do usuário:", error.message);
+          form.setError("root", {
+            message:
+              "Erro ao buscar dados do usuário. Tente novamente mais tarde.",
+          });
+        }
+      }
     };
 
-    try {
-      const response = await api.post("/student/register", payload);
+    fetchUserData();
+  }, [id, form]);
 
-      if (response.status === 201) {
+  const onSubmit = async (data: z.infer<typeof formSchema>) => {
+    const userPayload = Object.fromEntries(
+      Object.entries({
+        nome_completo: data.nome_completo,
+        email: data.email,
+      }).filter(([_, value]) => value !== undefined && value !== ""),
+    );
+
+    const studentPayload = Object.fromEntries(
+      Object.entries({
+        avatar_url: data.avatar_url,
+        tema_preferido: data.tema_preferido,
+        data_nascimento: new Date(data.data_nascimento).toISOString(),
+      }).filter(([_, value]) => value !== undefined && value !== ""),
+    );
+
+    try {
+      const userResponse = await api.put(`/user/update/${id}`, userPayload);
+
+      const studentResponse = await api.put(
+        `/student/update/${id}`,
+        studentPayload,
+      );
+
+      if (studentResponse.status === 201 && userResponse.status === 201) {
         navigate("/login");
       }
     } catch (error) {
@@ -76,7 +102,7 @@ export function StudentEditForm() {
               });
             }
             form.setError("root", {
-              message: `Erro ao criar conta: ${field.message.join(", ")}`,
+              message: `Erro ao atualizar conta: ${field.message.join(", ")}`,
             });
           },
         );
@@ -134,7 +160,7 @@ export function StudentEditForm() {
               {...field}
               label="URL do Avatar Personalizado"
               placeholder="https://urlDoAvatarPersonalizado.jpg"
-              type="url"
+              type="text"
             />
           )}
         />
@@ -142,49 +168,21 @@ export function StudentEditForm() {
           form={form}
           name="tema_preferido"
           render={({ field }) => (
-            <Form.Input
-              {...field}
+            <Form.Select
               label="Tema Preferido"
-              placeholder="Ex: Dinossauros"
-            />
-          )}
-        />
-        <Form.Field
-          form={form}
-          name="senha"
-          render={({ field }) => (
-            <Form.Input
-              {...field}
-              label="Senha"
-              placeholder="Senha"
-              type="password"
-            />
-          )}
-        />
-        <Form.Field
-          form={form}
-          name="confirmar_senha"
-          render={({ field }) => (
-            <Form.Input
-              {...field}
-              label="Confirmar Senha"
-              placeholder="Confirmar Senha"
-              type="password"
+              placeholder="Selecione um tema"
+              options={[
+                { value: "SISTEMA", label: "Sistema" },
+                { value: "ESCURO", label: "Escuro" },
+                { value: "CLARO", label: "Claro" },
+              ]}
+              onChange={field.onChange}
+              defaultValue={field.value}
             />
           )}
         />
         <Form.Submit>Atualizar Dados</Form.Submit>
       </Form.Main>
-      <p className="mt-6 w-full text-center text-lg">
-        Desistiu de fazer as modificações?{" "}
-        <Link
-          className="w-fit font-bold no-underline"
-          variant="secondary"
-          href="/home"
-        >
-          Voltar
-        </Link>
-      </p>
     </Form.Wrapper>
   );
 }
