@@ -1,7 +1,8 @@
-import useAuth from "@/hooks/Auth/useAuth";
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import api from "@/utils/api";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AxiosError } from "axios";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import z from "zod";
 import { Form } from "../Form/Root";
@@ -11,42 +12,92 @@ const formSchema = z.object({
   nome: z
     .string({ error: "Nome é obrigatório" })
     .max(80, { error: "O limite suportado é de 80 caracteres" })
-    .min(2, { error: "Nome da escola deve ter pelo menos 2 caracteres" }),
+    .min(2, { error: "Nome da escola deve ter pelo menos 2 caracteres" })
+    .optional(),
   descricao: z.string().optional(),
-  endereco: z.string({ error: "O endereço da escola é obrigatório" }),
-  telefone: z.string().optional(),
-  email: z.email({ error: "Email inválido" }).optional(),
+  localizacao: z.string({ error: "O endereço da escola é obrigatório" }),
+  telefone: z.string().refine(
+    (val) => {
+      const phoneRegex = /^\(\d{2}\) \d{4,5}-\d{4}$/;
+      return phoneRegex.test(val);
+    },
+    { message: "Telefone inválido" },
+  ),
+  email: z.email({ error: "Email inválido" }),
+  usuariosIds: z
+    .string()
+    .refine(
+      (val) => {
+        const ids = val.split(",").map((id) => id.trim());
+        return ids.every((id) => !isNaN(Number(id)));
+      },
+      { message: "IDs de usuários inválidos" },
+    )
+    .optional(),
 });
 
-export default function EditSchoolForm() {
-  const { profile } = useAuth();
+type EditSchoolFormProps = {
+  id: number;
+};
+
+export default function EditSchoolForm({ id }: EditSchoolFormProps) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      nome: "",
-      descricao: "",
-      endereco: "",
-      telefone: "",
-      email: "",
-    },
   });
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await api.get(`/school/list/${id}`);
+
+        if (response.status === 200) {
+          const formData = {
+            nome: response.data.nome || "",
+            descricao: response.data.descricao || "",
+            localizacao: response.data.localizacao || "",
+            telefone: response.data.telefone || "",
+            email: response.data.email || "",
+            usuariosIds: response.data.usuarios
+              ? response.data.usuarios
+                  .map((user: { id: number }) => user.id)
+                  .join(", ")
+              : "",
+          };
+          console.log(formData);
+          form.reset(formData);
+        }
+      } catch (error) {
+        if (error instanceof AxiosError) {
+          console.error("Erro ao buscar dados da escola:", error.message);
+        }
+      }
+    };
+
+    fetchData();
+  }, [id, form]);
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     try {
-      const userProfile = await profile();
+      const verifyData = Object.fromEntries(
+        Object.entries(data).filter(
+          ([_, value]) => value !== undefined && value !== null,
+        ),
+      );
 
       const payload = {
-        ...data,
-        usuariosIds: [userProfile?.id],
+        ...verifyData,
+        usuariosIds: verifyData.usuariosIds
+          ? verifyData.usuariosIds.split(",").map((id) => Number(id.trim()))
+          : [],
       };
 
-      const response = await api.post("/school/register", payload);
-      if (response.status === 201) {
-        form.reset();
-        alert("Escola criada com sucesso!");
+      const response = await api.put(`/school/update/${id}`, payload);
+
+      if (response.status === 200) {
+        alert("Escola atualizada com sucesso!");
       }
     } catch (error) {
-      console.error("Erro ao criar escola:", error);
+      console.error("Erro ao atualizar escola:", error);
       if (error instanceof AxiosError) {
         const response = error.response;
 
@@ -57,9 +108,10 @@ export default function EditSchoolForm() {
                 form.setError(field.field as keyof z.infer<typeof formSchema>, {
                   message: field.message.join(", "),
                 });
+                return;
               }
               form.setError("root", {
-                message: `Erro ao criar conta: ${field.message.join(", ")}`,
+                message: `Erro ao atualizar escola: ${field.message.join(", ")}`,
               });
             },
           );
@@ -76,29 +128,18 @@ export default function EditSchoolForm() {
     <Form.Wrapper>
       <Form.Title text="Atualizar Dados da Escola" />
       <Form.Main
-        form={{ ...form }}
+        form={form}
         onSubmit={onSubmit}
         className="flex flex-col gap-4"
       >
         <Form.Field
           form={form}
-          name="nome_escola"
+          name="nome"
           render={({ field }) => (
             <Form.Input
               {...field}
               label="Nome da Instituição"
               placeholder="Universidade Estadual da Paraíba"
-            />
-          )}
-        />
-        <Form.Field
-          form={form}
-          name="sigla"
-          render={({ field }) => (
-            <Form.Input
-              {...field}
-              label="Sigla da Instituição"
-              placeholder="UEPB"
             />
           )}
         />
@@ -115,7 +156,7 @@ export default function EditSchoolForm() {
         />
         <Form.Field
           form={form}
-          name="endereco"
+          name="localizacao"
           render={({ field }) => (
             <Form.Input
               {...field}
@@ -149,25 +190,12 @@ export default function EditSchoolForm() {
         />
         <Form.Field
           form={form}
-          name="senha"
+          name="usuariosIds"
           render={({ field }) => (
             <Form.Input
               {...field}
-              label="Senha"
-              placeholder="Senha"
-              type="password"
-            />
-          )}
-        />
-        <Form.Field
-          form={form}
-          name="confirmar_senha"
-          render={({ field }) => (
-            <Form.Input
-              {...field}
-              label="Confirmar Senha"
-              placeholder="Confirmar Senha"
-              type="password"
+              label="Usuários"
+              placeholder="IDs dos usuários"
             />
           )}
         />

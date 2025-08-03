@@ -1,16 +1,15 @@
 import { Route, Routes } from "react-router";
-import Form from "./pages/Login/Login";
-import { Home } from "./pages/Home/Home";
+import { RegisterStudentPage } from "./pages/CadAluno/CadAluno";
+import { RegisterSchoolPage } from "./pages/CadEscola/CadEscola";
+import { RegisterProfessorPage } from "./pages/CadProfessor/CadProfessor";
+import { RegisterResponsablePage } from "./pages/CadResponsavel/CadResponsavel";
+import { EditStudentPage } from "./pages/EditAluno/EditAluno";
+import { EditSchoolPage } from "./pages/EditEscola/EditEscola";
+import { EditTeacherPage } from "./pages/EditProfessor/EditProfessor";
+import { EditResponsablePage } from "./pages/EditResponsavel/EditResponsavel";
 import { Games } from "./pages/Games/Games";
-import { RegisterStudentPage } from './pages/CadAluno/CadAluno';
-import { RegisterProfessorPage } from './pages/CadProfessor/CadProfessor';
-import { RegisterResponsablePage } from './pages/CadResponsavel/CadResponsavel';
-import { RegisterSchoolPage } from './pages/CadEscola/CadEscola';
-import {EditStudentPage} from './pages/EditAluno/EditAluno';
-import {EditSchoolPage} from './pages/EditEscola/EditEscola';
-import {EditTeacherPage} from './pages/EditProfessor/EditProfessor';
-import {EditResponsablePage} from './pages/EditResponsavel/EditResponsavel';
-
+import { Home } from "./pages/Home/Home";
+import Form from "./pages/Login/Login";
 
 function App() {
   return (
@@ -19,23 +18,25 @@ function App() {
       <Route path="/login" element={<Form />} />
 
       <Route path="/games" element={<Games />} />
-      
-      <Route path="/cadastrar/aluno" element={<RegisterStudentPage/>}/>
 
-      <Route path="/cadastrar/escola" element={<RegisterSchoolPage/>}/>
+      <Route path="/cadastrar/aluno" element={<RegisterStudentPage />} />
 
-      <Route path="/cadastrar/professor" element={<RegisterProfessorPage/>}/>
+      <Route path="/cadastrar/escola" element={<RegisterSchoolPage />} />
 
-      <Route path="/cadastrar/responsavel" element={<RegisterResponsablePage/>}/>
+      <Route path="/cadastrar/professor" element={<RegisterProfessorPage />} />
 
-      <Route path="/editar/aluno" element={<EditStudentPage/>}/>
+      <Route
+        path="/cadastrar/responsavel"
+        element={<RegisterResponsablePage />}
+      />
 
-      <Route path="/editar/escola" element={<EditSchoolPage/>}/>
+      <Route path="/editar/aluno/:id" element={<EditStudentPage />} />
 
-      <Route path="/editar/professor" element={<EditTeacherPage/>}/>
+      <Route path="/editar/escola/:id" element={<EditSchoolPage />} />
 
-      <Route path="/editar/responsavel" element={<EditResponsablePage/>}/>
+      <Route path="/editar/professor/:id" element={<EditTeacherPage />} />
 
+      <Route path="/editar/responsavel/:id" element={<EditResponsablePage />} />
     </Routes>
   );
 }

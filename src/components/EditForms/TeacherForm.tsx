@@ -1,61 +1,62 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import api from "@/utils/api";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AxiosError } from "axios";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router";
 import { z } from "zod";
 import { Form } from "../Form/Root";
-import { Link } from "../utils/Link/Link";
 
-const formSchema = z
-  .object({
-    nome_completo: z
-      .string({ error: "Nome completo é obrigatório" })
-      .max(80, { error: "O limite suportado é de 80 caracteres" })
-      .min(2, { error: "Nome completo deve ter pelo menos 2 caracteres" }),
-    email: z.email({ error: "Digite um email válido" }),
-    avatar_url: z.url({ error: "Insira uma URL válida" }),
-    senha: z
-      .string({ error: "Senha deve ter entre 8 e 32 caracteres" })
-      .min(8, { error: "Senha deve ter pelo menos 8 caracteres" })
-      .max(32, { error: "Senha deve ter no máximo 32 caracteres" }),
-    confirmar_senha: z
-      .string({
-        error: "Confirmação de senha deve ter entre 8 e 32 caracteres",
-      })
-      .min(8, {
-        error: "Confirmação de senha deve ter pelo menos 8 caracteres",
-      })
-      .max(32, {
-        error: "Confirmação de senha deve ter no máximo 32 caracteres",
-      }),
-  })
-  .refine((data) => data.senha == data.confirmar_senha, {
-    error: "As senhas devem ser iguais",
-    path: ["confirmar_senha"],
-  });
+const formSchema = z.object({
+  nome_completo: z
+    .string({ error: "Nome completo é obrigatório" })
+    .max(80, { error: "O limite suportado é de 80 caracteres" })
+    .min(2, { error: "Nome completo deve ter pelo menos 2 caracteres" }),
+  email: z.email({ error: "Digite um email válido" }),
+});
 
-export function TeacherEditForm() {
+type TeacherFormProps = {
+  id: number;
+};
+
+export function TeacherEditForm({ id }: TeacherFormProps) {
   const navigate = useNavigate();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      nome_completo: "",
-      email: "",
-      senha: "",
-      confirmar_senha: "",
-    },
   });
 
-  const onSubmit = async (data: z.infer<typeof formSchema>) => {
-    const payload = {
-      ...data,
-      perfilId: 3,
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const response = await api.get(`/user/list/${id}`);
+
+        if (response.status === 200) {
+          const userData = {
+            ...response.data,
+          };
+          form.reset(userData);
+        }
+      } catch (error) {
+        if (error instanceof AxiosError) {
+          console.error("Erro ao buscar dados do usuário:", error.message);
+        }
+      }
     };
 
+    fetchUserData();
+  }, [id, form]);
+
+  const onSubmit = async (data: z.infer<typeof formSchema>) => {
+    const payload = Object.fromEntries(
+      Object.entries(data).filter(
+        ([_, value]) => value !== undefined && value !== "",
+      ),
+    );
+
     try {
-      const response = await api.post("/user/register", payload);
+      const response = await api.put(`/user/update/${id}`, payload);
 
       if (response.status === 201) {
         navigate("/login");
@@ -73,7 +74,7 @@ export function TeacherEditForm() {
                 });
               }
               form.setError("root", {
-                message: `Erro ao criar conta: ${field.message.join(", ")}`,
+                message: `Erro ao atualizar conta: ${field.message.join(", ")}`,
               });
             },
           );
@@ -116,66 +117,8 @@ export function TeacherEditForm() {
             />
           )}
         />
-        <Form.Field
-          form={form}
-          name="data_nascimento"
-          render={({ field }) => (
-            <Form.Input
-              {...field}
-              label="Data de Nascimento"
-              placeholder=""
-              type="date"
-            />
-          )}
-        />
-        <Form.Field
-          form={form}
-          name="avatar_url"
-          render={({ field }) => (
-            <Form.Input
-              {...field}
-              label="URL do Avatar Personalizado"
-              placeholder="https://urlDoAvatarPersonalizado.jpg"
-              type="url"
-            />
-          )}
-        />
-        <Form.Field
-          form={form}
-          name="senha"
-          render={({ field }) => (
-            <Form.Input
-              {...field}
-              label="Senha"
-              placeholder="Senha"
-              type="password"
-            />
-          )}
-        />
-        <Form.Field
-          form={form}
-          name="confirmar_senha"
-          render={({ field }) => (
-            <Form.Input
-              {...field}
-              label="Confirmar Senha"
-              placeholder="Confirmar Senha"
-              type="password"
-            />
-          )}
-        />
         <Form.Submit>Atualizar Dados</Form.Submit>
       </Form.Main>
-      <p className="mt-6 w-full text-center text-lg">
-        Desistiu de realizar as mordificações?{" "}
-        <Link
-          className="w-fit font-bold no-underline"
-          variant="secondary"
-          href="/login"
-        >
-          Voltar
-        </Link>
-      </p>
     </Form.Wrapper>
   );
 }

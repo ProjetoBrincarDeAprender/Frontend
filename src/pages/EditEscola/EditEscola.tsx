@@ -1,13 +1,20 @@
 import { Header } from "@/components/Header/Header";
 import EditSchoolForm from "@/components/School/EditForm";
+import { useParams } from "react-router";
 
 export function EditSchoolPage() {
+  const { id } = useParams();
+
+  if (!id) {
+    return <div>Erro: ID do aluno não fornecido.</div>;
+  }
+
   return (
     <div className="page-whith-header">
       <Header username="Usuario" />
 
       <div className="page-container">
-        <EditSchoolForm />
+        <EditSchoolForm id={+id} />
       </div>
     </div>
   );
