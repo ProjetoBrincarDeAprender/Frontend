@@ -1,15 +1,15 @@
 import { Footer } from "@/components/Footer/Footer";
-import { TeacherSignUpForm } from "@/components/SignUpForms/TeacherForm";
+import { ResponsableSignUpForm } from "@/components/SignUpForms/ResponsableForm";
 import { Header } from "../../components/Header/Header";
-import "./CadProfessor.css";
+import "./CadResponsavel.css";
 
-export function RegisterProfessorPage() {
+export function RegisterResponsablePage() {
   return (
     <div className="page-with-header">
       <Header username="Usuario" />
 
       <div className="page-container">
-        <TeacherSignUpForm />
+        <ResponsableSignUpForm />
       </div>
       <Footer />
     </div>
