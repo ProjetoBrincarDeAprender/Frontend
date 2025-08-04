@@ -1,16 +1,20 @@
 import { Navigate, Route, Routes } from "react-router";
-import Form from "./pages/Form/Form";
+import { RegisterStudentPage } from "./pages/CadAluno/CadAluno";
+import { RegisterSchoolPage } from "./pages/CadEscola/CadEscola";
+import { RegisterProfessorPage } from "./pages/CadProfessor/CadProfessor";
+import { RegisterResponsablePage } from "./pages/CadResponsavel/CadResponsavel";
 import Dashboard from "./pages/Dashboard/Dashboard";
-import { Home } from "./pages/Home/Home";
-import { Students } from "./pages/Dashboard/Students/Students";
 import { Schools } from "./pages/Dashboard/Schools/Schools";
+import { Students } from "./pages/Dashboard/Students/Students";
 import { Teachers } from "./pages/Dashboard/Teachers/Teachers";
-import { Profile } from "./pages/Profile/Profile";
-import LoginForm from "./pages/Login/Login";
+import { EditStudentPage } from "./pages/EditAluno/EditAluno";
+import { EditSchoolPage } from "./pages/EditEscola/EditEscola";
+import { EditTeacherPage } from "./pages/EditProfessor/EditProfessor";
+import { EditResponsablePage } from "./pages/EditResponsavel/EditResponsavel";
 import { Games } from "./pages/Games/Games";
-import { RegisterProfessorPage } from './pages/CadProfessor/CadProfessor';
-import { RegisterStudentPage } from './pages/CadAluno/CadAluno';
-import { RegisterSchoolPage } from './pages/CadEscola/CadEscola';
+import { Home } from "./pages/Home/Home";
+import { default as Form, default as LoginForm } from "./pages/Login/Login";
+import { Profile } from "./pages/Profile/Profile";
 
 function App() {
   return (
@@ -19,14 +23,33 @@ function App() {
       <Route path="/cadastrar" element={<Form />} />
       <Route path="/login" element={<LoginForm />} />
       <Route path="/games" element={<Games />} />
+
+      <Route path="/cadastrar/aluno" element={<RegisterStudentPage />} />
+
+      <Route path="/cadastrar/escola" element={<RegisterSchoolPage />} />
+
+      <Route path="/cadastrar/professor" element={<RegisterProfessorPage />} />
+
+      <Route
+        path="/cadastrar/responsavel"
+        element={<RegisterResponsablePage />}
+      />
+
+      <Route path="/editar/aluno/:id" element={<EditStudentPage />} />
+
+      <Route path="/editar/escola/:id" element={<EditSchoolPage />} />
+
+      <Route path="/editar/professor/:id" element={<EditTeacherPage />} />
+
+      <Route path="/editar/responsavel/:id" element={<EditResponsablePage />} />
       <Route path="/dashboard" element={<Dashboard />} />
       <Route path="/dashboard/students" element={<Students />} />
       <Route path="/dashboard/schools" element={<Schools />} />
       <Route path="/dashboard/teachers" element={<Teachers />} />
       <Route path="/profile/:id" element={<Profile />} />
-      <Route path="/cadastrar/professor" element={<RegisterProfessorPage/>}/>
-      <Route path="/cadastrar/aluno" element={<RegisterStudentPage/>}/>
-      <Route path="/cadastrar/escola" element={<RegisterSchoolPage/>}/>
+      <Route path="/cadastrar/professor" element={<RegisterProfessorPage />} />
+      <Route path="/cadastrar/aluno" element={<RegisterStudentPage />} />
+      <Route path="/cadastrar/escola" element={<RegisterSchoolPage />} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
