@@ -42,14 +42,19 @@ export function StudentEditForm({ id }: StudentFormProps) {
 
         if (response.status === 200) {
           const studentData = {
-            ...response.data,
+            nome_completo: response.data.nome_completo,
+            email: response.data.email,
+            tema_preferido: response.data.tema_preferido,
             avatar_url: response.data.avatar_url || "",
-            data_nascimento: response.data.data_nascimento.split("T")[0],
+            data_nascimento: response.data.data_nascimento
+              ? response.data.data_nascimento.split("T")[0]
+              : "",
           };
           form.reset(studentData);
-          console.log(form.formState);
+          console.log(form.formState.defaultValues);
         }
       } catch (error) {
+        console.log(error);
         if (error instanceof AxiosError) {
           console.error("Erro ao buscar dados do usuário:", error.message);
           form.setError("root", {
@@ -75,7 +80,9 @@ export function StudentEditForm({ id }: StudentFormProps) {
       Object.entries({
         avatar_url: data.avatar_url,
         tema_preferido: data.tema_preferido,
-        data_nascimento: new Date(data.data_nascimento).toISOString(),
+        data_nascimento: data.data_nascimento
+          ? new Date(data.data_nascimento).toISOString()
+          : undefined,
       }).filter(([_, value]) => value !== undefined && value !== ""),
     );
 
@@ -169,6 +176,7 @@ export function StudentEditForm({ id }: StudentFormProps) {
           name="tema_preferido"
           render={({ field }) => (
             <Form.Select
+              {...field}
               label="Tema Preferido"
               placeholder="Selecione um tema"
               options={[
