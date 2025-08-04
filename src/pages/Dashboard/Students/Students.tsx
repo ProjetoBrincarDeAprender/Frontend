@@ -2,19 +2,19 @@ import { Footer } from "../../../components/Footer/Footer";
 import { Header } from "../../../components/Header/Header";
 import { LateralMenu } from "../../../components/LateralMenu/LateralMenu";
 
+import StudentTable from "@/components/Student/StudentTable";
 import saturn from "../../../assets/saturn.svg";
-import { TableTest } from "../../../components/utils/Table/TableTest";
 
 export function Students() {
   return (
     <>
       <Header />
       <LateralMenu username="Placeholder" />
-      <main className="bg-slate-200 text-gray-800 font-1 pt-32 px-64">
+      <main className="font-1 bg-slate-200 px-64 pt-32 text-gray-800">
         <div className="flex items-center gap-4">
           <img className="max-w-24" src={saturn} alt="Saturn" />
           <div className="flex flex-col gap-2">
-            <h1 className="text-2xl font-semibold">Bem vindo usuário,</h1>
+            <h1 className="text-2xl font-semibold">Bem vindo </h1>
             <h1 className="text-5xl font-bold">Alunos</h1>
           </div>
         </div>
@@ -24,24 +24,18 @@ export function Students() {
             placeholder="Pesquisar por nome"
             name="searchInput"
             id="searchInput"
-            className="text-purplish-blue font-bold py-1 px-2 rounded-lg outline-4 outline-am0 focus:outline-yellow transition duration-300"
+            className="text-purplish-blue outline-am0 focus:outline-yellow rounded-lg px-2 py-1 font-bold outline-4 transition duration-300"
           />
-          <div className="flex gap-8 items-center font-bold text-2xl">
+          <div className="flex items-center gap-8 text-2xl font-bold">
             <a
-              className="bg-yellow text-purplish-blue hover:bg-purplish-blue hover:text-yellow transition duration-300 py-2 px-6 rounded-lg shadow"
-              href="edit/student"
-            >
-              Editar
-            </a>
-            <a
-              className="bg-yellow text-purplish-blue hover:bg-purplish-blue hover:text-yellow transition duration-300 py-2 px-6 rounded-lg shadow"
-              href="register/student"
+              className="bg-yellow text-purplish-blue hover:bg-purplish-blue hover:text-yellow rounded-lg px-6 py-2 shadow transition duration-300"
+              href="cadastrar/aluno"
             >
               Cadastrar
             </a>
           </div>
         </div>
-        <TableTest />
+        <StudentTable />
       </main>
       <Footer />
     </>

@@ -2,7 +2,7 @@ import { twMerge } from "tailwind-merge";
 import "./Link.css";
 
 interface LinkProps {
-  variant?: "primary" | "light" | "dark" | "secondary";
+  variant?: "primary" | "light" | "dark" | "secondary" | "none";
   children: React.ReactNode;
   href: string;
   className?: string;
@@ -20,7 +20,9 @@ export function Link({
     <a
       href={href}
       target={target}
-      className={twMerge(`link-${variant}`, className)}
+      className={
+        variant === "none" ? className : twMerge(`link-${variant}`, className)
+      }
     >
       {children}
     </a>
