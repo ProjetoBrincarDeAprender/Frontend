@@ -20,36 +20,42 @@ function App() {
   return (
     <Routes>
       <Route index element={<Home />} />
-      <Route path="/cadastrar" element={<Form />} />
+
+      <Route path="/register" element={<Form />} />
+
       <Route path="/login" element={<LoginForm />} />
+
       <Route path="/games" element={<Games />} />
 
-      <Route path="/cadastrar/aluno" element={<RegisterStudentPage />} />
+      <Route path="/register/student" element={<RegisterStudentPage />} />
 
-      <Route path="/cadastrar/escola" element={<RegisterSchoolPage />} />
+      <Route path="/register/school" element={<RegisterSchoolPage />} />
 
-      <Route path="/cadastrar/professor" element={<RegisterProfessorPage />} />
+      <Route path="/register/teacher" element={<RegisterProfessorPage />} />
 
       <Route
-        path="/cadastrar/responsavel"
+        path="/register/responsable"
         element={<RegisterResponsablePage />}
       />
 
-      <Route path="/editar/aluno/:id" element={<EditStudentPage />} />
+      <Route path="/edit/student/:id" element={<EditStudentPage />} />
 
-      <Route path="/editar/escola/:id" element={<EditSchoolPage />} />
+      <Route path="/edit/school/:id" element={<EditSchoolPage />} />
 
-      <Route path="/editar/professor/:id" element={<EditTeacherPage />} />
+      <Route path="/edit/teacher/:id" element={<EditTeacherPage />} />
 
-      <Route path="/editar/responsavel/:id" element={<EditResponsablePage />} />
+      <Route path="/edit/responsable/:id" element={<EditResponsablePage />} />
+
       <Route path="/dashboard" element={<Dashboard />} />
+
       <Route path="/dashboard/students" element={<Students />} />
+
       <Route path="/dashboard/schools" element={<Schools />} />
+
       <Route path="/dashboard/teachers" element={<Teachers />} />
+
       <Route path="/profile/:id" element={<Profile />} />
-      <Route path="/cadastrar/professor" element={<RegisterProfessorPage />} />
-      <Route path="/cadastrar/aluno" element={<RegisterStudentPage />} />
-      <Route path="/cadastrar/escola" element={<RegisterSchoolPage />} />
+
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );

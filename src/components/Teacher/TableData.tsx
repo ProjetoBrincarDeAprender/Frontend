@@ -33,7 +33,7 @@ export const TeacherColumns: ColumnDef<Teacher>[] = [
     cell: ({ row }) => (
       <div className="flex items-center justify-center gap-2">
         <Link
-          href={`/editar/professor/${row.original.id}`}
+          href={`/edit/teacher/${row.original.id}`}
           className="rounded bg-green-500 px-4 py-2 text-white transition-colors hover:bg-green-600"
           variant="none"
         >
