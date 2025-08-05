@@ -29,13 +29,13 @@ export function Teachers() {
           <div className="flex items-center gap-8 text-2xl font-bold">
             <a
               className="bg-yellow text-purplish-blue hover:bg-purplish-blue hover:text-yellow rounded-lg px-6 py-2 shadow transition duration-300"
-              href="edit/teacher"
+              href="/edit/teacher"
             >
               Editar
             </a>
             <a
               className="bg-yellow text-purplish-blue hover:bg-purplish-blue hover:text-yellow rounded-lg px-6 py-2 shadow transition duration-300"
-              href="register/teacher"
+              href="/register/teacher"
             >
               Cadastrar
             </a>
