@@ -206,7 +206,7 @@ export default function EditSchoolForm({ id }: EditSchoolFormProps) {
         <Link
           className="w-fit font-bold no-underline"
           variant="secondary"
-          href="/home"
+          href="/"
         >
           Voltar
         </Link>
