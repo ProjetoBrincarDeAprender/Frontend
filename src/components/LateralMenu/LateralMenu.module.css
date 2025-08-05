@@ -1,0 +1,59 @@
+.menuContainer {
+  background-color: var(--color-purplish-blue);
+  display: flex;
+  flex-direction: column;
+
+  max-width: 260px;
+  height: 83vh;
+}
+
+.menuContainer img {
+  border-radius: 50%;
+  margin: 60px auto;
+  margin-bottom: 10px;
+  width: 120px;
+}
+
+.user {
+  display: grid;
+  justify-content: center;
+}
+
+.username {
+  display: inline-block;
+  font: bold 1.5rem "Baloo Bhai 2", sans-serif;
+  margin-bottom: 30px;
+}
+
+.itens {
+  display: grid;
+  font: bold 1.5rem "Baloo Bhai 2", sans-serif;
+}
+
+.itens li {
+  padding: 20px 0px;
+  position: relative;
+  text-align: center;
+  transition: all 0.2s ease-in;
+}
+
+.itens li::before {
+  background: var(--color-am2);
+  content: "";
+  display: inline-block;
+  height: 100%;
+  width: 0px;
+  transition: all 0.2s ease-in;
+
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+
+.itens li:hover {
+  background: #150e45;
+}
+
+.itens li:hover::before {
+  width: 6px;
+}

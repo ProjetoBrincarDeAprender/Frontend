@@ -12,25 +12,25 @@ interface HeaderProps {
 
 export function Header({ username = "" }: HeaderProps) {
   return (
-    <header className="bg-slate-200 flex items-center justify-between px-28 py-4 shadow-xl font-bold fixed top-0 left-0 right-0 z-1000">
+    <header className="fixed top-0 right-0 left-0 z-1000 flex items-center justify-between bg-slate-200 px-28 py-4 font-bold shadow-xl">
       <div>
         <a href="/">
           <img
             src={logo}
             alt="Brincar de Aprender Logo"
-            className="block logo"
+            className="logo block"
           />
         </a>
       </div>
       <nav aria-label="Navegação Principal">
-        <ul className="flex gap-4 items-center text-base text-gray-900">
-          <li className="button-nav rounded-2xl bg-yellow px-5 py-2 shadow-lg">
-            <a href="/" className="flex gap-2 items-center">
+        <ul className="flex items-center gap-4 text-base text-gray-900">
+          <li className="button-nav bg-yellow rounded-2xl px-5 py-2 shadow-lg">
+            <a href="/" className="flex items-center gap-2">
               <BiHome /> <span>Inicio</span>
             </a>
           </li>
-          <li className="button-nav rounded-2xl bg-yellow px-5 py-2 shadow-lg">
-            <a href="/about" className="flex gap-2 items-center">
+          <li className="button-nav bg-yellow rounded-2xl px-5 py-2 shadow-lg">
+            <a href="/about" className="flex items-center gap-2">
               <FaRegQuestionCircle /> <span>Sobre</span>
             </a>
           </li>
@@ -38,27 +38,22 @@ export function Header({ username = "" }: HeaderProps) {
             <>
               <a
                 href="/dashboard"
-                className="profile-nav flex items-center gap-5 bg-am1 rounded-full"
+                className="profile-nav bg-am1 flex items-center gap-5 rounded-full"
               >
-                <span className="block px-5 ml-4">{username}</span>
-                <div className="bg-yellow rounded-full w-14 h-14 overflow-hidden p-2 border border-am2">
+                <span className="ml-4 block px-5">{username}</span>
+                <div className="bg-yellow border-am2 h-14 w-14 overflow-hidden rounded-full border p-2">
                   <img
                     src={profile}
                     alt="profile image"
-                    className="w-full h-full object-cover"
+                    className="h-full w-full object-cover"
                   />
                 </div>
               </a>
             </>
           ) : (
             <>
-              <li className="button-nav rounded-2xl bg-yellow px-5 py-2 shadow-lg">
-                <a href="/register" className="flex gap-2 items-center">
-                  <MdOutlinePersonAddAlt1 /> <span>Cadastrar-se</span>
-                </a>
-              </li>
-              <li className="button-nav rounded-2xl bg-yellow px-5 py-2 shadow-lg">
-                <a href="/login" className="flex gap-2 items-center">
+              <li className="button-nav bg-yellow rounded-2xl px-5 py-2 shadow-lg">
+                <a href="/login" className="flex items-center gap-2">
                   <FiLogIn />
                   <span>Entrar</span>
                 </a>
