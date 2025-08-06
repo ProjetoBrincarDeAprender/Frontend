@@ -1,5 +1,5 @@
 import { Footer } from "@/components/Footer/Footer";
-import { TeacherSignUpForm } from "@/components/SignUpForms/TeacherForm";
+import  TeacherSignUpForm  from "@/components/SignUpForms/TeacherForm";
 import { Header } from "../../components/Header/Header";
 import "./CadProfessor.css";
 

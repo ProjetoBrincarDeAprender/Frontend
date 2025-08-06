@@ -8,6 +8,14 @@ import graphic from "../../assets/graphic.svg";
 import "./Dashboard.css";
 import { InfoBadge } from "../../components/utils/InfoBadge/InfoBadge";
 
+import { RegisterSchoolModal } from "../../components/modals/RegisterSchoolModal";
+import { RegisterTeacherModal } from "../../components/modals/RegisterTeacherModal"
+import { RegisterStudentModal } from "../../components/modals/RegisterStudentModal"
+import { RegisterResponsableModal } from "../../components/modals/RegisterResponsableModal"
+
+
+
+
 export default function dashboard() {
   //Remover isto para produção
   const username = "Placeholder";
@@ -32,24 +40,11 @@ export default function dashboard() {
           </div>
           <h1 className="font-bold font-1 text-2xl mt-16">Ações Rápidas</h1>
           <div className="flex justify-center font-1 font-bold gap-8 mt-8 text-purplish-blue uppercase">
-            <a
-              href="/register/teacher"
-              className="bg-yellow shadow-xl py-4 px-8 rounded-2xl text-center hover:bg-purplish-blue hover:text-yellow transition duration-200"
-            >
-              Cadastrar Professor
-            </a>
-            <a
-              href="/register/student"
-              className="bg-yellow shadow-xl py-4 px-8 rounded-2xl text-center hover:bg-purplish-blue hover:text-yellow transition duration-200"
-            >
-              Cadastrar Aluno
-            </a>
-            <a
-              href="/register/school"
-              className="bg-yellow shadow-xl py-4 px-8 rounded-2xl text-center hover:bg-purplish-blue hover:text-yellow transition duration-200"
-            >
-              Cadastrar Escola
-            </a>
+            <RegisterTeacherModal />
+            <RegisterStudentModal />
+            <RegisterSchoolModal />
+            <RegisterResponsableModal />
+
           </div>
           <div className="bg-slate-300 mt-16 flex justify-around rounded-2xl py-8 shadow-2xl">
             <div className="bg-purplish-blue-dark rounded-2xl">

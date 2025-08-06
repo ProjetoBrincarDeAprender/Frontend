@@ -34,7 +34,7 @@ const formSchema = z
     path: ["confirmar_senha"],
   });
 
-export function TeacherSignUpForm() {
+export default function TeacherSignUpForm() {
   const navigate = useNavigate();
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -146,9 +146,9 @@ export function TeacherSignUpForm() {
         <Link
           className="w-fit font-bold no-underline"
           variant="secondary"
-          href="/login"
+          href="/dashboard"
         >
-          Faça Login
+         Cancelar
         </Link>
       </p>
     </Form.Wrapper>

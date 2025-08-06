@@ -146,9 +146,9 @@ export function ResponsableSignUpForm() {
         <Link
           className="w-fit font-bold no-underline"
           variant="secondary"
-          href="/login"
+          href="/dashboard"
         >
-          Faça Login
+          Cancelar
         </Link>
       </p>
     </Form.Wrapper>
