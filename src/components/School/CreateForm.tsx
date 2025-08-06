@@ -1,3 +1,4 @@
+
 import api from "@/utils/api";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AxiosError } from "axios";
@@ -173,9 +174,9 @@ export default function CreateSchoolForm() {
         <Link
           className="w-fit font-bold no-underline"
           variant="secondary"
-          href="/login"
+          href="/dashboard"
         >
-          Faça Login
+          Cancelar
         </Link>
       </p>
     </Form.Wrapper>
