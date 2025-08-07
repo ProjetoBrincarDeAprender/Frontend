@@ -69,12 +69,27 @@ export default function SignInForm() {
         <Form.Field
           form={form}
           name="email"
-          render={({ field }) => <Form.Input label="Email" {...field} />}
+          render={({ field }) => (
+            <Form.Input
+              {...field}
+              label="Email"
+              placeholder="exemplo@gmail.com"
+              className="mb-4"
+            />
+          )}
         />
         <Form.Field
           form={form}
           name="senha"
-          render={({ field }) => <Form.Input label="Senha" {...field} />}
+          render={({ field }) => (
+            <Form.Input
+              {...field}
+              label="Senha"
+              placeholder="Digite sua senha"
+              type="password"
+              className="mb-4"
+            />
+          )}
         />
         <Form.Submit>Entrar</Form.Submit>
       </Form.Main>
