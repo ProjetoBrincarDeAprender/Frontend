@@ -150,15 +150,10 @@ export function StudentSignUpForm() {
           form={form}
           name="tema_preferido"
           render={({ field }) => (
-            <Form.Select
+            <Form.Input
+              {...field}
               label="Tema Preferido"
-              placeholder="Selecione um tema"
-              options={[
-                { value: "SISTEMA", label: "Sistema" },
-                { value: "ESCURO", label: "Escuro" },
-                { value: "CLARO", label: "Claro" },
-              ]}
-              onChange={field.onChange}
+              placeholder="Ex: Fundo do Mar, Espaço"
             />
           )}
         />
