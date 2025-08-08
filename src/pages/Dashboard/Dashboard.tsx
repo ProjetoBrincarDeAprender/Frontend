@@ -11,6 +11,7 @@ import "./Dashboard.css";
 import { useUser } from "@/hooks/User/useUser";
 import { RegisterResponsableModal } from "../../components/modals/RegisterResponsableModal";
 import { RegisterSchoolModal } from "../../components/modals/RegisterSchoolModal";
+import { RegisterSchoolUserModal } from "@/components/modals/RegisterSchoolUserModal";
 import { RegisterStudentModal } from "../../components/modals/RegisterStudentModal";
 import { RegisterTeacherModal } from "../../components/modals/RegisterTeacherModal";
 
@@ -42,6 +43,7 @@ export default function Dashboard() {
             <RegisterTeacherModal />
             <RegisterStudentModal />
             <RegisterSchoolModal />
+            <RegisterSchoolUserModal />
             <RegisterResponsableModal />
           </div>
           <div className="mt-16 flex justify-around rounded-2xl bg-slate-300 py-8 shadow-2xl">
