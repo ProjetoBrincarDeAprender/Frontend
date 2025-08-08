@@ -1,4 +1,4 @@
-import TeacherSignUpForm from "@/components/Forms/SignUpForms/schoolUserForm";
+import TeacherSignUpForm from "@/components/Forms/SignUpForms/SchoolUserForm";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { useState } from "react";
