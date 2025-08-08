@@ -1,10 +1,9 @@
-
 import api from "@/utils/api";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AxiosError } from "axios";
 import { useForm } from "react-hook-form";
 import z from "zod";
-import { Form } from "../Form/Root";
+import { Form } from "../Forms/Form/Root";
 import { Link } from "../utils/Link/Link";
 
 const formSchema = z.object({
