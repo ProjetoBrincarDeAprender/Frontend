@@ -3,6 +3,7 @@ import { useUser } from "@/hooks/User/useUser";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AxiosError } from "axios";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import z from "zod";
 import { Form } from "../Form/Root";
 
@@ -38,9 +39,10 @@ export default function SignInForm() {
           perfil: profileData.perfil.nome,
           escola: profileData.escola?.nome,
         });
+
+        toast.success("Login realizado com sucesso!");
       }
     } catch (error) {
-      console.log("Error during sign-in:", error);
       if (error instanceof AxiosError) {
         const response = error.response;
         if (Array.isArray(response?.data?.message)) {
