@@ -14,7 +14,7 @@ export function RegisterStudentModal() {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button className="font-1 text-purplish-blue bg-yellow hover:bg-purplish-blue hover:text-yellow mt-8 flex min-h-[60px] justify-center gap-8 rounded-2xl px-8 py-4 text-center font-bold uppercase shadow-xl transition duration-200">
+        <Button className="font-1 text-purplish-blue bg-yellow hover:bg-purplish-blue hover:text-yellow flex min-h-[60px] justify-center gap-8 rounded-2xl px-8 py-4 text-center font-bold uppercase shadow-xl transition duration-200">
           Cadastrar Aluno(a)
         </Button>
       </DialogTrigger>
