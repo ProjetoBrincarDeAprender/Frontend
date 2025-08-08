@@ -1,10 +1,9 @@
-import "./Header.css";
-import logo from "../../assets/brincardeaprender.svg";
-import profile from "../../assets/astronauta-profile.svg";
 import { BiHome } from "react-icons/bi";
 import { FaRegQuestionCircle } from "react-icons/fa";
-import { MdOutlinePersonAddAlt1 } from "react-icons/md";
 import { FiLogIn } from "react-icons/fi";
+import profile from "../../assets/astronauta-profile.svg";
+import logo from "../../assets/brincardeaprender.svg";
+import "./Header.css";
 
 interface HeaderProps {
   username?: string;
@@ -12,7 +11,7 @@ interface HeaderProps {
 
 export function Header({ username = "" }: HeaderProps) {
   return (
-    <header className="fixed top-0 right-0 left-0 z-1000 flex items-center justify-between bg-slate-200 px-28 py-4 font-bold shadow-xl">
+    <header className="fixed top-0 z-50 flex w-full items-center justify-between bg-slate-200 px-28 py-4 font-bold shadow-xl">
       <div>
         <a href="/">
           <img
