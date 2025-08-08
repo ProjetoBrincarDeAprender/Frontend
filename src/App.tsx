@@ -15,12 +15,14 @@ import { EditResponsablePage } from "./pages/EditResponsavel/EditResponsavel";
 import { Games } from "./pages/Games/Games";
 import { Home } from "./pages/Home/Home";
 import { default as LoginForm } from "./pages/Login/Login";
+import Logout from "./pages/Logout/Logout";
 import { Profile } from "./pages/Profile/Profile";
 
 function App() {
   return (
     <Routes>
       <Route index element={<Home />} />
+      <Route path="/logout" element={<Logout />} />
       <Route path="/login" element={<LoginForm />} />
       <Route path="/games" element={<Games />} />
 
