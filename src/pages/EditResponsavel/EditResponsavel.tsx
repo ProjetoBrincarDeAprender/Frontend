@@ -11,7 +11,7 @@ export function EditResponsablePage() {
 
   return (
     <div className="page-whith-header">
-      <Header username="Usuario" />
+      <Header />
 
       <div className="page-container">
         <ResponsableEditForm id={+id} />
