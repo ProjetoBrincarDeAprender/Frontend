@@ -1,7 +1,8 @@
 import type { ColumnDef } from "@tanstack/react-table";
-import { Edit } from "lucide-react";
+//import { Edit } from "lucide-react";
 import DeleteModal from "../utils/DataTable/DeleteModal";
-import { Link } from "../utils/Link/Link";
+//import { Link } from "../utils/Link/Link";
+import { EditSchoolModal } from "../modals/EditSchoolModal";
 
 export type School = {
   id: number;
@@ -26,7 +27,7 @@ export const SchoolColumns: ColumnDef<School>[] = [
     header: "Descrição",
   },
   {
-    accessorKey: "endereco",
+    accessorKey: "localizacao",
     header: "Endereço",
   },
   {
@@ -42,13 +43,14 @@ export const SchoolColumns: ColumnDef<School>[] = [
     header: "Ações",
     cell: ({ row }) => (
       <div className="flex items-center justify-center gap-2">
-        <Link
+        {/* <Link
           href={`/edit/student/${row.original.id}`}
           className="rounded bg-green-500 px-4 py-2 text-white transition-colors hover:bg-green-600"
           variant="none"
         >
           <Edit />
-        </Link>
+        </Link> */}
+        <EditSchoolModal schoolId={row.original.id} /> 
         <DeleteModal route="/school/remove" id={row.original.id} />
       </div>
     ),
