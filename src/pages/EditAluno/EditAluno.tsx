@@ -1,4 +1,4 @@
-import { StudentEditForm } from "@/components/EditForms/StudentForm";
+import { StudentEditForm } from "@/components/Forms/EditForms/StudentForm";
 import { Header } from "@/components/Header/Header";
 import { useParams } from "react-router";
 
@@ -11,7 +11,7 @@ export function EditStudentPage() {
 
   return (
     <div className="page-whith-header">
-      <Header username="Usuario" />
+      <Header />
 
       <div className="page-container">
         <StudentEditForm id={+id} />

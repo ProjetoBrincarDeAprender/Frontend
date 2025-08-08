@@ -5,7 +5,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"; 
 import { Button } from "@/components/ui/button";
-import {StudentEditForm} from "@/components/EditForms/StudentForm";
+import {StudentEditForm} from "@/components/Forms/EditForms/StudentForm";
 
 // interface EditSchoolModalProps {
 //   schoolId: number;

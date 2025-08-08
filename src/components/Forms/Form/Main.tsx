@@ -1,6 +1,6 @@
 import type { UseFormReturn } from "react-hook-form";
 import { twMerge } from "tailwind-merge";
-import { Form, FormMessage } from "../ui/form";
+import { Form, FormMessage } from "../../ui/form";
 
 export type FromMainProps = {
   form: UseFormReturn<any>;

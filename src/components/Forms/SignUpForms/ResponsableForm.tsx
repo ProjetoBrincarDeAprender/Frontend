@@ -2,46 +2,64 @@ import api from "@/utils/api";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AxiosError } from "axios";
 import { useForm } from "react-hook-form";
-import z from "zod";
-import { Form } from "../Forms/Form/Root";
-import { Link } from "../utils/Link/Link";
+import { useNavigate } from "react-router";
+import { z } from "zod";
+import { Link } from "../../utils/Link/Link";
+import { Form } from "../Form/Root";
 
-const formSchema = z.object({
-  nome: z
-    .string({ error: "Nome é obrigatório" })
-    .max(80, { error: "O limite suportado é de 80 caracteres" })
-    .min(2, { error: "Nome da escola deve ter pelo menos 2 caracteres" }),
-  descricao: z.string().optional(),
-  localizacao: z.string({ error: "O endereço da escola é obrigatório" }),
-  telefone: z.string().optional(),
-  email: z.email({ error: "Email inválido" }).optional(),
-});
+const formSchema = z
+  .object({
+    nome_completo: z
+      .string({ error: "Nome completo é obrigatório" })
+      .max(80, { error: "O limite suportado é de 80 caracteres" })
+      .min(2, { error: "Nome completo deve ter pelo menos 2 caracteres" }),
+    email: z.email({ error: "Digite um email válido" }),
+    senha: z
+      .string({ error: "Senha deve ter entre 8 e 32 caracteres" })
+      .min(8, { error: "Senha deve ter pelo menos 8 caracteres" })
+      .max(32, { error: "Senha deve ter no máximo 32 caracteres" }),
+    confirmar_senha: z
+      .string({
+        error: "Confirmação de senha deve ter entre 8 e 32 caracteres",
+      })
+      .min(8, {
+        error: "Confirmação de senha deve ter pelo menos 8 caracteres",
+      })
+      .max(32, {
+        error: "Confirmação de senha deve ter no máximo 32 caracteres",
+      }),
+  })
+  .refine((data) => data.senha == data.confirmar_senha, {
+    error: "As senhas devem ser iguais",
+    path: ["confirmar_senha"],
+  });
 
-export default function CreateSchoolForm() {
+export function ResponsableSignUpForm() {
+  const navigate = useNavigate();
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      nome: "",
-      descricao: "",
-      localizacao: "",
-      telefone: "",
+      nome_completo: "",
       email: "",
+      senha: "",
+      confirmar_senha: "",
     },
   });
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
-    try {
-      const payload = {
-        ...data,
-      };
+    const payload = {
+      ...data,
+      perfilId: 3,
+    };
 
-      const response = await api.post("/school/register", payload);
+    try {
+      const response = await api.post("/user/register", payload);
+
       if (response.status === 201) {
-        form.reset();
-        alert("Escola criada com sucesso!");
+        navigate("/login");
       }
     } catch (error) {
-      console.error("Erro ao criar escola:", error);
       if (error instanceof AxiosError) {
         const response = error.response;
 
@@ -69,7 +87,7 @@ export default function CreateSchoolForm() {
 
   return (
     <Form.Wrapper>
-      <Form.Title text="Cadastrar Nova Escola" />
+      <Form.Title text="Cadastrar Novo Responsável" />
       <Form.Main
         form={{ ...form }}
         onSubmit={onSubmit}
@@ -77,34 +95,12 @@ export default function CreateSchoolForm() {
       >
         <Form.Field
           form={form}
-          name="nome"
+          name="nome_completo"
           render={({ field }) => (
             <Form.Input
               {...field}
-              label="Nome da Instituição"
-              placeholder="Universidade Estadual da Paraíba"
-            />
-          )}
-        />
-        <Form.Field
-          form={form}
-          name="descricao"
-          render={({ field }) => (
-            <Form.Input
-              {...field}
-              label="Descrição da Instituição (Opcional)"
-              placeholder="Escreva aqui a descrição"
-            />
-          )}
-        />
-        <Form.Field
-          form={form}
-          name="localizacao"
-          render={({ field }) => (
-            <Form.Input
-              {...field}
-              label="Endereço da Instituição"
-              placeholder="Ex: Rua Manoel Mendes dos Santos, 54"
+              label="Nome Completo"
+              placeholder="Insira seu nome completo"
             />
           )}
         />
@@ -121,20 +117,32 @@ export default function CreateSchoolForm() {
         />
         <Form.Field
           form={form}
-          name="telefone"
+          name="senha"
           render={({ field }) => (
             <Form.Input
               {...field}
-              label="Número da Instituição"
-              placeholder="83999399089"
-              type="tel"
+              label="Senha"
+              placeholder="Senha"
+              type="password"
+            />
+          )}
+        />
+        <Form.Field
+          form={form}
+          name="confirmar_senha"
+          render={({ field }) => (
+            <Form.Input
+              {...field}
+              label="Confirmar Senha"
+              placeholder="Confirmar Senha"
+              type="password"
             />
           )}
         />
         <Form.Submit>Criar Conta</Form.Submit>
       </Form.Main>
       <p className="mt-6 w-full text-center text-lg">
-        A escola já possui uma conta?{" "}
+        O responsável já possui uma conta?{" "}
         <Link
           className="w-fit font-bold no-underline"
           variant="secondary"
