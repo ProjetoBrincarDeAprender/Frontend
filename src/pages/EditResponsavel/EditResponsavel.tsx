@@ -1,4 +1,4 @@
-import { ResponsableEditForm } from "@/components/EditForms/ResponsableForm";
+import { ResponsableEditForm } from "@/components/Forms/EditForms/ResponsableForm";
 import { Header } from "@/components/Header/Header";
 import { useParams } from "react-router";
 
@@ -11,7 +11,7 @@ export function EditResponsablePage() {
 
   return (
     <div className="page-whith-header">
-      <Header username="Usuario" />
+      <Header />
 
       <div className="page-container">
         <ResponsableEditForm id={+id} />

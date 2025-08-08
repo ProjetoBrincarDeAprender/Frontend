@@ -4,8 +4,8 @@ import { AxiosError } from "axios";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router";
 import { z } from "zod";
+import { Link } from "../../utils/Link/Link";
 import { Form } from "../Form/Root";
-import { Link } from "../utils/Link/Link";
 
 const formSchema = z
   .object({
@@ -14,6 +14,10 @@ const formSchema = z
       .max(80, { error: "O limite suportado é de 80 caracteres" })
       .min(2, { error: "Nome completo deve ter pelo menos 2 caracteres" }),
     email: z.email({ error: "Digite um email válido" }),
+    escolaId: z.string({
+      error:
+        "É obrigatório que o admin de uma escola esteja vinculado a uma escola",
+    }),
     senha: z
       .string({ error: "Senha deve ter entre 8 e 32 caracteres" })
       .min(8, { error: "Senha deve ter pelo menos 8 caracteres" })
@@ -34,7 +38,7 @@ const formSchema = z
     path: ["confirmar_senha"],
   });
 
-export function ResponsableSignUpForm() {
+export default function SchoolUserSignUpForm() {
   const navigate = useNavigate();
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -42,6 +46,7 @@ export function ResponsableSignUpForm() {
     defaultValues: {
       nome_completo: "",
       email: "",
+      escolaId: "",
       senha: "",
       confirmar_senha: "",
     },
@@ -50,7 +55,7 @@ export function ResponsableSignUpForm() {
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     const payload = {
       ...data,
-      perfilId: 3,
+      perfilId: 2,
     };
 
     try {
@@ -87,7 +92,7 @@ export function ResponsableSignUpForm() {
 
   return (
     <Form.Wrapper>
-      <Form.Title text="Cadastrar Novo Responsável" />
+      <Form.Title text="Cadastrar Administrador de Escola" />
       <Form.Main
         form={{ ...form }}
         onSubmit={onSubmit}
@@ -112,6 +117,17 @@ export function ResponsableSignUpForm() {
               {...field}
               label="Email"
               placeholder="exemplo@gmail.com"
+            />
+          )}
+        />
+        <Form.Field
+          form={form}
+          name="escolaId"
+          render={({ field }) => (
+            <Form.Input
+              {...field}
+              label="ID da Escola do Usuário"
+              placeholder="Ex. 1092"
             />
           )}
         />
@@ -142,7 +158,7 @@ export function ResponsableSignUpForm() {
         <Form.Submit>Criar Conta</Form.Submit>
       </Form.Main>
       <p className="mt-6 w-full text-center text-lg">
-        O responsável já possui uma conta?{" "}
+        O administrador já possui uma conta?{" "}
         <Link
           className="w-fit font-bold no-underline"
           variant="secondary"

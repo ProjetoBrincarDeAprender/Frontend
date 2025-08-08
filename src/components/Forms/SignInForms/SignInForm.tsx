@@ -1,8 +1,9 @@
 import useAuth from "@/hooks/Auth/useAuth";
+import { useUser } from "@/hooks/User/useUser";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AxiosError } from "axios";
 import { useForm } from "react-hook-form";
-import { useNavigate } from "react-router";
+import { toast } from "sonner";
 import z from "zod";
 import { Form } from "../Form/Root";
 
@@ -16,7 +17,7 @@ const formSchema = z.object({
 
 export default function SignInForm() {
   const { login, profile } = useAuth();
-  const navigate = useNavigate();
+  const { registerUser } = useUser();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -30,12 +31,18 @@ export default function SignInForm() {
       await login(data.email, data.senha);
       const profileData = await profile();
 
-      // aqui coloca o redirecionamento para a pagina do perfil
       if (profileData) {
-        navigate("/dashboard");
+        registerUser({
+          id: profileData.id,
+          nome_completo: profileData.nome_completo,
+          email: profileData.email,
+          perfil: profileData.perfil.nome,
+          escola: profileData.escola?.nome,
+        });
+
+        toast.success("Login realizado com sucesso!");
       }
     } catch (error) {
-      console.log("Error during sign-in:", error);
       if (error instanceof AxiosError) {
         const response = error.response;
         if (Array.isArray(response?.data?.message)) {
@@ -69,12 +76,27 @@ export default function SignInForm() {
         <Form.Field
           form={form}
           name="email"
-          render={({ field }) => <Form.Input label="Email" {...field} />}
+          render={({ field }) => (
+            <Form.Input
+              {...field}
+              label="Email"
+              placeholder="exemplo@gmail.com"
+              className="mb-4"
+            />
+          )}
         />
         <Form.Field
           form={form}
           name="senha"
-          render={({ field }) => <Form.Input label="Senha" {...field} />}
+          render={({ field }) => (
+            <Form.Input
+              {...field}
+              label="Senha"
+              placeholder="Digite sua senha"
+              type="password"
+              className="mb-4"
+            />
+          )}
         />
         <Form.Submit>Entrar</Form.Submit>
       </Form.Main>

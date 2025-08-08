@@ -1,5 +1,5 @@
 import React from "react";
-import { FormControl, FormItem, FormLabel, FormMessage } from "../ui/form";
+import { FormControl, FormItem, FormLabel, FormMessage } from "../../ui/form";
 
 export type FormItemProps = {
   children?: React.ReactNode;

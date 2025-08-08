@@ -5,7 +5,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"; 
 import { Button } from "@/components/ui/button";
-import { TeacherEditForm } from "../EditForms/TeacherForm";
+import { TeacherEditForm } from "../Forms/EditForms/TeacherForm";
 // interface EditSchoolModalProps {
 //   schoolId: number;
 // }
@@ -32,7 +32,7 @@ export function EditTeacherModal({id}: EditTeacherModalProps) {
 
       <DialogContent className="sm:max-w-2xl max-h-[70vh] overflow-y-auto">
 
-          <TeacherEditForm  id={id} onSuccess={handleSuccess} />
+          <TeacherEditForm  id={id} onSucess={handleSuccess} />
         
       </DialogContent>
     </Dialog>
