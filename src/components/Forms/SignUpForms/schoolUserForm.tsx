@@ -14,6 +14,10 @@ const formSchema = z
       .max(80, { error: "O limite suportado é de 80 caracteres" })
       .min(2, { error: "Nome completo deve ter pelo menos 2 caracteres" }),
     email: z.email({ error: "Digite um email válido" }),
+    escolaId: z.string({
+      error:
+        "É obrigatório que o admin de uma escola esteja vinculado a uma escola",
+    }),
     senha: z
       .string({ error: "Senha deve ter entre 8 e 32 caracteres" })
       .min(8, { error: "Senha deve ter pelo menos 8 caracteres" })
@@ -42,6 +46,7 @@ export default function SchoolUserSignUpForm() {
     defaultValues: {
       nome_completo: "",
       email: "",
+      escolaId: "",
       senha: "",
       confirmar_senha: "",
     },
@@ -112,6 +117,17 @@ export default function SchoolUserSignUpForm() {
               {...field}
               label="Email"
               placeholder="exemplo@gmail.com"
+            />
+          )}
+        />
+        <Form.Field
+          form={form}
+          name="escolaId"
+          render={({ field }) => (
+            <Form.Input
+              {...field}
+              label="ID da Escola do Usuário"
+              placeholder="Ex. 1092"
             />
           )}
         />
