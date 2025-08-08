@@ -4,8 +4,8 @@ import { AxiosError } from "axios";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router";
 import { z } from "zod";
+import { Link } from "../../utils/Link/Link";
 import { Form } from "../Form/Root";
-import { Link } from "../utils/Link/Link";
 
 const formSchema = z
   .object({
@@ -14,14 +14,6 @@ const formSchema = z
       .max(80, { error: "O limite suportado é de 80 caracteres" })
       .min(2, { error: "Nome completo deve ter pelo menos 2 caracteres" }),
     email: z.email({ error: "Digite um email válido" }),
-    avatar_url: z
-      .url({ error: "Insira uma URL válida" })
-      .optional()
-      .or(z.literal("")),
-    tema_preferido: z.string({ error: "Insira um tema válido" }),
-    data_nascimento: z.string({
-      error: "Data de nascimento é obrigatória",
-    }),
     senha: z
       .string({ error: "Senha deve ter entre 8 e 32 caracteres" })
       .min(8, { error: "Senha deve ter pelo menos 8 caracteres" })
@@ -42,7 +34,7 @@ const formSchema = z
     path: ["confirmar_senha"],
   });
 
-export function StudentSignUpForm() {
+export function ResponsableSignUpForm() {
   const navigate = useNavigate();
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -56,18 +48,13 @@ export function StudentSignUpForm() {
   });
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
-    if (!data.avatar_url) {
-      delete data.avatar_url;
-    }
-
     const payload = {
       ...data,
-      data_nascimento: new Date(data.data_nascimento).toISOString(),
-      perfilId: 2,
+      perfilId: 3,
     };
 
     try {
-      const response = await api.post("/student/register", payload);
+      const response = await api.post("/user/register", payload);
 
       if (response.status === 201) {
         navigate("/login");
@@ -76,25 +63,31 @@ export function StudentSignUpForm() {
       if (error instanceof AxiosError) {
         const response = error.response;
 
-        response?.data?.message.map(
-          (field: { field: string; message: string[] }) => {
-            if (form.control._fields[field.field]) {
-              form.setError(field.field as keyof z.infer<typeof formSchema>, {
-                message: field.message.join(", "),
+        if (Array.isArray(response?.data?.message)) {
+          response?.data?.message.map(
+            (field: { field: string; message: string[] }) => {
+              if (form.control._fields[field.field]) {
+                form.setError(field.field as keyof z.infer<typeof formSchema>, {
+                  message: field.message.join(", "),
+                });
+              }
+              form.setError("root", {
+                message: `Erro ao criar conta: ${field.message.join(", ")}`,
               });
-            }
-            form.setError("root", {
-              message: `Erro ao criar conta: ${field.message.join(", ")}`,
-            });
-          },
-        );
+            },
+          );
+        } else {
+          form.setError("root", {
+            message: `${response?.data?.message}`,
+          });
+        }
       }
     }
   };
 
   return (
     <Form.Wrapper>
-      <Form.Title text="Cadastrar Novo Aluno" />
+      <Form.Title text="Cadastrar Novo Responsável" />
       <Form.Main
         form={{ ...form }}
         onSubmit={onSubmit}
@@ -117,48 +110,8 @@ export function StudentSignUpForm() {
           render={({ field }) => (
             <Form.Input
               {...field}
-              label="E-Mail"
+              label="Email"
               placeholder="exemplo@gmail.com"
-            />
-          )}
-        />
-        <Form.Field
-          form={form}
-          name="data_nascimento"
-          render={({ field }) => (
-            <Form.Input
-              {...field}
-              label="Data de Nascimento"
-              placeholder=""
-              type="date"
-            />
-          )}
-        />
-        <Form.Field
-          form={form}
-          name="avatar_url"
-          render={({ field }) => (
-            <Form.Input
-              {...field}
-              label="URL do Avatar Personalizado"
-              placeholder="https://urlDoAvatarPersonalizado.jpg"
-              type="text"
-            />
-          )}
-        />
-        <Form.Field
-          form={form}
-          name="tema_preferido"
-          render={({ field }) => (
-            <Form.Select
-              label="Tema Preferido"
-              placeholder="Selecione um tema"
-              options={[
-                { value: "SISTEMA", label: "Sistema" },
-                { value: "ESCURO", label: "Escuro" },
-                { value: "CLARO", label: "Claro" },
-              ]}
-              onChange={field.onChange}
             />
           )}
         />
@@ -189,13 +142,13 @@ export function StudentSignUpForm() {
         <Form.Submit>Criar Conta</Form.Submit>
       </Form.Main>
       <p className="mt-6 w-full text-center text-lg">
-        O aluno já possui uma conta?{" "}
+        O responsável já possui uma conta?{" "}
         <Link
           className="w-fit font-bold no-underline"
           variant="secondary"
-          href="/login"
+          href="/dashboard"
         >
-          Faça Login
+          Cancelar
         </Link>
       </p>
     </Form.Wrapper>

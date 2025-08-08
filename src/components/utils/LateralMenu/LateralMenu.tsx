@@ -64,7 +64,7 @@ export function LateralMenu({ username }: LateralMenuProps) {
         <ul className="flex flex-col gap-2 px-4">
           <li>
             <a
-              href="dashboard/logistics"
+              href="dashboard"
               className="block text-lg font-bold text-white rounded-lg py-3 px-4 hover:bg-[var(--color-am2)] transition-colors text-center"
             >
               Logística
@@ -94,6 +94,7 @@ export function LateralMenu({ username }: LateralMenuProps) {
               Escolas
             </a>
           </li>
+          
         </ul>
       </aside>
     </>
