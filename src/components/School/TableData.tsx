@@ -26,8 +26,8 @@ export const SchoolColumns: ColumnDef<School>[] = [
     header: "Descrição",
   },
   {
-    accessorKey: "endereco",
-    header: "Endereço",
+    accessorKey: "localizacao",
+    header: "Localização",
   },
   {
     accessorKey: "telefone",
