@@ -12,7 +12,7 @@ export function Header() {
   const { user } = useUser();
 
   return (
-    <header className="fixed top-0 right-0 left-0 z-1000 flex items-center justify-between bg-slate-200 px-28 py-4 font-bold shadow-xl">
+    <header className="fixed top-0 z-50 flex w-full items-center justify-between bg-slate-200 px-28 py-4 font-bold shadow-xl">
       <div>
         <Link to="/">
           <img
