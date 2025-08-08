@@ -1,5 +1,5 @@
-import { StudentSignUpForm } from "@/components/Forms/SignUpForms/StudentForm";
 import { Header } from "@/components/Header/Header";
+import { StudentSignUpForm } from "@/components/SignUpForms/StudentForm";
 
 export function RegisterStudentPage() {
   return (

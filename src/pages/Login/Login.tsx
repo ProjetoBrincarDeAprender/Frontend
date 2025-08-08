@@ -1,20 +1,8 @@
-import SignInForm from "@/components/Forms/SignInForms/SignInForm";
-import { useUser } from "@/hooks/User/useUser";
-import { Navigate } from "react-router";
+import SignInForm from "@/components/SignInForms/SignInForm";
 import { Footer } from "../../components/Footer/Footer";
 import { Header } from "../../components/Header/Header";
 
-export default function Login() {
-  const { user } = useUser();
-
-  switch (user?.perfil) {
-    case "Admin":
-      return <Navigate to="/dashboard" replace />;
-
-    case "Escola":
-      return <Navigate to="/dashboard" replace />;
-  }
-
+export default function Form() {
   return (
     <>
       <Header />

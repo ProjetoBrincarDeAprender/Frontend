@@ -1,12 +1,12 @@
 import React from "react";
-import { FormControl, FormItem, FormLabel, FormMessage } from "../../ui/form";
+import { FormControl, FormItem, FormLabel, FormMessage } from "../ui/form";
 import {
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
   Select as ShadcnSelect,
-} from "../../ui/select";
+} from "../ui/select";
 
 export type FormSelectProps = {
   wrapperClassName?: string;

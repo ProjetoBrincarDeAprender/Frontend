@@ -1,4 +1,4 @@
-import { ResponsableEditForm } from "@/components/Forms/EditForms/ResponsableForm";
+import { ResponsableEditForm } from "@/components/EditForms/ResponsableForm";
 import { Header } from "@/components/Header/Header";
 import { useParams } from "react-router";
 

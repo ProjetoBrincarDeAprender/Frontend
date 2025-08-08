@@ -3,7 +3,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { AxiosError } from "axios";
 import { useForm } from "react-hook-form";
 import z from "zod";
-import { Form } from "../Forms/Form/Root";
+import { Form } from "../Form/Root";
 import { Link } from "../utils/Link/Link";
 
 const formSchema = z.object({
@@ -173,9 +173,9 @@ export default function CreateSchoolForm() {
         <Link
           className="w-fit font-bold no-underline"
           variant="secondary"
-          href="/dashboard"
+          href="/login"
         >
-          Cancelar
+          Faça Login
         </Link>
       </p>
     </Form.Wrapper>

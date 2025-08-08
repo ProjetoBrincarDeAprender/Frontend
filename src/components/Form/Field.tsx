@@ -1,6 +1,6 @@
 import React from "react";
 import type { UseFormReturn } from "react-hook-form";
-import { FormField } from "../../ui/form";
+import { FormField } from "../ui/form";
 
 export type FormFieldProps = {
   form: UseFormReturn<any>;

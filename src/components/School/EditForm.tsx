@@ -5,7 +5,7 @@ import { AxiosError } from "axios";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import z from "zod";
-import { Form } from "../Forms/Form/Root";
+import { Form } from "../Form/Root";
 import { Link } from "../utils/Link/Link";
 
 const formSchema = z.object({

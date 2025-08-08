@@ -67,7 +67,7 @@ export function LateralMenu({ username }: LateralMenuProps) {
           <li>
             <button
               onClick={() => {
-                navigate("/dashboard/");
+                navigate("/dashboard/logistics");
                 setMenuOpen(false);
               }}
               className="block w-full text-lg font-bold text-white rounded-lg py-3 px-4 hover:bg-[var(--color-am2)] transition-colors text-center"
@@ -106,18 +106,6 @@ export function LateralMenu({ username }: LateralMenuProps) {
               className="block w-full text-lg font-bold text-white rounded-lg py-3 px-4 hover:bg-[var(--color-am2)] transition-colors text-center"
             >
               Escolas
-            </button>
-          </li>
-          
-          <li>
-            <button
-              onClick={() => {
-                navigate("/dashboard/responsable");
-                setMenuOpen(false);
-              }}
-              className="block w-full text-lg font-bold text-white rounded-lg py-3 px-4 hover:bg-[var(--color-am2)] transition-colors text-center"
-            >
-              Responsável
             </button>
           </li>
         </ul>

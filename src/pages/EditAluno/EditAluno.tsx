@@ -1,4 +1,4 @@
-import { StudentEditForm } from "@/components/Forms/EditForms/StudentForm";
+import { StudentEditForm } from "@/components/EditForms/StudentForm";
 import { Header } from "@/components/Header/Header";
 import { useParams } from "react-router";
 

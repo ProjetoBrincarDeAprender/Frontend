@@ -6,7 +6,7 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "../../ui/form";
+} from "../ui/form";
 
 export type FormInputProps = {
   wrapperClassName?: string;

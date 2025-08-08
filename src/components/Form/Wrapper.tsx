@@ -11,7 +11,7 @@ export default function Wrapper({ children, className }: FormWrapperProps) {
     <div
       className={twMerge(
         className,
-        "bg-am1 text-az3 font-1 flex w-full max-w-lg flex-col rounded-3xl p-10 ",
+        "bg-am1 text-az3 font-1 flex w-full max-w-lg flex-col rounded-3xl p-10 shadow-md",
       )}
     >
       {children}

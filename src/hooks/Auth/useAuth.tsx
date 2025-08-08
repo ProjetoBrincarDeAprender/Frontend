@@ -1,7 +1,21 @@
-import type { UserProfile } from "@/types/user";
 import api from "@/utils/api";
 import Cookies from "js-cookie";
 import { useState } from "react";
+
+interface UserProfile {
+  id: string;
+  nome_completo: string;
+  email: string;
+  perfil: {
+    nome: string;
+  };
+  escola: {
+    nome: string;
+  };
+  created_At: string;
+  perfil_id: number;
+  escolaId: number | null;
+}
 
 const useAuth = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);

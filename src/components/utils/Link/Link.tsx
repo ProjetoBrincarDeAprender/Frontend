@@ -1,4 +1,3 @@
-import { Link as ReactLink } from "react-router";
 import { twMerge } from "tailwind-merge";
 import "./Link.css";
 
@@ -18,14 +17,14 @@ export function Link({
   target = "",
 }: LinkProps) {
   return (
-    <ReactLink
-      to={href}
+    <a
+      href={href}
       target={target}
       className={
         variant === "none" ? className : twMerge(`link-${variant}`, className)
       }
     >
       {children}
-    </ReactLink>
+    </a>
   );
 }
