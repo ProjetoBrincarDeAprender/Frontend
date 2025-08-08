@@ -1,5 +1,5 @@
 import { twMerge } from "tailwind-merge";
-import { Button } from "../ui/button";
+import { Button } from "../../ui/button";
 import type { FormFieldProps } from "./Field";
 import Field from "./Field";
 import type { FormInputProps } from "./Input";

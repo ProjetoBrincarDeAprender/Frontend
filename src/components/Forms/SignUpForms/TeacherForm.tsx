@@ -4,8 +4,8 @@ import { AxiosError } from "axios";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router";
 import { z } from "zod";
+import { Link } from "../../utils/Link/Link";
 import { Form } from "../Form/Root";
-import { Link } from "../utils/Link/Link";
 
 const formSchema = z
   .object({
@@ -148,7 +148,7 @@ export default function TeacherSignUpForm() {
           variant="secondary"
           href="/dashboard"
         >
-         Cancelar
+          Cancelar
         </Link>
       </p>
     </Form.Wrapper>
