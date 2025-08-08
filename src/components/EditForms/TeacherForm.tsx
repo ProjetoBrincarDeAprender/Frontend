@@ -18,6 +18,7 @@ const formSchema = z.object({
 
 type TeacherFormProps = {
   id: number;
+  onSucess: () => void;
 };
 
 export function TeacherEditForm({ id }: TeacherFormProps) {

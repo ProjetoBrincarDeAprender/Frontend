@@ -5,14 +5,20 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"; 
 import { Button } from "@/components/ui/button";
-import  CreateSchoolForm   from "@/components/School/CreateForm"; 
+import { TeacherEditForm } from "../EditForms/TeacherForm";
+// interface EditSchoolModalProps {
+//   schoolId: number;
+// }
 
-export function RegisterSchoolModal() {
+interface EditTeacherModalProps {
+  id: number;
+}
+export function EditTeacherModal({id}: EditTeacherModalProps) {
 
   const [isOpen, setIsOpen] = useState(false);
 
   const handleSuccess = () => {
-    console.log("Cadastro realizado com sucesso!");
+    console.log("Aluno editado com sucesso!");
     setIsOpen(false);
   };
 
@@ -21,12 +27,12 @@ export function RegisterSchoolModal() {
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
     
       <DialogTrigger asChild>
-            <Button className="min-h-[60px] flex justify-center font-1 font-bold gap-8 mt-8 text-purplish-blue uppercase bg-yellow shadow-xl py-4 px-8 rounded-2xl  text-center hover:bg-purplish-blue hover:text-yellow transition duration-200">Cadastrar Escola</Button>
+            <Button className="rounded bg-green-500 px-4 py-2 text-white transition-colors hover:bg-green-600">Editar</Button>
       </DialogTrigger>
 
       <DialogContent className="sm:max-w-2xl max-h-[70vh] overflow-y-auto">
 
-          <CreateSchoolForm onSuccess={handleSuccess} />
+          <TeacherEditForm  id={id} onSuccess={handleSuccess} />
         
       </DialogContent>
     </Dialog>

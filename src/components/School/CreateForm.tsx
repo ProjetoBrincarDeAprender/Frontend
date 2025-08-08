@@ -13,7 +13,7 @@ const formSchema = z.object({
     .max(80, { error: "O limite suportado é de 80 caracteres" })
     .min(2, { error: "Nome da escola deve ter pelo menos 2 caracteres" }),
   descricao: z.string().optional(),
-  endereco: z.string({ error: "O endereço da escola é obrigatório" }),
+  localizacao: z.string({ error: "O endereço da escola é obrigatório" }),
   telefone: z.string().optional(),
   email: z.email({ error: "Email inválido" }).optional(),
 });
@@ -24,7 +24,7 @@ export default function CreateSchoolForm() {
     defaultValues: {
       nome: "",
       descricao: "",
-      endereco: "",
+      localizacao: "",
       telefone: "",
       email: "",
     },
@@ -78,7 +78,7 @@ export default function CreateSchoolForm() {
       >
         <Form.Field
           form={form}
-          name="nome_escola"
+          name="nome"
           render={({ field }) => (
             <Form.Input
               {...field}
@@ -87,17 +87,8 @@ export default function CreateSchoolForm() {
             />
           )}
         />
-        <Form.Field
-          form={form}
-          name="sigla"
-          render={({ field }) => (
-            <Form.Input
-              {...field}
-              label="Sigla da Instituição"
-              placeholder="UEPB"
-            />
-          )}
-        />
+  
+        
         <Form.Field
           form={form}
           name="descricao"
@@ -111,7 +102,7 @@ export default function CreateSchoolForm() {
         />
         <Form.Field
           form={form}
-          name="endereco"
+          name="localizacao"
           render={({ field }) => (
             <Form.Input
               {...field}
@@ -143,30 +134,7 @@ export default function CreateSchoolForm() {
             />
           )}
         />
-        <Form.Field
-          form={form}
-          name="senha"
-          render={({ field }) => (
-            <Form.Input
-              {...field}
-              label="Senha"
-              placeholder="Senha"
-              type="password"
-            />
-          )}
-        />
-        <Form.Field
-          form={form}
-          name="confirmar_senha"
-          render={({ field }) => (
-            <Form.Input
-              {...field}
-              label="Confirmar Senha"
-              placeholder="Confirmar Senha"
-              type="password"
-            />
-          )}
-        />
+       
         <Form.Submit>Criar Conta</Form.Submit>
       </Form.Main>
       <p className="mt-6 w-full text-center text-lg">
