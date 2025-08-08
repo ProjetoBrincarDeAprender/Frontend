@@ -1,18 +1,9 @@
-import * as React from "react";
-import { useState } from "react";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog"; 
+import TeacherSignUpForm from "@/components/Forms/SignUpForms/TeacherForm";
 import { Button } from "@/components/ui/button";
-import  TeacherSignUpForm  from '@/components/SignUpForms/TeacherForm'; 
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { useState } from "react";
 
 export function RegisterTeacherModal() {
-
   const [isOpen, setIsOpen] = useState(false);
 
   const handleSuccess = () => {
@@ -21,17 +12,15 @@ export function RegisterTeacherModal() {
   };
 
   return (
-
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-    
       <DialogTrigger asChild>
-            <Button className="min-h-[60px] flex justify-center font-1 font-bold gap-8 mt-8 text-purplish-blue uppercase bg-yellow shadow-xl py-4 px-8 rounded-2xl  text-center hover:bg-purplish-blue hover:text-yellow transition duration-200">Cadastrar Professor(a)</Button>
+        <Button className="font-1 text-purplish-blue bg-yellow hover:bg-purplish-blue hover:text-yellow mt-8 flex min-h-[60px] justify-center gap-8 rounded-2xl px-8 py-4 text-center font-bold uppercase shadow-xl transition duration-200">
+          Cadastrar Professor(a)
+        </Button>
       </DialogTrigger>
 
-      <DialogContent className="sm:max-w-2xl max-h-[70vh] overflow-y-auto">
-
-          <TeacherSignUpForm onSuccess={handleSuccess} />
-        
+      <DialogContent className="max-h-[70vh] overflow-y-auto sm:max-w-2xl">
+        <TeacherSignUpForm onSuccess={handleSuccess} />
       </DialogContent>
     </Dialog>
   );

@@ -1,8 +1,8 @@
 import useAuth from "@/hooks/Auth/useAuth";
+import { useUser } from "@/hooks/User/useUser";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AxiosError } from "axios";
 import { useForm } from "react-hook-form";
-import { useNavigate } from "react-router";
 import z from "zod";
 import { Form } from "../Form/Root";
 
@@ -16,7 +16,7 @@ const formSchema = z.object({
 
 export default function SignInForm() {
   const { login, profile } = useAuth();
-  const navigate = useNavigate();
+  const { registerUser } = useUser();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -30,9 +30,14 @@ export default function SignInForm() {
       await login(data.email, data.senha);
       const profileData = await profile();
 
-      // aqui coloca o redirecionamento para a pagina do perfil
       if (profileData) {
-        navigate("/dashboard");
+        registerUser({
+          id: profileData.id,
+          nome_completo: profileData.nome_completo,
+          email: profileData.email,
+          perfil: profileData.perfil.nome,
+          escola: profileData.escola?.nome,
+        });
       }
     } catch (error) {
       console.log("Error during sign-in:", error);
