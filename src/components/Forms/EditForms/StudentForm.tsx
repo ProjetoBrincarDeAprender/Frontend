@@ -26,9 +26,11 @@ const formSchema = z.object({
 
 type StudentFormProps = {
   id: number;
+    onSuccess: () => void;
+
 };
 
-export function StudentEditForm({ id }: StudentFormProps) {
+export function StudentEditForm({ id, onSuccess}: StudentFormProps) {
   const navigate = useNavigate();
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -41,6 +43,7 @@ export function StudentEditForm({ id }: StudentFormProps) {
         const response = await api.get(`/student/list/${id}`);
 
         if (response.status === 200) {
+
           const studentData = {
             nome_completo: response.data.nome_completo,
             email: response.data.email,
@@ -66,7 +69,7 @@ export function StudentEditForm({ id }: StudentFormProps) {
     };
 
     fetchUserData();
-  }, [id, form]);
+  }, [id]);
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     const userPayload = Object.fromEntries(
@@ -93,6 +96,7 @@ export function StudentEditForm({ id }: StudentFormProps) {
         `/student/update/${id}`,
         studentPayload,
       );
+      onSuccess();
 
       if (studentResponse.status === 201 && userResponse.status === 201) {
         navigate("/login");

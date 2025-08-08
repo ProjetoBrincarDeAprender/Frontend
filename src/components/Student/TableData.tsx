@@ -1,7 +1,8 @@
 import type { ColumnDef } from "@tanstack/react-table";
-import { Edit } from "lucide-react";
+// import { Edit, Import } from "lucide-react";
 import DeleteModal from "../utils/DataTable/DeleteModal";
-import { Link } from "../utils/Link/Link";
+// import { Link } from "../utils/Link/Link";
+import { EditStudentModal } from "../modals/EditStudentModal";
 
 export type Student = {
   id: number;
@@ -57,13 +58,14 @@ export const StudentColumns: ColumnDef<Student>[] = [
     header: "Ações",
     cell: ({ row }) => (
       <div className="flex items-center justify-center gap-2">
-        <Link
+        <EditStudentModal id={row.original.id}/>
+        {/* <Link
           href={`/edit/student/${row.original.id}`}
           className="rounded bg-green-500 px-4 py-2 text-white transition-colors hover:bg-green-600"
           variant="none"
         >
           <Edit />
-        </Link>
+        </Link> */}
         <DeleteModal route="/student/remove" id={row.original.id} />
       </div>
     ),

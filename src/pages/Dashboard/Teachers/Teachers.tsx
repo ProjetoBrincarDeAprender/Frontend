@@ -5,6 +5,8 @@ import { LateralMenu } from "../../../components/LateralMenu/LateralMenu";
 import TeacherTable from "@/components/Teacher/TeacherTable";
 import saturn from "../../../assets/saturn.svg";
 
+import { RegisterTeacherModal } from "@/components/modals/RegisterTeacherModal";
+
 export function Teachers() {
   return (
     <>
@@ -19,35 +21,38 @@ export function Teachers() {
               <h1 className="text-5xl font-bold">Professores</h1>
             </div>
           </div>
-          <div className="mt-16 flex items-center justify-between">
-            <input
-              type="text"
-              placeholder="Pesquisar por nome"
-              name="searchInput"
-              id="searchInput"
-              className="text-purplish-blue outline-am0 focus:outline-yellow rounded-lg px-2 py-1 font-bold outline-4 transition duration-300"
-            />
-            <div className="flex items-center gap-8 text-2xl font-bold">
-              <a
-                className="bg-yellow text-purplish-blue hover:bg-purplish-blue hover:text-yellow rounded-lg px-6 py-2 shadow transition duration-300"
-                href="/edit/teacher"
-              >
-                Editar
-              </a>
-              <a
-                className="bg-yellow text-purplish-blue hover:bg-purplish-blue hover:text-yellow rounded-lg px-6 py-2 shadow transition duration-300"
-                href="/register/teacher"
-              >
-                Cadastrar
-              </a>
-            </div>
+        <div className="mt-16 flex items-center justify-between">
+          <input
+            type="text"
+            placeholder="Pesquisar por nome"
+            name="searchInput"
+            id="searchInput"
+            className="text-purplish-blue outline-am0 focus:outline-yellow rounded-lg px-2 py-1 font-bold outline-4 transition duration-300"
+          />
+          <div className="flex items-center gap-8 text-2xl font-bold">
+            {/* <a
+              className="bg-yellow text-purplish-blue hover:bg-purplish-blue hover:text-yellow rounded-lg px-6 py-2 shadow transition duration-300"
+              href="/edit/teacher"
+            >
+              Editar
+            </a> */}
+            <RegisterTeacherModal/>
+            {/* <a
+              className="bg-yellow text-purplish-blue hover:bg-purplish-blue hover:text-yellow rounded-lg px-6 py-2 shadow transition duration-300"
+              href="/register/teacher"
+            >
+              Cadastrar
+            </a> */}
           </div>
+          </div>
+
           <TeacherTable />
         </main>
         <div className="mt-20">
           <Footer />
         </div>
       </div>
+
     </>
   );
 }
