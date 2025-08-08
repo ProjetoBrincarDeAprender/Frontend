@@ -5,6 +5,8 @@ import { LateralMenu } from "../../../components/LateralMenu/LateralMenu";
 import StudentTable from "@/components/Student/StudentTable";
 import saturn from "../../../assets/saturn.svg";
 
+import { RegisterStudentModal } from "@/components/modals/RegisterStudentModal";
+
 export function Students() {
   return (
     <>
@@ -28,12 +30,13 @@ export function Students() {
               className="text-purplish-blue outline-am0 focus:outline-yellow rounded-lg px-2 py-1 font-bold outline-4 transition duration-300"
             />
             <div className="flex items-center gap-8 text-2xl font-bold">
-              <a
+              <RegisterStudentModal/>
+              {/* <a
                 className="bg-yellow text-purplish-blue hover:bg-purplish-blue hover:text-yellow rounded-lg px-6 py-2 shadow transition duration-300"
                 href="/register/student"
               >
                 Cadastrar
-              </a>
+              </a> */}
             </div>
           </div>
           <StudentTable />
