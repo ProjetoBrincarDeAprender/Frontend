@@ -12,7 +12,7 @@ const formSchema = z.object({
     .max(80, { error: "O limite suportado é de 80 caracteres" })
     .min(2, { error: "Nome da escola deve ter pelo menos 2 caracteres" }),
   descricao: z.string().optional(),
-  localizacao: z.string({ error: "A localização da escola é obrigatório" }),
+  localizacao: z.string({ error: "O endereço da escola é obrigatório" }),
   telefone: z.string().optional(),
   email: z.email({ error: "Email inválido" }).optional(),
 });

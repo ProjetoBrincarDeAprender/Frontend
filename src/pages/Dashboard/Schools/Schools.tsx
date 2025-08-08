@@ -7,6 +7,8 @@ import { RegisterSchoolUserModal } from "@/components/modals/RegisterSchoolUserM
 import SchoolTable from "@/components/School/SchoolTable";
 import saturn from "../../../assets/saturn.svg";
 
+//import { RegisterSchoolModal } from "@/components/modals/RegisterSchoolModal";
+
 export function Schools() {
   return (
     <>
@@ -21,6 +23,7 @@ export function Schools() {
               <h1 className="text-5xl font-bold">Escolas</h1>
             </div>
           </div>
+
           <div className="mt-16 flex items-center justify-between">
             <input
               type="text"

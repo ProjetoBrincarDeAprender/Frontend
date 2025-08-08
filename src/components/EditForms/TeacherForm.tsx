@@ -6,7 +6,7 @@ import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router";
 import { z } from "zod";
-import { Form } from "../Form/Root";
+import { Form } from "../Forms/Form//Root";
 
 const formSchema = z.object({
   nome_completo: z

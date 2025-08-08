@@ -7,6 +7,8 @@ import { useForm } from "react-hook-form";
 import z from "zod";
 import { Form } from "../Forms/Form/Root";
 import { Link } from "../utils/Link/Link";
+// No topo do EditForm.tsx
+import { IMaskInput } from 'react-imask';
 
 const formSchema = z.object({
   nome: z
@@ -15,15 +17,15 @@ const formSchema = z.object({
     .min(2, { error: "Nome da escola deve ter pelo menos 2 caracteres" })
     .optional(),
   descricao: z.string().optional(),
-  localizacao: z.string({ error: "O endereço da escola é obrigatório" }),
+  localizacao: z.string({ error: "O endereço da escola é obrigatório" }).optional(),
   telefone: z.string().refine(
     (val) => {
       const phoneRegex = /^\(\d{2}\) \d{4,5}-\d{4}$/;
       return phoneRegex.test(val);
     },
     { message: "Telefone inválido" },
-  ),
-  email: z.email({ error: "Email inválido" }),
+  ).optional(),
+  email: z.email({ error: "Email inválido" }).optional(),
   usuariosIds: z
     .string()
     .refine(
@@ -38,9 +40,10 @@ const formSchema = z.object({
 
 type EditSchoolFormProps = {
   id: number;
+  onSuccess: () => void;
 };
 
-export default function EditSchoolForm({ id }: EditSchoolFormProps) {
+export default function EditSchoolForm({ id, onSuccess }: EditSchoolFormProps) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
   });
@@ -78,23 +81,28 @@ export default function EditSchoolForm({ id }: EditSchoolFormProps) {
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     try {
-      const verifyData = Object.fromEntries(
-        Object.entries(data).filter(
-          ([_, value]) => value !== undefined && value !== null,
-        ),
-      );
 
-      const payload = {
-        ...verifyData,
-        usuariosIds: verifyData.usuariosIds
-          ? verifyData.usuariosIds.split(",").map((id) => Number(id.trim()))
-          : [],
-      };
+      // const verifyData = Object.fromEntries(
+      //   Object.entries(data).filter(
+      //     ([_, value]) => value !== undefined && value !== null,
+      //   ),
+      // );
+
+      // const payload = {
+      //   ...verifyData,
+      //   usuariosIds: verifyData.usuariosIds
+      //     ? verifyData.usuariosIds.split(",").map((id) => Number(id.trim()))
+      //     : [],
+      // };
+
+      const { usuariosIds, ...updateData } = data;
+      const payload = updateData;
+
 
       const response = await api.put(`/school/update/${id}`, payload);
 
       if (response.status === 200) {
-        alert("Escola atualizada com sucesso!");
+        onSuccess();
       }
     } catch (error) {
       console.error("Erro ao atualizar escola:", error);
@@ -180,15 +188,19 @@ export default function EditSchoolForm({ id }: EditSchoolFormProps) {
           form={form}
           name="telefone"
           render={({ field }) => (
-            <Form.Input
-              {...field}
-              label="Número da Instituição"
-              placeholder="83999399089"
-              type="tel"
+            
+            <IMaskInput
+              mask="(00) 00000-0000" 
+              value={field.value || ''} 
+              onAccept={(value: string) => {
+                field.onChange(value);
+              }}
+              placeholder="(83) 99999-9999"
+              className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
             />
           )}
         />
-        <Form.Field
+        {/* <Form.Field
           form={form}
           name="usuariosIds"
           render={({ field }) => (
@@ -198,7 +210,7 @@ export default function EditSchoolForm({ id }: EditSchoolFormProps) {
               placeholder="IDs dos usuários"
             />
           )}
-        />
+        /> */}
         <Form.Submit>Atualizar Dados</Form.Submit>
       </Form.Main>
       <p className="mt-6 w-full text-center text-lg">
