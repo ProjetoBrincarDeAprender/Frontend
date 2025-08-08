@@ -1,15 +1,15 @@
 import "./Footer.css";
 
-import logo from "../../assets/brincardeaprender_blackandwhite.svg";
-import star from "../../assets/star.svg";
-import pipa from "../../assets/pipa.svg";
-import laco from "../../assets/laco.svg";
-import { Link } from "../utils/Link/Link";
 import { FaFacebook, FaInstagram } from "react-icons/fa";
+import logo from "../../assets/brincardeaprender_blackandwhite.svg";
+import laco from "../../assets/laco.svg";
+import pipa from "../../assets/pipa.svg";
+import star from "../../assets/star.svg";
+import { Link } from "../utils/Link/Link";
 
 export function Footer() {
   return (
-    <footer className="footer-pseudo bg-az4 shadow-2xl flex flex-col font-2 font-semibold text-xl py-8">
+    <footer className="footer-pseudo bg-az4 font-2 mt-auto flex flex-col py-8 text-xl font-semibold shadow-2xl">
       {/* Pipa/Constelação */}
       <img
         src={pipa}
@@ -34,16 +34,16 @@ export function Footer() {
       {/* Laço inferior direita */}
       <img src={laco} alt="Laço" className="footer-laco" aria-hidden="true" />
       {/* Conteúdo original */}
-      <div className="flex justify-around items-start">
+      <div className="flex items-start justify-around">
         <div>
           <div className="max-w-48">
             <img
-              className="block max-w-full h-auto object-cover"
+              className="block h-auto max-w-full object-cover"
               src={logo}
               alt="Brincar de Aprender Logo"
             />
           </div>
-          <div className="flex flex-col gap-4 mt-4 ml-2.5">
+          <div className="mt-4 ml-2.5 flex flex-col gap-4">
             <Link
               href="#"
               variant="light"
@@ -51,7 +51,7 @@ export function Footer() {
               className="text-2xl"
             >
               <FaInstagram
-                className="inline-block outline-2 rounded-full"
+                className="inline-block rounded-full outline-2"
                 size={32}
               />
               <span className="ml-5">Instagram</span>
@@ -63,14 +63,14 @@ export function Footer() {
               className="text-2xl"
             >
               <FaFacebook
-                className="inline-block outline-2 rounded-full"
+                className="inline-block rounded-full outline-2"
                 size={32}
               />
               <span className="ml-5">Facebook</span>
             </Link>
           </div>
         </div>
-        <div className="flex flex-col gap-4 mt-8">
+        <div className="mt-8 flex flex-col gap-4">
           <h1 className="mb-6 text-blue-200">Utilidades</h1>
           <Link href="/" variant="light">
             Inicio
@@ -82,14 +82,14 @@ export function Footer() {
             Jogos
           </Link>
         </div>
-        <div className="flex flex-col gap-4 mt-8">
+        <div className="mt-8 flex flex-col gap-4">
           <h1 className="mb-6 text-blue-200">Contato</h1>
           <Link href="mailto:brincardeaprenderedu@gmail.com" variant="light">
             brincardeaprenderedu@gmail.com
           </Link>
         </div>
       </div>
-      <div className="self-center mt-12">
+      <div className="mt-12 self-center">
         <h1 className="text-sm font-normal text-blue-200">
           © 2025. Todos os direitos reservados
         </h1>
