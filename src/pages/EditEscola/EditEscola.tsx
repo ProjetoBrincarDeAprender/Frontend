@@ -11,7 +11,7 @@ export function EditSchoolPage() {
 
   return (
     <div className="page-whith-header">
-      <Header username="Usuario" />
+      <Header />
 
       <div className="page-container">
         <EditSchoolForm id={+id} />
