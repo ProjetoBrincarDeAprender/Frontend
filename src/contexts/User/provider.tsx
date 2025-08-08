@@ -1,5 +1,6 @@
 import useAuth from "@/hooks/Auth/useAuth";
 import type { User } from "@/types/user";
+import Cookies from "js-cookie";
 import { type ReactNode, useEffect, useState } from "react";
 import { UserContext } from "./context";
 
@@ -28,7 +29,9 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
       });
     };
 
-    fetchUser();
+    if (Cookies.get("authToken")) {
+      fetchUser();
+    }
   }, []);
 
   return (
