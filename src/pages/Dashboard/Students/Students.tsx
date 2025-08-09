@@ -1,6 +1,7 @@
 import { Footer } from "../../../components/Footer/Footer";
 import { Header } from "../../../components/Header/Header";
 import { LateralMenu } from "../../../components/LateralMenu/LateralMenu";
+import { useUser } from "@/hooks/User/useUser";
 
 import StudentTable from "@/components/Student/StudentTable";
 import saturn from "../../../assets/saturn.svg";
@@ -8,11 +9,14 @@ import saturn from "../../../assets/saturn.svg";
 import { RegisterStudentModal } from "@/components/modals/RegisterStudentModal";
 
 export function Students() {
+  const { user } = useUser();
+
+  const username = user?.nome_completo || "Usuário";
   return (
     <>
       <div className="bg-slate-200">
         <Header />
-        <LateralMenu username="Placeholder" />
+        <LateralMenu username={username} />
         <main className="font-1 px-64 pt-32 text-gray-800">
           <div className="flex items-center gap-4">
             <img className="max-w-24" src={saturn} alt="Saturn" />
@@ -30,7 +34,7 @@ export function Students() {
               className="text-purplish-blue outline-am0 focus:outline-yellow rounded-lg px-2 py-1 font-bold outline-4 transition duration-300"
             />
             <div className="flex items-center gap-8 text-2xl font-bold">
-              <RegisterStudentModal/>
+              <RegisterStudentModal />
               {/* <a
                 className="bg-yellow text-purplish-blue hover:bg-purplish-blue hover:text-yellow rounded-lg px-6 py-2 shadow transition duration-300"
                 href="/register/student"

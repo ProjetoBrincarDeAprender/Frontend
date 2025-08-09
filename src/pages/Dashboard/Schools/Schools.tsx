@@ -3,6 +3,7 @@ import { Header } from "../../../components/Header/Header";
 import { LateralMenu } from "../../../components/LateralMenu/LateralMenu";
 import { RegisterSchoolModal } from "@/components/modals/RegisterSchoolModal";
 import { RegisterSchoolUserModal } from "@/components/modals/RegisterSchoolUserModal";
+import { useUser } from "@/hooks/User/useUser";
 
 import SchoolTable from "@/components/School/SchoolTable";
 import saturn from "../../../assets/saturn.svg";
@@ -10,11 +11,14 @@ import saturn from "../../../assets/saturn.svg";
 //import { RegisterSchoolModal } from "@/components/modals/RegisterSchoolModal";
 
 export function Schools() {
+  const { user } = useUser();
+
+  const username = user?.nome_completo || "Usuário";
   return (
     <>
       <div className="bg-slate-200">
         <Header />
-        <LateralMenu username="Placeholder" />
+        <LateralMenu username={username} />
         <main className="font-1 px-64 pt-32 text-gray-800">
           <div className="flex items-center gap-4">
             <img className="max-w-24" src={saturn} alt="Saturn" />
