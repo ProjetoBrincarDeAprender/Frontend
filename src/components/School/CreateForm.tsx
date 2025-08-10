@@ -6,6 +6,8 @@ import z from "zod";
 import { Form } from "../Forms/Form/Root";
 import type { SignUpFormProps } from "../Forms/SignUpForms/signUpFormProps";
 import { Link } from "../utils/Link/Link";
+import { IMaskInput } from "react-imask";
+
 
 const formSchema = z.object({
   nome: z
@@ -14,8 +16,19 @@ const formSchema = z.object({
     .min(2, { error: "Nome da escola deve ter pelo menos 2 caracteres" }),
   descricao: z.string().optional(),
   localizacao: z.string({ error: "O endereço da escola é obrigatório" }),
-  telefone: z.string().optional(),
-  email: z.email({ error: "Email inválido" }).optional(),
+telefone: z
+    .string()
+    .optional()
+    .refine(
+      (val) => {
+        if (!val || val === "") return true;
+        const phoneRegex = /^\(\d{2}\) \d{4,5}-\d{4}$/;
+        return phoneRegex.test(val);
+      },
+      {
+        message: "Formato inválido.",
+      },
+    ),  email: z.email({ error: "Email inválido" }).optional(),
 });
 
 export default function CreateSchoolForm({ onSuccess }: SignUpFormProps) {
@@ -124,12 +137,27 @@ export default function CreateSchoolForm({ onSuccess }: SignUpFormProps) {
           form={form}
           name="telefone"
           render={({ field }) => (
-            <Form.Input
-              {...field}
-              label="Número da Instituição"
-              placeholder="83999399089"
-              type="tel"
-            />
+            <Form.Item> 
+             <div className="flex w-full flex-col gap-2">
+              <label htmlFor="telefone" className="text-sm font-medium">
+                Telefone
+              </label>
+              <IMaskInput
+                mask={[
+                  { mask: '(00) 0000-0000' },
+                  { mask: '(00) 00000-0000' }
+                ]}
+                value={field.value}
+                onAccept={(value: string) => {
+                  field.onChange(value);
+                }}
+                inputRef={field.ref}
+                placeholder="(83) 99999-9999"
+                className="flex h-13 w-full rounded-lg bg-amber-50 px-6 py-2 text-base text-gray-800 bg-transparent border border-purplish-blue placeholder:text-gray-500 transition-colors ease-in-out duration-200 hover:border-purplish-blue focus-visible:outline-none focus-visible:ring-2 disabled:cursor-not-allowed disabled:opacity-50"
+              />
+              </div>
+              {/* <Form.Message /> */}
+            </Form.Item>
           )}
         />
         <Form.Submit>Criar Conta</Form.Submit>
