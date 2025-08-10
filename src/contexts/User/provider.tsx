@@ -1,5 +1,6 @@
 import useAuth from "@/hooks/Auth/useAuth";
 import type { User } from "@/types/user";
+import Cookies from "js-cookie";
 import { type ReactNode, useEffect, useState } from "react";
 import { UserContext } from "./context";
 
@@ -7,7 +8,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   const { profile } = useAuth();
   const [user, setUser] = useState<User | null>(null);
 
-  const registerUser = (userData: User) => {
+  const registerUser = (userData: User | null) => {
     setUser(userData);
   };
 
@@ -24,11 +25,16 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
         nome_completo: response.nome_completo,
         email: response.email,
         perfil: response.perfil.nome,
-        escola: response.escola?.nome || "",
+        escola: {
+          id: response.escolaId,
+          nome: response.escola.nome,
+        },
       });
     };
 
-    fetchUser();
+    if (Cookies.get("authToken")) {
+      fetchUser();
+    }
   }, []);
 
   return (

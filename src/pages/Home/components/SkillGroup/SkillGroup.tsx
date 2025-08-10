@@ -7,9 +7,9 @@ interface SkillGroupProps {
 
 export function SkillGroup({ className = "" }: SkillGroupProps) {
   return (
-    <section className={`${className} bg-blue-50 py-32`}>
+    <section className={`${className} bg-[#D9D9D9] py-32`}>
       <div className="text-center">
-        <h2 className="title-skillgroup font-1 font-bold text-4xl text-gray-800">
+        <h2 className="title-skillgroup font-1 text-4xl font-bold text-gray-800">
           HABILIDADES DESENVOLVIDAS
         </h2>
       </div>

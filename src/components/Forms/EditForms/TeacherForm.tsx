@@ -1,10 +1,9 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
+import { useUser } from "@/hooks/User/useUser";
 import api from "@/utils/api";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AxiosError } from "axios";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { useNavigate } from "react-router";
 import { z } from "zod";
 import { Form } from "../Form/Root";
 
@@ -14,18 +13,22 @@ const formSchema = z.object({
     .max(80, { error: "O limite suportado é de 80 caracteres" })
     .min(2, { error: "Nome completo deve ter pelo menos 2 caracteres" }),
   email: z.email({ error: "Digite um email válido" }),
+  escolaId: z.string().optional(),
 });
 
 type TeacherFormProps = {
   id: number;
+  onSuccess: () => void;
 };
 
-export function TeacherEditForm({ id }: TeacherFormProps) {
-  const navigate = useNavigate();
-
+export function TeacherEditForm({ id, onSuccess }: TeacherFormProps) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
   });
+  const { user } = useUser();
+  const [schools, setSchools] = useState<{ id: number; nome: string }[] | null>(
+    null,
+  );
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -44,9 +47,27 @@ export function TeacherEditForm({ id }: TeacherFormProps) {
         }
       }
     };
+    const fetchSchools = async () => {
+      try {
+        const response = await api.get("/school/list");
+
+        if (response.status === 200) {
+          setSchools(response.data);
+        }
+      } catch (error) {
+        if (error instanceof AxiosError) {
+          form.setError("root", {
+            message: `Erro ao carregar escolas: ${error.message}`,
+          });
+        }
+      }
+    };
 
     fetchUserData();
-  }, [id, form]);
+    if (user?.perfil == "Admin") {
+      fetchSchools();
+    }
+  }, [id, form, user?.perfil]);
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     const payload = Object.fromEntries(
@@ -58,8 +79,8 @@ export function TeacherEditForm({ id }: TeacherFormProps) {
     try {
       const response = await api.put(`/user/update/${id}`, payload);
 
-      if (response.status === 201) {
-        navigate("/login");
+      if (response.status === 200) {
+        onSuccess();
       }
     } catch (error) {
       if (error instanceof AxiosError) {
@@ -117,6 +138,23 @@ export function TeacherEditForm({ id }: TeacherFormProps) {
             />
           )}
         />
+        {user?.perfil == "Admin" && schools && (
+          <Form.Field
+            form={form}
+            name="escolaId"
+            render={({ field }) => (
+              <Form.Select
+                {...field}
+                label="Escola"
+                placeholder="Selecione a Escola"
+                options={schools.map((school) => ({
+                  value: String(school.id),
+                  label: school.nome,
+                }))}
+              />
+            )}
+          />
+        )}
         <Form.Submit>Atualizar Dados</Form.Submit>
       </Form.Main>
     </Form.Wrapper>

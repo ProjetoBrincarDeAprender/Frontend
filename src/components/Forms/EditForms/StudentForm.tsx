@@ -1,10 +1,9 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
+import { useUser } from "@/hooks/User/useUser";
 import api from "@/utils/api";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AxiosError } from "axios";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { useNavigate } from "react-router";
 import { z } from "zod";
 import { Form } from "../Form/Root";
 
@@ -18,22 +17,28 @@ const formSchema = z.object({
     .url({ error: "Insira uma URL válida" })
     .optional()
     .or(z.literal("")),
-  tema_preferido: z.string({ error: "Insira um tema válido" }),
-  data_nascimento: z.string({
-    error: "Data de nascimento é obrigatória",
-  }),
+  tema_preferido: z.string({ error: "Insira um tema válido" }).optional(),
+  data_nascimento: z
+    .string({
+      error: "Data de nascimento é obrigatória",
+    })
+    .optional(),
+  escolaId: z.string().optional(),
 });
 
 type StudentFormProps = {
   id: number;
+  onSuccess: () => void;
 };
 
-export function StudentEditForm({ id }: StudentFormProps) {
-  const navigate = useNavigate();
-
+export function StudentEditForm({ id, onSuccess }: StudentFormProps) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
   });
+  const { user } = useUser();
+  const [schools, setSchools] = useState<{ id: number; nome: string }[] | null>(
+    null,
+  );
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -49,6 +54,7 @@ export function StudentEditForm({ id }: StudentFormProps) {
             data_nascimento: response.data.data_nascimento
               ? response.data.data_nascimento.split("T")[0]
               : "",
+            escolaId: response.data.escolaId || "",
           };
           form.reset(studentData);
           console.log(form.formState.defaultValues);
@@ -64,15 +70,34 @@ export function StudentEditForm({ id }: StudentFormProps) {
         }
       }
     };
+    const fetchSchools = async () => {
+      try {
+        const response = await api.get("/school/list");
+
+        if (response.status === 200) {
+          setSchools(response.data);
+        }
+      } catch (error) {
+        if (error instanceof AxiosError) {
+          form.setError("root", {
+            message: `Erro ao carregar escolas: ${error.message}`,
+          });
+        }
+      }
+    };
 
     fetchUserData();
-  }, [id, form]);
+    if (user?.perfil == "Admin") {
+      fetchSchools();
+    }
+  }, [id, form, user?.perfil]);
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     const userPayload = Object.fromEntries(
       Object.entries({
         nome_completo: data.nome_completo,
         email: data.email,
+        escolaId: user?.perfil == "Admin" ? data.escolaId : undefined,
       }).filter(([_, value]) => value !== undefined && value !== ""),
     );
 
@@ -94,8 +119,8 @@ export function StudentEditForm({ id }: StudentFormProps) {
         studentPayload,
       );
 
-      if (studentResponse.status === 201 && userResponse.status === 201) {
-        navigate("/login");
+      if (studentResponse.status === 200 && userResponse.status === 200) {
+        onSuccess();
       }
     } catch (error) {
       if (error instanceof AxiosError) {
@@ -189,6 +214,23 @@ export function StudentEditForm({ id }: StudentFormProps) {
             />
           )}
         />
+        {user?.perfil == "Admin" && schools && (
+          <Form.Field
+            form={form}
+            name="escolaId"
+            render={({ field }) => (
+              <Form.Select
+                {...field}
+                label="Escola"
+                placeholder="Selecione a Escola"
+                options={schools.map((school) => ({
+                  value: String(school.id),
+                  label: school.nome,
+                }))}
+              />
+            )}
+          />
+        )}
         <Form.Submit>Atualizar Dados</Form.Submit>
       </Form.Main>
     </Form.Wrapper>
