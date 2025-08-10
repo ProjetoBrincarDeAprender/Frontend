@@ -4,6 +4,7 @@ import { AxiosError } from "axios";
 import { useForm } from "react-hook-form";
 import z from "zod";
 import { Form } from "../Forms/Form/Root";
+import type { SignUpFormProps } from "../Forms/SignUpForms/signUpFormProps";
 import { Link } from "../utils/Link/Link";
 
 const formSchema = z.object({
@@ -17,7 +18,7 @@ const formSchema = z.object({
   email: z.email({ error: "Email inválido" }).optional(),
 });
 
-export default function CreateSchoolForm() {
+export default function CreateSchoolForm({ onSuccess }: SignUpFormProps) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -38,7 +39,7 @@ export default function CreateSchoolForm() {
       const response = await api.post("/school/register", payload);
       if (response.status === 201) {
         form.reset();
-        alert("Escola criada com sucesso!");
+        onSuccess();
       }
     } catch (error) {
       console.error("Erro ao criar escola:", error);

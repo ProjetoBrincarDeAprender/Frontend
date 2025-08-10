@@ -6,14 +6,14 @@ import { ArrowUpDown } from "lucide-react";
 import { EditTeacherModal } from "../modals/EditTeacherModal";
 import { Button } from "../ui/button";
 
-export type Teacher = {
+export type Responsible = {
   id: number;
   nome_completo: string;
   email: string;
   escola: string;
 };
 
-export const TeacherColumns: ColumnDef<Teacher>[] = [
+export const ResponsibleColumns: ColumnDef<Responsible>[] = [
   {
     accessorKey: "id",
     header: ({ column }) => (
