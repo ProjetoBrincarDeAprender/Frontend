@@ -1,10 +1,7 @@
 import type { ColumnDef } from "@tanstack/react-table";
-// import { Edit, Import } from "lucide-react";
+import { Edit } from "lucide-react";
 import DeleteModal from "../utils/DataTable/DeleteModal";
-// import { Link } from "../utils/Link/Link";
-import { ArrowUpDown } from "lucide-react";
-import { EditStudentModal } from "../modals/EditStudentModal";
-import { Button } from "../ui/button";
+import { Link } from "../utils/Link/Link";
 
 export type Student = {
   id: number;
@@ -21,118 +18,52 @@ export type Student = {
 export const StudentColumns: ColumnDef<Student>[] = [
   {
     accessorKey: "id",
-    header: ({ column }) => (
-      <Button
-        variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-      >
-        ID
-        <ArrowUpDown className="ml-2 h-4 w-4" />
-      </Button>
-    ),
+    header: "ID",
   },
   {
     accessorKey: "avatar_url",
-    header: ({ column }) => (
-      <Button
-        variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-      >
-        Avatar
-        <ArrowUpDown className="ml-2 h-4 w-4" />
-      </Button>
-    ),
+    header: "Avatar",
   },
   {
     accessorKey: "nome_completo",
-    header: ({ column }) => (
-      <Button
-        variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-      >
-        Nome Completo
-        <ArrowUpDown className="ml-2 h-4 w-4" />
-      </Button>
-    ),
+    header: "Nome Completo",
   },
   {
     accessorKey: "email",
-    header: ({ column }) => (
-      <Button
-        variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-      >
-        Email
-        <ArrowUpDown className="ml-2 h-4 w-4" />
-      </Button>
-    ),
+    header: "Email",
   },
   {
     accessorKey: "perfil",
-    header: ({ column }) => (
-      <Button
-        variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-      >
-        Perfil
-        <ArrowUpDown className="ml-2 h-4 w-4" />
-      </Button>
-    ),
+    header: "Perfil",
   },
   {
     accessorKey: "escola",
-    header: ({ column }) => (
-      <Button
-        variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-      >
-        Escola
-        <ArrowUpDown className="ml-2 h-4 w-4" />
-      </Button>
-    ),
+    header: "Escola",
   },
   {
     accessorKey: "created_ad",
-    header: ({ column }) => (
-      <Button
-        variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-      >
-        Criado em
-        <ArrowUpDown className="ml-2 h-4 w-4" />
-      </Button>
-    ),
+    header: "Criado em",
   },
   {
     accessorKey: "data_nascimento",
-    header: ({ column }) => (
-      <Button
-        variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-      >
-        Data de Nascimento
-        <ArrowUpDown className="ml-2 h-4 w-4" />
-      </Button>
-    ),
+    header: "Data de Nascimento",
   },
   {
     accessorKey: "tema_preferido",
-    header: ({ column }) => (
-      <Button
-        variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-      >
-        Tema Preferido
-        <ArrowUpDown className="ml-2 h-4 w-4" />
-      </Button>
-    ),
+    header: "Tema Preferido",
   },
   {
     accessorKey: "actions",
     header: "Ações",
     cell: ({ row }) => (
       <div className="flex items-center justify-center gap-2">
-        <EditStudentModal id={row.original.id} />
+        <Link
+          href={`/edit/student/${row.original.id}`}
+          className="rounded bg-green-500 px-4 py-2 text-white transition-colors hover:bg-green-600"
+          variant="none"
+        >
+          <Edit />
+        </Link>
         <DeleteModal route="/student/remove" id={row.original.id} />
       </div>
     ),

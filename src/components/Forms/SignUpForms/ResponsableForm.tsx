@@ -1,13 +1,11 @@
-import { useUser } from "@/hooks/User/useUser";
 import api from "@/utils/api";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AxiosError } from "axios";
-import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router";
 import { z } from "zod";
 import { Link } from "../../utils/Link/Link";
 import { Form } from "../Form/Root";
-import type { SignUpFormProps } from "./signUpFormProps";
 
 const formSchema = z
   .object({
@@ -30,14 +28,15 @@ const formSchema = z
       .max(32, {
         error: "Confirmação de senha deve ter no máximo 32 caracteres",
       }),
-    escolaId: z.string().optional(),
   })
   .refine((data) => data.senha == data.confirmar_senha, {
     error: "As senhas devem ser iguais",
     path: ["confirmar_senha"],
   });
 
-export function ResponsableSignUpForm({ onSuccess }: SignUpFormProps) {
+export function ResponsableSignUpForm() {
+  const navigate = useNavigate();
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -47,45 +46,18 @@ export function ResponsableSignUpForm({ onSuccess }: SignUpFormProps) {
       confirmar_senha: "",
     },
   });
-  const { user } = useUser();
-  const [schools, setSchools] = useState<{ id: number; nome: string }[] | null>(
-    null,
-  );
-
-  useEffect(() => {
-    const fetchSchools = async () => {
-      try {
-        const response = await api.get("/school/list");
-
-        if (response.status === 200) {
-          setSchools(response.data);
-        }
-      } catch (error) {
-        if (error instanceof AxiosError) {
-          form.setError("root", {
-            message: `Erro ao carregar escolas: ${error.message}`,
-          });
-        }
-      }
-    };
-
-    if (user?.perfil == "Admin") {
-      fetchSchools();
-    }
-  }, [form, user]);
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     const payload = {
       ...data,
-      perfilId: 5,
-      escolaId: user?.escola?.id || data.escolaId,
+      perfilId: 3,
     };
 
     try {
       const response = await api.post("/user/register", payload);
 
       if (response.status === 201) {
-        onSuccess();
+        navigate("/login");
       }
     } catch (error) {
       if (error instanceof AxiosError) {
@@ -143,23 +115,6 @@ export function ResponsableSignUpForm({ onSuccess }: SignUpFormProps) {
             />
           )}
         />
-        {user?.perfil == "Admin" && schools && (
-          <Form.Field
-            form={form}
-            name="escolaId"
-            render={({ field }) => (
-              <Form.Select
-                {...field}
-                label="Escola"
-                placeholder="Selecione a Escola"
-                options={schools.map((school) => ({
-                  value: String(school.id),
-                  label: school.nome,
-                }))}
-              />
-            )}
-          />
-        )}
         <Form.Field
           form={form}
           name="senha"

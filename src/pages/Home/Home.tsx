@@ -10,7 +10,7 @@ export function Home() {
   return (
     <>
       <Header />
-      <main className="flex flex-col">
+      <main className="flex flex-col m-auto">
         <Introduction />
         <PopularGames className="mt-48" />
         <SkillGroup className="mt-48" />

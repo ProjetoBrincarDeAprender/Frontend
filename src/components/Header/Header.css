@@ -1,4 +1,5 @@
 header {
+  max-width: 150rem;
   margin: auto;
   font-family: var(--font-1);
 }

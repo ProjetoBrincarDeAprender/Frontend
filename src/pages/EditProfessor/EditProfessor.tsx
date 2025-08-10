@@ -11,7 +11,7 @@ export function EditTeacherPage() {
 
   return (
     <div className="page-whith-header">
-      <Header />
+      <Header username="Usuario" />
 
       <div className="page-container">
         <TeacherEditForm id={+id} />

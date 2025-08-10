@@ -1,27 +1,20 @@
 import { ResponsableSignUpForm } from "@/components/Forms/SignUpForms/ResponsableForm";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
-import { useTable } from "@/hooks/Table/useTable";
 import { useState } from "react";
-import { toast } from "sonner";
-import type { RegisterModalProps } from "./registerModalProps";
 
-export function RegisterResponsableModal({
-  isOnTable = true,
-}: RegisterModalProps) {
+export function RegisterResponsableModal() {
   const [isOpen, setIsOpen] = useState(false);
-  const { setUpdating } = isOnTable ? useTable() : { setUpdating: () => {} };
 
   const handleSuccess = () => {
+    console.log("Cadastro realizado com sucesso!");
     setIsOpen(false);
-    toast.success("Cadastro realizado com sucesso!");
-    if (isOnTable) setUpdating(true);
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button className="font-1 text-purplish-blue bg-yellow hover:bg-purplish-blue hover:text-yellow flex min-h-[60px] justify-center gap-8 rounded-2xl px-8 py-4 text-center font-bold uppercase shadow-xl transition duration-200">
+        <Button className="font-1 text-purplish-blue bg-yellow hover:bg-purplish-blue hover:text-yellow mt-8 flex min-h-[60px] justify-center gap-8 rounded-2xl px-8 py-4 text-center font-bold uppercase shadow-xl transition duration-200">
           Cadastrar Responsável
         </Button>
       </DialogTrigger>

@@ -11,10 +11,10 @@ interface IntroductionProps {
 export function Introduction({ className = "" }: IntroductionProps) {
   return (
     <section
-      className={`${className} font-1 container flex justify-around self-center pt-32`}
+      className={`${className} pt-32 container flex justify-around self-center font-1`}
     >
       <div className="flex flex-col gap-8 self-center">
-        <h1 className="text-5xl font-bold">
+        <h1 className="font-bold text-5xl">
           Plataforma de Jogos
           <br />
           Educacionais
@@ -23,9 +23,9 @@ export function Introduction({ className = "" }: IntroductionProps) {
         <Link
           href="/games"
           variant="dark"
-          className="play-button bg-yellow self-start rounded-2xl px-16 py-3 text-center text-4xl font-bold hover:bg-yellow-600"
+          className="play-button px-16 py-3 bg-yellow hover:bg-yellow-600 rounded-2xl text-4xl font-bold text-center self-start"
         >
-          <BiJoystick className="text-purplish-blue inline-block" /> Jogar
+          <BiJoystick className="inline-block text-purplish-blue" /> Jogar
         </Link>
       </div>
       <div className="self-center">

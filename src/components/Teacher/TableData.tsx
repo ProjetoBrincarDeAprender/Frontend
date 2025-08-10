@@ -1,10 +1,7 @@
 import type { ColumnDef } from "@tanstack/react-table";
-// import { Edit } from "lucide-react";
+import { Edit } from "lucide-react";
 import DeleteModal from "../utils/DataTable/DeleteModal";
-// import { Link } from "../utils/Link/Link";
-import { ArrowUpDown } from "lucide-react";
-import { EditTeacherModal } from "../modals/EditTeacherModal";
-import { Button } from "../ui/button";
+import { Link } from "../utils/Link/Link";
 
 export type Teacher = {
   id: number;
@@ -16,58 +13,32 @@ export type Teacher = {
 export const TeacherColumns: ColumnDef<Teacher>[] = [
   {
     accessorKey: "id",
-    header: ({ column }) => (
-      <Button
-        variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-      >
-        ID
-        <ArrowUpDown className="ml-2 h-4 w-4" />
-      </Button>
-    ),
+    header: "ID",
   },
   {
     accessorKey: "nome_completo",
-    header: ({ column }) => (
-      <Button
-        variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-      >
-        Nome Completo
-        <ArrowUpDown className="ml-2 h-4 w-4" />
-      </Button>
-    ),
+    header: "Nome Completo",
   },
   {
     accessorKey: "email",
-    header: ({ column }) => (
-      <Button
-        variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-      >
-        Email
-        <ArrowUpDown className="ml-2 h-4 w-4" />
-      </Button>
-    ),
+    header: "Email",
   },
   {
     accessorKey: "escola",
-    header: ({ column }) => (
-      <Button
-        variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-      >
-        Escola
-        <ArrowUpDown className="ml-2 h-4 w-4" />
-      </Button>
-    ),
+    header: "Escola",
   },
   {
     accessorKey: "actions",
     header: "Ações",
     cell: ({ row }) => (
       <div className="flex items-center justify-center gap-2">
-        <EditTeacherModal id={row.original.id} />
+        <Link
+          href={`/edit/teacher/${row.original.id}`}
+          className="rounded bg-green-500 px-4 py-2 text-white transition-colors hover:bg-green-600"
+          variant="none"
+        >
+          <Edit />
+        </Link>
         <DeleteModal route="/user/remove" id={row.original.id} />
       </div>
     ),

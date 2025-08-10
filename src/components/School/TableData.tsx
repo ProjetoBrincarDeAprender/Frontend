@@ -1,8 +1,7 @@
 import type { ColumnDef } from "@tanstack/react-table";
-import { ArrowUpDown } from "lucide-react";
-import { EditSchoolModal } from "../modals/EditSchoolModal";
-import { Button } from "../ui/button";
+import { Edit } from "lucide-react";
 import DeleteModal from "../utils/DataTable/DeleteModal";
+import { Link } from "../utils/Link/Link";
 
 export type School = {
   id: number;
@@ -16,82 +15,40 @@ export type School = {
 export const SchoolColumns: ColumnDef<School>[] = [
   {
     accessorKey: "id",
-    header: ({ column }) => (
-      <Button
-        variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-      >
-        ID
-        <ArrowUpDown className="ml-2 h-4 w-4" />
-      </Button>
-    ),
+    header: "ID",
   },
   {
     accessorKey: "nome",
-    header: ({ column }) => (
-      <Button
-        variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-      >
-        Nome
-        <ArrowUpDown className="ml-2 h-4 w-4" />
-      </Button>
-    ),
+    header: "Nome",
   },
   {
     accessorKey: "descricao",
-    header: ({ column }) => (
-      <Button
-        variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-      >
-        Descrição
-        <ArrowUpDown className="ml-2 h-4 w-4" />
-      </Button>
-    ),
+    header: "Descrição",
   },
   {
-    accessorKey: "localizacao",
-    header: ({ column }) => (
-      <Button
-        variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-      >
-        Endereço
-        <ArrowUpDown className="ml-2 h-4 w-4" />
-      </Button>
-    ),
+    accessorKey: "endereco",
+    header: "Endereço",
   },
   {
     accessorKey: "telefone",
-    header: ({ column }) => (
-      <Button
-        variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-      >
-        Telefone
-        <ArrowUpDown className="ml-2 h-4 w-4" />
-      </Button>
-    ),
+    header: "Telefone",
   },
   {
     accessorKey: "email",
-    header: ({ column }) => (
-      <Button
-        variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-      >
-        Email
-        <ArrowUpDown className="ml-2 h-4 w-4" />
-      </Button>
-    ),
+    header: "Email",
   },
   {
     accessorKey: "actions",
     header: "Ações",
     cell: ({ row }) => (
       <div className="flex items-center justify-center gap-2">
-        <EditSchoolModal schoolId={row.original.id} />
+        <Link
+          href={`/edit/student/${row.original.id}`}
+          className="rounded bg-green-500 px-4 py-2 text-white transition-colors hover:bg-green-600"
+          variant="none"
+        >
+          <Edit />
+        </Link>
         <DeleteModal route="/school/remove" id={row.original.id} />
       </div>
     ),

@@ -8,7 +8,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { useTable } from "@/hooks/Table/useTable";
 import api from "@/utils/api";
 import { DialogClose } from "@radix-ui/react-dialog";
 import { Trash2 } from "lucide-react";
@@ -22,14 +21,13 @@ type DeleteModalProps = {
 
 export default function DeleteModal({ id, route }: DeleteModalProps) {
   const [open, setOpen] = useState(false);
-  const { setUpdating } = useTable();
 
   const handleDelete = async () => {
     try {
       const response = await api.delete(`${route}/${id}`);
       if (response.status === 200) {
         setOpen(false);
-        setUpdating(true);
+        window.location.reload();
       }
     } catch (error) {
       console.error("Error deleting item:", error);

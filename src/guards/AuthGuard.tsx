@@ -1,7 +1,5 @@
 import { useUser } from "@/hooks/User/useUser";
 import { Navigate, Outlet } from "react-router";
-import { toast } from "sonner";
-import Cookies from "js-cookie";
 
 interface AuthGuardProps {
   redirectTo?: string;
@@ -15,15 +13,14 @@ export const AuthGuard = ({
   role,
 }: AuthGuardProps) => {
   const { user } = useUser();
-  const isLoggedIn = Cookies.get("authToken");
 
-  if (requireAuth && !isLoggedIn) {
-    toast.error("Você precisa estar logado para acessar esta página.");
+  if (requireAuth && !user) {
     return <Navigate to={redirectTo} replace />;
   }
 
-  if (requireAuth && role && user && !role.includes(user?.perfil)) {
-    toast.error("Você não tem permissão para acessar esta página.");
+  if (role && user && !role.includes(user?.perfil)) {
+    // Quando adicionar o Toast lembrar de atualizar isso
+    alert("Acesso negado: você não tem permissão para acessar esta página.");
     return <Navigate to={redirectTo} replace />;
   }
 

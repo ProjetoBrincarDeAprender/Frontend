@@ -31,12 +31,7 @@ const useAuth = () => {
     }
   };
 
-  const logout = () => {
-    Cookies.remove("authToken");
-    setIsLoggedIn(false);
-  };
-
-  return { isLoggedIn, login, profile, logout };
+  return { isLoggedIn, login, profile };
 };
 
 export default useAuth;

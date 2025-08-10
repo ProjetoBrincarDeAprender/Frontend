@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import api from "@/utils/api";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AxiosError } from "axios";
@@ -6,8 +7,6 @@ import { useForm } from "react-hook-form";
 import z from "zod";
 import { Form } from "../Forms/Form/Root";
 import { Link } from "../utils/Link/Link";
-// No topo do EditForm.tsx
-import { IMaskInput } from "react-imask";
 
 const formSchema = z.object({
   nome: z
@@ -16,28 +15,32 @@ const formSchema = z.object({
     .min(2, { error: "Nome da escola deve ter pelo menos 2 caracteres" })
     .optional(),
   descricao: z.string().optional(),
-  localizacao: z
-    .string({ error: "O endereço da escola é obrigatório" })
-    .optional(),
-  telefone: z
+  localizacao: z.string({ error: "O endereço da escola é obrigatório" }),
+  telefone: z.string().refine(
+    (val) => {
+      const phoneRegex = /^\(\d{2}\) \d{4,5}-\d{4}$/;
+      return phoneRegex.test(val);
+    },
+    { message: "Telefone inválido" },
+  ),
+  email: z.email({ error: "Email inválido" }),
+  usuariosIds: z
     .string()
     .refine(
       (val) => {
-        const phoneRegex = /^\(\d{2}\) \d{4,5}-\d{4}$/;
-        return phoneRegex.test(val);
+        const ids = val.split(",").map((id) => id.trim());
+        return ids.every((id) => !isNaN(Number(id)));
       },
-      { message: "Telefone inválido" },
+      { message: "IDs de usuários inválidos" },
     )
     .optional(),
-  email: z.email({ error: "Email inválido" }).optional(),
 });
 
 type EditSchoolFormProps = {
   id: number;
-  onSuccess: () => void;
 };
 
-export default function EditSchoolForm({ id, onSuccess }: EditSchoolFormProps) {
+export default function EditSchoolForm({ id }: EditSchoolFormProps) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
   });
@@ -60,6 +63,7 @@ export default function EditSchoolForm({ id, onSuccess }: EditSchoolFormProps) {
                   .join(", ")
               : "",
           };
+          console.log(formData);
           form.reset(formData);
         }
       } catch (error) {
@@ -74,19 +78,23 @@ export default function EditSchoolForm({ id, onSuccess }: EditSchoolFormProps) {
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     try {
-      console.log("Dados enviados:", data);
-      const verifiedData = Object.fromEntries(
+      const verifyData = Object.fromEntries(
         Object.entries(data).filter(
           ([_, value]) => value !== undefined && value !== null,
         ),
       );
 
-      const payload = verifiedData;
+      const payload = {
+        ...verifyData,
+        usuariosIds: verifyData.usuariosIds
+          ? verifyData.usuariosIds.split(",").map((id) => Number(id.trim()))
+          : [],
+      };
 
       const response = await api.put(`/school/update/${id}`, payload);
 
       if (response.status === 200) {
-        onSuccess();
+        alert("Escola atualizada com sucesso!");
       }
     } catch (error) {
       console.error("Erro ao atualizar escola:", error);
@@ -172,17 +180,23 @@ export default function EditSchoolForm({ id, onSuccess }: EditSchoolFormProps) {
           form={form}
           name="telefone"
           render={({ field }) => (
-            <Form.Item>
-              <IMaskInput
-                mask="(00) 00000-0000"
-                value={field.value || ""}
-                onAccept={(value: string) => {
-                  field.onChange(value);
-                }}
-                placeholder="(83) 99999-9999"
-                className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
-              />
-            </Form.Item>
+            <Form.Input
+              {...field}
+              label="Número da Instituição"
+              placeholder="83999399089"
+              type="tel"
+            />
+          )}
+        />
+        <Form.Field
+          form={form}
+          name="usuariosIds"
+          render={({ field }) => (
+            <Form.Input
+              {...field}
+              label="Usuários"
+              placeholder="IDs dos usuários"
+            />
           )}
         />
         <Form.Submit>Atualizar Dados</Form.Submit>

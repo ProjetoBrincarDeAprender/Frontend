@@ -1,7 +1,4 @@
-import { useTable } from "@/hooks/Table/useTable";
-import { useUser } from "@/hooks/User/useUser";
 import api from "@/utils/api";
-import { Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router";
 import { DataTable } from "../utils/DataTable/DataTable";
@@ -10,16 +7,11 @@ import { SchoolColumns, type School } from "./TableData";
 export default function SchoolTable() {
   const [data, setData] = useState<School[] | null>(null);
   const [searchParams, _] = useSearchParams();
-  const { updating, setUpdating } = useTable();
-  const { user } = useUser();
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await api.get(
-          `/school/list${user?.perfil != "Admin" ? "?escolaId=" + user?.escola?.id : ""}`,
-          {},
-        );
+        const response = await api.get("/school/list", {});
 
         if (response.status == 200) {
           setData(response.data);
@@ -29,14 +21,12 @@ export default function SchoolTable() {
       }
     };
 
-    fetchData().then(() => setUpdating(false));
-  }, [updating, setUpdating, user]);
+    fetchData();
+  }, []);
 
   return (
     <>
-      {updating ? (
-        <Loader2 className="animate-spin" />
-      ) : data ? (
+      {data ? (
         <DataTable
           columns={SchoolColumns}
           data={data}
@@ -47,7 +37,7 @@ export default function SchoolTable() {
           }}
         />
       ) : (
-        <Loader2 className="animate-spin" />
+        <div>Loading...</div>
       )}
     </>
   );

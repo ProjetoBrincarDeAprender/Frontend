@@ -35,13 +35,6 @@
   width: auto;
 }
 
-html,
-body {
-  margin: 0;
-  padding: 0;
-  height: 100%;
-}
-
 body {
   background-color: var(--color-purplish-blue);
   color: var(--color-blue-100);
