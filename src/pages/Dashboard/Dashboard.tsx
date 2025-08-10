@@ -8,10 +8,10 @@ import saturn from "../../assets/saturn.svg";
 import { InfoBadge } from "../../components/utils/InfoBadge/InfoBadge";
 import "./Dashboard.css";
 
+import { RegisterSchoolUserModal } from "@/components/modals/RegisterSchoolUserModal";
 import { useUser } from "@/hooks/User/useUser";
 import { RegisterResponsableModal } from "../../components/modals/RegisterResponsableModal";
 import { RegisterSchoolModal } from "../../components/modals/RegisterSchoolModal";
-import { RegisterSchoolUserModal } from "@/components/modals/RegisterSchoolUserModal";
 import { RegisterStudentModal } from "../../components/modals/RegisterStudentModal";
 import { RegisterTeacherModal } from "../../components/modals/RegisterTeacherModal";
 
@@ -49,11 +49,15 @@ export default function Dashboard() {
             </div>
             <h1 className="font-1 mt-16 text-2xl font-bold">Ações Rápidas</h1>
             <div className="font-1 text-purplish-blue mt-8 flex justify-center gap-8 font-bold uppercase">
-              <RegisterTeacherModal />
-              <RegisterStudentModal />
-              <RegisterSchoolModal />
-              <RegisterSchoolUserModal />
-              <RegisterResponsableModal />
+              <RegisterTeacherModal isOnTable={false} />
+              <RegisterStudentModal isOnTable={false} />
+              {user?.perfil == "Admin" && (
+                <>
+                  <RegisterSchoolModal isOnTable={false} />
+                  <RegisterSchoolUserModal />
+                </>
+              )}
+              <RegisterResponsableModal isOnTable={false} />
             </div>
             <div className="mt-16 flex justify-around rounded-2xl bg-slate-300 py-8 shadow-2xl">
               <div className="bg-purplish-blue-dark rounded-2xl">

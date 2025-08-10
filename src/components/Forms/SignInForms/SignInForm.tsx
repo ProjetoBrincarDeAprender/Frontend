@@ -37,7 +37,10 @@ export default function SignInForm() {
           nome_completo: profileData.nome_completo,
           email: profileData.email,
           perfil: profileData.perfil.nome,
-          escola: profileData.escola?.nome,
+          escola: {
+            id: profileData.escolaId || null,
+            nome: profileData.escola?.nome || "",
+          },
         });
 
         toast.success("Login realizado com sucesso!");

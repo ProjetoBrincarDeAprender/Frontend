@@ -1,18 +1,21 @@
-import { useState } from "react";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
 import EditSchoolForm from "@/components/School/EditForm";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { useTable } from "@/hooks/Table/useTable";
+import { useState } from "react";
+import { toast } from "sonner";
 
 interface EditSchoolModalProps {
   schoolId: number;
 }
 export function EditSchoolModal({ schoolId }: EditSchoolModalProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const { setUpdating } = useTable();
 
   const handleSuccess = () => {
-    console.log("Escola editada com sucesso!");
     setIsOpen(false);
-    window.location.reload();
+    toast.success("Escola atualizada com sucesso!");
+    setUpdating(true);
   };
 
   return (

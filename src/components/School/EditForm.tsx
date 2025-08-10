@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import api from "@/utils/api";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AxiosError } from "axios";
@@ -8,7 +7,7 @@ import z from "zod";
 import { Form } from "../Forms/Form/Root";
 import { Link } from "../utils/Link/Link";
 // No topo do EditForm.tsx
-import { IMaskInput } from 'react-imask';
+import { IMaskInput } from "react-imask";
 
 const formSchema = z.object({
   nome: z
@@ -17,25 +16,20 @@ const formSchema = z.object({
     .min(2, { error: "Nome da escola deve ter pelo menos 2 caracteres" })
     .optional(),
   descricao: z.string().optional(),
-  localizacao: z.string({ error: "O endereço da escola é obrigatório" }).optional(),
-  telefone: z.string().refine(
-    (val) => {
-      const phoneRegex = /^\(\d{2}\) \d{4,5}-\d{4}$/;
-      return phoneRegex.test(val);
-    },
-    { message: "Telefone inválido" },
-  ).optional(),
-  email: z.email({ error: "Email inválido" }).optional(),
-  usuariosIds: z
+  localizacao: z
+    .string({ error: "O endereço da escola é obrigatório" })
+    .optional(),
+  telefone: z
     .string()
     .refine(
       (val) => {
-        const ids = val.split(",").map((id) => id.trim());
-        return ids.every((id) => !isNaN(Number(id)));
+        const phoneRegex = /^\(\d{2}\) \d{4,5}-\d{4}$/;
+        return phoneRegex.test(val);
       },
-      { message: "IDs de usuários inválidos" },
+      { message: "Telefone inválido" },
     )
     .optional(),
+  email: z.email({ error: "Email inválido" }).optional(),
 });
 
 type EditSchoolFormProps = {
@@ -66,7 +60,6 @@ export default function EditSchoolForm({ id, onSuccess }: EditSchoolFormProps) {
                   .join(", ")
               : "",
           };
-          console.log(formData);
           form.reset(formData);
         }
       } catch (error) {
@@ -81,23 +74,14 @@ export default function EditSchoolForm({ id, onSuccess }: EditSchoolFormProps) {
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     try {
+      console.log("Dados enviados:", data);
+      const verifiedData = Object.fromEntries(
+        Object.entries(data).filter(
+          ([_, value]) => value !== undefined && value !== null,
+        ),
+      );
 
-      // const verifyData = Object.fromEntries(
-      //   Object.entries(data).filter(
-      //     ([_, value]) => value !== undefined && value !== null,
-      //   ),
-      // );
-
-      // const payload = {
-      //   ...verifyData,
-      //   usuariosIds: verifyData.usuariosIds
-      //     ? verifyData.usuariosIds.split(",").map((id) => Number(id.trim()))
-      //     : [],
-      // };
-
-      const { usuariosIds, ...updateData } = data;
-      const payload = updateData;
-
+      const payload = verifiedData;
 
       const response = await api.put(`/school/update/${id}`, payload);
 
@@ -188,29 +172,19 @@ export default function EditSchoolForm({ id, onSuccess }: EditSchoolFormProps) {
           form={form}
           name="telefone"
           render={({ field }) => (
-            
-            <IMaskInput
-              mask="(00) 00000-0000" 
-              value={field.value || ''} 
-              onAccept={(value: string) => {
-                field.onChange(value);
-              }}
-              placeholder="(83) 99999-9999"
-              className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-            />
+            <Form.Item>
+              <IMaskInput
+                mask="(00) 00000-0000"
+                value={field.value || ""}
+                onAccept={(value: string) => {
+                  field.onChange(value);
+                }}
+                placeholder="(83) 99999-9999"
+                className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+              />
+            </Form.Item>
           )}
         />
-        {/* <Form.Field
-          form={form}
-          name="usuariosIds"
-          render={({ field }) => (
-            <Form.Input
-              {...field}
-              label="Usuários"
-              placeholder="IDs dos usuários"
-            />
-          )}
-        /> */}
         <Form.Submit>Atualizar Dados</Form.Submit>
       </Form.Main>
       <p className="mt-6 w-full text-center text-lg">

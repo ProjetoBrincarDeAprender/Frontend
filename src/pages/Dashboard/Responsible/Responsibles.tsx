@@ -3,13 +3,13 @@ import { Footer } from "../../../components/Footer/Footer";
 import { Header } from "../../../components/Header/Header";
 import { LateralMenu } from "../../../components/LateralMenu/LateralMenu";
 
-import TeacherTable from "@/components/Teacher/TeacherTable";
 import saturn from "../../../assets/saturn.svg";
 
-import { RegisterTeacherModal } from "@/components/modals/RegisterTeacherModal";
+import { RegisterResponsableModal } from "@/components/modals/RegisterResponsableModal";
+import ResponsibleTable from "@/components/Responsible/TeacherTable";
 import { TableProvider } from "@/contexts/Table/provider";
 
-export function Teachers() {
+export function Responsibles() {
   const { user } = useUser();
 
   const username = user?.nome_completo || "Usuário";
@@ -24,16 +24,16 @@ export function Teachers() {
             <img className="max-w-24" src={saturn} alt="Saturn" />
             <div className="flex flex-col gap-2">
               <h1 className="text-2xl font-semibold">Bem vindo usuário,</h1>
-              <h1 className="text-5xl font-bold">Professores</h1>
+              <h1 className="text-5xl font-bold">Responsáveis</h1>
             </div>
           </div>
           <TableProvider>
             <div className="mt-16 flex items-center justify-between">
               <div className="flex items-center gap-8 text-2xl font-bold">
-                <RegisterTeacherModal isOnTable />
+                <RegisterResponsableModal isOnTable />
               </div>
             </div>
-            <TeacherTable />
+            <ResponsibleTable />
           </TableProvider>
         </main>
         <div className="mt-20">
