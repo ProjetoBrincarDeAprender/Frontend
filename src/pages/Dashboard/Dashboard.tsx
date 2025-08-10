@@ -35,7 +35,7 @@ export default function Dashboard() {
               />
               <div className="flex flex-col gap-2">
                 <h1 className="text-xl font-semibold">Bem vindo {username},</h1>
-                <h1 className="text-4xl">PAINEL DE LOGISTICA</h1>
+                <h1 className="text-4xl">Painel de Logistica</h1>
               </div>
             </div>
             <div className="mt-16 flex justify-center gap-8">
