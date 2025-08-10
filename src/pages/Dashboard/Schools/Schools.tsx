@@ -1,11 +1,12 @@
-import { Footer } from "../../../components/Footer/Footer";
-import { Header } from "../../../components/Header/Header";
-import { LateralMenu } from "../../../components/LateralMenu/LateralMenu";
 import { RegisterSchoolModal } from "@/components/modals/RegisterSchoolModal";
 import { RegisterSchoolUserModal } from "@/components/modals/RegisterSchoolUserModal";
 import { useUser } from "@/hooks/User/useUser";
+import { Footer } from "../../../components/Footer/Footer";
+import { Header } from "../../../components/Header/Header";
+import { LateralMenu } from "../../../components/LateralMenu/LateralMenu";
 
 import SchoolTable from "@/components/School/SchoolTable";
+import { TableProvider } from "@/contexts/Table/provider";
 import saturn from "../../../assets/saturn.svg";
 
 //import { RegisterSchoolModal } from "@/components/modals/RegisterSchoolModal";
@@ -28,22 +29,17 @@ export function Schools() {
             </div>
           </div>
 
-          <div className="mt-16 flex items-center justify-between">
-            <input
-              type="text"
-              placeholder="Pesquisar por nome"
-              name="searchInput"
-              id="searchInput"
-              className="text-purplish-blue outline-am0 focus:outline-yellow rounded-lg px-2 py-1 font-bold outline-4 transition duration-300"
-            />
-            <div className="flex items-center gap-8 text-2xl font-bold">
-              <RegisterSchoolModal />
-              <RegisterSchoolUserModal />
+          <TableProvider>
+            <div className="mt-16 flex items-center justify-between">
+              <div className="flex items-center gap-8 text-2xl font-bold">
+                <RegisterSchoolModal isOnTable />
+                <RegisterSchoolUserModal />
+              </div>
             </div>
-          </div>
-          <div className="mt-12">
-            <SchoolTable />
-          </div>
+            <div className="mt-12">
+              <SchoolTable />
+            </div>
+          </TableProvider>
         </main>
         <div className="mt-20">
           <Footer />

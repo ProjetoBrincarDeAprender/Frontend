@@ -18,5 +18,8 @@ export type User = {
   nome_completo: string;
   email: string;
   perfil: string;
-  escola: string | null;
+  escola: {
+    id: number | null;
+    nome: string | null;
+  } | null;
 };

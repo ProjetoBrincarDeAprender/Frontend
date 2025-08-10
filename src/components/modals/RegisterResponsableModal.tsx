@@ -1,14 +1,21 @@
 import { ResponsableSignUpForm } from "@/components/Forms/SignUpForms/ResponsableForm";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { useTable } from "@/hooks/Table/useTable";
 import { useState } from "react";
+import { toast } from "sonner";
+import type { RegisterModalProps } from "./registerModalProps";
 
-export function RegisterResponsableModal() {
+export function RegisterResponsableModal({
+  isOnTable = true,
+}: RegisterModalProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const { setUpdating } = isOnTable ? useTable() : { setUpdating: () => {} };
 
   const handleSuccess = () => {
-    console.log("Cadastro realizado com sucesso!");
     setIsOpen(false);
+    toast.success("Cadastro realizado com sucesso!");
+    if (isOnTable) setUpdating(true);
   };
 
   return (
