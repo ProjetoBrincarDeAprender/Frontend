@@ -2,13 +2,14 @@ import SchoolUserSignUpForm from "@/components/Forms/SignUpForms/schoolUserForm"
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { useState } from "react";
+import { toast } from "sonner";
 
 export function RegisterSchoolUserModal() {
   const [isOpen, setIsOpen] = useState(false);
 
   const handleSuccess = () => {
-    console.log("Cadastro realizado com sucesso!");
     setIsOpen(false);
+    toast.success("Cadastro realizado com sucesso!");
   };
 
   return (

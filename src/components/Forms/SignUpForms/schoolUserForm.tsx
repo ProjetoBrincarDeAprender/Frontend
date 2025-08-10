@@ -1,11 +1,12 @@
 import api from "@/utils/api";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AxiosError } from "axios";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { useNavigate } from "react-router";
 import { z } from "zod";
 import { Link } from "../../utils/Link/Link";
 import { Form } from "../Form/Root";
+import type { SignUpFormProps } from "./signUpFormProps";
 
 const formSchema = z
   .object({
@@ -38,19 +39,39 @@ const formSchema = z
     path: ["confirmar_senha"],
   });
 
-export default function SchoolUserSignUpForm() {
-  const navigate = useNavigate();
-
+export default function SchoolUserSignUpForm({ onSuccess }: SignUpFormProps) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       nome_completo: "",
       email: "",
-      escolaId: "",
       senha: "",
       confirmar_senha: "",
     },
   });
+  const [schools, setSchools] = useState<{ id: number; nome: string }[] | null>(
+    null,
+  );
+
+  useEffect(() => {
+    const fetchSchools = async () => {
+      try {
+        const response = await api.get("/school/list");
+
+        if (response.status === 200) {
+          setSchools(response.data);
+        }
+      } catch (error) {
+        if (error instanceof AxiosError) {
+          form.setError("root", {
+            message: `Erro ao carregar escolas: ${error.message}`,
+          });
+        }
+      }
+    };
+
+    fetchSchools();
+  }, [form]);
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     const payload = {
@@ -62,7 +83,7 @@ export default function SchoolUserSignUpForm() {
       const response = await api.post("/user/register", payload);
 
       if (response.status === 201) {
-        navigate("/login");
+        onSuccess();
       }
     } catch (error) {
       if (error instanceof AxiosError) {
@@ -120,17 +141,23 @@ export default function SchoolUserSignUpForm() {
             />
           )}
         />
-        <Form.Field
-          form={form}
-          name="escolaId"
-          render={({ field }) => (
-            <Form.Input
-              {...field}
-              label="ID da Escola do Usuário"
-              placeholder="Ex. 1092"
-            />
-          )}
-        />
+        {schools && (
+          <Form.Field
+            form={form}
+            name="escolaId"
+            render={({ field }) => (
+              <Form.Select
+                {...field}
+                label="Escola"
+                placeholder="Selecione a Escola"
+                options={schools.map((school) => ({
+                  value: String(school.id),
+                  label: school.nome,
+                }))}
+              />
+            )}
+          />
+        )}
         <Form.Field
           form={form}
           name="senha"

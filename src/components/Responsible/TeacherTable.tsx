@@ -5,21 +5,19 @@ import { Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router";
 import { DataTable } from "../utils/DataTable/DataTable";
-import { TeacherColumns, type Teacher } from "./TableData";
+import { ResponsibleColumns, type Responsible } from "./TableData";
 
-export default function TeacherTable() {
-  const [data, setData] = useState<Teacher[] | null>(null);
+export default function ResponsibleTable() {
+  const [data, setData] = useState<Responsible[] | null>(null);
   const [searchParams, _] = useSearchParams();
   const { updating, setUpdating } = useTable();
   const { user } = useUser();
-
-  console.log(user);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await api.get(
-          `/user/list?type=Professor${user?.perfil != "Admin" ? "&escolaId=" + user?.escola?.id : ""}`,
+          `/user/list?type=Responsavel${user?.perfil != "Admin" ? "&escolaId=" + user?.escola?.id : ""}`,
           {},
         );
 
@@ -40,7 +38,7 @@ export default function TeacherTable() {
         <Loader2 className="animate-spin" />
       ) : data ? (
         <DataTable
-          columns={TeacherColumns}
+          columns={ResponsibleColumns}
           data={data}
           {...{
             page: searchParams.get("page")

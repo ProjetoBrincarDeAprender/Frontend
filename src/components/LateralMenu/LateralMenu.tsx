@@ -1,6 +1,7 @@
-import { useState, useRef, useEffect } from "react";
-import { useNavigate } from "react-router";
+import { useUser } from "@/hooks/User/useUser";
+import { useEffect, useRef, useState } from "react";
 import { FiMenu } from "react-icons/fi";
+import { useNavigate } from "react-router";
 import profile from "../../assets/astronauta-profile.svg";
 
 interface LateralMenuProps {
@@ -11,6 +12,7 @@ export function LateralMenu({ username }: LateralMenuProps) {
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
+  const { user } = useUser();
 
   // Fecha o menu ao clicar fora
   useEffect(() => {
@@ -84,17 +86,19 @@ export function LateralMenu({ username }: LateralMenuProps) {
               Alunos
             </button>
           </li>
-          <li>
-            <button
-              onClick={() => {
-                navigate("/dashboard/schools");
-                setMenuOpen(false);
-              }}
-              className="block w-full cursor-pointer rounded-lg px-4 py-3 text-center text-lg font-bold text-white transition-colors hover:bg-[var(--color-am2)]"
-            >
-              Escolas
-            </button>
-          </li>
+          {user?.perfil == "Admin" && (
+            <li>
+              <button
+                onClick={() => {
+                  navigate("/dashboard/schools");
+                  setMenuOpen(false);
+                }}
+                className="block w-full cursor-pointer rounded-lg px-4 py-3 text-center text-lg font-bold text-white transition-colors hover:bg-[var(--color-am2)]"
+              >
+                Escolas
+              </button>
+            </li>
+          )}
           <li>
             <button
               onClick={() => {
@@ -109,7 +113,7 @@ export function LateralMenu({ username }: LateralMenuProps) {
           <li>
             <button
               onClick={() => {
-                navigate("/dashboard/responsable");
+                navigate("/dashboard/responsables");
                 setMenuOpen(false);
               }}
               className="block w-full cursor-pointer rounded-lg px-4 py-3 text-center text-lg font-bold text-white transition-colors hover:bg-[var(--color-am2)]"
