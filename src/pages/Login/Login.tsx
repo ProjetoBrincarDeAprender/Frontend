@@ -1,4 +1,4 @@
-import SignInForm from "@/components/SignInForm";
+import SignInForm from "@/components/features/login/SignInForm";
 import { useUser } from "@/hooks/User/useUser";
 import { Navigate } from "react-router";
 import { Footer } from "../../components/footer/Footer";
