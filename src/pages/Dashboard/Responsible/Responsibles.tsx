@@ -6,7 +6,7 @@ import { LateralMenu } from "../../../components/sideBar/sideBar";
 import saturn from "../../../assets/saturn.svg";
 
 import { RegisterResponsableModal } from "@/components/features/users/responsible/create/ResponsibleCreateModal";
-import ResponsibleTable from "@/components/Responsible/TeacherTable";
+import ResponsibleTable from "@/components/features/users/responsible/files/TeacherTable";
 import { TableProvider } from "@/contexts/Table/provider";
 
 export function Responsibles() {
