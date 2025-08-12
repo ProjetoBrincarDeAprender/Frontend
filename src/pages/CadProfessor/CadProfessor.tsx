@@ -1,6 +1,6 @@
-import { Footer } from "@/components/Footer/Footer";
-import TeacherSignUpForm from "@/components/Forms/SignUpForms/TeacherForm";
-import { Header } from "../../components/Header/Header";
+import { Footer } from "@/components/footer/Footer";
+import TeacherSignUpForm from "@/components/features/users/teacher/create/TeacherCreateForm";
+import { Header } from "../../components/header/Header";
 import "./CadProfessor.css";
 
 export function RegisterProfessorPage() {

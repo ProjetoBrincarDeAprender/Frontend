@@ -1,6 +1,6 @@
-import { Footer } from "@/components/Footer/Footer";
-import { ResponsableSignUpForm } from "@/components/Forms/SignUpForms/ResponsableForm";
-import { Header } from "../../components/Header/Header";
+import { Footer } from "@/components/footer/Footer";
+import { ResponsableSignUpForm } from "@/components/features/users/responsible/create/ResponsibleCreateForm";
+import { Header } from "../../components/header/Header";
 import "./CadResponsavel.css";
 
 export function RegisterResponsablePage() {

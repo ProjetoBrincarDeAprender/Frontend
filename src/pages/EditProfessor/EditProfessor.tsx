@@ -1,5 +1,5 @@
-import { TeacherEditForm } from "@/components/Forms/EditForms/TeacherForm";
-import { Header } from "@/components/Header/Header";
+import { TeacherEditForm } from "@/components/features/users/teacher/edit/TeacherEditForm";
+import { Header } from "@/components/header/Header";
 import { useParams } from "react-router";
 
 export function EditTeacherPage() {

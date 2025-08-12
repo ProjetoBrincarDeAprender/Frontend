@@ -1,5 +1,5 @@
-import { StudentEditForm } from "@/components/Forms/EditForms/StudentForm";
-import { Header } from "@/components/Header/Header";
+import { StudentEditForm } from "@/components/features/users/students/edit/StudentEditForm";
+import { Header } from "@/components/header/Header";
 import { useParams } from "react-router";
 
 export function EditStudentPage() {
