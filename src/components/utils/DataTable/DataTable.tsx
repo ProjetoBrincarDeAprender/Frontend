@@ -58,7 +58,7 @@ export function DataTable<TData, TValue>({
 
   return (
     <div>
-      <div className="flex items-center py-4">
+      <div className="flex items-center gap-2 py-4">
         <Input
           placeholder={`Digite o ${selectedColumn}`}
           value={
@@ -67,7 +67,7 @@ export function DataTable<TData, TValue>({
           onChange={(event) =>
             table.getColumn(selectedColumn)?.setFilterValue(event.target.value)
           }
-          className="max-w-sm"
+          className="max-h-10 max-w-64"
         />
         <Select onValueChange={setSelectedColumn} defaultValue={selectedColumn}>
           <SelectTrigger>
@@ -87,8 +87,8 @@ export function DataTable<TData, TValue>({
         </Select>
       </div>
       <div className="w-full overflow-hidden overflow-x-auto rounded-md border">
-        <Table className="custom-table">
-          <TableHeader>
+        <Table className="custom-table bg-blue-50">
+          <TableHeader className="bg-blue-200">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
