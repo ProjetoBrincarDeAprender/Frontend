@@ -1,5 +1,5 @@
-import CreateSchoolForm from "@/components/School/CreateForm";
-import { Header } from "../../components/Header/Header";
+import CreateSchoolForm from "@/components/features/users/school/create/SchoolCreateForm";
+import { Header } from "../../components/header/Header";
 import "../CadProfessor/CadProfessor.css";
 
 export function RegisterSchoolPage() {

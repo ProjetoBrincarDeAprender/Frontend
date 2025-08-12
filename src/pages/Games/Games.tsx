@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { Footer } from "../../components/Footer/Footer";
-import { Header } from "../../components/Header/Header";
+import { Footer } from "../../components/footer/Footer";
+import { Header } from "../../components/header/Header";
 
 import { Card, type CardProps } from "../../components/utils/Card/Card";
 
@@ -23,14 +23,14 @@ export function Games() {
   return (
     <>
       <Header />
-      <main className="pt-48 bg-slate-200">
-        <div className="mb-16 flex border-4 border-am2 items-center rounded-xl mx-auto max-w-md text-gray-900">
-          <input type="text" className="py-2 px-6 w-full focus:outline-0" />
+      <main className="bg-slate-200 pt-48">
+        <div className="border-am2 mx-auto mb-16 flex max-w-md items-center rounded-xl border-4 text-gray-900">
+          <input type="text" className="w-full px-6 py-2 focus:outline-0" />
           <span className="block px-4" onClick={handleSubmitSearch}>
             <BiSearch size={32} className="text-purplish-blue" />
           </span>
         </div>
-        <div className="py-16 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-y-32">
+        <div className="grid grid-cols-1 gap-y-32 py-16 sm:grid-cols-2 md:grid-cols-3">
           {games.map((game) => (
             <Card
               key={game.gameIdUrl}

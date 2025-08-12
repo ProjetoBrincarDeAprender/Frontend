@@ -1,5 +1,5 @@
-import { ResponsableEditForm } from "@/components/Forms/EditForms/ResponsableForm";
-import { Header } from "@/components/Header/Header";
+import { ResponsableEditForm } from "@/components/features/users/responsible/edit/ResponsibleEditForm";
+import { Header } from "@/components/header/Header";
 import { useParams } from "react-router";
 
 export function EditResponsablePage() {

@@ -1,11 +1,11 @@
-import { RegisterSchoolModal } from "@/components/modals/RegisterSchoolModal";
-import { RegisterSchoolUserModal } from "@/components/modals/RegisterSchoolUserModal";
+import { RegisterSchoolModal } from "@/components/features/users/school/create/SchoolCreateModal";
+import { RegisterSchoolUserModal } from "@/components/features/users/schoolUser/create/SchoolUserCreateModal";
 import { useUser } from "@/hooks/User/useUser";
-import { Footer } from "../../../components/Footer/Footer";
-import { Header } from "../../../components/Header/Header";
-import { LateralMenu } from "../../../components/LateralMenu/LateralMenu";
+import { Footer } from "../../../components/footer/Footer";
+import { Header } from "../../../components/header/Header";
+import { LateralMenu } from "../../../components/sideBar/sideBar";
 
-import SchoolTable from "@/components/School/SchoolTable";
+import SchoolTable from "@/components/features/users/school/files/SchoolTable";
 import { TableProvider } from "@/contexts/Table/provider";
 import saturn from "../../../assets/saturn.svg";
 

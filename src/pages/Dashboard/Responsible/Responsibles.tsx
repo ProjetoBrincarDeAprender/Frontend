@@ -1,11 +1,11 @@
 import { useUser } from "@/hooks/User/useUser";
-import { Footer } from "../../../components/Footer/Footer";
-import { Header } from "../../../components/Header/Header";
-import { LateralMenu } from "../../../components/LateralMenu/LateralMenu";
+import { Footer } from "../../../components/footer/Footer";
+import { Header } from "../../../components/header/Header";
+import { LateralMenu } from "../../../components/sideBar/sideBar";
 
 import saturn from "../../../assets/saturn.svg";
 
-import { RegisterResponsableModal } from "@/components/modals/RegisterResponsableModal";
+import { RegisterResponsableModal } from "@/components/features/users/responsible/create/ResponsibleCreateModal";
 import ResponsibleTable from "@/components/Responsible/TeacherTable";
 import { TableProvider } from "@/contexts/Table/provider";
 
