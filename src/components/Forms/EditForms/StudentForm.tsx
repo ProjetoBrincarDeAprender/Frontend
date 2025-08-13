@@ -57,7 +57,6 @@ export function StudentEditForm({ id, onSuccess }: StudentFormProps) {
             escolaId: response.data.escolaId || "",
           };
           form.reset(studentData);
-          console.log(form.formState.defaultValues);
         }
       } catch (error) {
         console.log(error);
@@ -86,10 +85,10 @@ export function StudentEditForm({ id, onSuccess }: StudentFormProps) {
       }
     };
 
-    fetchUserData();
     if (user?.perfil == "Admin") {
       fetchSchools();
     }
+    fetchUserData();
   }, [id, form, user?.perfil]);
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
@@ -220,7 +219,8 @@ export function StudentEditForm({ id, onSuccess }: StudentFormProps) {
             name="escolaId"
             render={({ field }) => (
               <Form.Select
-                {...field}
+                defaultValue={String(field.value)}
+                onChange={field.onChange}
                 label="Escola"
                 placeholder="Selecione a Escola"
                 options={schools.map((school) => ({

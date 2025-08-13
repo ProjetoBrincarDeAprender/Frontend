@@ -174,18 +174,18 @@ export default function EditSchoolForm({ id, onSuccess }: EditSchoolFormProps) {
           render={({ field }) => (
             <Form.Item>
               <div className="flex w-full flex-col gap-2">
-              <label htmlFor="telefone" className="text-sm font-medium">
-                Telefone
-              </label>
-              <IMaskInput
-                mask="(00) 00000-0000"
-                value={field.value || ""}
-                onAccept={(value: string) => {
-                  field.onChange(value);
-                }}
-                placeholder="(83) 99999-9999"
-                className="flex h-13 w-full rounded-lg px-6 py-2 text-base text-gray-800 bg-transparent border border-purplish-blue placeholder:text-gray-500 transition-colors ease-in-out duration-200 hover:border-purplish-blue focus-visible:outline-none focus-visible:ring-2 disabled:cursor-not-allowed disabled:opacity-50"
-              />
+                <label htmlFor="telefone" className="text-sm font-medium">
+                  Telefone
+                </label>
+                <IMaskInput
+                  mask="(00) 00000-0000"
+                  value={field.value || ""}
+                  onAccept={(value: string) => {
+                    field.onChange(value);
+                  }}
+                  placeholder="(83) 99999-9999"
+                  className="border-purplish-blue hover:border-purplish-blue flex h-13 w-full rounded-lg border bg-transparent px-6 py-2 text-base text-gray-800 transition-colors duration-200 ease-in-out placeholder:text-gray-500 focus-visible:ring-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+                />
               </div>
             </Form.Item>
           )}
