@@ -1,12 +1,12 @@
 import { useUser } from "@/hooks/User/useUser";
-import { Footer } from "../../../components/Footer/Footer";
-import { Header } from "../../../components/Header/Header";
-import { LateralMenu } from "../../../components/LateralMenu/LateralMenu";
+import { Footer } from "../../../components/footer/Footer";
+import { Header } from "../../../components/header/Header";
+import { LateralMenu } from "../../../components/sideBar/sideBar";
 
-import StudentTable from "@/components/Student/StudentTable";
+import StudentTable from "@/components/features/users/students/files/StudentTable";
 import saturn from "../../../assets/saturn.svg";
 
-import { RegisterStudentModal } from "@/components/modals/RegisterStudentModal";
+import { RegisterStudentModal } from "@/components/features/users/students/create/StudentCreateModal";
 import { TableProvider } from "@/contexts/Table/provider";
 
 export function Students() {

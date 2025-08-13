@@ -1,4 +1,3 @@
-import { FancyMultiSelect } from "@/components/forms/MultiSelect";
 import { Form } from "@/components/forms/Root";
 import { useUser } from "@/hooks/User/useUser";
 import api from "@/utils/api";
@@ -15,15 +14,14 @@ const formSchema = z.object({
     .min(2, { error: "Nome completo deve ter pelo menos 2 caracteres" }),
   email: z.email({ error: "Digite um email válido" }),
   escolaId: z.string().optional(),
-  usersIds: z.array(z.string()).optional(),
 });
 
-type ResponsibleFormProps = {
+type ResponsableFormProps = {
   id: number;
   onSuccess: () => void;
 };
 
-export function ResponsibleEditForm({ id, onSuccess }: ResponsibleFormProps) {
+export function ResponsableEditForm({ id, onSuccess }: ResponsableFormProps) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
   });
@@ -31,12 +29,6 @@ export function ResponsibleEditForm({ id, onSuccess }: ResponsibleFormProps) {
   const [schools, setSchools] = useState<{ id: number; nome: string }[] | null>(
     null,
   );
-  const [students, setStudents] = useState<
-    { id: number; nome_completo: string; email: string }[] | null
-  >(null);
-  const [allStudents, setAllStudents] = useState<
-    { id: number; nome_completo: string; email: string }[] | null
-  >(null);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -46,7 +38,6 @@ export function ResponsibleEditForm({ id, onSuccess }: ResponsibleFormProps) {
         if (response.status === 200) {
           const userData = {
             ...response.data,
-            escolaId: String(response.data.escolaId),
           };
           form.reset(userData);
         }
@@ -71,65 +62,24 @@ export function ResponsibleEditForm({ id, onSuccess }: ResponsibleFormProps) {
         }
       }
     };
-    const fetchRelations = async () => {
-      try {
-        const response = await api.get(`/responsible/list/${id}/students`);
-        if (response.status == 200) {
-          const users = response.data;
-          setStudents(users);
-          const originalIds = users.map((user: { id: number }) =>
-            String(user.id),
-          );
-          form.setValue("usersIds", originalIds);
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    };
 
-    const fetchAllStudents = async () => {
-      try {
-        const response = await api.get(
-          `/user/list?type=Aluno${user?.perfil == "Admin" ? "" : `&escolaId=${user?.escola?.id}`}`,
-        );
-        if (response.status == 200) {
-          const users = response.data;
-          setAllStudents(users);
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    };
-
-    fetchRelations();
-    fetchAllStudents();
+    fetchUserData();
     if (user?.perfil == "Admin") {
       fetchSchools();
     }
-    fetchUserData();
-  }, [id, form, user?.perfil, user?.escola?.id]);
+  }, [id, form, user?.perfil]);
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
-    const userData = {
-      nome_completo: data.nome_completo,
-      email: data.email,
-      escolaId: data.escolaId,
-    };
-
-    const userPayload = Object.fromEntries(
-      Object.entries(userData).filter(
+    const payload = Object.fromEntries(
+      Object.entries(data).filter(
         ([_, value]) => value !== undefined && value !== "",
       ),
     );
 
     try {
-      const responseUser = await api.put(`/user/update/${id}`, userPayload);
+      const response = await api.put(`/user/update/${id}`, payload);
 
-      await api.put(`/responsible/update/${id}`, {
-        usersIds: data.usersIds?.map((id) => Number(id)) || [],
-      });
-
-      if (responseUser.status === 200) {
+      if (response.status === 200) {
         onSuccess();
       }
     } catch (error) {
@@ -173,7 +123,7 @@ export function ResponsibleEditForm({ id, onSuccess }: ResponsibleFormProps) {
             <Form.Input
               {...field}
               label="Nome Completo"
-              placeholder="Mudar nome do(a) responsável"
+              placeholder="Modificar nome completo"
             />
           )}
         />
@@ -194,32 +144,12 @@ export function ResponsibleEditForm({ id, onSuccess }: ResponsibleFormProps) {
             name="escolaId"
             render={({ field }) => (
               <Form.Select
-                defaultValue={String(field.value)}
-                onChange={field.onChange}
+                {...field}
                 label="Escola"
                 placeholder="Selecione a Escola"
                 options={schools.map((school) => ({
                   value: String(school.id),
                   label: school.nome,
-                }))}
-              />
-            )}
-          />
-        )}
-        {allStudents && students && (
-          <Form.Field
-            form={form}
-            name="usersIds"
-            render={({ field }) => (
-              <FancyMultiSelect
-                onSelect={field.onChange}
-                data={allStudents.map(({ id, email }) => ({
-                  value: String(id),
-                  label: email,
-                }))}
-                preSelectedData={students.map(({ id, email }) => ({
-                  value: String(id),
-                  label: email,
                 }))}
               />
             )}
