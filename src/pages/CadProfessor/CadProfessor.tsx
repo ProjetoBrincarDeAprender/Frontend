@@ -1,12 +1,12 @@
+import TeacherSignUpForm from "@/components/features/users/teacher/create/TeacherCreateForm";
 import { Footer } from "@/components/Footer/Footer";
-import TeacherSignUpForm from "@/components/Forms/SignUpForms/TeacherForm";
-import { Header } from "../../components/Header/Header";
+import { Header } from "@/components/Header/Header";
 import "./CadProfessor.css";
 
 export function RegisterProfessorPage() {
   return (
     <div className="page-with-header">
-      <Header username="Usuario" />
+      <Header />
 
       <div className="page-container">
         <TeacherSignUpForm />

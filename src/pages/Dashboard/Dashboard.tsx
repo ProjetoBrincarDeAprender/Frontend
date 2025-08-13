@@ -1,6 +1,4 @@
-import { Footer } from "../../components/Footer/Footer";
-import { Header } from "../../components/Header/Header";
-import { LateralMenu } from "../../components/LateralMenu/LateralMenu";
+import { LateralMenu } from "../../components/sideBar/sideBar";
 
 import graphic from "../../assets/graphic.svg";
 import saturn from "../../assets/saturn.svg";
@@ -8,12 +6,14 @@ import saturn from "../../assets/saturn.svg";
 import { InfoBadge } from "../../components/utils/InfoBadge/InfoBadge";
 import "./Dashboard.css";
 
-import { RegisterSchoolUserModal } from "@/components/modals/RegisterSchoolUserModal";
+import { RegisterSchoolUserModal } from "@/components/features/users/schoolUser/create/SchoolUserCreateModal";
+import { Footer } from "@/components/Footer/Footer";
+import { Header } from "@/components/Header/Header";
 import { useUser } from "@/hooks/User/useUser";
-import { RegisterResponsableModal } from "../../components/modals/RegisterResponsableModal";
-import { RegisterSchoolModal } from "../../components/modals/RegisterSchoolModal";
-import { RegisterStudentModal } from "../../components/modals/RegisterStudentModal";
-import { RegisterTeacherModal } from "../../components/modals/RegisterTeacherModal";
+import { RegisterResponsableModal } from "../../components/features/users/responsible/create/ResponsibleCreateModal";
+import { RegisterSchoolModal } from "../../components/features/users/school/create/SchoolCreateModal";
+import { RegisterStudentModal } from "../../components/features/users/students/create/StudentCreateModal";
+import { RegisterTeacherModal } from "../../components/features/users/teacher/create/TeacherCreateModal";
 
 export default function Dashboard() {
   const { user } = useUser();
