@@ -1,13 +1,9 @@
-import ResponsableEditForm from "@/components/School/EditForm";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { useTable } from "@/hooks/Table/useTable";
 import { useState } from "react";
 import { toast } from "sonner";
-
-// interface EditSchoolModalProps {
-//   schoolId: number;
-// }
+import { ResponsibleEditForm } from "../Forms/EditForms/ResponsibleForm";
 
 interface EditResponsabletModalProps {
   id: number;
@@ -32,7 +28,7 @@ export function EditResponsableModal({ id }: EditResponsabletModalProps) {
       </DialogTrigger>
 
       <DialogContent className="max-h-[70vh] overflow-y-auto sm:max-w-2xl">
-        <ResponsableEditForm id={id} onSuccess={handleSuccess} />
+        <ResponsibleEditForm id={id} onSuccess={handleSuccess} />
       </DialogContent>
     </Dialog>
   );

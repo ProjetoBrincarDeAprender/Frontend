@@ -1,4 +1,5 @@
 import { useUser } from "@/hooks/User/useUser";
+import type { UserProfile } from "@/types/user";
 import api from "@/utils/api";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AxiosError } from "axios";
@@ -6,6 +7,7 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Link } from "../../utils/Link/Link";
+import { FancyMultiSelect } from "../Form/MultiSelect";
 import { Form } from "../Form/Root";
 import type { SignUpFormProps } from "./signUpFormProps";
 
@@ -31,6 +33,7 @@ const formSchema = z
         error: "Confirmação de senha deve ter no máximo 32 caracteres",
       }),
     escolaId: z.string().optional(),
+    usersIds: z.array(z.string()).optional(),
   })
   .refine((data) => data.senha == data.confirmar_senha, {
     error: "As senhas devem ser iguais",
@@ -51,6 +54,7 @@ export function ResponsableSignUpForm({ onSuccess }: SignUpFormProps) {
   const [schools, setSchools] = useState<{ id: number; nome: string }[] | null>(
     null,
   );
+  const [users, setUsers] = useState<UserProfile[] | null>(null);
 
   useEffect(() => {
     const fetchSchools = async () => {
@@ -68,15 +72,32 @@ export function ResponsableSignUpForm({ onSuccess }: SignUpFormProps) {
         }
       }
     };
+    const fetchUsers = async () => {
+      try {
+        const response = await api.get(
+          `/user/list?type=Aluno${user?.perfil == "Admin" ? "" : `&escolaId=${user?.escola?.id}`}`,
+        );
+
+        if (response.status == 200) {
+          const users = response.data;
+          setUsers(users);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
 
     if (user?.perfil == "Admin") {
       fetchSchools();
     }
+    fetchUsers();
   }, [form, user]);
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
+    const { usersIds, ...userData } = data;
+
     const payload = {
-      ...data,
+      ...userData,
       perfilId: 5,
       escolaId: user?.escola?.id || data.escolaId,
     };
@@ -84,8 +105,19 @@ export function ResponsableSignUpForm({ onSuccess }: SignUpFormProps) {
     try {
       const response = await api.post("/user/register", payload);
 
-      if (response.status === 201) {
-        onSuccess();
+      if (usersIds && usersIds.length > 0) {
+        const responseLinking = await api.post("/responsible/register", {
+          userId: response.data.id,
+          educandosIds: usersIds.map((value) => Number(value)),
+        });
+
+        if (response.status == 201 && responseLinking.status == 201) {
+          return onSuccess();
+        }
+      }
+
+      if (response.status == 201) {
+        return onSuccess();
       }
     } catch (error) {
       if (error instanceof AxiosError) {
@@ -181,6 +213,23 @@ export function ResponsableSignUpForm({ onSuccess }: SignUpFormProps) {
               label="Confirmar Senha"
               placeholder="Confirmar Senha"
               type="password"
+            />
+          )}
+        />
+        <Form.Field
+          form={form}
+          name="usersIds"
+          render={({ field }) => (
+            <FancyMultiSelect
+              onSelect={field.onChange}
+              data={
+                users
+                  ? users.map(({ id, email }) => ({
+                      value: String(id),
+                      label: email,
+                    }))
+                  : []
+              }
             />
           )}
         />

@@ -3,7 +3,7 @@ import type { ColumnDef } from "@tanstack/react-table";
 import DeleteModal from "../utils/DataTable/DeleteModal";
 // import { Link } from "../utils/Link/Link";
 import { ArrowUpDown } from "lucide-react";
-import { EditTeacherModal } from "../modals/EditTeacherModal";
+import { EditResponsableModal } from "../modals/EditResponsableModal";
 import { Button } from "../ui/button";
 
 export type Responsible = {
@@ -67,7 +67,7 @@ export const ResponsibleColumns: ColumnDef<Responsible>[] = [
     header: "Ações",
     cell: ({ row }) => (
       <div className="flex items-center justify-center gap-2">
-        <EditTeacherModal id={row.original.id} />
+        <EditResponsableModal id={row.original.id} />
         <DeleteModal route="/user/remove" id={row.original.id} />
       </div>
     ),
