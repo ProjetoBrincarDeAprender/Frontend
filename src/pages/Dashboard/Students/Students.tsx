@@ -1,6 +1,6 @@
+import { Footer } from "@/components/Footer/Footer";
+import { Header } from "@/components/Header/Header";
 import { useUser } from "@/hooks/User/useUser";
-import { Footer } from "../../../components/footer/Footer";
-import { Header } from "../../../components/header/Header";
 import { LateralMenu } from "../../../components/sideBar/sideBar";
 
 import StudentTable from "@/components/features/users/students/files/StudentTable";

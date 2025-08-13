@@ -1,7 +1,7 @@
+import { Footer } from "@/components/Footer/Footer";
+import { Header } from "@/components/Header/Header";
+import { LateralMenu } from "@/components/sideBar/sideBar";
 import { useUser } from "@/hooks/User/useUser";
-import { Footer } from "../../../components/footer/Footer";
-import { Header } from "../../../components/header/Header";
-import { LateralMenu } from "../../../components/sideBar/sideBar";
 
 import TeacherTable from "@/components/features/users/teacher/files/TeacherTable";
 import saturn from "../../../assets/saturn.svg";
