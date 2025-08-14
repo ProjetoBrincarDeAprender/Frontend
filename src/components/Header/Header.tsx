@@ -67,7 +67,7 @@ export function Header() {
                 </Link>
               </li>
               <Link
-                to="/dashboard"
+                to="/profile"
                 className="profile-nav bg-am1 flex items-center gap-5 rounded-full"
               >
                 <span className="ml-4 block px-5">{user.nome_completo}</span>
