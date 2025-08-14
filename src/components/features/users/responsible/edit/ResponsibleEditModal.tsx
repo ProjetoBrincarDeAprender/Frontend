@@ -1,4 +1,4 @@
-import { ResponsibleEditForm } from "@/components/Forms/EditForms/ResponsibleForm";
+import { ResponsibleEditForm } from "./ResponsibleEditForm";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { useTable } from "@/hooks/Table/useTable";
