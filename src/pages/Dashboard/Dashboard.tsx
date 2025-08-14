@@ -1,11 +1,9 @@
+// dependencias
+import { Link } from "react-router";
+
+// componentes do site
 import { LateralMenu } from "../../components/sideBar/sideBar";
-
-import graphic from "../../assets/graphic.svg";
-import saturn from "../../assets/saturn.svg";
-
 import { InfoBadge } from "../../components/utils/InfoBadge/InfoBadge";
-import "./Dashboard.css";
-
 import { RegisterSchoolUserModal } from "@/components/features/users/schoolUser/create/SchoolUserCreateModal";
 import { Footer } from "@/components/footer/Footer";
 import { Header } from "@/components/header/Header";
@@ -14,6 +12,13 @@ import { RegisterResponsableModal } from "../../components/features/users/respon
 import { RegisterSchoolModal } from "../../components/features/users/school/create/SchoolCreateModal";
 import { RegisterStudentModal } from "../../components/features/users/students/create/StudentCreateModal";
 import { RegisterTeacherModal } from "../../components/features/users/teacher/create/TeacherCreateModal";
+
+// imagens
+import graphic from "../../assets/graphic.svg";
+import saturn from "../../assets/saturn.svg";
+
+// estilos
+import "./Dashboard.css";
 
 export default function Dashboard() {
   const { user } = useUser();
@@ -40,15 +45,35 @@ export default function Dashboard() {
           </div>
           <h1 className="font-1 mt-16 text-2xl font-bold">Ações Rápidas</h1>
           <div className="font-1 text-purplish-blue mt-8 flex justify-center gap-8 font-bold uppercase">
-            <RegisterTeacherModal isOnTable={false} />
-            <RegisterStudentModal isOnTable={false} />
+            <Link
+              to="/dashboard/teachers"
+              className="blue bg-yellow hover:bg-purplish-blue hover:text-yellow flex min-h-[60px] justify-center gap-8 rounded-2xl px-8 py-4 text-center font-bold uppercase shadow-xl transition duration-200"
+            >
+              Cadastrar Professor(a)
+            </Link>
+
+            <Link
+              to="/dashboard/students"
+              className="blue bg-yellow hover:bg-purplish-blue hover:text-yellow flex min-h-[60px] justify-center gap-8 rounded-2xl px-8 py-4 text-center font-bold uppercase shadow-xl transition duration-200"
+            >
+              Cadastrar Aluno(a)
+            </Link>
+            <Link
+              to="/dashboard/responsables"
+              className="blue bg-yellow hover:bg-purplish-blue hover:text-yellow flex min-h-[60px] justify-center gap-8 rounded-2xl px-8 py-4 text-center font-bold uppercase shadow-xl transition duration-200"
+            >
+              Cadastrar Responsável
+            </Link>
             {user?.perfil == "Admin" && (
               <>
-                <RegisterSchoolModal isOnTable={false} />
-                <RegisterSchoolUserModal />
+                <Link
+                  to="/dashboard/schools"
+                  className="blue bg-yellow hover:bg-purplish-blue hover:text-yellow flex min-h-[60px] justify-center gap-8 rounded-2xl px-8 py-4 text-center font-bold uppercase shadow-xl transition duration-200"
+                >
+                  Cadastrar Escola
+                </Link>
               </>
             )}
-            <RegisterResponsableModal isOnTable={false} />
           </div>
           <div className="mt-16 flex justify-around rounded-2xl bg-slate-300 py-8 shadow-2xl">
             <div className="bg-purplish-blue-dark rounded-2xl">
