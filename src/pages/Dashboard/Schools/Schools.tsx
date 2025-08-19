@@ -1,7 +1,7 @@
 import { RegisterSchoolModal } from "@/components/features/users/school/create/SchoolCreateModal";
 import { RegisterSchoolUserModal } from "@/components/features/users/schoolUser/create/SchoolUserCreateModal";
-import { Footer } from "@/components/footer/Footer";
-import { Header } from "@/components/header/Header";
+import { Footer } from "@/components/Footer/Footer";
+import { Header } from "@/components/Header/Header";
 import { useUser } from "@/hooks/User/useUser";
 import { LateralMenu } from "../../../components/sideBar/sideBar";
 

@@ -54,7 +54,7 @@ export function StudentEditForm({ id, onSuccess }: StudentFormProps) {
             data_nascimento: response.data.data_nascimento
               ? response.data.data_nascimento.split("T")[0]
               : "",
-            escolaId: response.data.escolaId || "",
+            escolaId: String(response.data.escolaId) || "",
           };
           form.reset(studentData);
         }
@@ -199,27 +199,20 @@ export function StudentEditForm({ id, onSuccess }: StudentFormProps) {
           form={form}
           name="tema_preferido"
           render={({ field }) => (
-            <Form.Select
+            <Form.Input
               {...field}
               label="Tema Preferido"
-              placeholder="Selecione um tema"
-              options={[
-                { value: "SISTEMA", label: "Sistema" },
-                { value: "ESCURO", label: "Escuro" },
-                { value: "CLARO", label: "Claro" },
-              ]}
-              onChange={field.onChange}
-              defaultValue={field.value}
+              placeholder="Ex: Fundo do Mar, Espaço"
             />
           )}
         />
-        {user?.perfil == "Admin" && schools && (
+        {user?.perfil == "Admin" && schools ? (
           <Form.Field
             form={form}
             name="escolaId"
             render={({ field }) => (
               <Form.Select
-                defaultValue={String(field.value)}
+                value={String(field.value)}
                 onChange={field.onChange}
                 label="Escola"
                 placeholder="Selecione a Escola"
@@ -230,6 +223,8 @@ export function StudentEditForm({ id, onSuccess }: StudentFormProps) {
               />
             )}
           />
+        ) : (
+          <span>Loading...</span>
         )}
         <Form.Submit>Atualizar Dados</Form.Submit>
       </Form.Main>

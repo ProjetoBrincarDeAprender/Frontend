@@ -2,16 +2,11 @@
 import { Link } from "react-router";
 
 // componentes do site
+import { Footer } from "@/components/Footer/Footer";
+import { Header } from "@/components/Header/Header";
+import { useUser } from "@/hooks/User/useUser";
 import { LateralMenu } from "../../components/sideBar/sideBar";
 import { InfoBadge } from "../../components/utils/InfoBadge/InfoBadge";
-import { RegisterSchoolUserModal } from "@/components/features/users/schoolUser/create/SchoolUserCreateModal";
-import { Footer } from "@/components/footer/Footer";
-import { Header } from "@/components/header/Header";
-import { useUser } from "@/hooks/User/useUser";
-import { RegisterResponsableModal } from "../../components/features/users/responsible/create/ResponsibleCreateModal";
-import { RegisterSchoolModal } from "../../components/features/users/school/create/SchoolCreateModal";
-import { RegisterStudentModal } from "../../components/features/users/students/create/StudentCreateModal";
-import { RegisterTeacherModal } from "../../components/features/users/teacher/create/TeacherCreateModal";
 
 // imagens
 import graphic from "../../assets/graphic.svg";
