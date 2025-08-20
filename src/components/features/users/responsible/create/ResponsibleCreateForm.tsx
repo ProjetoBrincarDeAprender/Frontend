@@ -10,6 +10,7 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import type { SignUpFormProps } from "../../common/signUpFormProps";
+import { PasswordInput } from "@/components/ui/password-input";
 
 const formSchema = z
   .object({
@@ -192,11 +193,12 @@ export function ResponsableSignUpForm({ onSuccess }: SignUpFormProps) {
             )}
           />
         )}
+        
         <Form.Field
           form={form}
           name="senha"
           render={({ field }) => (
-            <Form.Input
+            <PasswordInput
               {...field}
               label="Senha"
               placeholder="Senha"
@@ -208,7 +210,7 @@ export function ResponsableSignUpForm({ onSuccess }: SignUpFormProps) {
           form={form}
           name="confirmar_senha"
           render={({ field }) => (
-            <Form.Input
+            <PasswordInput
               {...field}
               label="Confirmar Senha"
               placeholder="Confirmar Senha"
@@ -216,6 +218,7 @@ export function ResponsableSignUpForm({ onSuccess }: SignUpFormProps) {
             />
           )}
         />
+        
         <Form.Field
           form={form}
           name="usersIds"

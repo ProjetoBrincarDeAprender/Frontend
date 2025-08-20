@@ -8,6 +8,7 @@ import { IMaskInput } from "react-imask";
 import z from "zod";
 import type { SignUpFormProps } from "../../common/signUpFormProps";
 
+
 const formSchema = z.object({
   nome: z
     .string({ error: "Nome é obrigatório" })
