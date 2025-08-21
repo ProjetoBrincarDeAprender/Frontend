@@ -221,20 +221,19 @@ export default function TeacherSignUpForm({ onSuccess }: SignUpFormProps) {
           form={form}
           name="usersIds"
           render={({ field }) => (
-            <>
-              <Label>Alunos do Professor</Label>
-              <FancyMultiSelect
-                onSelect={field.onChange}
-                data={
-                  users
-                    ? users.map(({ id, email }) => ({
-                        value: String(id),
-                        label: email,
-                      }))
-                    : []
-                }
-              />
-            </>
+            <FancyMultiSelect
+              onSelect={field.onChange}
+              label="Alunos do Professor"
+              placeholder="Selecione os alunos do professor..."
+              data={
+                users
+                  ? users.map(({ id, email }) => ({
+                      value: String(id),
+                      label: email,
+                    }))
+                  : []
+              }
+            />
           )}
         />
         <Form.Submit>Criar Conta</Form.Submit>
