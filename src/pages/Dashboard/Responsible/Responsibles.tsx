@@ -1,5 +1,5 @@
-import { Footer } from "@/components/Footer/Footer";
-import { Header } from "@/components/Header/Header";
+import { Footer } from "@/components/footer/Footer";
+import { Header } from "@/components/header/Header";
 import { useUser } from "@/hooks/User/useUser";
 import { LateralMenu } from "../../../components/sideBar/sideBar";
 
@@ -18,7 +18,7 @@ export function Responsibles() {
     <>
       <Header />
       <LateralMenu username={username} />
-      <main className="font-1 h-full bg-neutral-200 px-64 pt-32 text-gray-800">
+      <main className="font-1 h-full bg-neutral-200 px-32 pt-32 pb-32 text-gray-800">
         <div className="flex items-center gap-4">
           <img className="max-w-24" src={saturn} alt="Saturn" />
           <div className="flex flex-col gap-2">

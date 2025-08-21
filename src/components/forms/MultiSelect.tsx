@@ -82,14 +82,13 @@ export function FancyMultiSelect({
               </Badge>
             );
           })}
-          {/* Avoid having the "Search" Icon */}
           <CommandPrimitive.Input
             ref={inputRef}
             value={inputValue}
             onValueChange={setInputValue}
             onBlur={() => setOpen(false)}
             onFocus={() => setOpen(true)}
-            placeholder="Select datas..."
+            placeholder="Selecione os alunos..."
             className="placeholder:text-muted-foreground ml-2 flex-1 bg-transparent outline-none"
           />
         </div>
