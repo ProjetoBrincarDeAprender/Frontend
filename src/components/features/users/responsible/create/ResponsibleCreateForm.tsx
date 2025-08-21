@@ -10,6 +10,7 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import type { SignUpFormProps } from "../../common/signUpFormProps";
+import { Label } from "@/components/ui/label";
 
 const formSchema = z
   .object({
@@ -220,17 +221,20 @@ export function ResponsableSignUpForm({ onSuccess }: SignUpFormProps) {
           form={form}
           name="usersIds"
           render={({ field }) => (
-            <FancyMultiSelect
-              onSelect={field.onChange}
-              data={
-                users
-                  ? users.map(({ id, email }) => ({
-                      value: String(id),
-                      label: email,
-                    }))
-                  : []
-              }
-            />
+            <>
+              <Label>Alunos do Responsável</Label>
+              <FancyMultiSelect
+                onSelect={field.onChange}
+                data={
+                  users
+                    ? users.map(({ id, email }) => ({
+                        value: String(id),
+                        label: email,
+                      }))
+                    : []
+                }
+              />
+            </>
           )}
         />
         <Form.Submit>Criar Conta</Form.Submit>

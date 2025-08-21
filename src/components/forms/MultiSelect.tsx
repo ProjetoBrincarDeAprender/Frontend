@@ -88,7 +88,7 @@ export function FancyMultiSelect({
             onValueChange={setInputValue}
             onBlur={() => setOpen(false)}
             onFocus={() => setOpen(true)}
-            placeholder="Selecione os alunos do professor..."
+            placeholder="Selecione os alunos..."
             className="placeholder:text-muted-foreground ml-2 flex-1 bg-transparent outline-none"
           />
         </div>
