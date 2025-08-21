@@ -32,18 +32,6 @@ export const StudentColumns: ColumnDef<Student>[] = [
     ),
   },
   {
-    accessorKey: "avatar_url",
-    header: ({ column }) => (
-      <Button
-        variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-      >
-        Avatar
-        <ArrowUpDown className="ml-2 h-4 w-4" />
-      </Button>
-    ),
-  },
-  {
     accessorKey: "nome_completo",
     header: ({ column }) => (
       <Button
@@ -68,18 +56,6 @@ export const StudentColumns: ColumnDef<Student>[] = [
     ),
   },
   {
-    accessorKey: "perfil",
-    header: ({ column }) => (
-      <Button
-        variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-      >
-        Perfil
-        <ArrowUpDown className="ml-2 h-4 w-4" />
-      </Button>
-    ),
-  },
-  {
     accessorKey: "escola",
     header: ({ column }) => (
       <Button
@@ -87,18 +63,6 @@ export const StudentColumns: ColumnDef<Student>[] = [
         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
       >
         Escola
-        <ArrowUpDown className="ml-2 h-4 w-4" />
-      </Button>
-    ),
-  },
-  {
-    accessorKey: "created_ad",
-    header: ({ column }) => (
-      <Button
-        variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-      >
-        Criado em
         <ArrowUpDown className="ml-2 h-4 w-4" />
       </Button>
     ),
