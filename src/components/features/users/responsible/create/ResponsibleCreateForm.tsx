@@ -10,7 +10,6 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import type { SignUpFormProps } from "../../common/signUpFormProps";
-import { Label } from "@/components/ui/label";
 
 const formSchema = z
   .object({
