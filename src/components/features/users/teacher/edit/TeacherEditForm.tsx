@@ -216,6 +216,8 @@ export function TeacherEditForm({ id, onSuccess }: TeacherFormProps) {
             render={({ field }) => (
               <FancyMultiSelect
                 onSelect={field.onChange}
+                label="Alunos do Professor"
+                placeholder="Selecione os alunos do professor..."
                 data={allStudents.map(({ id, email }) => ({
                   value: String(id),
                   label: email,
