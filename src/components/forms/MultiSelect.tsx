@@ -62,11 +62,21 @@ export function FancyMultiSelect({
   );
 
   return (
+
     <>
       <Label>{label}</Label>
       <Command className="overflow-visible bg-transparent">
-        <div className="group border-input ring-offset-background focus-within:ring-ring rounded-md border px-3 py-2 text-sm focus-within:ring-2 focus-within:ring-offset-2">
-          <div className="flex flex-wrap gap-1">
+        <div
+        className="
+          flex min-h-[52px] w-full flex-wrap items-center gap-2 rounded-lg px-6 py-2 text-base text-gray-800 bg-transparent
+          border border-purplish-blue
+          placeholder:text-gray-500
+          transition-colors ease-in-out duration-200
+          hover:border-purplish-blue
+          focus-within:outline-none focus-within:ring-2
+          disabled:cursor-not-allowed disabled:opacity-50"
+              
+      >
             {selected.map((data) => {
               return (
                 <Badge key={data.value} variant="secondary">
@@ -96,9 +106,8 @@ export function FancyMultiSelect({
               onBlur={() => setOpen(false)}
               onFocus={() => setOpen(true)}
               placeholder={placeholder}
-              className="placeholder:text-muted-foreground ml-2 flex-1 bg-transparent outline-none"
+              className="flex-1 bg-transparent outline-none placeholder:text-gray-500 text-gray-800"
             />
-          </div>
         </div>
         <div className="relative mt-2">
           <CommandList>
@@ -130,5 +139,5 @@ export function FancyMultiSelect({
         </div>
       </Command>
     </>
-  );
+ );
 }
