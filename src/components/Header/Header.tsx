@@ -4,12 +4,31 @@ import { BiHome } from "react-icons/bi";
 import { FaRegQuestionCircle } from "react-icons/fa";
 import { FiLogIn } from "react-icons/fi";
 import { Link } from "react-router";
+import { useNavigate } from "react-router";
+
+// imagens
 import profile from "../../assets/astronauta-profile.svg";
 import logo from "../../assets/brincardeaprender.svg";
+
+// estilos
 import "./Header.css";
 
 export function Header() {
   const { user } = useUser();
+  const navigate = useNavigate(); // função para usar o "useNavigate" do react router
+
+  /**
+   * Define qual página irá ser acessada dependendo do perfil do usuário
+   * Ex: Aluno deve acessar a trilha ao iniciar (na teoria), enquanto o admin, o dashboard
+   * OBS: Só temos a pág de início do admin e da escola, então não estão implementados outros inícios
+   */
+  function handleInicio() {
+    if (user?.perfil == "Admin" || user?.perfil == "Escola") {
+      navigate("/dashboard");
+    } else {
+      navigate("/");
+    }
+  }
 
   return (
     <header className="fixed top-0 z-50 flex w-full items-center justify-between bg-slate-200 px-28 py-4 font-bold shadow-xl">
@@ -22,12 +41,17 @@ export function Header() {
           />
         </Link>
       </div>
+
+      {/* Navegação Principal */}
       <nav aria-label="Navegação Principal">
         <ul className="flex items-center gap-4 text-base text-gray-900">
           <li className="button-nav bg-yellow rounded-2xl px-5 py-2 shadow-lg">
-            <Link to="/" className="flex items-center gap-2">
+            <button
+              onClick={handleInicio}
+              className="flex cursor-pointer items-center gap-2"
+            >
               <BiHome /> <span>Inicio</span>
-            </Link>
+            </button>
           </li>
           <li className="button-nav bg-yellow rounded-2xl px-5 py-2 shadow-lg">
             <Link to="/about" className="flex items-center gap-2">
@@ -43,7 +67,7 @@ export function Header() {
                 </Link>
               </li>
               <Link
-                to="/dashboard"
+                to="/profile"
                 className="profile-nav bg-am1 flex items-center gap-5 rounded-full"
               >
                 <span className="ml-4 block px-5">{user.nome_completo}</span>

@@ -1,8 +1,8 @@
-import SignInForm from "@/components/Forms/SignInForms/SignInForm";
+import SignInForm from "@/components/features/login/SignInForm";
+import { Footer } from "@/components/Footer/Footer";
+import { Header } from "@/components/Header/Header";
 import { useUser } from "@/hooks/User/useUser";
 import { Navigate } from "react-router";
-import { Footer } from "../../components/Footer/Footer";
-import { Header } from "../../components/Header/Header";
 
 export default function Login() {
   const { user } = useUser();

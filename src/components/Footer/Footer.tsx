@@ -1,11 +1,11 @@
 import "./Footer.css";
 
+import { Link } from "@/components/utils/Link/Link";
 import { FaFacebook, FaInstagram } from "react-icons/fa";
 import logo from "../../assets/brincardeaprender_blackandwhite.svg";
 import laco from "../../assets/laco.svg";
 import pipa from "../../assets/pipa.svg";
 import star from "../../assets/star.svg";
-import { Link } from "../utils/Link/Link";
 
 export function Footer() {
   return (
