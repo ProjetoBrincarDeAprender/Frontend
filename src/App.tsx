@@ -10,6 +10,7 @@ import { Home } from "./pages/Home/Home";
 import { default as LoginForm } from "./pages/Login/Login";
 import Logout from "./pages/Logout/Logout";
 import { Profile } from "./pages/Profile/Profile";
+import { SchoolUsers } from "./pages/Dashboard/SchoolUsers/SchoolUsers";
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
         <Route path="students" element={<Students />} />
         <Route element={<AuthGuard requireAuth role={["Admin"]} />}>
           <Route path="schools" element={<Schools />} />
+          <Route path="schoolusers" element={<SchoolUsers />} />
         </Route>
         <Route path="teachers" element={<Teachers />} />
         <Route path="responsables" element={<Responsibles />} />
