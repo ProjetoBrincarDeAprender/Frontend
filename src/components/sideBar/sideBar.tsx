@@ -87,17 +87,30 @@ export function LateralMenu({ username }: LateralMenuProps) {
             </button>
           </li>
           {user?.perfil == "Admin" && (
-            <li>
-              <button
-                onClick={() => {
-                  navigate("/dashboard/schools");
-                  setMenuOpen(false);
-                }}
-                className="block w-full cursor-pointer rounded-lg px-4 py-3 text-center text-lg font-bold text-white transition-colors hover:bg-[var(--color-am2)]"
-              >
-                Escolas
-              </button>
-            </li>
+            <>
+              <li>
+                <button
+                  onClick={() => {
+                    navigate("/dashboard/schools");
+                    setMenuOpen(false);
+                  }}
+                  className="block w-full cursor-pointer rounded-lg px-4 py-3 text-center text-lg font-bold text-white transition-colors hover:bg-[var(--color-am2)]"
+                >
+                  Escolas
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => {
+                    navigate("/dashboard/schoolusers");
+                    setMenuOpen(false);
+                  }}
+                  className="block w-full cursor-pointer rounded-lg px-4 py-3 text-center text-lg font-bold text-white transition-colors hover:bg-[var(--color-am2)]"
+                >
+                  Usuários Escola
+                </button>
+              </li>
+            </>
           )}
           <li>
             <button

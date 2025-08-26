@@ -1,18 +1,19 @@
 import { RegisterSchoolModal } from "@/components/features/users/school/create/SchoolCreateModal";
+
+import SchoolTable from "@/components/features/users/school/files/SchoolTable";
+import { TableProvider } from "@/contexts/Table/provider";
+import saturn from "../../../assets/saturn.svg";
+
+//import { RegisterSchoolModal } from "@/components/modals/RegisterSchoolModal";
+
 import { RegisterSchoolUserModal } from "@/components/features/users/schoolUser/create/SchoolUserCreateModal";
 import { Footer } from "@/components/footer/Footer";
 import { Header } from "@/components/header/Header";
 import { useUser } from "@/hooks/User/useUser";
 import { LateralMenu } from "../../../components/sideBar/sideBar";
-
-import SchoolTable from "@/components/features/users/school/files/SchoolTable";
-import { TableProvider } from "@/contexts/Table/provider";
-import saturn from "../../../assets/saturn.svg";
 import { Link } from "react-router";
 
-//import { RegisterSchoolModal } from "@/components/modals/RegisterSchoolModal";
-
-export function Schools() {
+export function SchoolUsers() {
   const { user } = useUser();
 
   const username = user?.nome_completo || "Usuário";
@@ -25,19 +26,19 @@ export function Schools() {
           <img className="max-w-24" src={saturn} alt="Saturn" />
           <div className="flex flex-col gap-2">
             <h1 className="text-2xl font-semibold">Bem vindo {username},</h1>
-            <h1 className="text-5xl font-bold">Escolas</h1>
+            <h1 className="text-5xl font-bold">Usuários Escola</h1>
           </div>
         </div>
 
         <TableProvider>
           <div className="mt-16 flex items-center justify-between">
             <div className="flex items-center gap-8 text-2xl font-bold">
-              <RegisterSchoolModal isOnTable />
+              <RegisterSchoolUserModal />
               <Link
-                to="/dashboard/schoolusers"
+                to="/dashboard/schools"
                 className="blue bg-yellow hover:bg-purplish-blue hover:text-yellow flex min-h-[60px] items-center justify-center gap-8 rounded-2xl px-8 py-4 text-center text-sm font-bold uppercase shadow-xl transition duration-200"
               >
-                Cadastrar Adm Escola
+                Cadastrar Escola
               </Link>
             </div>
           </div>
