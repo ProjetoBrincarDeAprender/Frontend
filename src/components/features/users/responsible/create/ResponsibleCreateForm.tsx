@@ -224,20 +224,19 @@ export function ResponsableSignUpForm({ onSuccess }: SignUpFormProps) {
           form={form}
           name="usersIds"
           render={({ field }) => (
-            <>
-              <Label>Alunos do Responsável</Label>
-              <FancyMultiSelect
-                onSelect={field.onChange}
-                data={
-                  users
-                    ? users.map(({ id, email }) => ({
-                        value: String(id),
-                        label: email,
-                      }))
-                    : []
-                }
-              />
-            </>
+            <FancyMultiSelect
+              onSelect={field.onChange}
+              label="Alunos do Responsável"
+              placeholder="Selecione os alunos do responsável..."
+              data={
+                users
+                  ? users.map(({ id, email }) => ({
+                      value: String(id),
+                      label: email,
+                    }))
+                  : []
+              }
+            />
           )}
         />
         <Form.Submit>Criar Conta</Form.Submit>

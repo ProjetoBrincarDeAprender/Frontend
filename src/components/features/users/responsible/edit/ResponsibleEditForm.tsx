@@ -215,6 +215,8 @@ export function ResponsibleEditForm({ id, onSuccess }: ResponsibleFormProps) {
             render={({ field }) => (
               <FancyMultiSelect
                 onSelect={field.onChange}
+                label="Alunos do Responsável"
+                placeholder="Selecione os alunos do responsável..."
                 data={allStudents.map(({ id, email }) => ({
                   value: String(id),
                   label: email,
