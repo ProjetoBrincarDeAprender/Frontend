@@ -11,7 +11,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import type { SignUpFormProps } from "../../common/signUpFormProps";
 import { PasswordInput } from "@/components/ui/password-input";
-import { Label } from "@/components/ui/label";
+//import { Label } from "@/components/ui/label";
 
 const formSchema = z
   .object({
@@ -198,25 +198,39 @@ export function ResponsableSignUpForm({ onSuccess }: SignUpFormProps) {
         <Form.Field
           form={form}
           name="senha"
-          render={({ field }) => (
+          render={({ field, fieldState }) => (
+            <>
             <PasswordInput
               {...field}
               label="Senha"
               placeholder="Senha"
               type="password"
             />
+            {fieldState.error &&(
+              <p className="text-sm text-red-600">
+                {fieldState.error.message}
+              </p>
+            )}
+          </>
           )}
         />
         <Form.Field
           form={form}
           name="confirmar_senha"
-          render={({ field }) => (
+          render={({ field, fieldState }) => (
+            <>
             <PasswordInput
               {...field}
               label="Confirmar Senha"
               placeholder="Confirmar Senha"
               type="password"
             />
+            {fieldState.error && (
+              <p className="text-sm text-red-600">
+                {fieldState.error.message}
+              </p>
+            )}
+          </>
           )}
         />
         
