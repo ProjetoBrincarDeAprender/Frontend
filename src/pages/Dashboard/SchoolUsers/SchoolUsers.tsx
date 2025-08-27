@@ -1,7 +1,6 @@
-import { RegisterSchoolModal } from "@/components/features/users/school/create/SchoolCreateModal";
+//import { RegisterSchoolModal } from "@/components/features/users/school/create/SchoolCreateModal";
 
-import SchoolTable from "@/components/features/users/school/files/SchoolTable";
-import { TableProvider } from "@/contexts/Table/provider";
+import SchoolUserTable from "@/components/features/users/schoolUser/files/SchoolUserTable";
 import saturn from "../../../assets/saturn.svg";
 
 //import { RegisterSchoolModal } from "@/components/modals/RegisterSchoolModal";
@@ -12,6 +11,8 @@ import { Header } from "@/components/header/Header";
 import { useUser } from "@/hooks/User/useUser";
 import { LateralMenu } from "../../../components/sideBar/sideBar";
 import { Link } from "react-router";
+import { TableProvider } from "@/contexts/Table/provider";
+
 
 export function SchoolUsers() {
   const { user } = useUser();
@@ -43,7 +44,7 @@ export function SchoolUsers() {
             </div>
           </div>
           <div className="mt-12">
-            <SchoolTable />
+            <SchoolUserTable />
           </div>
         </TableProvider>
       </main>
