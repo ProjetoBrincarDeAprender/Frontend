@@ -1,5 +1,6 @@
 import { FancyMultiSelect } from "@/components/forms/MultiSelect";
 import { Form } from "@/components/forms/Root";
+import { PasswordInput } from "@/components/ui/password-input";
 import { Link } from "@/components/utils/Link/Link";
 import { useUser } from "@/hooks/User/useUser";
 import type { UserProfile } from "@/types/user";
@@ -10,9 +11,6 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import type { SignUpFormProps } from "../../common/signUpFormProps";
-import { PasswordInput } from "@/components/ui/password-input";
-import { Label } from "@/components/ui/label";
-
 
 const formSchema = z
   .object({
@@ -195,32 +193,46 @@ export function ResponsableSignUpForm({ onSuccess }: SignUpFormProps) {
             )}
           />
         )}
-        
+
         <Form.Field
           form={form}
           name="senha"
-          render={({ field }) => (
-            <PasswordInput
-              {...field}
-              label="Senha"
-              placeholder="Senha"
-              type="password"
-            />
+          render={({ field, fieldState }) => (
+            <>
+              <PasswordInput
+                {...field}
+                label="Senha"
+                placeholder="Senha"
+                type="password"
+              />
+              {fieldState.error && (
+                <p className="text-sm text-red-600">
+                  {fieldState.error.message}
+                </p>
+              )}
+            </>
           )}
         />
         <Form.Field
           form={form}
           name="confirmar_senha"
-          render={({ field }) => (
-            <PasswordInput
-              {...field}
-              label="Confirmar Senha"
-              placeholder="Confirmar Senha"
-              type="password"
-            />
+          render={({ field, fieldState }) => (
+            <>
+              <PasswordInput
+                {...field}
+                label="Confirmar Senha"
+                placeholder="Confirmar Senha"
+                type="password"
+              />
+              {fieldState.error && (
+                <p className="text-sm text-red-600">
+                  {fieldState.error.message}
+                </p>
+              )}
+            </>
           )}
         />
-        
+
         <Form.Field
           form={form}
           name="usersIds"
