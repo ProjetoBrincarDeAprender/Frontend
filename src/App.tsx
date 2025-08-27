@@ -11,6 +11,7 @@ import { default as LoginForm } from "./pages/Login/Login";
 import Logout from "./pages/Logout/Logout";
 import { Profile } from "./pages/Profile/Profile";
 import { SchoolUsers } from "./pages/Dashboard/SchoolUsers/SchoolUsers";
+import VowelsGame from "./components/features/games/VowelsGame";
 
 function App() {
   return (
@@ -33,6 +34,8 @@ function App() {
         <Route path="teachers" element={<Teachers />} />
         <Route path="responsables" element={<Responsibles />} />
       </Route>
+
+      <Route path="games/vowels" element={<VowelsGame />} />
 
       <Route element={<AuthGuard requireAuth />}>
         <Route path="/profile" element={<Profile />} />
