@@ -1,11 +1,13 @@
 import { useTable } from "@/hooks/Table/useTable";
 import { useUser } from "@/hooks/User/useUser";
 import api from "@/utils/api";
-import { Loader2 } from "lucide-react";
+//import { Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router";
 import { DataTable } from "../../../../utils/DataTable/DataTable";
 import { StudentColumns, type Student } from "./TableData";
+
+import { SkeletonTable } from "@/components/ui/skeleton-table";
 
 export default function StudentTable() {
   const [data, setData] = useState<Student[] | null>(null);
@@ -35,20 +37,19 @@ export default function StudentTable() {
   return (
     <>
       {updating ? (
-        <Loader2 className="animate-spin" />
-      ) : data ? (
+        <SkeletonTable rows={6} cols={StudentColumns.length}/>
+      ) : (
         <DataTable
           columns={StudentColumns}
-          data={data}
+          data={data ?? []}
           {...{
             page: searchParams.get("page")
               ? parseInt(searchParams.get("page")!)
               : 0,
           }}
         />
-      ) : (
-        <Loader2 className="animate-spin" />
       )}
+
     </>
   );
 }
