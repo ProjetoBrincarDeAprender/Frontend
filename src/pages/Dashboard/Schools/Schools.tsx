@@ -1,5 +1,5 @@
 import { RegisterSchoolModal } from "@/components/features/users/school/create/SchoolCreateModal";
-import { RegisterSchoolUserModal } from "@/components/features/users/schoolUser/create/SchoolUserCreateModal";
+//import { RegisterSchoolUserModal } from "@/components/features/users/schoolUser/create/SchoolUserCreateModal";
 import { Footer } from "@/components/footer/Footer";
 import { Header } from "@/components/header/Header";
 import { useUser } from "@/hooks/User/useUser";
