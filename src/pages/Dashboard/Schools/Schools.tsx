@@ -1,5 +1,4 @@
 import { RegisterSchoolModal } from "@/components/features/users/school/create/SchoolCreateModal";
-import { RegisterSchoolUserModal } from "@/components/features/users/schoolUser/create/SchoolUserCreateModal";
 import { Footer } from "@/components/Footer/Footer";
 import { Header } from "@/components/Header/Header";
 import { useUser } from "@/hooks/User/useUser";
@@ -7,8 +6,8 @@ import { LateralMenu } from "../../../components/sideBar/sideBar";
 
 import SchoolTable from "@/components/features/users/school/files/SchoolTable";
 import { TableProvider } from "@/contexts/Table/provider";
-import saturn from "../../../assets/saturn.svg";
 import { Link } from "react-router";
+import saturn from "../../../assets/saturn.svg";
 
 //import { RegisterSchoolModal } from "@/components/modals/RegisterSchoolModal";
 
