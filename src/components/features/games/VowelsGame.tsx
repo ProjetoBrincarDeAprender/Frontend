@@ -64,19 +64,19 @@ const VowelsGame: React.FC = () => {
         >
           <Button
             onClick={() => clickButton("A")}
-            className="absolute top-120 right-138 cursor-pointer"
+            className="absolute top-110 right-140 cursor-pointer p-12 text-8xl"
           >
             {letters[0]}
           </Button>
           <Button
             onClick={() => clickButton("a")}
-            className="absolute top-120 right-98 cursor-pointer"
+            className="absolute top-110 right-80 cursor-pointer p-12 text-8xl"
           >
             {letters[1]}
           </Button>
           <Button
             onClick={() => clickButton("a")}
-            className="absolute top-120 right-58 cursor-pointer"
+            className="absolute top-110 right-20 cursor-pointer p-12 text-8xl"
           >
             {letters[2]}
           </Button>
