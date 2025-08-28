@@ -1,4 +1,3 @@
-import { Key } from "lucide-react";
 import { EventBus } from "../EventBus";
 import Phaser from "phaser";
 
@@ -6,8 +5,6 @@ export default class Vowels extends Phaser.Scene {
   private answers: { [key: string]: string }[] = [];
   private image?: Phaser.GameObjects.Image;
   private level: number;
-
-  public letters: string[] = [];
 
   constructor() {
     super("Vowels");
@@ -31,18 +28,16 @@ export default class Vowels extends Phaser.Scene {
 
   create() {
     this.image = this.add.image(400, 300, "abelha");
-    this.createLevel();
+    this.recreateLevel();
 
     EventBus.emit("current-scene-ready", "O jogo das vogais foi carregado!");
   }
 
   update() {}
 
-  createLevel() {
-    this.letters.push(this.answers[this.level].answer);
-    this.letters.push("a");
-    this.letters.push("a");
-    EventBus.emit("letras-definidas", this.letters);
+  recreateLevel() {
+    const newLetters = [this.answers[this.level].answer, "a", "a"];
+    EventBus.emit("letras-definidas", newLetters);
   }
 
   changeLevel(letter: string) {
@@ -52,6 +47,7 @@ export default class Vowels extends Phaser.Scene {
       if (this.answers[this.level].answer === letter) {
         this.level++;
         this.image.setTexture(this.answers[this.level].key);
+        this.recreateLevel();
         console.log("Imagem trocada!");
       }
     }
