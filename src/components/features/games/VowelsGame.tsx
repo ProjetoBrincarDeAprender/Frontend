@@ -1,6 +1,8 @@
 import React, { useEffect } from "react";
 import Phaser from "phaser";
 import Vowels from "@/games/vowels/Vowels";
+import { Footer } from "@/components/footer/Footer";
+import { EventBus } from "@/games/EventBus";
 
 const VowelsGame: React.FC = () => {
   useEffect(() => {
@@ -15,12 +17,22 @@ const VowelsGame: React.FC = () => {
 
     const game = new Phaser.Game(config);
 
+    EventBus.on("current-scene-ready", (log: string) => {
+      console.log({ log });
+    });
+
     return () => {
       game.destroy(true);
     };
   }, []);
 
-  return <div id="game-container" className="flex justify-center"></div>;
+  return (
+    <>
+      {/* <Header /> */}
+      <div id="game-container" className="mt-5 mb-20 flex justify-center"></div>
+      <Footer />
+    </>
+  );
 };
 
 export default VowelsGame;

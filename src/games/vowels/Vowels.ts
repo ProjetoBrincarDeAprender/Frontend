@@ -1,3 +1,4 @@
+import { EventBus } from "../EventBus";
 import Phaser from "phaser";
 
 export default class Vowels extends Phaser.Scene {
@@ -7,6 +8,8 @@ export default class Vowels extends Phaser.Scene {
 
   create() {
     this.add.image(400, 300, "abelha");
+
+    EventBus.emit("current-scene-ready", "O jogo das vogais foi carregado!");
   }
 
   update() {}

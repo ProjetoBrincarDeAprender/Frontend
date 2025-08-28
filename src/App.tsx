@@ -37,7 +37,9 @@ function App() {
         <Route path="responsables" element={<Responsibles />} />
       </Route>
 
-      <Route path="games/vowels" element={<VowelsGame />} />
+      <Route path="/games">
+        <Route path="vowels" element={<VowelsGame />} />
+      </Route>
 
       <Route element={<AuthGuard requireAuth />}>
         <Route path="/profile" element={<Profile />} />
