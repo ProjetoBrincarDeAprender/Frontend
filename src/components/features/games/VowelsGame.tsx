@@ -55,29 +55,32 @@ const VowelsGame: React.FC = () => {
 
   return (
     <>
-      {/* <Header /> */}
-      <div
-        id="game-container"
-        className="relative mt-5 mb-20 flex justify-center"
-      >
-        <Button
-          onClick={() => clickButton("A")}
-          className="absolute top-120 right-160 cursor-pointer"
+      <div className="mt-5 mb-20 flex justify-center">
+        {/* <Header /> */}
+        <div
+          id="game-container"
+          className="relative"
+          style={{ width: 800, height: 600 }}
         >
-          {letters[0]}
-        </Button>
-        <Button
-          onClick={() => clickButton("a")}
-          className="absolute top-120 right-120 cursor-pointer"
-        >
-          {letters[1]}
-        </Button>
-        <Button
-          onClick={() => clickButton("a")}
-          className="absolute top-120 right-80 cursor-pointer"
-        >
-          {letters[2]}
-        </Button>
+          <Button
+            onClick={() => clickButton("A")}
+            className="absolute top-120 right-138 cursor-pointer"
+          >
+            {letters[0]}
+          </Button>
+          <Button
+            onClick={() => clickButton("a")}
+            className="absolute top-120 right-98 cursor-pointer"
+          >
+            {letters[1]}
+          </Button>
+          <Button
+            onClick={() => clickButton("a")}
+            className="absolute top-120 right-58 cursor-pointer"
+          >
+            {letters[2]}
+          </Button>
+        </div>
       </div>
       <Footer />
     </>
