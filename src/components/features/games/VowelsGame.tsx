@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from "react";
-import Phaser from "phaser";
-import Vowels from "@/games/vowels/Vowels";
 import { Footer } from "@/components/footer/Footer";
 import { EventBus } from "@/games/EventBus";
 import { Button } from "@/components/ui/button";
+import Phaser from "phaser";
+import Vowels from "@/games/vowels/Vowels";
 
 export interface IRefVowelsGame {
   game: Phaser.Game | null;
@@ -26,21 +26,26 @@ const VowelsGame: React.FC = () => {
 
     gameRef.current = new Phaser.Game(config);
 
-    EventBus.on("current-scene-ready", (log: string) => {
+    EventBus.once("current-scene-ready", (log: string) => {
       console.log({ log });
     });
+
+    const handleLetters = (buttonLetters: string[]) => {
+      setLetters(buttonLetters);
+    };
+
+    EventBus.on("letras-definidas", handleLetters);
 
     return () => {
       if (gameRef.current) {
         gameRef.current.destroy(true);
       }
+      EventBus.off("letras-definidas", handleLetters);
     };
   }, []);
 
   useEffect(() => {
-    EventBus.on("letras-definidas", (array: string[]) => {
-      setLetters(array);
-    });
+    console.log(letters);
   }, [letters]);
 
   const clickButton = (letter: string) => {
@@ -62,7 +67,7 @@ const VowelsGame: React.FC = () => {
           {letters[0]}
         </Button>
         <Button
-          onClick={() => clickButton("E")}
+          onClick={() => clickButton("a")}
           className="absolute top-120 right-120 cursor-pointer"
         >
           {letters[1]}
