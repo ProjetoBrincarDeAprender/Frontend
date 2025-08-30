@@ -7,6 +7,7 @@ import { useNavigate, useSearchParams } from "react-router";
 import saturn from "../../../../assets/saturn.svg";
 import { TableProvider } from "@/contexts/Table/provider";
 import { Button } from "@/components/ui/button";
+import { StudentsUnlinkedTable } from "./StudentsUnlinkedTable/StudentsUnlinkedTable";
 
 export function LinkStudents() {
   const [studentsIdToLink, setStudentsIdToLink] = useState<string[]>([]); // Array com IDs dos alunos a serem vinculados
@@ -36,10 +37,10 @@ export function LinkStudents() {
             <h1 className="mb-2 text-2xl font-semibold">
               Bem-vindo, {username}
             </h1>
-            <h2 className="text-4xl font-bold">Vincular Alunos ao Professor</h2>
-            <p className="mt-2 text-lg text-gray-600">
-              Professor ID: <span className="font-bold">{teacherId}</span>
-            </p>
+            <h2 className="text-4xl font-bold">
+              Vincular Alunos a(o) {username}
+            </h2>
+            <p className="mt-2 text-lg text-gray-600"></p>
           </div>
         </section>
         <TableProvider>
@@ -52,11 +53,20 @@ export function LinkStudents() {
                     : "opacity-50"
                 } bg-yellow text-purplish-blue px-14 py-7 text-xl font-bold shadow-md`}
                 disabled={studentsIdToLink.length === 0}
+                title={
+                  studentsIdToLink.length === 0
+                    ? "Deve ser selecionado algum aluno primeiro"
+                    : undefined
+                }
               >
                 Vincular Aluno(s)
               </Button>
             </div>
           </div>
+          <StudentsUnlinkedTable
+            selectedIds={studentsIdToLink}
+            setSelectedIds={setStudentsIdToLink}
+          />
         </TableProvider>
       </main>
     </>
