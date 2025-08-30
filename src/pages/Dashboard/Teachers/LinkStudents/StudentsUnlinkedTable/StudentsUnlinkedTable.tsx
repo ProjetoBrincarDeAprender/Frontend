@@ -11,41 +11,6 @@ export type UnlinkedStudents = {
   escola: string;
 };
 
-// Colunas da tabela
-const UnlinkedStudentsColumns = [
-  {
-    accessorKey: "id",
-    header: "ID",
-  },
-  {
-    accessorKey: "nome_completo",
-    header: "Nome Completo",
-  },
-  {
-    accessorKey: "email",
-    header: "Email",
-  },
-  {
-    accessorKey: "escola",
-    header: "Escola",
-  },
-  {
-    id: "vinculo",
-    header: "Vínculo",
-    cell: ({ row, table }) => (
-      <input
-        type="checkbox"
-        checked={
-          table.options.meta?.selectedIds?.includes(row.original.id) || false
-        }
-        onChange={() => table.options.meta?.toggleSelect(row.original.id)}
-      />
-    ),
-    enableSorting: false,
-    enableColumnFilter: false,
-  },
-];
-
 export function StudentsUnlinkedTable({
   selectedIds,
   setSelectedIds,
