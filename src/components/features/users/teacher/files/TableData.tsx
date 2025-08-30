@@ -68,7 +68,7 @@ export const TeacherColumns: ColumnDef<Teacher>[] = [
     cell: ({ row }) => (
       <div className="flex items-center justify-center gap-2">
         <EditTeacherModal id={row.original.id} />
-        <a className="bg-blue-400 px-3 py-2 shadow-sm rounded-sm transition hover:bg-blue-500" href={`/dashboard/teachers/link-students?id=${row.original.id}`}><Share2 className="text-slate-100" /></a>
+        <a className="bg-blue-400 px-3 py-2 shadow-sm rounded-sm transition hover:bg-blue-500" href={`/dashboard/link-students?id=${row.original.id}`}><Share2 className="text-slate-100" /></a>
         <DeleteModal route="/user/remove" id={row.original.id} />
       </div>
     ),

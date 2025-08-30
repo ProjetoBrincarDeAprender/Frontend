@@ -11,6 +11,7 @@ import { default as LoginForm } from "./pages/Login/Login";
 import Logout from "./pages/Logout/Logout";
 import { Profile } from "./pages/Profile/Profile";
 import { SchoolUsers } from "./pages/Dashboard/SchoolUsers/SchoolUsers";
+import { LinkStudents } from "./pages/Dashboard/Teachers/LinkStudents/LinkStudents";
 
 function App() {
   return (
@@ -31,6 +32,7 @@ function App() {
           <Route path="schoolusers" element={<SchoolUsers />} />
         </Route>
         <Route path="teachers" element={<Teachers />} />
+        <Route path="link-students" element={<LinkStudents />} />
         <Route path="responsables" element={<Responsibles />} />
       </Route>
 
