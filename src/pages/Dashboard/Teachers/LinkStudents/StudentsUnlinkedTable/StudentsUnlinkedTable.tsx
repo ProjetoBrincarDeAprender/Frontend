@@ -15,8 +15,8 @@ export function StudentsUnlinkedTable({
   selectedIds,
   setSelectedIds,
 }: {
-  selectedIds: string[];
-  setSelectedIds: React.Dispatch<React.SetStateAction<string[]>>;
+  selectedIds: number[];
+  setSelectedIds: React.Dispatch<React.SetStateAction<number[]>>;
 }) {
   const [data, setData] = useState<UnlinkedStudents[] | null>(null);
   const [loading, setLoading] = useState(true);
@@ -39,9 +39,7 @@ export function StudentsUnlinkedTable({
 
   const toggleSelect = (id: number) => {
     setSelectedIds((prev) =>
-      prev.includes(String(id))
-        ? prev.filter((item) => item !== String(id))
-        : [...prev, String(id)],
+      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id],
     );
   };
 
@@ -108,7 +106,7 @@ export function StudentsUnlinkedTable({
       cell: ({ row }: { row: any }) => (
         <input
           type="checkbox"
-          checked={selectedIds.includes(String(row.original.id))}
+          checked={selectedIds.includes(row.original.id)}
           onChange={() => toggleSelect(row.original.id)}
         />
       ),

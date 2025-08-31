@@ -2,15 +2,17 @@ import { Header } from "@/components/Header/Header";
 import { LateralMenu } from "@/components/sideBar/sideBar";
 import { useUser } from "@/hooks/User/useUser";
 import { useEffect, useState } from "react";
+import api from "@/utils/api";
 import { useNavigate, useSearchParams } from "react-router";
 
 import saturn from "../../../../assets/saturn.svg";
 import { TableProvider } from "@/contexts/Table/provider";
 import { Button } from "@/components/ui/button";
 import { StudentsUnlinkedTable } from "./StudentsUnlinkedTable/StudentsUnlinkedTable";
+import { toast } from "sonner";
 
 export function LinkStudents() {
-  const [studentsIdToLink, setStudentsIdToLink] = useState<string[]>([]); // Array com IDs dos alunos a serem vinculados
+  const [studentsIdToLink, setStudentsIdToLink] = useState<number[]>([]);
 
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
@@ -58,6 +60,27 @@ export function LinkStudents() {
                     ? "Deve ser selecionado algum aluno primeiro"
                     : undefined
                 }
+                onClick={async () => {
+                  if (studentsIdToLink.length === 0) return;
+                  try {
+                    const response = await api.put(
+                      `/responsible/update/${teacherId}`,
+                      { usersIds: studentsIdToLink },
+                    );
+                    if (!response || response.status !== 200) {
+                      toast.error(
+                        "Erro ao vincular alunos ao professor. Tente novamente.",
+                      );
+                    } else {
+                      // Adicione aqui feedback de sucesso ou navegação
+                    }
+                  } catch (error) {
+                    toast.error(
+                      "Erro ao vincular alunos ao professor. Tente novamente.",
+                    );
+                    console.error(error);
+                  }
+                }}
               >
                 Vincular Aluno(s)
               </Button>
