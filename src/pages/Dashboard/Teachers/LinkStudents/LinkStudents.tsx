@@ -25,7 +25,23 @@ export function LinkStudents() {
   useEffect(() => {
     if (!teacherId) {
       navigate("/dashboard/teachers"); // redireciona se não houver id
+      return;
     }
+    const fetchLinkedStudents = async () => {
+      try {
+        const response = await api.get(
+          `/responsible/list/${teacherId}/students`,
+        );
+        if (response.status === 200 && Array.isArray(response.data)) {
+          setStudentsIdToLink(
+            response.data.map((student: { id: number }) => student.id),
+          );
+        }
+      } catch (error) {
+        // Se der erro, não faz nada
+      }
+    };
+    fetchLinkedStudents();
   }, [teacherId, navigate]);
 
   return (
@@ -72,7 +88,7 @@ export function LinkStudents() {
                         "Erro ao vincular alunos ao professor. Tente novamente.",
                       );
                     } else {
-                      // Adicione aqui feedback de sucesso ou navegação
+                      toast.success("Alunos vinculados com sucesso!");
                     }
                   } catch (error) {
                     toast.error(
