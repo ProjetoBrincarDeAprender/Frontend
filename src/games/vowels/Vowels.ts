@@ -1,4 +1,5 @@
 import { EventBus } from "../EventBus";
+import { LetterButton } from "./gameObjects/LetterButton";
 import Phaser from "phaser";
 import Level from "./Level";
 
@@ -17,12 +18,18 @@ export default class Vowels extends Phaser.Scene {
   preload() {
     this.load.image("abelha", "/assets/abelha.svg");
     this.load.image("elefante", "/assets/elefante.svg");
+
+    this.load.image("defaultButton", "/assets/defaultButton.svg");
+    this.load.image("hoverButton", "/assets/hoverButton.svg");
+    this.load.image("clickedButton", "/assets/clickedButton.svg");
   }
 
   create() {
     var firstImage = this.levels[this.currentlevel].name;
     this.image = this.add.image(400, 300, firstImage);
-    this.recreateLevel();
+
+    const button = new LetterButton(this, 400, 300, "defaultButton");
+    this.add.existing(button);
 
     EventBus.emit("current-scene-ready", "O jogo das vogais foi carregado!");
   }
