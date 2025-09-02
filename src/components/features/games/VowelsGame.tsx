@@ -1,7 +1,6 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { Footer } from "@/components/footer/Footer";
 import { EventBus } from "@/games/EventBus";
-import { Button } from "@/components/ui/button";
 import Phaser from "phaser";
 import Vowels from "@/games/vowels/Vowels";
 
@@ -12,7 +11,6 @@ export interface IRefVowelsGame {
 
 const VowelsGame: React.FC = () => {
   const gameRef = useRef<Phaser.Game | null>(null);
-  const [letters, setLetters] = useState<string[]>([]);
 
   useEffect(() => {
     const config: Phaser.Types.Core.GameConfig = {
@@ -30,28 +28,12 @@ const VowelsGame: React.FC = () => {
       console.log({ log });
     });
 
-    const handleLetters = (buttonLetters: string[]) => {
-      setLetters(buttonLetters);
-    };
-
-    EventBus.on("letras-definidas", handleLetters);
-
     return () => {
       if (gameRef.current) {
         gameRef.current.destroy(true);
       }
-      EventBus.off("letras-definidas", handleLetters);
     };
   }, []);
-
-  useEffect(() => {
-    console.log(letters);
-  }, [letters]);
-
-  const clickButton = (letter: string) => {
-    const scene = gameRef.current?.scene.getScene("Vowels") as any;
-    scene.changeLevel(letter);
-  };
 
   return (
     <>
@@ -61,26 +43,7 @@ const VowelsGame: React.FC = () => {
           id="game-container"
           className="relative"
           style={{ width: 800, height: 600 }}
-        >
-          <Button
-            onClick={() => clickButton("A")}
-            className="absolute top-110 right-140 cursor-pointer p-12 text-8xl"
-          >
-            {letters[0]}
-          </Button>
-          <Button
-            onClick={() => clickButton("a")}
-            className="absolute top-110 right-80 cursor-pointer p-12 text-8xl"
-          >
-            {letters[1]}
-          </Button>
-          <Button
-            onClick={() => clickButton("a")}
-            className="absolute top-110 right-20 cursor-pointer p-12 text-8xl"
-          >
-            {letters[2]}
-          </Button>
-        </div>
+        ></div>
       </div>
       <Footer />
     </>
