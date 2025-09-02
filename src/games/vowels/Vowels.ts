@@ -28,8 +28,13 @@ export default class Vowels extends Phaser.Scene {
     var firstImage = this.levels[this.currentlevel].name;
     this.image = this.add.image(400, 300, firstImage);
 
-    const button = new LetterButton(this, 400, 300, "defaultButton");
+    const button = new LetterButton(this, 200, 500, "defaultButton");
+    const button2 = new LetterButton(this, 400, 500, "defaultButton");
+    const button3 = new LetterButton(this, 600, 500, "defaultButton");
+
     this.add.existing(button);
+    this.add.existing(button2);
+    this.add.existing(button3);
 
     EventBus.emit("current-scene-ready", "O jogo das vogais foi carregado!");
   }
