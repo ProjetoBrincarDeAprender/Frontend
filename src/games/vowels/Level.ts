@@ -7,7 +7,7 @@ export default class Level {
     this.answer = answer;
   }
 
-  isCorrectAnswer(clickedLetter: string) {
+  isCorrectLetter(clickedLetter: string) {
     if (clickedLetter === this.answer) return true;
     return false;
   }
