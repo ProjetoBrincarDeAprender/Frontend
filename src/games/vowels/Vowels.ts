@@ -1,5 +1,6 @@
 import { EventBus } from "../EventBus";
 import { LetterButton } from "./gameObjects/LetterButton";
+import randomGenerator from "../common/utils/randomGenerator";
 import Phaser from "phaser";
 import Level from "./Level";
 
@@ -28,7 +29,8 @@ export default class Vowels extends Phaser.Scene {
   }
 
   create() {
-    // const answer = this.levels[this.currentlevel];
+    const answer = this.currentlevel.getAnswer();
+    const answerIndex = randomGenerator.randomIndex(3);
 
     const button1 = new LetterButton(
       this,
@@ -74,7 +76,7 @@ export default class Vowels extends Phaser.Scene {
       this.changeLevel(button3.getLetter());
     });
 
-    const firstImage = this.currentlevel.name;
+    const firstImage = this.currentlevel.getName();
     this.image = this.add.image(400, 300, firstImage);
 
     EventBus.emit("current-scene-ready", "O jogo das vogais foi carregado!");
@@ -88,7 +90,7 @@ export default class Vowels extends Phaser.Scene {
       if (this.currentlevel.isCorrectLetter(letter)) {
         this.indexCurrentLevel++;
         this.currentlevel = this.levels[this.indexCurrentLevel];
-        this.image.setTexture(this.currentlevel.name);
+        this.image.setTexture(this.currentlevel.getName());
       }
     }
   }
