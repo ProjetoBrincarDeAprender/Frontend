@@ -6,4 +6,9 @@ export default class Level {
     this.name = name;
     this.answer = answer;
   }
+
+  isCorrectAnswer(clickedLetter: string) {
+    if (clickedLetter === this.answer) return true;
+    return false;
+  }
 }
