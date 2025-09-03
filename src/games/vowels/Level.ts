@@ -1,6 +1,6 @@
 export default class Level {
-  name: string;
-  answer: string;
+  private name: string;
+  private answer: string;
 
   constructor(name: string, answer: string) {
     this.name = name;
@@ -10,5 +10,13 @@ export default class Level {
   isCorrectLetter(clickedLetter: string) {
     if (clickedLetter === this.answer) return true;
     return false;
+  }
+
+  getName() {
+    return this.name;
+  }
+
+  getAnswer() {
+    return this.answer;
   }
 }
