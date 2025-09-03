@@ -25,9 +25,6 @@ export default class Vowels extends Phaser.Scene {
   }
 
   create() {
-    var firstImage = this.levels[this.currentlevel].name;
-    this.image = this.add.image(400, 300, firstImage);
-
     const button1 = new LetterButton(
       this,
       200,
@@ -35,6 +32,7 @@ export default class Vowels extends Phaser.Scene {
       "defaultButton",
       "hoverButton",
       "clickedButton",
+      "A",
     );
     const button2 = new LetterButton(
       this,
@@ -43,6 +41,7 @@ export default class Vowels extends Phaser.Scene {
       "defaultButton",
       "hoverButton",
       "clickedButton",
+      "B",
     );
     const button3 = new LetterButton(
       this,
@@ -51,31 +50,39 @@ export default class Vowels extends Phaser.Scene {
       "defaultButton",
       "hoverButton",
       "clickedButton",
+      "B",
     );
 
     this.add.existing(button1);
     this.add.existing(button2);
     this.add.existing(button3);
 
+    button1.on("pointerdown", () => {
+      this.changeLevel(button1.getLetter());
+    });
+
+    button2.on("pointerdown", () => {
+      this.changeLevel(button2.getLetter());
+    });
+
+    button3.on("pointerdown", () => {
+      this.changeLevel(button3.getLetter());
+    });
+
+    const firstImage = this.levels[this.currentlevel].name;
+    this.image = this.add.image(400, 300, firstImage);
+
     EventBus.emit("current-scene-ready", "O jogo das vogais foi carregado!");
   }
 
   update() {}
 
-  recreateLevel() {
-    const newLetters = [this.levels[this.currentlevel].answer, "a", "a"];
-    EventBus.emit("letras-definidas", newLetters);
-  }
-
   changeLevel(letter: string) {
-    // Se a imagem atual for a mesma do nome do dicionário
-    if (this.image?.texture.key === this.levels[this.currentlevel].name) {
-      // Se a letra estiver correta
-      if (this.levels[this.currentlevel].answer === letter) {
+    if (this.image) {
+      // Se é a resposta correta do nível em que estamos nesse momento
+      if (this.levels[this.currentlevel].isCorrectAnswer(letter)) {
         this.currentlevel++;
         this.image.setTexture(this.levels[this.currentlevel].name);
-        this.recreateLevel();
-        console.log("Imagem trocada!");
       }
     }
   }
