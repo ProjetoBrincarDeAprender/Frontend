@@ -1,3 +1,5 @@
+import randomGenerator from "../common/utils/randomGenerator";
+
 export default class Level {
   private name: string;
   private answer: string;
@@ -10,6 +12,17 @@ export default class Level {
   isCorrectLetter(clickedLetter: string) {
     if (clickedLetter === this.answer) return true;
     return false;
+  }
+
+  defineButtonsLetters(buttonsNumber: number = 1) {
+    let letterArray = new Array(buttonsNumber);
+    for (let i = 0; i < buttonsNumber; i++) {
+      let randomLetter = randomGenerator.randomCharacter();
+      letterArray[i] = randomLetter;
+    }
+    const answerIndex = randomGenerator.randomIndex(buttonsNumber);
+    letterArray[answerIndex] = this.answer;
+    return letterArray;
   }
 
   getName() {
