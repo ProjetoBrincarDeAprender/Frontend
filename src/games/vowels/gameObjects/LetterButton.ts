@@ -4,30 +4,30 @@ export class LetterButton extends Phaser.GameObjects.Container {
   private defaultImage: Phaser.GameObjects.Image;
   private hoverImage: Phaser.GameObjects.Image;
   private clickImage: Phaser.GameObjects.Image;
-  private letter: Phaser.GameObjects.Text;
+  private buttonText: Phaser.GameObjects.Text;
 
   constructor(
     scene: Phaser.Scene,
     x: number,
     y: number,
-    defaultImage: string,
+    defaultImage: string = "null",
     hoverImage: string = defaultImage,
     clickImage: string = defaultImage,
-    letter: string = "null",
+    buttonText: string = "null",
   ) {
     super(scene, x, y);
 
     this.defaultImage = scene.add.image(0, 0, defaultImage);
     this.hoverImage = scene.add.image(0, 0, hoverImage);
     this.clickImage = scene.add.image(0, 0, clickImage);
-    this.letter = scene.add.text(0, 0, letter).setOrigin(0.5);
+    this.buttonText = scene.add.text(0, 0, buttonText).setOrigin(0.5);
 
     this.setSize(this.defaultImage.width, this.defaultImage.height);
 
     this.add(this.defaultImage);
     this.add(this.hoverImage);
     this.add(this.clickImage);
-    this.add(this.letter);
+    this.add(this.buttonText);
 
     this.hoverImage.setVisible(false);
     this.clickImage.setVisible(false);
@@ -57,8 +57,12 @@ export class LetterButton extends Phaser.GameObjects.Container {
     this.clickImage.setVisible(true);
   }
 
-  getLetter() {
-    const stringLetter: string = this.letter.text;
-    return stringLetter;
+  getButtonText() {
+    const stringText = this.buttonText.text;
+    return stringText;
+  }
+
+  setButtonText(buttonText: string) {
+    this.buttonText.text = buttonText;
   }
 }
