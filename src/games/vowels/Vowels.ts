@@ -12,6 +12,9 @@ export default class Vowels extends Phaser.Scene {
   private button2: LetterButton | undefined;
   private button3: LetterButton | undefined;
 
+  private hitTime: number;
+  private missCount: number;
+
   constructor() {
     super("Vowels");
     this.levels.push(new Level("abelha", "A"));
@@ -19,6 +22,9 @@ export default class Vowels extends Phaser.Scene {
 
     this.indexCurrentLevel = 0;
     this.currentlevel = this.levels[this.indexCurrentLevel];
+
+    this.hitTime = 0;
+    this.missCount = 0;
   }
 
   preload() {
@@ -86,6 +92,8 @@ export default class Vowels extends Phaser.Scene {
     this.image = this.add.image(400, 300, firstImage);
 
     EventBus.emit("current-scene-ready", "O jogo das vogais foi carregado!");
+
+    this.hitTime = this.time.now;
   }
 
   update() {}
@@ -94,15 +102,24 @@ export default class Vowels extends Phaser.Scene {
     if (this.image) {
       // Se é a resposta correta do nível em que estamos nesse momento
       if (this.currentlevel.isCorrectLetter(letter)) {
+        const initialTime = this.hitTime;
+        const finalTime = this.time.now;
+        this.hitTime = finalTime - initialTime;
+        console.log(this.hitTime);
+
+        console.log(this.missCount);
+        this.missCount = 0;
+
         this.indexCurrentLevel++;
         this.currentlevel = this.levels[this.indexCurrentLevel];
         this.image.setTexture(this.currentlevel.getName());
 
         let letterArray = this.currentlevel.defineButtonsLetters(3);
-
         this.button1?.setButtonText(letterArray[0]);
         this.button2?.setButtonText(letterArray[1]);
         this.button3?.setButtonText(letterArray[2]);
+      } else {
+        this.missCount++;
       }
     }
   }
