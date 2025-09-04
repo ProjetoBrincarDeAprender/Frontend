@@ -22,12 +22,12 @@ export default class Vowels extends Phaser.Scene {
   }
 
   preload() {
-    this.load.image("abelha", "/assets/abelha.svg");
-    this.load.image("elefante", "/assets/elefante.svg");
+    this.load.image("abelha", "/assets/vowelsGame/abelha.svg");
+    this.load.image("elefante", "/assets/vowelsGame/elefante.svg");
 
-    this.load.image("defaultButton", "/assets/defaultButton.svg");
-    this.load.image("hoverButton", "/assets/hoverButton.svg");
-    this.load.image("clickedButton", "/assets/clickedButton.svg");
+    this.load.image("defaultButton", "/assets/common/defaultButton.svg");
+    this.load.image("hoverButton", "/assets/common/hoverButton.svg");
+    this.load.image("clickedButton", "/assets/common/clickedButton.svg");
   }
 
   create() {
