@@ -31,6 +31,14 @@ export default class Vowels extends Phaser.Scene {
   create() {
     const answer = this.currentlevel.getAnswer();
     const answerIndex = randomGenerator.randomIndex(3);
+    let letterArray = ["null", "null", "null"];
+
+    for (let i = 0; i < 3; i++) {
+      let randomLetter = randomGenerator.randomCharacter();
+      letterArray[i] = randomLetter;
+    }
+
+    letterArray[answerIndex] = answer;
 
     const button1 = new LetterButton(
       this,
@@ -39,7 +47,7 @@ export default class Vowels extends Phaser.Scene {
       "defaultButton",
       "hoverButton",
       "clickedButton",
-      "A",
+      letterArray[0],
     );
     const button2 = new LetterButton(
       this,
@@ -48,7 +56,7 @@ export default class Vowels extends Phaser.Scene {
       "defaultButton",
       "hoverButton",
       "clickedButton",
-      "B",
+      letterArray[1],
     );
     const button3 = new LetterButton(
       this,
@@ -57,7 +65,7 @@ export default class Vowels extends Phaser.Scene {
       "defaultButton",
       "hoverButton",
       "clickedButton",
-      "B",
+      letterArray[2],
     );
 
     this.add.existing(button1);
