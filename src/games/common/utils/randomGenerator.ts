@@ -5,13 +5,10 @@ export default class randomGenerator {
     return index;
   }
 
-  static randomCharacter(restriction?: string | string[]) {
-    let character = "";
+  static randomCharacter() {
     const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     const alphabetLength = alphabet.length;
-
-    character = alphabet[this.randomIndex(alphabetLength)];
-
+    const character = alphabet[this.randomIndex(alphabetLength)];
     return character;
   }
 }
