@@ -4,6 +4,8 @@ import { EventBus } from "@/games/EventBus";
 import Phaser from "phaser";
 import Vowels from "@/games/vowels/Vowels";
 
+import Credits from "@/games/vowels/credits";
+
 export interface IRefVowelsGame {
   game: Phaser.Game | null;
   scene: Phaser.Scene | null;
