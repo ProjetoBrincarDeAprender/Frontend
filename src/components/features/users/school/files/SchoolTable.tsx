@@ -1,7 +1,6 @@
 import { useTable } from "@/hooks/Table/useTable";
 import { useUser } from "@/hooks/User/useUser";
 import api from "@/utils/api";
-//import { Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router";
 import { DataTable } from "../../../../utils/DataTable/DataTable";
@@ -36,7 +35,7 @@ export default function SchoolTable() {
   return (
     <>
       {updating ? (
-        <SkeletonTable rows={6} cols={SchoolColumns.length}/>
+        <SkeletonTable rows={6} cols={SchoolColumns.length} />
       ) : (
         <DataTable
           columns={SchoolColumns}
