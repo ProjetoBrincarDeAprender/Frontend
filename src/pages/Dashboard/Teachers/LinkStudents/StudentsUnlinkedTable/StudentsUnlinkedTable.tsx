@@ -3,6 +3,7 @@ import api from "@/utils/api";
 import { DataTable } from "@/components/utils/DataTable/DataTable";
 import { SkeletonTable } from "@/components/ui/skeleton-table";
 import { ArrowUpDown } from "lucide-react";
+import { useSearchParams } from "react-router";
 
 export type UnlinkedStudents = {
   id: number;
@@ -20,14 +21,27 @@ export function StudentsUnlinkedTable({
 }) {
   const [data, setData] = useState<UnlinkedStudents[] | null>(null);
   const [loading, setLoading] = useState(true);
+  const [searchParams] = useSearchParams();
+  const teacherId = searchParams.get("id");
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await api.get("/student/list", {});
-        if (response.status === 200) {
-          setData(response.data);
+        let linkedStudents: UnlinkedStudents[] = [];
+        if (teacherId) {
+          const linkedRes = await api.get(
+            `/responsible/list/${teacherId}/students`,
+          );
+          if (linkedRes.status === 200 && Array.isArray(linkedRes.data)) {
+            linkedStudents = linkedRes.data;
+          }
         }
+        const response = await api.get("/student/list?responsibleId=null", {});
+        let unlinkedStudents: UnlinkedStudents[] = [];
+        if (response.status === 200 && Array.isArray(response.data)) {
+          unlinkedStudents = response.data;
+        }
+        setData([...linkedStudents, ...unlinkedStudents]);
       } catch (error) {
         console.log(error);
       } finally {
@@ -35,7 +49,7 @@ export function StudentsUnlinkedTable({
       }
     };
     fetchData();
-  }, []);
+  }, [teacherId]);
 
   const toggleSelect = (id: number) => {
     setSelectedIds((prev) =>
