@@ -5,9 +5,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { AxiosError } from "axios";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
-import z, { optional } from "zod";
+import z from "zod";
 // No topo do EditForm.tsx
-import { IMaskInput } from "react-imask";
 
 const formSchema = z.object({
   nome_completo: z
@@ -16,22 +15,6 @@ const formSchema = z.object({
     .min(2, { error: "Nome completo deve ter pelo menos 2 caracteres" })
     .optional(),
   email: z.email({ error: "Digite um email válido" }).optional(),
-  // escolaId: z
-  //   .string({
-  //     error:
-  //       "É obrigatório que o admin de uma escola esteja vinculado a uma escola",
-  //   })
-  //   .optional(),
-  // telefone: z
-  //   .string()
-  //   .refine(
-  //     (val) => {
-  //       const phoneRegex = /^\(\d{2}\) \d{4,5}-\d{4}$/;
-  //       return phoneRegex.test(val);
-  //     },
-  //     { message: "Telefone inválido" },
-  //   )
-  //   .optional(),
 });
 
 type EditSchoolUserFormProps = {
@@ -56,7 +39,6 @@ export default function EditSchoolUserForm({
           const formData = {
             nome_completo: response.data.nome_completo || "",
             email: response.data.email || "",
-            telefone: response.data.telefone || "",
           };
           form.reset(formData);
         }
@@ -147,28 +129,6 @@ export default function EditSchoolUserForm({
             />
           )}
         />
-        {/* <Form.Field
-          form={form}
-          name="telefone"
-          render={({ field }) => (
-            <Form.Item>
-              <div className="flex w-full flex-col gap-2">
-                <label htmlFor="telefone" className="text-sm font-medium">
-                  Telefone
-                </label>
-                <IMaskInput
-                  mask="(00) 00000-0000"
-                  value={field.value || ""}
-                  onAccept={(value: string) => {
-                    field.onChange(value);
-                  }}
-                  placeholder="(83) 99999-9999"
-                  className="border-purplish-blue hover:border-purplish-blue flex h-13 w-full rounded-lg border bg-transparent px-6 py-2 text-base text-gray-800 transition-colors duration-200 ease-in-out placeholder:text-gray-500 focus-visible:ring-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
-                />
-              </div>
-            </Form.Item>
-          )}
-        /> */}
         <Form.Submit>Atualizar Dados</Form.Submit>
       </Form.Main>
       <p className="mt-6 w-full text-center text-lg">
