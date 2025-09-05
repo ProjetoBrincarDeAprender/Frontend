@@ -37,7 +37,7 @@ export default function StudentTable() {
   return (
     <>
       {updating ? (
-        <SkeletonTable rows={6} cols={StudentColumns.length}/>
+        <SkeletonTable rows={6} cols={StudentColumns.length} />
       ) : (
         <DataTable
           columns={StudentColumns}
@@ -49,7 +49,6 @@ export default function StudentTable() {
           }}
         />
       )}
-
     </>
   );
 }
