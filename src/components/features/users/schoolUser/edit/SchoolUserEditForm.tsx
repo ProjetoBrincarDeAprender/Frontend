@@ -22,16 +22,16 @@ const formSchema = z.object({
   //       "É obrigatório que o admin de uma escola esteja vinculado a uma escola",
   //   })
   //   .optional(),
-  telefone: z
-    .string()
-    .refine(
-      (val) => {
-        const phoneRegex = /^\(\d{2}\) \d{4,5}-\d{4}$/;
-        return phoneRegex.test(val);
-      },
-      { message: "Telefone inválido" },
-    )
-    .optional(),
+  // telefone: z
+  //   .string()
+  //   .refine(
+  //     (val) => {
+  //       const phoneRegex = /^\(\d{2}\) \d{4,5}-\d{4}$/;
+  //       return phoneRegex.test(val);
+  //     },
+  //     { message: "Telefone inválido" },
+  //   )
+  //   .optional(),
 });
 
 type EditSchoolUserFormProps = {
