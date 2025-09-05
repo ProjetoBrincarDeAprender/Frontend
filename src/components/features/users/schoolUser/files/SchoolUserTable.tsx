@@ -1,16 +1,14 @@
 import { useTable } from "@/hooks/Table/useTable";
 import { useUser } from "@/hooks/User/useUser";
 import api from "@/utils/api";
-//import { Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router";
-import { DataTable } from "@/components/utils/DataTable/DataTable";
-import { ResponsibleColumns, type Responsible } from "./TableData";
+import { DataTable } from "../../../../utils/DataTable/DataTable";
+import { SchoolUserColumns, type SchoolUser } from "./TableData";
 
-import { SkeletonTable } from "@/components/ui/skeleton-table";
-
-export default function ResponsibleTable() {
-  const [data, setData] = useState<Responsible[] | null>(null);
+export default function SchoolUserTable() {
+  const [data, setData] = useState<SchoolUser[] | null>(null);
   const [searchParams, _] = useSearchParams();
   const { updating, setUpdating } = useTable();
   const { user } = useUser();
@@ -19,7 +17,7 @@ export default function ResponsibleTable() {
     const fetchData = async () => {
       try {
         const response = await api.get(
-          `/user/list?type=Responsavel${user?.perfil != "Admin" ? "&escolaId=" + user?.escola?.id : ""}`,
+          `/user/list?type=Escola${user?.perfil != "Admin" ? "?escolaId=" + user?.escola?.id : ""}`,
           {},
         );
 
@@ -37,17 +35,19 @@ export default function ResponsibleTable() {
   return (
     <>
       {updating ? (
-        <SkeletonTable rows={6} cols={ResponsibleColumns.length}/>
-      ) : (
+        <Loader2 className="animate-spin" />
+      ) : data ? (
         <DataTable
-          columns={ResponsibleColumns}
-          data={data ??[]}
+          columns={SchoolUserColumns}
+          data={data}
           {...{
             page: searchParams.get("page")
               ? parseInt(searchParams.get("page")!)
               : 0,
           }}
         />
+      ) : (
+        <Loader2 className="animate-spin" />
       )}
     </>
   );

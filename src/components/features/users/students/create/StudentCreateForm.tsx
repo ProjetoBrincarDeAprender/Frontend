@@ -22,10 +22,30 @@ const formSchema = z
       .url({ error: "Insira uma URL válida" })
       .optional()
       .or(z.literal("")),
-    tema_preferido: z.string({ error: "Insira um tema válido" }),
-    data_nascimento: z.string({
-      error: "Data de nascimento é obrigatória",
-    }),
+    tema_preferido: z.string({ error: "Insira um tema válido" }).optional(),
+    data_nascimento: z
+      .string()
+      .nonempty({ message: "Data de nascimento é obrigatória" })
+      .refine((val) => {
+        const date = new Date(val);
+        const year = date.getFullYear();
+        const currentYear = new Date().getFullYear();
+        return year >= 1940 && year <= currentYear;
+      }, {
+        message: "Data de nascimento inválida",
+      })
+      .refine((val) => {
+        const date = new Date(val);
+        const today = new Date();
+        let age = today.getFullYear() - date.getFullYear();
+        const m = today.getMonth() - date.getMonth();
+        if (m < 0 || (m === 0 && today.getDate() < date.getDate())) {
+          age--; 
+        }
+        return age >= 5;
+      }, {
+        message: "O aluno deve ter pelo menos 5 anos de idade",
+      }),
     senha: z
       .string({ error: "Senha deve ter entre 8 e 32 caracteres" })
       .min(8, { error: "Senha deve ter pelo menos 8 caracteres" })
@@ -207,25 +227,39 @@ export function StudentSignUpForm({ onSuccess }: SignUpFormProps) {
         <Form.Field
           form={form}
           name="senha"
-          render={({ field }) => (
+          render={({ field, fieldState }) => (
+            <>
             <PasswordInput
               {...field}
               label="Senha"
               placeholder="Senha"
               type="password"
             />
+            {fieldState.error && (
+              <p className="text-sm text-red-600">
+                {fieldState.error.message}
+              </p>
+            )}
+          </>
           )}
         />
         <Form.Field
           form={form}
           name="confirmar_senha"
-          render={({ field }) => (
-            <PasswordInput
-              {...field}
-              label="Confirmar Senha"
-              placeholder="Confirmar Senha"
-              type="password"
-            />
+          render={({ field, fieldState }) => (
+            <>
+              <PasswordInput
+                {...field}
+                label="Confirmar Senha"
+                placeholder="Confirmar Senha"
+                type="password"
+              />
+              {fieldState.error && (
+                <p className="text-sm text-red-600">
+                  {fieldState.error.message}
+                </p>
+              )}
+            </>
           )}
         />
         <Form.Submit>Criar Conta</Form.Submit>
