@@ -57,7 +57,11 @@ export function ResponsableSignUpForm({ onSuccess }: SignUpFormProps) {
   );
   const [users, setUsers] = useState<UserProfile[] | null>(null);
 
+  const [errorMensage, setErrorMessage] = useState<string | null>(null);
+  const escolaSelecionada = form.watch("escolaId");
+
   useEffect(() => {
+    if (user?.perfil !== "Admin") return;
     const fetchSchools = async () => {
       try {
         const response = await api.get("/school/list");
@@ -73,26 +77,38 @@ export function ResponsableSignUpForm({ onSuccess }: SignUpFormProps) {
         }
       }
     };
+    fetchSchools();
+  }, [user?.perfil, form]);
+
+  useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await api.get(
-          `/user/list?type=Aluno${user?.perfil == "Admin" ? "" : `&escolaId=${user?.escola?.id}`}`,
-        );
+        const escolaId = user?.perfil === "Admin" ? escolaSelecionada : user?.escola?.id;
+        if (!escolaId) return setUsers([]);
+
+        const response = await api.get(`/user/list?type=Aluno${escolaId ? `&escolaId=${escolaId}` : ""}`);
+  
+        // const response = await api.get(
+        //   `/user/list?type=Aluno${user?.perfil == "Admin" ? "" : `&escolaId=${user?.escola?.id}`}`,
+        // );
 
         if (response.status == 200) {
           const users = response.data;
           setUsers(users);
+          if (users.length === 0) {
+            setErrorMessage("Não há alunos cadastrados nesta escola!");
+          } else {
+            setErrorMessage(null);
+          }
         }
       } catch (error) {
         console.log(error);
       }
     };
 
-    if (user?.perfil == "Admin") {
-      fetchSchools();
-    }
+   
     fetchUsers();
-  }, [form, user]);
+  }, [user, form, escolaSelecionada]);
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     const { usersIds, ...userData } = data;
@@ -100,7 +116,7 @@ export function ResponsableSignUpForm({ onSuccess }: SignUpFormProps) {
     const payload = {
       ...userData,
       perfilId: 5,
-      escolaId: user?.escola?.id || data.escolaId,
+      escolaId: user?.perfil === "Admin" ? data.escolaId : user?.escola?.id,
     };
 
     try {
@@ -237,6 +253,7 @@ export function ResponsableSignUpForm({ onSuccess }: SignUpFormProps) {
           form={form}
           name="usersIds"
           render={({ field }) => (
+            <>
             <FancyMultiSelect
               onSelect={field.onChange}
               label="Alunos do Responsável"
@@ -250,6 +267,8 @@ export function ResponsableSignUpForm({ onSuccess }: SignUpFormProps) {
                   : []
               }
             />
+             {errorMensage && <p className="text-sm text-yellow-800 mt-1">{errorMensage}</p>}
+            </>
           )}
         />
         <Form.Submit>Criar Conta</Form.Submit>

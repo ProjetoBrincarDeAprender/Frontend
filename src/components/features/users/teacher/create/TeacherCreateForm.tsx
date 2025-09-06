@@ -58,7 +58,12 @@ export default function TeacherSignUpForm({ onSuccess }: SignUpFormProps) {
   );
   const [users, setUsers] = useState<UserProfile[] | null>(null);
 
+  const [errorMensage, setErrorMessage] = useState<string | null>(null);
+  const escolaSelecionada = form.watch("escolaId");
+
   useEffect(() => {
+    if (user?.perfil !== "Admin") return; 
+    
     const fetchSchools = async () => {
       try {
         const response = await api.get("/school/list");
@@ -74,26 +79,38 @@ export default function TeacherSignUpForm({ onSuccess }: SignUpFormProps) {
         }
       }
     };
+    fetchSchools();
+  }, [user?.perfil, form]);
+
+  useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await api.get(
-          `/user/list?type=Aluno${user?.perfil == "Admin" ? "" : `&escolaId=${user?.escola?.id}`}`,
-        );
+        const escolaId = user?.perfil === "Admin" ? escolaSelecionada : user?.escola?.id;
+        if (!escolaId) return setUsers([]);
+
+        const response = await api.get(`/user/list?type=Aluno${escolaId ? `&escolaId=${escolaId}` : ""}`);
+
+        //antigo
+        // const response = await api.get(
+        //   `/user/list?type=Aluno${user?.perfil == "Admin" ? "" : `&escolaId=${user?.escola?.id}`}`,
+        // );
 
         if (response.status == 200) {
           const users = response.data;
           setUsers(users);
+
+          if (users.length === 0) {
+            setErrorMessage("Não há alunos cadastrados nesta escola!");
+          } else {
+            setErrorMessage(null);
+          }
         }
       } catch (error) {
         console.log(error);
       }
     };
-
-    if (user?.perfil == "Admin") {
-      fetchSchools();
-    }
     fetchUsers();
-  }, [form, user]);
+  }, [escolaSelecionada, user?.perfil, user?.escola?.id]);
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     const { usersIds, ...userData } = data;
@@ -236,6 +253,7 @@ export default function TeacherSignUpForm({ onSuccess }: SignUpFormProps) {
           form={form}
           name="usersIds"
           render={({ field }) => (
+            <>
             <FancyMultiSelect
               onSelect={field.onChange}
               label="Alunos do Professor"
@@ -249,9 +267,12 @@ export default function TeacherSignUpForm({ onSuccess }: SignUpFormProps) {
                   : []
               }
             />
+             {errorMensage && <p className="text-sm text-yellow-800 mt-1">{errorMensage}</p>}
+            </>
           )}
         />
         <Form.Submit>Criar Conta</Form.Submit>
+
       </Form.Main>
       <p className="mt-6 w-full text-center text-lg">
         O professor já possui uma conta?{" "}
