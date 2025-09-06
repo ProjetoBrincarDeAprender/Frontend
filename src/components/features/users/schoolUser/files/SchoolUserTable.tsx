@@ -13,6 +13,7 @@ export default function SchoolUserTable() {
   const [searchParams, _] = useSearchParams();
   useTable();
   const { user } = useUser();
+  const { updating, setUpdating } = useTable();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -33,8 +34,8 @@ export default function SchoolUserTable() {
       }
     };
 
-    fetchData();
-  }, [user]);
+    fetchData().then(() => setUpdating(false));
+  }, [user, updating, setUpdating]);
 
   return (
     <>
