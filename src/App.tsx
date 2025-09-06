@@ -1,17 +1,18 @@
 import { Navigate, Route, Routes } from "react-router";
+import VowelsGame from "./components/features/games/VowelsGame";
 import { AuthGuard } from "./guards/AuthGuard";
 import Dashboard from "./pages/Dashboard/Dashboard";
 import { Responsibles } from "./pages/Dashboard/Responsible/Responsibles";
 import { Schools } from "./pages/Dashboard/Schools/Schools";
+import { SchoolUsers } from "./pages/Dashboard/SchoolUsers/SchoolUsers";
 import { Students } from "./pages/Dashboard/Students/Students";
+import { LinkStudents } from "./pages/Dashboard/Teachers/LinkStudents/LinkStudents";
 import { Teachers } from "./pages/Dashboard/Teachers/Teachers";
 import { Games } from "./pages/Games/Games";
 import { Home } from "./pages/Home/Home";
 import { default as LoginForm } from "./pages/Login/Login";
 import Logout from "./pages/Logout/Logout";
 import { Profile } from "./pages/Profile/Profile";
-import { SchoolUsers } from "./pages/Dashboard/SchoolUsers/SchoolUsers";
-import VowelsGame from "./components/features/games/VowelsGame";
 
 function App() {
   return (
@@ -32,6 +33,7 @@ function App() {
           <Route path="schoolusers" element={<SchoolUsers />} />
         </Route>
         <Route path="teachers" element={<Teachers />} />
+        <Route path="link-students" element={<LinkStudents />} />
         <Route path="responsables" element={<Responsibles />} />
       </Route>
 

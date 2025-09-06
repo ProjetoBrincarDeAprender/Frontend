@@ -1,19 +1,17 @@
 import { useTable } from "@/hooks/Table/useTable";
 import { useUser } from "@/hooks/User/useUser";
 import api from "@/utils/api";
-//import { Loader2 } from "lucide-react";
+import { SkeletonTable } from "@/components/ui/skeleton-table";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router";
 import { DataTable } from "../../../../utils/DataTable/DataTable";
-import { StudentColumns, type Student } from "./TableData";
+import { SchoolUserColumns, type SchoolUser } from "./TableData";
 
-import { SkeletonTable } from "@/components/ui/skeleton-table";
-
-export default function StudentTable() {
-  const [data, setData] = useState<Student[] | null>(null);
+export default function SchoolUserTable() {
+  const [data, setData] = useState<SchoolUser[] | null>(null);
   const [loading, setLoading] = useState(true);
   const [searchParams, _] = useSearchParams();
-  const { updating, setUpdating } = useTable();
+  useTable();
   const { user } = useUser();
 
   useEffect(() => {
@@ -21,7 +19,7 @@ export default function StudentTable() {
       setLoading(true);
       try {
         const response = await api.get(
-          `/student/list${user?.perfil != "Admin" ? "?escolaId=" + user?.escola?.id : ""}`,
+          `/user/list?type=Escola${user?.perfil != "Admin" ? "?escolaId=" + user?.escola?.id : ""}`,
           {},
         );
 
@@ -35,16 +33,16 @@ export default function StudentTable() {
       }
     };
 
-    fetchData().then(() => setUpdating(false));
-  }, [updating, setUpdating, user]);
+    fetchData();
+  }, [user]);
 
   return (
     <>
       {loading ? (
-        <SkeletonTable rows={6} cols={StudentColumns.length} />
+        <SkeletonTable rows={6} cols={SchoolUserColumns.length} />
       ) : (
         <DataTable
-          columns={StudentColumns}
+          columns={SchoolUserColumns}
           data={data ?? []}
           {...{
             page: searchParams.get("page")

@@ -1,5 +1,7 @@
-import SchoolTable from "@/components/features/users/school/files/SchoolTable";
 import { TableProvider } from "@/contexts/Table/provider";
+//import { RegisterSchoolModal } from "@/components/features/users/school/create/SchoolCreateModal";
+
+import SchoolUserTable from "@/components/features/users/schoolUser/files/SchoolUserTable";
 import saturn from "../../../assets/saturn.svg";
 
 //import { RegisterSchoolModal } from "@/components/modals/RegisterSchoolModal";
@@ -9,6 +11,7 @@ import { Footer } from "@/components/Footer/Footer";
 import { Header } from "@/components/Header/Header";
 import { useUser } from "@/hooks/User/useUser";
 import { Link } from "react-router";
+
 import { LateralMenu } from "../../../components/sideBar/sideBar";
 
 export function SchoolUsers() {
@@ -40,9 +43,7 @@ export function SchoolUsers() {
               </Link>
             </div>
           </div>
-          <div className="mt-12">
-            <SchoolTable />
-          </div>
+          <SchoolUserTable />
         </TableProvider>
       </main>
       <Footer />

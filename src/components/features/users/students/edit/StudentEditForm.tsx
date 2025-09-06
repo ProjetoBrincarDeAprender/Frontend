@@ -21,9 +21,28 @@ const formSchema = z.object({
     .or(z.literal("")),
   tema_preferido: z.string({ error: "Insira um tema válido" }).optional(),
   data_nascimento: z
-    .string({
-      error: "Data de nascimento é obrigatória",
-    })
+      .string()
+      .nonempty({ message: "Data de nascimento é obrigatória" })
+      .refine((val) => {
+        const date = new Date(val);
+        const year = date.getFullYear();
+        const currentYear = new Date().getFullYear();
+        return year >= 1940 && year <= currentYear;
+      }, {
+        message: "Data de nascimento inválida",
+      })
+      .refine((val) => {
+        const date = new Date(val);
+        const today = new Date();
+        let age = today.getFullYear() - date.getFullYear();
+        const m = today.getMonth() - date.getMonth();
+        if (m < 0 || (m === 0 && today.getDate() < date.getDate())) {
+          age--; 
+        }
+        return age >= 5;
+      }, {
+        message: "O aluno deve ter pelo menos 5 anos de idade",
+      })
     .optional(),
   escolaId: z.string().optional(),
 });

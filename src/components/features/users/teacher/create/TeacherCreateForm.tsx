@@ -11,6 +11,10 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import type { SignUpFormProps } from "../../common/signUpFormProps";
+<<<<<<< HEAD
+=======
+//import { Label } from "@/components/ui/label";
+>>>>>>> fabad77c8070c1e60e39c1f02be89efb0d35da44
 
 const formSchema = z
   .object({
@@ -196,25 +200,39 @@ export default function TeacherSignUpForm({ onSuccess }: SignUpFormProps) {
         <Form.Field
           form={form}
           name="senha"
-          render={({ field }) => (
-            <PasswordInput
-              {...field}
-              label="Senha"
-              placeholder="Senha"
-              type="password"
-            />
+          render={({ field, fieldState }) => (
+            <>
+              <PasswordInput
+                {...field}
+                label="Senha"
+                placeholder="Senha"
+                type="password"
+              />
+              {fieldState.error && (
+                <p className="text-sm text-red-600">
+                  {fieldState.error.message}
+                </p>
+              )}
+            </>
           )}
         />
         <Form.Field
           form={form}
           name="confirmar_senha"
-          render={({ field }) => (
-            <PasswordInput
-              {...field}
-              label="Confirmar Senha"
-              placeholder="Confirmar Senha"
-              type="password"
-            />
+          render={({ field, fieldState }) => (
+            <>
+              <PasswordInput
+                {...field}
+                label="Confirmar Senha"
+                placeholder="Confirmar Senha"
+                type="password"
+              />
+              {fieldState.error && (
+                <p className="text-sm text-red-600">
+                  {fieldState.error.message}
+                </p>
+              )}
+            </>
           )}
         />
         <Form.Field

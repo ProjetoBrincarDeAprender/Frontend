@@ -40,9 +40,7 @@ export function Schools() {
               </Link>
             </div>
           </div>
-          <div className="mt-12">
-            <SchoolTable />
-          </div>
+          <SchoolTable />
         </TableProvider>
       </main>
       <Footer />

@@ -78,6 +78,11 @@ export const StudentColumns: ColumnDef<Student>[] = [
         <ArrowUpDown className="ml-2 h-4 w-4" />
       </Button>
     ),
+    cell: ({ row }) => {
+      const actualDate = row.getValue<string>("data_nascimento");
+      const formattedDate = new Date(actualDate).toLocaleDateString("pt-BR");
+      return formattedDate;
+    },
   },
   {
     accessorKey: "tema_preferido",
