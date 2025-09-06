@@ -1,7 +1,6 @@
 import { useTable } from "@/hooks/Table/useTable";
 import { useUser } from "@/hooks/User/useUser";
 import api from "@/utils/api";
-//import { Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router";
 import { DataTable } from "../../../../utils/DataTable/DataTable";
@@ -13,20 +12,24 @@ export default function SchoolTable() {
   const [searchParams, _] = useSearchParams();
   const { updating, setUpdating } = useTable();
   const { user } = useUser();
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
+      setLoading(true);
       try {
         const response = await api.get(
           `/school/list${user?.perfil != "Admin" ? "?escolaId=" + user?.escola?.id : ""}`,
           {},
         );
 
-        if (response.status == 200) {
+        if (response.status === 200) {
           setData(response.data);
         }
       } catch (error) {
         console.log(error);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -35,8 +38,8 @@ export default function SchoolTable() {
 
   return (
     <>
-      {updating ? (
-        <SkeletonTable rows={6} cols={SchoolColumns.length}/>
+      {loading ? (
+        <SkeletonTable rows={6} cols={SchoolColumns.length} />
       ) : (
         <DataTable
           columns={SchoolColumns}
