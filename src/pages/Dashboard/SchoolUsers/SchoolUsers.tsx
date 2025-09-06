@@ -43,9 +43,7 @@ export function SchoolUsers() {
               </Link>
             </div>
           </div>
-          <div className="mt-12">
-            <SchoolUserTable />
-          </div>
+          <SchoolUserTable />
         </TableProvider>
       </main>
       <Footer />

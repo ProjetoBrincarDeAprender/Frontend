@@ -11,6 +11,7 @@ import { SkeletonTable } from "@/components/ui/skeleton-table";
 
 export default function TeacherTable() {
   const [data, setData] = useState<Teacher[] | null>(null);
+  const [loading, setLoading] = useState(true);
   const [searchParams, _] = useSearchParams();
   const { updating, setUpdating } = useTable();
   const { user } = useUser();
@@ -19,17 +20,20 @@ export default function TeacherTable() {
 
   useEffect(() => {
     const fetchData = async () => {
+      setLoading(true);
       try {
         const response = await api.get(
           `/user/list?type=Professor${user?.perfil != "Admin" ? "&escolaId=" + user?.escola?.id : ""}`,
           {},
         );
 
-        if (response.status == 200) {
+        if (response.status === 200) {
           setData(response.data);
         }
       } catch (error) {
         console.log(error);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -38,9 +42,9 @@ export default function TeacherTable() {
 
   return (
     <>
-      {updating ? (
-        <SkeletonTable rows={6} cols={TeacherColumns.length}/>
-      ) :(
+      {loading ? (
+        <SkeletonTable rows={6} cols={TeacherColumns.length} />
+      ) : (
         <DataTable
           columns={TeacherColumns}
           data={data ?? []}
