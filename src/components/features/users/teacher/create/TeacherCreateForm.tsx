@@ -11,10 +11,6 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import type { SignUpFormProps } from "../../common/signUpFormProps";
-<<<<<<< HEAD
-//import { Label } from "@/components/ui/label";
-=======
->>>>>>> cea0317 (fix: import issues)
 
 const formSchema = z
   .object({
@@ -65,8 +61,8 @@ export default function TeacherSignUpForm({ onSuccess }: SignUpFormProps) {
   const escolaSelecionada = form.watch("escolaId");
 
   useEffect(() => {
-    if (user?.perfil !== "Admin") return; 
-    
+    if (user?.perfil !== "Admin") return;
+
     const fetchSchools = async () => {
       try {
         const response = await api.get("/school/list");
@@ -88,10 +84,13 @@ export default function TeacherSignUpForm({ onSuccess }: SignUpFormProps) {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const escolaId = user?.perfil === "Admin" ? escolaSelecionada : user?.escola?.id;
+        const escolaId =
+          user?.perfil === "Admin" ? escolaSelecionada : user?.escola?.id;
         if (!escolaId) return setUsers([]);
 
-        const response = await api.get(`/user/list?type=Aluno${escolaId ? `&escolaId=${escolaId}` : ""}`);
+        const response = await api.get(
+          `/user/list?type=Aluno${escolaId ? `&escolaId=${escolaId}` : ""}`,
+        );
 
         //antigo
         // const response = await api.get(
@@ -257,25 +256,26 @@ export default function TeacherSignUpForm({ onSuccess }: SignUpFormProps) {
           name="usersIds"
           render={({ field }) => (
             <>
-            <FancyMultiSelect
-              onSelect={field.onChange}
-              label="Alunos do Professor"
-              placeholder="Selecione os alunos do professor..."
-              data={
-                users
-                  ? users.map(({ id, email }) => ({
-                      value: String(id),
-                      label: email,
-                    }))
-                  : []
-              }
-            />
-             {errorMensage && <p className="text-sm text-yellow-800 mt-1">{errorMensage}</p>}
+              <FancyMultiSelect
+                onSelect={field.onChange}
+                label="Alunos do Professor"
+                placeholder="Selecione os alunos do professor..."
+                data={
+                  users
+                    ? users.map(({ id, email }) => ({
+                        value: String(id),
+                        label: email,
+                      }))
+                    : []
+                }
+              />
+              {errorMensage && (
+                <p className="mt-1 text-sm text-yellow-800">{errorMensage}</p>
+              )}
             </>
           )}
         />
         <Form.Submit>Criar Conta</Form.Submit>
-
       </Form.Main>
       <p className="mt-6 w-full text-center text-lg">
         O professor já possui uma conta?{" "}
