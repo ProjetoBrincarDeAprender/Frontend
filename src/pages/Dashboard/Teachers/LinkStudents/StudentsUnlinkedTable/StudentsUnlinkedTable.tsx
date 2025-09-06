@@ -1,12 +1,12 @@
-import { useEffect, useState } from "react";
-import api from "@/utils/api";
-import { DataTable } from "@/components/utils/DataTable/DataTable";
 import { SkeletonTable } from "@/components/ui/skeleton-table";
+import { DataTable } from "@/components/utils/DataTable/DataTable";
+import api from "@/utils/api";
 import { ArrowUpDown } from "lucide-react";
+import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router";
 
 export type UnlinkedStudents = {
-  id: number;
+  id: string;
   nome_completo: string;
   email: string;
   escola: string;
@@ -134,7 +134,10 @@ export function StudentsUnlinkedTable({
       {loading ? (
         <SkeletonTable rows={6} cols={columns.length} />
       ) : (
-        <DataTable columns={columns} data={data ?? []} />
+        <DataTable
+          columns={columns}
+          data={data?.map((item) => ({ ...item, id: String(item.id) })) ?? []}
+        />
       )}
     </>
   );

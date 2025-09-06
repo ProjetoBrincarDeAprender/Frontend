@@ -3,11 +3,11 @@ import type { ColumnDef } from "@tanstack/react-table";
 import DeleteModal from "../../../../utils/DataTable/DeleteModal";
 // import { Link } from "../utils/Link/Link";
 import { ArrowUpDown } from "lucide-react";
-import { EditStudentModal } from "../edit/StudentEditModal";
 import { Button } from "../../../../ui/button";
+import { EditStudentModal } from "../edit/StudentEditModal";
 
 export type Student = {
-  id: number;
+  id: string;
   nome_completo: string;
   email: string;
   perfil: string;
@@ -101,8 +101,8 @@ export const StudentColumns: ColumnDef<Student>[] = [
     header: "Ações",
     cell: ({ row }) => (
       <div className="flex items-center justify-center gap-2">
-        <EditStudentModal id={row.original.id} />
-        <DeleteModal route="/student/remove" id={row.original.id} />
+        <EditStudentModal id={+row.original.id} />
+        <DeleteModal route="/student/remove" id={+row.original.id} />
       </div>
     ),
   },

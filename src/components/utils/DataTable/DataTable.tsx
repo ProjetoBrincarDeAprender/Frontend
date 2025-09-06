@@ -60,16 +60,27 @@ export function DataTable<TData, TValue>({
     <div>
       <div className="flex items-center gap-2 py-4">
         <Input
-          placeholder={`Digite o ${selectedColumn}`}
+          placeholder={`Digite o ${selectedColumn.charAt(0).toUpperCase() + selectedColumn.slice(1).replace("_", " ")}`}
           value={
             (table.getColumn(selectedColumn)?.getFilterValue() as string) ?? ""
           }
-          onChange={(event) =>
-            table.getColumn(selectedColumn)?.setFilterValue(event.target.value)
-          }
+          onChange={(event) => {
+            table.setColumnFilters((_old: ColumnFiltersState) => [
+              {
+                id: selectedColumn,
+                value: event.target.value,
+              },
+            ]);
+          }}
           className="max-h-10 max-w-64"
         />
-        <Select onValueChange={setSelectedColumn} defaultValue={selectedColumn}>
+        <Select
+          onValueChange={(value) => {
+            setSelectedColumn(value);
+            table.resetColumnFilters();
+          }}
+          defaultValue={selectedColumn}
+        >
           <SelectTrigger>
             <SelectValue placeholder="Selecione uma coluna" />
           </SelectTrigger>
@@ -78,7 +89,7 @@ export function DataTable<TData, TValue>({
               if (id != "actions") {
                 return (
                   <SelectItem key={id} value={id}>
-                    {id}
+                    {id.charAt(0).toUpperCase() + id.slice(1).replace("_", " ")}
                   </SelectItem>
                 );
               }

@@ -2,9 +2,9 @@ import { useTable } from "@/hooks/Table/useTable";
 import { useUser } from "@/hooks/User/useUser";
 import api from "@/utils/api";
 //import { Loader2 } from "lucide-react";
+import { DataTable } from "@/components/utils/DataTable/DataTable";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router";
-import { DataTable } from "@/components/utils/DataTable/DataTable";
 import { ResponsibleColumns, type Responsible } from "./TableData";
 
 import { SkeletonTable } from "@/components/ui/skeleton-table";
@@ -44,7 +44,7 @@ export default function ResponsibleTable() {
       ) : (
         <DataTable
           columns={ResponsibleColumns}
-          data={data ?? []}
+          data={data?.map((item) => ({ ...item, id: String(item.id) })) ?? []}
           {...{
             page: searchParams.get("page")
               ? parseInt(searchParams.get("page")!)
