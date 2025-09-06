@@ -16,8 +16,6 @@ export default function TeacherTable() {
   const { updating, setUpdating } = useTable();
   const { user } = useUser();
 
-  console.log(user);
-
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
@@ -47,7 +45,7 @@ export default function TeacherTable() {
       ) : (
         <DataTable
           columns={TeacherColumns}
-          data={data ?? []}
+          data={data?.map((item) => ({ ...item, id: String(item.id) })) ?? []}
           {...{
             page: searchParams.get("page")
               ? parseInt(searchParams.get("page")!)

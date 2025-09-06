@@ -1,7 +1,7 @@
+import { SkeletonTable } from "@/components/ui/skeleton-table";
 import { useTable } from "@/hooks/Table/useTable";
 import { useUser } from "@/hooks/User/useUser";
 import api from "@/utils/api";
-import { SkeletonTable } from "@/components/ui/skeleton-table";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router";
 import { DataTable } from "../../../../utils/DataTable/DataTable";
@@ -43,7 +43,7 @@ export default function SchoolUserTable() {
       ) : (
         <DataTable
           columns={SchoolUserColumns}
-          data={data ?? []}
+          data={data?.map((item) => ({ ...item, id: String(item.id) })) ?? []}
           {...{
             page: searchParams.get("page")
               ? parseInt(searchParams.get("page")!)

@@ -1,11 +1,11 @@
 import type { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown } from "lucide-react";
-import { EditSchoolModal } from "../edit/SchoolEditModal";
 import { Button } from "../../../../ui/button";
 import DeleteModal from "../../../../utils/DataTable/DeleteModal";
+import { EditSchoolModal } from "../edit/SchoolEditModal";
 
 export type School = {
-  id: number;
+  id: string;
   nome: string;
   descricao?: string;
   endereco?: string;
@@ -91,8 +91,8 @@ export const SchoolColumns: ColumnDef<School>[] = [
     header: "Ações",
     cell: ({ row }) => (
       <div className="flex items-center justify-center gap-2">
-        <EditSchoolModal schoolId={row.original.id} />
-        <DeleteModal route="/school/remove" id={row.original.id} />
+        <EditSchoolModal schoolId={+row.original.id} />
+        <DeleteModal route="/school/remove" id={+row.original.id} />
       </div>
     ),
   },
