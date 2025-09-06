@@ -8,9 +8,9 @@ import saturn from "../../../assets/saturn.svg";
 import { RegisterSchoolUserModal } from "@/components/features/users/schoolUser/create/SchoolUserCreateModal";
 import { Footer } from "@/components/Footer/Footer";
 import { Header } from "@/components/Header/Header";
+import { TableProvider } from "@/contexts/Table/provider";
 import { useUser } from "@/hooks/User/useUser";
 import { Link } from "react-router";
-import { TableProvider } from "@/contexts/Table/provider";
 
 import { LateralMenu } from "../../../components/sideBar/sideBar";
 
