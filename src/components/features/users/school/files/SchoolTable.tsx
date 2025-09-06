@@ -12,20 +12,24 @@ export default function SchoolTable() {
   const [searchParams, _] = useSearchParams();
   const { updating, setUpdating } = useTable();
   const { user } = useUser();
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
+      setLoading(true);
       try {
         const response = await api.get(
           `/school/list${user?.perfil != "Admin" ? "?escolaId=" + user?.escola?.id : ""}`,
           {},
         );
 
-        if (response.status == 200) {
+        if (response.status === 200) {
           setData(response.data);
         }
       } catch (error) {
         console.log(error);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -34,7 +38,7 @@ export default function SchoolTable() {
 
   return (
     <>
-      {updating ? (
+      {loading ? (
         <SkeletonTable rows={6} cols={SchoolColumns.length} />
       ) : (
         <DataTable
