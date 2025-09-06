@@ -9,6 +9,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import type { SignUpFormProps } from "../../common/signUpFormProps";
 import { PasswordInput } from "@/components/ui/password-input";
+import { IMaskInput } from "react-imask";
 
 
 const formSchema = z
@@ -25,27 +26,42 @@ const formSchema = z
     tema_preferido: z.string({ error: "Insira um tema válido" }).optional(),
     data_nascimento: z
       .string()
-      .nonempty({ message: "Data de nascimento é obrigatória" })
+      .nonempty({ error: "Data de nascimento é obrigatória" })
+      .refine((val) => /^\d{2}\/\d{2}\/\d{4}$/.test(val), {
+        error: "Formato inválido. Use dd/mm/aaaa",
+      })
+      .refine((val) => {
+        const [dia, mes, ano] = val.split("/").map(Number);
+        const date = new Date(ano, mes - 1, dia);
+
+        return (
+          date.getFullYear() === ano &&
+          date.getMonth() === mes - 1 &&
+          date.getDate() === dia
+        );
+      }, { error: "Data inexistente" })
       .refine((val) => {
         const date = new Date(val);
         const year = date.getFullYear();
         const currentYear = new Date().getFullYear();
         return year >= 1940 && year <= currentYear;
       }, {
-        message: "Data de nascimento inválida",
+        error: "Data de nascimento inválida",
       })
       .refine((val) => {
-        const date = new Date(val);
+        const [dia, mes, ano] = val.split("/").map(Number);
+        // const _date = new Date(ano, mes - 1, dia);
         const today = new Date();
-        let age = today.getFullYear() - date.getFullYear();
-        const m = today.getMonth() - date.getMonth();
-        if (m < 0 || (m === 0 && today.getDate() < date.getDate())) {
+        let age = today.getFullYear() - ano;
+        const m = today.getMonth() - (mes- 1);
+        if (m < 0 || (m === 0 && today.getDate() < dia)) {
           age--; 
         }
         return age >= 5;
       }, {
-        message: "O aluno deve ter pelo menos 5 anos de idade",
+        error: "O aluno deve ter pelo menos 5 anos de idade",
       }),
+
     senha: z
       .string({ error: "Senha deve ter entre 8 e 32 caracteres" })
       .min(8, { error: "Senha deve ter pelo menos 8 caracteres" })
@@ -108,10 +124,13 @@ export function StudentSignUpForm({ onSuccess }: SignUpFormProps) {
     if (!data.avatar_url) {
       delete data.avatar_url;
     }
+ 
+    const [dia, mes, ano] = data.data_nascimento.split("/").map(Number);
+    const dataISO = new Date(ano, mes - 1, dia).toISOString();
 
     const payload = {
       ...data,
-      data_nascimento: new Date(data.data_nascimento).toISOString(),
+      data_nascimento: dataISO,
       perfilId: 3,
       escolaId: user?.escola?.id || data.escolaId,
     };
@@ -172,24 +191,35 @@ export function StudentSignUpForm({ onSuccess }: SignUpFormProps) {
             />
           )}
         />
+
         <Form.Field
           form={form}
           name="data_nascimento"
-          render={({ field }) => (
-            <Form.Input
-              {...field}
-              label="Data de Nascimento"
-              placeholder=""
-              type="date"
-            />
+          render={({ field, fieldState }) => (
+            <div className="flex flex-col gap-2">
+              <label className="text-sm font-medium">Data de Nascimento</label>
+              <IMaskInput
+                {...field}
+                mask="00/00/0000"
+                placeholder="dd/mm/aaaa"
+                value={field.value || ""}
+                onAccept={(value) => field.onChange(value)}
+                className="border-purplish-blue hover:border-purplish-blue flex h-13 w-full rounded-lg border bg-transparent px-6 py-2 text-base text-gray-800 transition-colors duration-200 ease-in-out placeholder:text-gray-500 focus-visible:ring-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+              />
+              {fieldState.error && (
+                <p className="text-sm text-red-600">{fieldState.error.message}</p>
+              )}
+            </div>
           )}
         />
+
         <Form.Field
           form={form}
           name="avatar_url"
           render={({ field }) => (
             <Form.Input
               {...field}
+              // value={field.value || ""}
               label="URL do Avatar Personalizado"
               placeholder="https://urlDoAvatarPersonalizado.jpg"
               type="text"
@@ -214,6 +244,7 @@ export function StudentSignUpForm({ onSuccess }: SignUpFormProps) {
             render={({ field }) => (
               <Form.Select
                 {...field}
+                // value={field.value || ""}
                 label="Escola"
                 placeholder="Selecione a Escola"
                 options={schools.map((school) => ({

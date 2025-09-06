@@ -11,23 +11,27 @@ import { SkeletonTable } from "@/components/ui/skeleton-table";
 
 export default function StudentTable() {
   const [data, setData] = useState<Student[] | null>(null);
+  const [loading, setLoading] = useState(true);
   const [searchParams, _] = useSearchParams();
   const { updating, setUpdating } = useTable();
   const { user } = useUser();
 
   useEffect(() => {
     const fetchData = async () => {
+      setLoading(true);
       try {
         const response = await api.get(
           `/student/list${user?.perfil != "Admin" ? "?escolaId=" + user?.escola?.id : ""}`,
           {},
         );
 
-        if (response.status == 200) {
+        if (response.status === 200) {
           setData(response.data);
         }
       } catch (error) {
         console.log(error);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -36,8 +40,8 @@ export default function StudentTable() {
 
   return (
     <>
-      {updating ? (
-        <SkeletonTable rows={6} cols={StudentColumns.length}/>
+      {loading ? (
+        <SkeletonTable rows={6} cols={StudentColumns.length} />
       ) : (
         <DataTable
           columns={StudentColumns}
@@ -49,7 +53,6 @@ export default function StudentTable() {
           }}
         />
       )}
-
     </>
   );
 }
