@@ -28,6 +28,7 @@ export function TeacherEditForm({ id, onSuccess }: TeacherFormProps) {
     resolver: zodResolver(formSchema),
   });
   const { user } = useUser();
+  
   const [schools, setSchools] = useState<{ id: number; nome: string }[] | null>(
     null,
   );
@@ -38,6 +39,9 @@ export function TeacherEditForm({ id, onSuccess }: TeacherFormProps) {
     { id: number; nome_completo: string; email: string }[] | null
   >(null);
 
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const escolaSelecionada = form.watch("escolaId");
+
   useEffect(() => {
     const fetchUserData = async () => {
       try {
@@ -47,7 +51,7 @@ export function TeacherEditForm({ id, onSuccess }: TeacherFormProps) {
           const userData = {
             nome_completo: response.data.nome_completo,
             email: response.data.email,
-            escolaId: String(response.data.escolaId) || "",
+            escolaId: form.getValues("escolaId") || String(response.data.escolaId),
           };
           form.reset(userData);
         }
@@ -57,6 +61,7 @@ export function TeacherEditForm({ id, onSuccess }: TeacherFormProps) {
         }
       }
     };
+
     const fetchSchools = async () => {
       try {
         const response = await api.get("/school/list");
@@ -72,6 +77,7 @@ export function TeacherEditForm({ id, onSuccess }: TeacherFormProps) {
         }
       }
     };
+
     const fetchRelations = async () => {
       try {
         const response = await api.get(`/responsible/list/${id}/students`);
@@ -90,31 +96,42 @@ export function TeacherEditForm({ id, onSuccess }: TeacherFormProps) {
 
     const fetchAllStudents = async () => {
       try {
-        const response = await api.get(
-          `/user/list?type=Aluno${user?.perfil == "Admin" ? "" : `&escolaId=${user?.escola?.id}`}`,
-        );
+        const escolaId = user?.perfil === "Admin" ? escolaSelecionada : user?.escola?.id;
+        if (!escolaId) return setAllStudents([]);
+
+        const response = await api.get(`/user/list?type=Aluno&escolaId=${escolaId}`);
+        //  ANTIGO
+        //const response = await api.get(
+        //   `/user/list?type=Aluno${user?.perfil == "Admin" ? "" : `&escolaId=${user?.escola?.id}`}`,
+        // );
         if (response.status == 200) {
           const users = response.data;
           setAllStudents(users);
+          if (users.length === 0) {
+            setErrorMessage("Não há alunos cadastrados nesta escola!");
+          } else {
+            setErrorMessage(null);
+          }
         }
       } catch (error) {
         console.log(error);
       }
     };
 
-    fetchRelations();
-    fetchAllStudents();
+    
     if (user?.perfil == "Admin") {
       fetchSchools();
     }
+    fetchRelations();
+    fetchAllStudents();
     fetchUserData();
-  }, [id, form, user?.perfil, user?.escola?.id]);
+  }, [id, form, user?.perfil, escolaSelecionada, user?.escola?.id]);
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     const userData = {
       nome_completo: data.nome_completo,
       email: data.email,
-      escolaId: data.escolaId,
+      escolaId: user?.perfil === "Admin" ? data.escolaId : user?.escola?.id,
     };
 
     const userPayload = Object.fromEntries(
@@ -195,7 +212,7 @@ export function TeacherEditForm({ id, onSuccess }: TeacherFormProps) {
             name="escolaId"
             render={({ field }) => (
               <Form.Select
-                value={String(field.value)}
+                value={field.value || ""}
                 onChange={field.onChange}
                 label="Escola"
                 placeholder="Selecione a Escola"
@@ -209,11 +226,13 @@ export function TeacherEditForm({ id, onSuccess }: TeacherFormProps) {
         ) : (
           <span>Loading...</span>
         )}
+
         {allStudents && students && (
           <Form.Field
             form={form}
             name="usersIds"
             render={({ field }) => (
+              <>
               <FancyMultiSelect
                 onSelect={field.onChange}
                 label="Alunos do Professor"
@@ -227,6 +246,8 @@ export function TeacherEditForm({ id, onSuccess }: TeacherFormProps) {
                   label: email,
                 }))}
               />
+              {errorMessage && <p className="text-sm text-yellow-800 mt-1">{errorMessage}</p>}
+              </>
             )}
           />
         )}
