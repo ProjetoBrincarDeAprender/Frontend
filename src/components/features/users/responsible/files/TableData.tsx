@@ -7,7 +7,7 @@ import { ArrowUpDown } from "lucide-react";
 import { EditResponsableModal } from "../edit/ResponsibleEditModal";
 
 export type Responsible = {
-  id: number;
+  id: string;
   nome_completo: string;
   email: string;
   escola: string;
@@ -67,8 +67,8 @@ export const ResponsibleColumns: ColumnDef<Responsible>[] = [
     header: "Ações",
     cell: ({ row }) => (
       <div className="flex items-center justify-center gap-2">
-        <EditResponsableModal id={row.original.id} />
-        <DeleteModal route="/user/remove" id={row.original.id} />
+        <EditResponsableModal id={+row.original.id} />
+        <DeleteModal route="/user/remove" id={+row.original.id} />
       </div>
     ),
   },
