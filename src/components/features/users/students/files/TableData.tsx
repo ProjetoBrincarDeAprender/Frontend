@@ -80,8 +80,19 @@ export const StudentColumns: ColumnDef<Student>[] = [
     ),
     cell: ({ row }) => {
       const actualDate = row.getValue<string>("data_nascimento");
-      const formattedDate = new Date(actualDate).toLocaleDateString("pt-BR");
-      return formattedDate;
+      if (!actualDate) return "-";
+
+      const match = actualDate.match(/^(\d{4})-(\d{2})-(\d{2})/);
+      if (!match) return actualDate; 
+
+      const [, year, month, day] = match.map(Number);
+
+      const date = new Date(year, month - 1, day); 
+
+      return date.toLocaleDateString("pt-BR"); 
+
+      // const formattedDate = new Date(actualDate).toLocaleDateString("pt-BR");
+      // return formattedDate;
     },
   },
   {
