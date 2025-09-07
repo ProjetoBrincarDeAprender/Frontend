@@ -83,11 +83,15 @@ export function StudentEditForm({ id, onSuccess }: StudentFormProps) {
           const studentData = {
             nome_completo: response.data.nome_completo,
             email: response.data.email,
-            tema_preferido: response.data.tema_preferido,
+            tema_preferido: response.data.tema_preferido || "",
             avatar_url: response.data.avatar_url || "",
             data_nascimento: response.data.data_nascimento
-               ? new Date(response.data.data_nascimento)
-                  .toLocaleDateString("pt-BR") 
+                ? (() => {
+                  const match = response.data.data_nascimento.match(/^(\d{4})-(\d{2})-(\d{2})/);
+                  if (!match) return "";
+                  const [, year, month, day] = match.map(Number);
+                  return `${String(day).padStart(2, "0")}/${String(month).padStart(2, "0")}/${year}`;
+                })()
               : "",
             escolaId: String(response.data.escolaId) || "",
           };
@@ -142,7 +146,7 @@ export function StudentEditForm({ id, onSuccess }: StudentFormProps) {
         data_nascimento: data.data_nascimento
           ? (() => {
               const [dia, mes, ano] = data.data_nascimento.split("/").map(Number);
-              return new Date(ano, mes - 1, dia).toISOString(); 
+              return `${ano}-${String(mes).padStart(2, "0")}-${String(dia).padStart(2, "0")}`;
             })()
           : undefined,
       }).filter(([_, value]) => value !== undefined && value !== ""),
