@@ -41,21 +41,21 @@ const formSchema = z
         );
       }, { error: "Data inexistente" })
       .refine((val) => {
-        const date = new Date(val);
-        const year = date.getFullYear();
+        const [_dia, _mes, ano] = val.split("/").map(Number);
         const currentYear = new Date().getFullYear();
-        return year >= 1940 && year <= currentYear;
+        return ano >= 1940 && ano <= currentYear;
       }, {
         error: "Data de nascimento inválida",
       })
       .refine((val) => {
         const [dia, mes, ano] = val.split("/").map(Number);
-        // const _date = new Date(ano, mes - 1, dia);
+
         const today = new Date();
         let age = today.getFullYear() - ano;
-        const m = today.getMonth() - (mes- 1);
+        const m = today.getMonth() -( mes -1);
+
         if (m < 0 || (m === 0 && today.getDate() < dia)) {
-          age--; 
+          age--;
         }
         return age >= 5;
       }, {
@@ -126,11 +126,13 @@ export function StudentSignUpForm({ onSuccess }: SignUpFormProps) {
     }
  
     const [dia, mes, ano] = data.data_nascimento.split("/").map(Number);
-    const dataISO = new Date(ano, mes - 1, dia).toISOString();
+    const dataFormatada = `${ano.toString().padStart(4, "0")}-${mes
+    .toString()
+    .padStart(2, "0")}-${dia.toString().padStart(2, "0")}`;
 
     const payload = {
       ...data,
-      data_nascimento: dataISO,
+      data_nascimento: dataFormatada,
       perfilId: 3,
       escolaId: user?.escola?.id || data.escolaId,
     };
