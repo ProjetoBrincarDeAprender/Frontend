@@ -34,7 +34,7 @@ export function SchoolUsers() {
         <TableProvider>
           <div className="mt-16 flex items-center justify-between">
             <div className="flex items-center gap-8 text-2xl font-bold">
-              <RegisterSchoolUserModal />
+              <RegisterSchoolUserModal isOnTable />
               <Link
                 to="/dashboard/schools"
                 className="blue bg-yellow hover:bg-purplish-blue hover:text-yellow flex min-h-[60px] items-center justify-center gap-8 rounded-2xl px-8 py-4 text-center text-sm font-bold uppercase shadow-xl transition duration-200"
