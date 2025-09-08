@@ -13,7 +13,7 @@ export default function StudentCard() {
           <img
             src={profile}
             alt=""
-            className="border-amarelo w-xl rounded-2xl border-8"
+            className="border-amarelo w-3xl rounded-2xl border-8"
           />
           <span className="baloobhai text-amarelo block text-center text-4xl font-extrabold">
             Aluno

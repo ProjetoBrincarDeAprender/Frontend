@@ -15,7 +15,7 @@ export default function Login() {
       return <Navigate to="/dashboard" replace />;
 
     case "Responsavel":
-      return <Navigate to="/" replace />;
+      return <Navigate to="/responsibledashboard" replace />;
   }
 
   return (
