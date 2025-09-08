@@ -6,7 +6,6 @@ import { AxiosError } from "axios";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import z from "zod";
-// No topo do EditForm.tsx
 import { IMaskInput } from "react-imask";
 
 const formSchema = z.object({
@@ -50,7 +49,7 @@ export default function EditSchoolForm({ id, onSuccess }: EditSchoolFormProps) {
         if (response.status === 200) {
           const formData = {
             nome: response.data.nome || "",
-            descricao: response.data.descricao || "",
+            descricao: response.data.descricao ?? undefined,
             localizacao: response.data.localizacao || "",
             telefone: response.data.telefone || "",
             email: response.data.email || "",
@@ -74,9 +73,16 @@ export default function EditSchoolForm({ id, onSuccess }: EditSchoolFormProps) {
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     try {
+
+       const normalizedData = {
+        ...data,
+        descricao: data.descricao?.trim() === "" ? undefined : data.descricao,
+      };
+
+
       console.log("Dados enviados:", data);
       const verifiedData = Object.fromEntries(
-        Object.entries(data).filter(
+        Object.entries(normalizedData).filter(
           ([_, value]) => value !== undefined && value !== null,
         ),
       );
@@ -135,6 +141,7 @@ export default function EditSchoolForm({ id, onSuccess }: EditSchoolFormProps) {
             />
           )}
         />
+
         <Form.Field
           form={form}
           name="descricao"
@@ -178,7 +185,10 @@ export default function EditSchoolForm({ id, onSuccess }: EditSchoolFormProps) {
                   Telefone
                 </label>
                 <IMaskInput
-                  mask="(00) 00000-0000"
+                  mask={[
+                    { mask: "(00) 0000-0000" },
+                    { mask:"(00) 00000-0000"}
+                ]}
                   value={field.value || ""}
                   onAccept={(value: string) => {
                     field.onChange(value);
