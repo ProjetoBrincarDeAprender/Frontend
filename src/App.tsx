@@ -12,6 +12,7 @@ import Logout from "./pages/Logout/Logout";
 import { Profile } from "./pages/Profile/Profile";
 import { SchoolUsers } from "./pages/Dashboard/SchoolUsers/SchoolUsers";
 import { LinkStudents } from "./pages/Dashboard/Teachers/LinkStudents/LinkStudents";
+import { ResponsibleDashboard } from "./pages/Dashboard/Responsible/ReponsibleDashboard";
 
 function App() {
   return (
@@ -20,6 +21,9 @@ function App() {
       <Route path="/logout" element={<Logout />} />
       <Route path="/login" element={<LoginForm />} />
       <Route path="/games" element={<Games />} />
+
+      {/* URL apenas de testes */}
+      <Route path="/responsibledashboard" element={<ResponsibleDashboard />} />
 
       <Route
         path="/dashboard"

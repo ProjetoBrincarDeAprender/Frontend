@@ -13,6 +13,9 @@ export default function Login() {
 
     case "Escola":
       return <Navigate to="/dashboard" replace />;
+
+    case "Responsavel":
+      return <Navigate to="/" replace />;
   }
 
   return (
