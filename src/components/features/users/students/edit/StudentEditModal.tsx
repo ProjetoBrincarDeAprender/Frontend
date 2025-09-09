@@ -10,6 +10,7 @@ import { toast } from "sonner";
 // }
 interface EditStudentModalProps {
   id: number;
+  onSuccess?: () => void;
 }
 
 export function EditStudentModal({ id }: EditStudentModalProps) {
