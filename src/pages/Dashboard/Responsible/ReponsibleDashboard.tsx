@@ -41,14 +41,16 @@ export function ResponsibleDashboard() {
           </div>
         </div>
       </section>
-      {response.map((student) => {
-        return (
-          <StudentCard
-            imageUrl={student.avatar_url}
-            studentName={student.nome_completo}
-          />
-        );
-      })}
+      {response.map(
+        (student: { avatar_url: string | null; nome_completo: string }) => {
+          return (
+            <StudentCard
+              imageUrl={student.avatar_url}
+              studentName={student.nome_completo}
+            />
+          );
+        },
+      )}
       <Footer />
     </div>
   );
