@@ -14,8 +14,14 @@ export default function Login() {
     case "Escola":
       return <Navigate to="/dashboard" replace />;
 
+    case "Aluno":
+      return <Navigate to="/profile" replace />;
+    
+     case "Professor":
+      return <Navigate to="/profile" replace />;
+
     case "Responsavel":
-      return <Navigate to="/responsibledashboard" replace />;
+      return <Navigate to="/profile" replace />;
   }
 
   return (

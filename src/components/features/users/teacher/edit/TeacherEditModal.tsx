@@ -10,6 +10,8 @@ import { TeacherEditForm } from "./TeacherEditForm";
 
 interface EditTeacherModalProps {
   id: number;
+  onSuccess?: () => void;
+
 }
 export function EditTeacherModal({ id }: EditTeacherModalProps) {
   const [isOpen, setIsOpen] = useState(false);
