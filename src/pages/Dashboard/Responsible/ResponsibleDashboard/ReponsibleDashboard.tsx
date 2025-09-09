@@ -32,7 +32,7 @@ export function ResponsibleDashboard() {
   return (
     <div className="flex h-fit flex-col bg-neutral-200 pt-28 text-gray-800">
       <Header />
-      <section className="h-full px-78 pt-8">
+      <section className="h-full px-78 pt-8 mb-10">
         <div className="flex items-center gap-4">
           <img className="max-w-24" src={saturn} alt="Saturn" />
           <div className="flex flex-col gap-2">

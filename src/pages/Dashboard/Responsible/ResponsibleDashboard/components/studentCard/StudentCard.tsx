@@ -24,7 +24,7 @@ export default function StudentCard({
     // Divisao geral
     <div>
       {/* Card */}
-      <div className="mx-auto mt-10 mb-20 flex max-w-4xl gap-8 rounded-lg bg-sky-800 p-10 shadow-xl">
+      <div className="mx-auto mb-10 flex max-w-4xl gap-8 rounded-lg bg-sky-800 p-10 shadow-xl">
         {/* imagem */}
         <div className="flex flex-col justify-items-center gap-4">
           <img
