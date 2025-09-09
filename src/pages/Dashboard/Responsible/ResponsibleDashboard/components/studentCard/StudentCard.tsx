@@ -1,7 +1,7 @@
 import { Link } from "react-router";
 import { useNavigate } from "react-router";
 
-import star from "../../assets/star.svg";
+import star from "../../../../../../assets/star.svg";
 
 import "./studentCard.css";
 

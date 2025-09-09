@@ -2,8 +2,8 @@ import { Footer } from "@/components/Footer/Footer";
 import { Header } from "@/components/Header/Header";
 import { useUser } from "@/hooks/User/useUser";
 import { useEffect, useState } from "react";
-import StudentCard from "@/components/studentCard/StudentCard";
-import saturn from "../../../assets/saturn.svg";
+import StudentCard from "@/pages/Dashboard/Responsible/ResponsibleDashboard/components/studentCard/StudentCard";
+import saturn from "../../../../assets/saturn.svg";
 import api from "@/utils/api";
 
 export function ResponsibleDashboard() {
