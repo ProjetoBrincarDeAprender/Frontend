@@ -75,7 +75,7 @@ export default function StudentCard({
             <li>
               <button
                 onClick={() => navigate(-1)}
-                className="blue bg-yellow hover:bg-purplish-blue hover:text-yellow flex min-h-[60px] justify-center gap-8 rounded-2xl px-8 px-11 py-4 text-center font-bold text-stone-700 uppercase shadow-xl transition duration-200"
+                className="blue bg-yellow hover:bg-purplish-blue hover:text-yellow flex min-h-[60px] cursor-pointer justify-center gap-8 rounded-2xl px-8 px-11 py-4 text-center font-bold text-stone-700 uppercase shadow-xl transition duration-200"
               >
                 Voltar
               </button>
