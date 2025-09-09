@@ -7,6 +7,7 @@ import { toast } from "sonner";
 
 interface EditResponsabletModalProps {
   id: number;
+  onSuccess?: () => void;
 }
 
 export function EditResponsableModal({ id }: EditResponsabletModalProps) {
