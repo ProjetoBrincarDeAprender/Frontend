@@ -52,17 +52,17 @@ export function Profile() {
       <div className="relative bg-purplish-blue-dark/95 rounded-3xl shadow-2xl p-8 w-[900px] flex  items-center z-10 mt-30">
         <div className="flex flex-col items-center  justify-center w-1/4">
           {/* Pensei em colocar o avatar do usuário - Implementação futura */}
-          {user.avatar_url ? (
+          {/* {user.avatar_url ? (
             <img
               src={user.avatar_url}
               alt="Foto de perfil"
               className="w-36 h-36 rounded-full border-4 border-am0 object-cover shadow-lg"
             />
-          ) : (
+          ) : ( */}
             <div className="w-36 h-36 rounded-full bg-am2 flex items-center justify-center text-white text-4xl font-bold shadow-lg border-7 border-am1">
               {user.nome_completo.charAt(0).toUpperCase()}
             </div>
-          )}
+          {/* )} */}
         
 
           <div className="mt-18 flex flex-col gap-3 w-full font-1 "> 
