@@ -1,8 +1,25 @@
-import "./studentCard.css";
-import profile from "../../assets/astronauta-profile.svg";
 import { Link } from "react-router";
+import { useNavigate } from "react-router";
 
-export default function StudentCard() {
+import star from "../../assets/star.svg";
+
+import "./studentCard.css";
+
+type StudentCardProps = {
+  imageUrl: string | null;
+  studentName: string;
+};
+
+export default function StudentCard({
+  imageUrl = null,
+  studentName,
+}: StudentCardProps) {
+  const navigate = useNavigate();
+
+  if (!imageUrl)
+    imageUrl =
+      "https://static.vecteezy.com/system/resources/previews/005/194/102/non_2x/user-icon-flat-design-isolated-on-white-background-free-vector.jpg";
+
   return (
     // Divisao geral
     <div>
@@ -11,18 +28,19 @@ export default function StudentCard() {
         {/* imagem */}
         <div className="flex flex-col justify-items-center gap-4">
           <img
-            src={profile}
+            src={imageUrl}
             alt=""
             className="border-amarelo w-3xl rounded-2xl border-8"
           />
           <span className="baloobhai text-amarelo block text-center text-4xl font-extrabold">
-            Aluno
+            {studentName}
           </span>
         </div>
 
         {/* Tempo */}
         <div className="baloobhai border-amarelo flex flex-col items-center justify-center gap-4 rounded-lg border-8 bg-slate-100 px-4 py-8 text-center text-xl font-bold text-stone-700">
           <span className="rounded-full border-6 border-sky-800 px-4 py-7">
+            {/* Precisa virar prop (analisar como vai puxar o tempo) */}
             00:00
           </span>
           <span>Tempo hoje</span>
@@ -31,6 +49,8 @@ export default function StudentCard() {
         {/* Dificuldade */}
         <div className="flex flex-col items-center gap-4 rounded-lg border-8 border-red-900 bg-slate-100 p-4 text-center font-bold text-stone-700">
           <h2 className="text-2xl text-red-900">Dificuldade</h2>
+
+          {/* Precisa virar prop (analisar como vai puxar as dificuldades) */}
           <p>
             Notou-se que nos exercícios correlacionaos a experiências
             matemáticas, [user] tem dificuldades notáveis. é necessário
@@ -41,24 +61,28 @@ export default function StudentCard() {
         {/* Parte da direita*/}
         <div className="flex flex-col gap-10">
           {/* Estrelinha */}
-          <div className="baloobhai border-amarelo rounded-full border-6 bg-slate-100 px-2 text-end font-bold text-stone-700">
-            <img src="" alt="" />
+          <div className="baloobhai border-amarelo relative rounded-full border-6 bg-slate-100 px-2 text-end font-bold text-stone-700">
+            <img
+              src={star}
+              alt=""
+              className="absolute -top-6 -left-8 max-w-16"
+            />
             <span>0/1000</span>
           </div>
 
           {/* Menu de itens */}
           <ul className="flex flex-col gap-2">
             <li>
-              <Link
-                to="/"
-                className="blue bg-yellow hover:bg-purplish-blue hover:text-yellow flex min-h-[60px] justify-center gap-8 rounded-2xl px-8 py-4 text-center font-bold text-stone-700 uppercase shadow-xl transition duration-200"
+              <button
+                onClick={() => navigate(-1)}
+                className="blue bg-yellow hover:bg-purplish-blue hover:text-yellow flex min-h-[60px] justify-center gap-8 rounded-2xl px-8 px-11 py-4 text-center font-bold text-stone-700 uppercase shadow-xl transition duration-200"
               >
                 Voltar
-              </Link>
+              </button>
             </li>
             <li>
               <Link
-                to="/"
+                to="/trilha"
                 className="blue bg-yellow hover:bg-purplish-blue hover:text-yellow flex min-h-[60px] justify-center gap-8 rounded-2xl px-8 py-4 text-center font-bold text-stone-700 uppercase shadow-xl transition duration-200"
               >
                 Trilha
@@ -66,7 +90,7 @@ export default function StudentCard() {
             </li>
             <li>
               <Link
-                to="/"
+                to="/detalhes"
                 className="blue bg-yellow hover:bg-purplish-blue hover:text-yellow flex min-h-[60px] justify-center gap-8 rounded-2xl px-8 py-4 text-center font-bold text-stone-700 uppercase shadow-xl transition duration-200"
               >
                 Detalhes

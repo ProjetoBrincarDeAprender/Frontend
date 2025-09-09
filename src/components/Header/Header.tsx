@@ -25,6 +25,8 @@ export function Header() {
   function handleInicio() {
     if (user?.perfil == "Admin" || user?.perfil == "Escola") {
       navigate("/dashboard");
+    } else if (user?.perfil == "Responsavel") {
+      navigate("/responsibledashboard");
     } else {
       navigate("/");
     }

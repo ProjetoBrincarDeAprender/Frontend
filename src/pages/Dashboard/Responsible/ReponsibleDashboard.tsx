@@ -1,31 +1,32 @@
 import { Footer } from "@/components/Footer/Footer";
 import { Header } from "@/components/Header/Header";
 import { useUser } from "@/hooks/User/useUser";
+import { useEffect, useState } from "react";
 import StudentCard from "@/components/studentCard/StudentCard";
 import saturn from "../../../assets/saturn.svg";
 import api from "@/utils/api";
-import { useEffect } from "react";
 
 export function ResponsibleDashboard() {
   const { user } = useUser();
+  const [response, setResponse] = useState<any>([]);
   const username = user?.nome_completo || "Usuário";
 
   useEffect(() => {
     if (!user?.id) return;
 
-    const buscarAlunos = async () => {
+    const fetchData = async () => {
       try {
-        const response = await api.get(
+        const students = await api.get(
           `/responsible/list/${user?.id}/students`,
         );
-        console.log(response);
-        return response.data;
+        console.log(students);
+        setResponse(students.data);
       } catch (error) {
         console.error("Erro ao buscar aluno:", error);
       }
     };
 
-    buscarAlunos();
+    fetchData();
   }, [user?.id]);
 
   return (
@@ -40,8 +41,14 @@ export function ResponsibleDashboard() {
           </div>
         </div>
       </section>
-
-      <StudentCard />
+      {response.map((student) => {
+        return (
+          <StudentCard
+            imageUrl={student.avatar_url}
+            studentName={student.nome_completo}
+          />
+        );
+      })}
       <Footer />
     </div>
   );
