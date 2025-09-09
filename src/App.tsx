@@ -1,6 +1,6 @@
 import { Navigate, Route, Routes } from "react-router";
 import { AuthGuard } from "./guards/AuthGuard";
-import Dashboard from "./pages/Dashboard/Dashboard";
+import Dashboard from "./pages/Dashboard/Admin/Dashboard";
 import { Responsibles } from "./pages/Dashboard/Responsible/Responsibles";
 import { Schools } from "./pages/Dashboard/Schools/Schools";
 import { Students } from "./pages/Dashboard/Students/Students";
@@ -12,6 +12,7 @@ import Logout from "./pages/Logout/Logout";
 import { Profile } from "./pages/Profile/Profile";
 import { SchoolUsers } from "./pages/Dashboard/SchoolUsers/SchoolUsers";
 import { LinkStudents } from "./pages/Dashboard/Teachers/LinkStudents/LinkStudents";
+import { ResponsibleDashboard } from "./pages/Dashboard/Responsible/ResponsibleDashboard/ReponsibleDashboard";
 
 function App() {
   return (
@@ -20,6 +21,9 @@ function App() {
       <Route path="/logout" element={<Logout />} />
       <Route path="/login" element={<LoginForm />} />
       <Route path="/games" element={<Games />} />
+
+      {/* URL apenas de testes */}
+      <Route path="/responsibledashboard" element={<ResponsibleDashboard />} />
 
       <Route
         path="/dashboard"
