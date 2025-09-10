@@ -1,5 +1,6 @@
 import { FancyMultiSelect } from "@/components/forms/MultiSelect";
 import { Form } from "@/components/forms/Root";
+import { PasswordInput } from "@/components/ui/password-input";
 import { Link } from "@/components/utils/Link/Link";
 import { useUser } from "@/hooks/User/useUser";
 import type { UserProfile } from "@/types/user";
@@ -10,9 +11,6 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import type { SignUpFormProps } from "../../common/signUpFormProps";
-import { PasswordInput } from "@/components/ui/password-input";
-import { Label } from "@/components/ui/label";
-
 
 const formSchema = z
   .object({
@@ -59,7 +57,11 @@ export function ResponsableSignUpForm({ onSuccess }: SignUpFormProps) {
   );
   const [users, setUsers] = useState<UserProfile[] | null>(null);
 
+  const [errorMensage, setErrorMessage] = useState<string | null>(null);
+  const escolaSelecionada = form.watch("escolaId");
+
   useEffect(() => {
+    if (user?.perfil !== "Admin") return;
     const fetchSchools = async () => {
       try {
         const response = await api.get("/school/list");
@@ -75,26 +77,38 @@ export function ResponsableSignUpForm({ onSuccess }: SignUpFormProps) {
         }
       }
     };
+    fetchSchools();
+  }, [user?.perfil, form]);
+
+  useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await api.get(
-          `/user/list?type=Aluno${user?.perfil == "Admin" ? "" : `&escolaId=${user?.escola?.id}`}`,
-        );
+        const escolaId = user?.perfil === "Admin" ? escolaSelecionada : user?.escola?.id;
+        if (!escolaId) return setUsers([]);
+
+        const response = await api.get(`/user/list?type=Aluno${escolaId ? `&escolaId=${escolaId}` : ""}`);
+  
+        // const response = await api.get(
+        //   `/user/list?type=Aluno${user?.perfil == "Admin" ? "" : `&escolaId=${user?.escola?.id}`}`,
+        // );
 
         if (response.status == 200) {
           const users = response.data;
           setUsers(users);
+          if (users.length === 0) {
+            setErrorMessage("Não há alunos cadastrados nesta escola!");
+          } else {
+            setErrorMessage(null);
+          }
         }
       } catch (error) {
         console.log(error);
       }
     };
 
-    if (user?.perfil == "Admin") {
-      fetchSchools();
-    }
+   
     fetchUsers();
-  }, [form, user]);
+  }, [user, form, escolaSelecionada]);
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     const { usersIds, ...userData } = data;
@@ -102,7 +116,7 @@ export function ResponsableSignUpForm({ onSuccess }: SignUpFormProps) {
     const payload = {
       ...userData,
       perfilId: 5,
-      escolaId: user?.escola?.id || data.escolaId,
+      escolaId: user?.perfil === "Admin" ? data.escolaId : user?.escola?.id,
     };
 
     try {
@@ -195,36 +209,51 @@ export function ResponsableSignUpForm({ onSuccess }: SignUpFormProps) {
             )}
           />
         )}
-        
+
         <Form.Field
           form={form}
           name="senha"
-          render={({ field }) => (
-            <PasswordInput
-              {...field}
-              label="Senha"
-              placeholder="Senha"
-              type="password"
-            />
+          render={({ field, fieldState }) => (
+            <>
+              <PasswordInput
+                {...field}
+                label="Senha"
+                placeholder="Senha"
+                type="password"
+              />
+              {fieldState.error && (
+                <p className="text-sm text-red-600">
+                  {fieldState.error.message}
+                </p>
+              )}
+            </>
           )}
         />
         <Form.Field
           form={form}
           name="confirmar_senha"
-          render={({ field }) => (
-            <PasswordInput
-              {...field}
-              label="Confirmar Senha"
-              placeholder="Confirmar Senha"
-              type="password"
-            />
+          render={({ field, fieldState }) => (
+            <>
+              <PasswordInput
+                {...field}
+                label="Confirmar Senha"
+                placeholder="Confirmar Senha"
+                type="password"
+              />
+              {fieldState.error && (
+                <p className="text-sm text-red-600">
+                  {fieldState.error.message}
+                </p>
+              )}
+            </>
           )}
         />
-        
+
         <Form.Field
           form={form}
           name="usersIds"
           render={({ field }) => (
+            <>
             <FancyMultiSelect
               onSelect={field.onChange}
               label="Alunos do Responsável"
@@ -238,6 +267,8 @@ export function ResponsableSignUpForm({ onSuccess }: SignUpFormProps) {
                   : []
               }
             />
+             {errorMensage && <p className="text-sm text-yellow-800 mt-1">{errorMensage}</p>}
+            </>
           )}
         />
         <Form.Submit>Criar Conta</Form.Submit>

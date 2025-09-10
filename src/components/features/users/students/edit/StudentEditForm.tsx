@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 //import { PasswordInput } from "@/components/ui/password-input";
+import { IMaskInput } from "react-imask";
 
 
 const formSchema = z.object({
@@ -21,8 +22,39 @@ const formSchema = z.object({
     .or(z.literal("")),
   tema_preferido: z.string({ error: "Insira um tema válido" }).optional(),
   data_nascimento: z
-    .string({
-      error: "Data de nascimento é obrigatória",
+      .string()
+      .nonempty({ error: "Data de nascimento é obrigatória" })
+      .refine((val) => /^\d{2}\/\d{2}\/\d{4}$/.test(val), {
+      error: "Formato inválido. Use dd/mm/aaaa", 
+      })
+      .refine((val) => {
+      const [dia, mes, ano] = val.split("/").map(Number);
+      const date = new Date(ano, mes - 1, dia);
+      return (
+        date.getFullYear() === ano &&
+        date.getMonth() === mes - 1 &&
+        date.getDate() === dia
+      );
+      }, { error: "Data inexistente" }) 
+       .refine((val) => {
+      const [_dia, _mes, ano] = val.split("/").map(Number);
+      const year = ano;
+      const currentYear = new Date().getFullYear();
+      return year >= 1940 && year <= currentYear;
+      }, {
+        error: "Data de nascimento inválida", 
+      })
+      .refine((val) => {
+      const [dia, mes, ano] = val.split("/").map(Number);
+      const today = new Date();
+      let age = today.getFullYear() - ano;
+      const m = today.getMonth() - (mes - 1);
+      if (m < 0 || (m === 0 && today.getDate() < dia)) {
+        age--;
+      }
+      return age >= 5;
+    }, {
+      error: "O aluno deve ter pelo menos 5 anos de idade", 
     })
     .optional(),
   escolaId: z.string().optional(),
@@ -54,7 +86,8 @@ export function StudentEditForm({ id, onSuccess }: StudentFormProps) {
             tema_preferido: response.data.tema_preferido,
             avatar_url: response.data.avatar_url || "",
             data_nascimento: response.data.data_nascimento
-              ? response.data.data_nascimento.split("T")[0]
+               ? new Date(response.data.data_nascimento)
+                  .toLocaleDateString("pt-BR") 
               : "",
             escolaId: String(response.data.escolaId) || "",
           };
@@ -107,7 +140,10 @@ export function StudentEditForm({ id, onSuccess }: StudentFormProps) {
         avatar_url: data.avatar_url,
         tema_preferido: data.tema_preferido,
         data_nascimento: data.data_nascimento
-          ? new Date(data.data_nascimento).toISOString()
+          ? (() => {
+              const [dia, mes, ano] = data.data_nascimento.split("/").map(Number);
+              return new Date(ano, mes - 1, dia).toISOString(); 
+            })()
           : undefined,
       }).filter(([_, value]) => value !== undefined && value !== ""),
     );
@@ -173,18 +209,28 @@ export function StudentEditForm({ id, onSuccess }: StudentFormProps) {
             />
           )}
         />
+
         <Form.Field
           form={form}
           name="data_nascimento"
-          render={({ field }) => (
-            <Form.Input
-              {...field}
-              label="Data de Nascimento"
-              placeholder=""
-              type="date"
-            />
+          render={({ field, fieldState }) => (
+            <div className="flex flex-col gap-2">
+              <label className="text-sm font-medium">Data de Nascimento</label>
+              <IMaskInput
+                {...field}
+                mask="00/00/0000"
+                placeholder="dd/mm/aaaa"
+                value={field.value || ""}
+                onAccept={(value) => field.onChange(value)}
+                className="border-purplish-blue hover:border-purplish-blue flex h-13 w-full rounded-lg border bg-transparent px-6 py-2 text-base text-gray-800 transition-colors duration-200 ease-in-out placeholder:text-gray-500 focus-visible:ring-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+              />
+              {fieldState.error && (
+                <p className="text-sm text-red-600">{fieldState.error.message}</p>
+              )}
+            </div>
           )}
         />
+
         <Form.Field
           form={form}
           name="avatar_url"

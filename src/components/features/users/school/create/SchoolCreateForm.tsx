@@ -14,7 +14,10 @@ const formSchema = z.object({
     .string({ error: "Nome é obrigatório" })
     .max(80, { error: "O limite suportado é de 80 caracteres" })
     .min(2, { error: "Nome da escola deve ter pelo menos 2 caracteres" }),
-  descricao: z.string().optional(),
+  descricao: z
+  .string()
+  .transform((val) => (val.trim() === "" ? undefined : val))
+  .optional(),
   localizacao: z.string({ error: "O endereço da escola é obrigatório" }),
   telefone: z
     .string()
@@ -48,6 +51,7 @@ export default function CreateSchoolForm({ onSuccess }: SignUpFormProps) {
     try {
       const payload = {
         ...data,
+        descricao: data.descricao ?? null,
       };
 
       const response = await api.post("/school/register", payload);
