@@ -96,7 +96,7 @@ export default function SignInForm() {
           form={form}
           name="senha"
           render={({ field }) => (
-            <div className="relative w-full">
+            <div className="relative w-full mt-4">
               <Form.Input
                 {...field}
                 label="Senha"
