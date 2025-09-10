@@ -21,13 +21,15 @@ export function Profile() {
   useEffect(() => {
     profile()
       .then((data) => {
+              console.log("Perfil retornado:", data); // 👀 ver aqui
+
         if (data) setUser(data);
       })
       .catch(() => {
         navigate("/login");
       })
       .finally(() => setLoading(false));
-  }, [profile, navigate]);
+  }, []);
 
   if (loading) {
     return (
