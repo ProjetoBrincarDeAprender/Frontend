@@ -2,6 +2,7 @@ import { EventBus } from "../common/utils/EventBus";
 import { LetterButton } from "./gameObjects/LetterButton";
 import Phaser from "phaser";
 import Level from "./Level";
+import GameStats from "../common/GameStats";
 
 export default class Vowels extends Phaser.Scene {
   private image?: Phaser.GameObjects.Image;
@@ -11,9 +12,7 @@ export default class Vowels extends Phaser.Scene {
   private button1: LetterButton | undefined;
   private button2: LetterButton | undefined;
   private button3: LetterButton | undefined;
-
-  private hitTime: number;
-  private missCount: number;
+  private gameStats: GameStats;
 
   constructor() {
     super("Vowels");
@@ -23,8 +22,7 @@ export default class Vowels extends Phaser.Scene {
     this.indexCurrentLevel = 0;
     this.currentlevel = this.levels[this.indexCurrentLevel];
 
-    this.hitTime = 0;
-    this.missCount = 0;
+    this.gameStats = new GameStats();
   }
 
   preload() {
@@ -92,8 +90,6 @@ export default class Vowels extends Phaser.Scene {
     this.image = this.add.image(400, 300, firstImage);
 
     EventBus.emit("current-scene-ready", "O jogo das vogais foi carregado!");
-
-    this.hitTime = this.time.now;
   }
 
   update() {}
@@ -102,13 +98,13 @@ export default class Vowels extends Phaser.Scene {
     if (this.image) {
       // Se é a resposta correta do nível em que estamos nesse momento
       if (this.currentlevel.isCorrectLetter(letter)) {
-        const initialTime = this.hitTime;
-        const finalTime = this.time.now;
-        this.hitTime = finalTime - initialTime;
-        console.log(this.hitTime);
+        this.gameStats.addHitTime(this.time.now);
+        console.log(`Tempo: ${this.gameStats.hitTimes}`);
+        this.gameStats.resetInitialLevelTime(this.time.now);
 
-        console.log(this.missCount);
-        this.missCount = 0;
+        this.gameStats.addMissCount();
+        console.log(`Erros: ${this.gameStats.missCounts}`);
+        this.gameStats.resetActualLevelMisses();
 
         this.indexCurrentLevel++;
 
@@ -125,7 +121,7 @@ export default class Vowels extends Phaser.Scene {
         this.button2?.setButtonText(letterArray[1]);
         this.button3?.setButtonText(letterArray[2]);
       } else {
-        this.missCount++;
+        this.gameStats.addMiss();
       }
     }
   }
