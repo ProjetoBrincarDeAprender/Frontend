@@ -44,7 +44,7 @@ export default function ResponsibleTable() {
       ) : (
         <DataTable
           columns={ResponsibleColumns}
-          data={data?.map((item) => ({ ...item, id: String(item.id) })) ?? []}
+          data={data ?? []}
           {...{
             page: searchParams.get("page")
               ? parseInt(searchParams.get("page")!)

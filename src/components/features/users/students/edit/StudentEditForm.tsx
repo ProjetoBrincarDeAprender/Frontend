@@ -9,7 +9,6 @@ import { z } from "zod";
 //import { PasswordInput } from "@/components/ui/password-input";
 import { IMaskInput } from "react-imask";
 
-
 const formSchema = z.object({
   nome_completo: z
     .string({ error: "Nome completo é obrigatório" })
@@ -22,40 +21,49 @@ const formSchema = z.object({
     .or(z.literal("")),
   tema_preferido: z.string({ error: "Insira um tema válido" }).optional(),
   data_nascimento: z
-      .string()
-      .nonempty({ error: "Data de nascimento é obrigatória" })
-      .refine((val) => /^\d{2}\/\d{2}\/\d{4}$/.test(val), {
-      error: "Formato inválido. Use dd/mm/aaaa", 
-      })
-      .refine((val) => {
-      const [dia, mes, ano] = val.split("/").map(Number);
-      const date = new Date(ano, mes - 1, dia);
-      return (
-        date.getFullYear() === ano &&
-        date.getMonth() === mes - 1 &&
-        date.getDate() === dia
-      );
-      }, { error: "Data inexistente" }) 
-       .refine((val) => {
-      const [_dia, _mes, ano] = val.split("/").map(Number);
-      const year = ano;
-      const currentYear = new Date().getFullYear();
-      return year >= 1940 && year <= currentYear;
-      }, {
-        error: "Data de nascimento inválida", 
-      })
-      .refine((val) => {
-      const [dia, mes, ano] = val.split("/").map(Number);
-      const today = new Date();
-      let age = today.getFullYear() - ano;
-      const m = today.getMonth() - (mes - 1);
-      if (m < 0 || (m === 0 && today.getDate() < dia)) {
-        age--;
-      }
-      return age >= 5;
-    }, {
-      error: "O aluno deve ter pelo menos 5 anos de idade", 
+    .string()
+    .nonempty({ error: "Data de nascimento é obrigatória" })
+    .refine((val) => /^\d{2}\/\d{2}\/\d{4}$/.test(val), {
+      error: "Formato inválido. Use dd/mm/aaaa",
     })
+    .refine(
+      (val) => {
+        const [dia, mes, ano] = val.split("/").map(Number);
+        const date = new Date(ano, mes - 1, dia);
+        return (
+          date.getFullYear() === ano &&
+          date.getMonth() === mes - 1 &&
+          date.getDate() === dia
+        );
+      },
+      { error: "Data inexistente" },
+    )
+    .refine(
+      (val) => {
+        const [_dia, _mes, ano] = val.split("/").map(Number);
+        const year = ano;
+        const currentYear = new Date().getFullYear();
+        return year >= 1940 && year <= currentYear;
+      },
+      {
+        error: "Data de nascimento inválida",
+      },
+    )
+    .refine(
+      (val) => {
+        const [dia, mes, ano] = val.split("/").map(Number);
+        const today = new Date();
+        let age = today.getFullYear() - ano;
+        const m = today.getMonth() - (mes - 1);
+        if (m < 0 || (m === 0 && today.getDate() < dia)) {
+          age--;
+        }
+        return age >= 5;
+      },
+      {
+        error: "O aluno deve ter pelo menos 5 anos de idade",
+      },
+    )
     .optional(),
   escolaId: z.string().optional(),
 });
@@ -86,8 +94,10 @@ export function StudentEditForm({ id, onSuccess }: StudentFormProps) {
             tema_preferido: response.data.tema_preferido || "",
             avatar_url: response.data.avatar_url || "",
             data_nascimento: response.data.data_nascimento
-                ? (() => {
-                  const match = response.data.data_nascimento.match(/^(\d{4})-(\d{2})-(\d{2})/);
+              ? (() => {
+                  const match = response.data.data_nascimento.match(
+                    /^(\d{4})-(\d{2})-(\d{2})/,
+                  );
                   if (!match) return "";
                   const [, year, month, day] = match.map(Number);
                   return `${String(day).padStart(2, "0")}/${String(month).padStart(2, "0")}/${year}`;
@@ -136,7 +146,7 @@ export function StudentEditForm({ id, onSuccess }: StudentFormProps) {
         nome_completo: data.nome_completo,
         email: data.email,
         escolaId: user?.perfil == "Admin" ? data.escolaId : undefined,
-      }).filter(([_, value]) => value !== undefined && value !== ""),
+      }),
     );
 
     const studentPayload = Object.fromEntries(
@@ -145,11 +155,13 @@ export function StudentEditForm({ id, onSuccess }: StudentFormProps) {
         tema_preferido: data.tema_preferido,
         data_nascimento: data.data_nascimento
           ? (() => {
-              const [dia, mes, ano] = data.data_nascimento.split("/").map(Number);
+              const [dia, mes, ano] = data.data_nascimento
+                .split("/")
+                .map(Number);
               return `${ano}-${String(mes).padStart(2, "0")}-${String(dia).padStart(2, "0")}`;
             })()
           : undefined,
-      }).filter(([_, value]) => value !== undefined && value !== ""),
+      }),
     );
 
     try {
@@ -229,7 +241,9 @@ export function StudentEditForm({ id, onSuccess }: StudentFormProps) {
                 className="border-purplish-blue hover:border-purplish-blue flex h-13 w-full rounded-lg border bg-transparent px-6 py-2 text-base text-gray-800 transition-colors duration-200 ease-in-out placeholder:text-gray-500 focus-visible:ring-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
               />
               {fieldState.error && (
-                <p className="text-sm text-red-600">{fieldState.error.message}</p>
+                <p className="text-sm text-red-600">
+                  {fieldState.error.message}
+                </p>
               )}
             </div>
           )}

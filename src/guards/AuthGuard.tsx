@@ -1,7 +1,7 @@
 import { useUser } from "@/hooks/User/useUser";
+import Cookies from "js-cookie";
 import { Navigate, Outlet } from "react-router";
 import { toast } from "sonner";
-import Cookies from "js-cookie";
 
 interface AuthGuardProps {
   redirectTo?: string;

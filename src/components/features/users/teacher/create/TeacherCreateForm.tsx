@@ -3,7 +3,7 @@ import { Form } from "@/components/forms/Root";
 import { PasswordInput } from "@/components/ui/password-input";
 import { Link } from "@/components/utils/Link/Link";
 import { useUser } from "@/hooks/User/useUser";
-import type { UserProfile } from "@/types/user";
+import type { User, UserProfile } from "@/types/user";
 import api from "@/utils/api";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AxiosError } from "axios";
@@ -62,8 +62,8 @@ export default function TeacherSignUpForm({ onSuccess }: SignUpFormProps) {
   const escolaSelecionada = form.watch("escolaId");
 
   useEffect(() => {
-    if (user?.perfil !== "Admin") return; 
-    
+    if (user?.perfil !== "Admin") return;
+
     const fetchSchools = async () => {
       try {
         const response = await api.get("/school/list");
@@ -85,10 +85,15 @@ export default function TeacherSignUpForm({ onSuccess }: SignUpFormProps) {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const escolaId = user?.perfil === "Admin" ? escolaSelecionada : user?.escola?.id;
-        if (!escolaId) return setUsers([]);
+        const escola =
+          user?.perfil === "Admin"
+            ? schools?.find((school) => school.id === Number(escolaSelecionada))
+            : user?.escola;
+        if (!escola) return setUsers([]);
 
-        const response = await api.get(`/user/list?type=Aluno${escolaId ? `&escolaId=${escolaId}` : ""}`);
+        const response = await api.get(
+          `/student/list/relations/teacher?isNull=true`,
+        );
 
         //antigo
         // const response = await api.get(
@@ -97,7 +102,7 @@ export default function TeacherSignUpForm({ onSuccess }: SignUpFormProps) {
 
         if (response.status == 200) {
           const users = response.data;
-          setUsers(users);
+          setUsers(users.filter((user: User) => user.escola == escola.nome));
 
           if (users.length === 0) {
             setErrorMessage("Não há alunos cadastrados nesta escola!");
@@ -110,7 +115,7 @@ export default function TeacherSignUpForm({ onSuccess }: SignUpFormProps) {
       }
     };
     fetchUsers();
-  }, [escolaSelecionada, user?.perfil, user?.escola?.id]);
+  }, [escolaSelecionada, user, schools]);
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     const { usersIds, ...userData } = data;
@@ -125,8 +130,8 @@ export default function TeacherSignUpForm({ onSuccess }: SignUpFormProps) {
       const response = await api.post("/user/register", payload);
 
       if (usersIds && usersIds.length > 0) {
-        const responseLinking = await api.post("/responsible/register", {
-          userId: response.data.id,
+        const responseLinking = await api.post("/teacher/register", {
+          userId: response.data.codigo_usuario,
           educandosIds: usersIds.map((value) => Number(value)),
         });
 
@@ -254,25 +259,26 @@ export default function TeacherSignUpForm({ onSuccess }: SignUpFormProps) {
           name="usersIds"
           render={({ field }) => (
             <>
-            <FancyMultiSelect
-              onSelect={field.onChange}
-              label="Alunos do Professor"
-              placeholder="Selecione os alunos do professor..."
-              data={
-                users
-                  ? users.map(({ id, email }) => ({
-                      value: String(id),
-                      label: email,
-                    }))
-                  : []
-              }
-            />
-             {errorMensage && <p className="text-sm text-yellow-800 mt-1">{errorMensage}</p>}
+              <FancyMultiSelect
+                onSelect={field.onChange}
+                label="Alunos do Professor"
+                placeholder="Selecione os alunos do professor..."
+                data={
+                  users
+                    ? users.map(({ codigo_usuario, email }) => ({
+                        value: String(codigo_usuario),
+                        label: email,
+                      }))
+                    : []
+                }
+              />
+              {errorMensage && (
+                <p className="mt-1 text-sm text-yellow-800">{errorMensage}</p>
+              )}
             </>
           )}
         />
         <Form.Submit>Criar Conta</Form.Submit>
-
       </Form.Main>
       <p className="mt-6 w-full text-center text-lg">
         O professor já possui uma conta?{" "}

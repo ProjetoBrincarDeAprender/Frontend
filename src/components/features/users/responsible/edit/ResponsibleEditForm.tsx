@@ -1,6 +1,7 @@
 import { FancyMultiSelect } from "@/components/forms/MultiSelect";
 import { Form } from "@/components/forms/Root";
 import { useUser } from "@/hooks/User/useUser";
+import type { User } from "@/types/user";
 import api from "@/utils/api";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AxiosError } from "axios";
@@ -8,7 +9,6 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 //import { PasswordInput } from "@/components/ui/password-input";
-
 
 const formSchema = z.object({
   nome_completo: z
@@ -18,6 +18,9 @@ const formSchema = z.object({
   email: z.email({ error: "Digite um email válido" }),
   escolaId: z.string().optional(),
   usersIds: z.array(z.string()).optional(),
+  parentesco: z
+    .string()
+    .max(50, { error: "Parentesco deve ter no máximo 50 caracteres" }),
 });
 
 type ResponsibleFormProps = {
@@ -33,12 +36,8 @@ export function ResponsibleEditForm({ id, onSuccess }: ResponsibleFormProps) {
   const [schools, setSchools] = useState<{ id: number; nome: string }[] | null>(
     null,
   );
-  const [students, setStudents] = useState<
-    { id: number; nome_completo: string; email: string }[] | null
-  >(null);
-  const [allStudents, setAllStudents] = useState<
-    { id: number; nome_completo: string; email: string }[] | null
-  >(null);
+  const [students, setStudents] = useState<User[] | null>(null);
+  const [allStudents, setAllStudents] = useState<User[] | null>(null);
 
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const escolaSelecionada = form.watch("escolaId");
@@ -53,7 +52,8 @@ export function ResponsibleEditForm({ id, onSuccess }: ResponsibleFormProps) {
             //...response.data,
             nome_completo: response.data.nome_completo,
             email: response.data.email,
-            escolaId: form.getValues("escolaId") || String(response.data.escolaId),
+            escolaId:
+              form.getValues("escolaId") || String(response.data.escolaId),
           };
           form.reset(userData);
         }
@@ -97,17 +97,23 @@ export function ResponsibleEditForm({ id, onSuccess }: ResponsibleFormProps) {
 
     const fetchAllStudents = async () => {
       try {
-        const escolaId = escolaSelecionada || user?.escola?.id;
-        if (!escolaId) return setAllStudents([]);
-        const response = await api.get(`/user/list?type=Aluno${escolaId ? `&escolaId=${escolaId}` : ""}`);
-        // ANTIGO 
+        const escola =
+          user?.perfil === "Admin"
+            ? schools?.find((school) => school.id === Number(escolaSelecionada))
+            : user?.escola;
+        if (!escola) return setAllStudents([]);
+
+        const response = await api.get(
+          `/student/list/relations/responsible?isNull=true`,
+        );
+        // ANTIGO
         //const response = await api.get(
         //   `/user/list?type=Aluno${user?.perfil == "Admin" ? "" : `&escolaId=${user?.escola?.id}`}`,
         // );
         if (response.status == 200) {
           const users = response.data;
-          setAllStudents(users);
-           if (users.length === 0) {
+          setAllStudents(users.filter((u: User) => u.escola == escola.nome));
+          if (users.length === 0) {
             setErrorMessage("Não há alunos cadastrados nesta escola!");
           } else {
             setErrorMessage(null);
@@ -118,10 +124,9 @@ export function ResponsibleEditForm({ id, onSuccess }: ResponsibleFormProps) {
       }
     };
 
-   
     if (user?.perfil === "Admin") {
       fetchSchools();
-    } 
+    }
     fetchRelations();
     fetchAllStudents();
     fetchUserData();
@@ -134,17 +139,12 @@ export function ResponsibleEditForm({ id, onSuccess }: ResponsibleFormProps) {
       escolaId: data.escolaId,
     };
 
-    const userPayload = Object.fromEntries(
-      Object.entries(userData).filter(
-        ([_, value]) => value !== undefined && value !== "",
-      ),
-    );
-
     try {
-      const responseUser = await api.put(`/user/update/${id}`, userPayload);
+      const responseUser = await api.put(`/user/update/${id}`, userData);
 
       await api.put(`/responsible/update/${id}`, {
         usersIds: data.usersIds?.map((id) => Number(id)) || [],
+        parentesco: data.parentesco,
       });
 
       if (responseUser.status === 200) {
@@ -206,6 +206,17 @@ export function ResponsibleEditForm({ id, onSuccess }: ResponsibleFormProps) {
             />
           )}
         />
+        <Form.Field
+          form={form}
+          name="parentesco"
+          render={({ field }) => (
+            <Form.Input
+              {...field}
+              label="Parentesco"
+              placeholder="Insira qual seu parentesco"
+            />
+          )}
+        />
         {user?.perfil == "Admin" && schools && (
           <Form.Field
             form={form}
@@ -230,20 +241,24 @@ export function ResponsibleEditForm({ id, onSuccess }: ResponsibleFormProps) {
             name="usersIds"
             render={({ field }) => (
               <>
-              <FancyMultiSelect
-                onSelect={field.onChange}
-                label="Alunos do Responsável"
-                placeholder="Selecione os alunos do responsável..."
-                data={allStudents.map(({ id, email }) => ({
-                  value: String(id),
-                  label: email,
-                }))}
-                preSelectedData={students.map(({ id, email }) => ({
-                  value: String(id),
-                  label: email,
-                }))}
-              />
-              {errorMessage && <p className="text-sm text-yellow-800 mt-1">{errorMessage}</p>}
+                <FancyMultiSelect
+                  onSelect={field.onChange}
+                  label="Alunos do Responsável"
+                  placeholder="Selecione os alunos do responsável..."
+                  data={allStudents.map(({ codigo_usuario, email }) => ({
+                    value: String(codigo_usuario),
+                    label: email,
+                  }))}
+                  preSelectedData={students.map(
+                    ({ codigo_usuario, email }) => ({
+                      value: String(codigo_usuario),
+                      label: email,
+                    }),
+                  )}
+                />
+                {errorMessage && (
+                  <p className="mt-1 text-sm text-yellow-800">{errorMessage}</p>
+                )}
               </>
             )}
           />
