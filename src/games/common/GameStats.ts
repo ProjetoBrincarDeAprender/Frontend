@@ -13,29 +13,29 @@ export default class GameStats {
     this.initialLevelTime = 0;
   }
 
-  addHitTime(finalTime: number) {
+  addHitTime(finalTime: number): void {
     const deltaTime = finalTime - this.initialLevelTime;
     this.hitTimes.push(deltaTime);
     this.initialLevelTime = finalTime;
   }
 
-  addMissCount() {
+  addMissCount(): void {
     this.missCounts.push(this.acutalLevelMisses);
   }
 
-  addMiss() {
+  addMiss(): void {
     this.acutalLevelMisses++;
   }
 
-  resetInitialLevelTime(newTime: number = 0) {
+  resetInitialLevelTime(newTime: number = 0): void {
     this.initialLevelTime = newTime;
   }
 
-  resetActualLevelMisses() {
+  resetActualLevelMisses(): void {
     this.acutalLevelMisses = 0;
   }
 
-  resetAllData() {
+  resetAllData(): void {
     this.hitTimes = [];
     this.missCounts = [];
   }

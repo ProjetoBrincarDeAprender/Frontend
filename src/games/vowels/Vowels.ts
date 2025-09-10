@@ -3,26 +3,25 @@ import { LetterButton } from "./gameObjects/LetterButton";
 import Phaser from "phaser";
 import Level from "./Level";
 import GameStats from "../common/GameStats";
+import LevelManager from "../common/LevelManager";
 
 export default class Vowels extends Phaser.Scene {
   private image?: Phaser.GameObjects.Image;
-  private currentlevel: Level;
-  private indexCurrentLevel: number;
-  private levels: Level[] = [];
   private button1: LetterButton | undefined;
   private button2: LetterButton | undefined;
   private button3: LetterButton | undefined;
   private gameStats: GameStats;
+  private levelManager: LevelManager;
 
   constructor() {
     super("Vowels");
-    this.levels.push(new Level("abelha", "A"));
-    this.levels.push(new Level("elefante", "E"));
 
-    this.indexCurrentLevel = 0;
-    this.currentlevel = this.levels[this.indexCurrentLevel];
+    const levels: Level[] = [];
+    levels.push(new Level("abelha", "A"));
+    levels.push(new Level("elefante", "E"));
 
     this.gameStats = new GameStats();
+    this.levelManager = new LevelManager(levels);
   }
 
   preload() {
@@ -35,7 +34,9 @@ export default class Vowels extends Phaser.Scene {
   }
 
   create() {
-    let letterArray = this.currentlevel.defineButtonsLetters(3);
+    let letterArray = this.levelManager
+      .getCurrentLevel()
+      .defineButtonsLetters(3);
 
     this.button1 = new LetterButton(
       this,
@@ -86,7 +87,7 @@ export default class Vowels extends Phaser.Scene {
       this.changeLevel(button3.getButtonText());
     });
 
-    const firstImage = this.currentlevel.getName();
+    const firstImage = this.levelManager.getCurrentLevel().getName();
     this.image = this.add.image(400, 300, firstImage);
 
     EventBus.emit("current-scene-ready", "O jogo das vogais foi carregado!");
@@ -95,9 +96,11 @@ export default class Vowels extends Phaser.Scene {
   update() {}
 
   changeLevel(letter: string) {
+    let currentLevel: Level = this.levelManager.getCurrentLevel();
+
     if (this.image) {
       // Se é a resposta correta do nível em que estamos nesse momento
-      if (this.currentlevel.isCorrectLetter(letter)) {
+      if (currentLevel.isCorrectLetter(letter)) {
         this.gameStats.addHitTime(this.time.now);
         console.log(`Tempo: ${this.gameStats.hitTimes}`);
         this.gameStats.resetInitialLevelTime(this.time.now);
@@ -106,17 +109,18 @@ export default class Vowels extends Phaser.Scene {
         console.log(`Erros: ${this.gameStats.missCounts}`);
         this.gameStats.resetActualLevelMisses();
 
-        this.indexCurrentLevel++;
+        this.levelManager.nextLevel();
 
-        if (this.indexCurrentLevel >= this.levels.length) {
+        if (this.levelManager.isFinished()) {
           this.scene.start("vowelsCredits");
           return;
         }
 
-        this.currentlevel = this.levels[this.indexCurrentLevel];
-        this.image.setTexture(this.currentlevel.getName());
+        currentLevel = this.levelManager.getCurrentLevel();
 
-        let letterArray = this.currentlevel.defineButtonsLetters(3);
+        this.image.setTexture(currentLevel.getName());
+
+        let letterArray = currentLevel.defineButtonsLetters(3);
         this.button1?.setButtonText(letterArray[0]);
         this.button2?.setButtonText(letterArray[1]);
         this.button3?.setButtonText(letterArray[2]);
