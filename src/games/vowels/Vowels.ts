@@ -4,12 +4,15 @@ import Phaser from "phaser";
 import Level from "./Level";
 import GameStats from "../common/GameStats";
 import LevelManager from "../common/LevelManager";
+import Logic from "./Logic";
+import type Button from "../common/Button";
 
 export default class Vowels extends Phaser.Scene {
   private image?: Phaser.GameObjects.Image;
   private gameStats: GameStats;
   private levelManager: LevelManager;
   private buttonManager: ButtonManager;
+  private logic: Logic;
 
   constructor() {
     super("Vowels");
@@ -21,6 +24,7 @@ export default class Vowels extends Phaser.Scene {
     this.gameStats = new GameStats();
     this.levelManager = new LevelManager(levels);
     this.buttonManager = new ButtonManager(this);
+    this.logic = new Logic();
   }
 
   preload() {
@@ -33,57 +37,59 @@ export default class Vowels extends Phaser.Scene {
   }
 
   create() {
-    let letterArray = this.levelManager
+    const positions: { x: number; y: number }[] = [
+      { x: 200, y: 500 },
+      { x: 400, y: 500 },
+      { x: 600, y: 500 },
+    ];
+    const textures: string[] = [
+      "defaultButton",
+      "hoverButton",
+      "clickedButton",
+    ];
+    this.buttonManager.createButtons(positions, textures);
+    this.setupLevel();
+
+    const firstImage: string = this.levelManager
       .getCurrentLevel()
-      .defineButtonsLetters(3);
-
-    this.buttonManager.createButtons(
-      [
-        { x: 200, y: 500 },
-        { x: 400, y: 500 },
-        { x: 600, y: 500 },
-      ],
-      ["defaultButton", "hoverButton", "clickedButton"],
-    );
-
-    this.buttonManager.setButtonTexts(letterArray);
-
-    this.add.existing(this.buttonManager.buttons[0]);
-    this.add.existing(this.buttonManager.buttons[1]);
-    this.add.existing(this.buttonManager.buttons[2]);
-
-    this.buttonManager.buttons[0].on("pointerdown", () => {
-      this.changeLevel(this.buttonManager.buttons[0].getButtonText());
-    });
-
-    this.buttonManager.buttons[1].on("pointerdown", () => {
-      this.changeLevel(this.buttonManager.buttons[1].getButtonText());
-    });
-
-    this.buttonManager.buttons[2].on("pointerdown", () => {
-      this.changeLevel(this.buttonManager.buttons[2].getButtonText());
-    });
-
-    const firstImage = this.levelManager.getCurrentLevel().getName();
+      .getLevelName();
     this.image = this.add.image(400, 300, firstImage);
-
-    EventBus.emit("current-scene-ready", "O jogo das vogais foi carregado!");
+    console.log("Jogo das vogais carregado!");
   }
 
   update() {}
 
-  changeLevel(letter: string) {
+  setupLevel() {
+    const answer: string = this.levelManager.getCurrentLevel().getAnswer();
+    const buttonsNumber: number = this.buttonManager.buttons.length;
+    const buttonTexts: string[] = this.logic.generateButtonsLetters(
+      buttonsNumber,
+      answer,
+    );
+    this.buttonManager.setButtonTexts(buttonTexts);
+    this.buttonManager.addButtonsOnScene();
+
+    this.buttonManager.buttons.forEach((button) => {
+      button.once("pointerdown", () => {
+        this.handleButtonClick(button);
+      });
+    });
+  }
+
+  handleButtonClick(button: Button) {
     let currentLevel: Level = this.levelManager.getCurrentLevel();
+    const text: string = button.getButtonText();
 
     if (this.image) {
-      // Se é a resposta correta do nível em que estamos nesse momento
-      if (currentLevel.isCorrectLetter(letter)) {
+      if (currentLevel.isCorrectLetter(text)) {
+        const currentIndex: number = this.levelManager.getCurrentIndex();
+
         this.gameStats.addHitTime(this.time.now);
-        console.log(`Tempo: ${this.gameStats.hitTimes}`);
+        console.log(`Tempo: ${this.gameStats.hitTimes[currentIndex]}`);
         this.gameStats.resetInitialLevelTime(this.time.now);
 
         this.gameStats.addMissCount();
-        console.log(`Erros: ${this.gameStats.missCounts}`);
+        console.log(`Erros: ${this.gameStats.missCounts[currentIndex]}`);
         this.gameStats.resetActualLevelMisses();
 
         this.levelManager.nextLevel();
@@ -94,11 +100,16 @@ export default class Vowels extends Phaser.Scene {
         }
 
         currentLevel = this.levelManager.getCurrentLevel();
+        const answer: string = this.levelManager.getCurrentLevel().getAnswer();
+        const buttonsNumber: number = this.buttonManager.buttons.length;
 
-        this.image.setTexture(currentLevel.getName());
+        this.image.setTexture(currentLevel.getLevelName());
 
-        let letterArray = currentLevel.defineButtonsLetters(3);
-        this.buttonManager.setButtonTexts(letterArray);
+        let buttonTexts = this.logic.generateButtonsLetters(
+          buttonsNumber,
+          answer,
+        );
+        this.buttonManager.setButtonTexts(buttonTexts);
       } else {
         this.gameStats.addMiss();
       }

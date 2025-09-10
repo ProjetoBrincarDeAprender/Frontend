@@ -9,10 +9,6 @@ export default class LevelManager {
     this.currentIndex = 0;
   }
 
-  getCurrentLevel(): Level {
-    return this.levels[this.currentIndex];
-  }
-
   nextLevel(): boolean {
     this.currentIndex++;
     if (this.currentIndex < this.levels.length) return true;
@@ -22,5 +18,13 @@ export default class LevelManager {
   isFinished(): boolean {
     if (this.currentIndex >= this.levels.length) return true;
     return false;
+  }
+
+  getCurrentLevel(): Level {
+    return this.levels[this.currentIndex];
+  }
+
+  getCurrentIndex(): number {
+    return this.currentIndex;
   }
 }

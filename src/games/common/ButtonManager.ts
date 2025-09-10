@@ -34,5 +34,9 @@ export default class ButtonManager {
     });
   }
 
-  
+  addButtonsOnScene(): void {
+    this.buttons.forEach((button) => {
+      this.scene.add.existing(button);
+    });
+  }
 }
