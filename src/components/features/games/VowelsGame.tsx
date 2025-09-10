@@ -1,8 +1,9 @@
+import { EventBus } from "@/games/common/utils/EventBus";
 import { Footer } from "@/components/Footer/Footer";
-import { EventBus } from "@/games/EventBus";
-import Vowels from "@/games/vowels/Vowels";
-import Phaser from "phaser";
 import { useEffect, useRef } from "react";
+import Credits from "@/games/vowels/Credits";
+import Phaser from "phaser";
+import Vowels from "@/games/vowels/Vowels";
 
 export interface IRefVowelsGame {
   game: Phaser.Game | null;
@@ -17,7 +18,7 @@ const VowelsGame: React.FC = () => {
       type: Phaser.AUTO,
       width: 800,
       height: 600,
-      scene: [Vowels],
+      scene: [Vowels, Credits],
       parent: "game-container",
       backgroundColor: "#ffffff",
     };

@@ -1,4 +1,4 @@
-import { EventBus } from "../EventBus";
+import { EventBus } from "../common/utils/EventBus";
 import { LetterButton } from "./gameObjects/LetterButton";
 import Phaser from "phaser";
 import Level from "./Level";
@@ -111,6 +111,12 @@ export default class Vowels extends Phaser.Scene {
         this.missCount = 0;
 
         this.indexCurrentLevel++;
+
+        if (this.indexCurrentLevel >= this.levels.length) {
+          this.scene.start("vowelsCredits");
+          return;
+        }
+
         this.currentlevel = this.levels[this.indexCurrentLevel];
         this.image.setTexture(this.currentlevel.getName());
 
