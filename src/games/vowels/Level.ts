@@ -1,4 +1,4 @@
-import randomGenerator from "../common/utils/randomGenerator";
+import randomGenerator from "../common/utils/RandomGenerator";
 
 export default class Level {
   private name: string;

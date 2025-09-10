@@ -1,5 +1,5 @@
 import { EventBus } from "../common/utils/EventBus";
-import { LetterButton } from "./gameObjects/LetterButton";
+import ButtonManager from "../common/ButtonManager";
 import Phaser from "phaser";
 import Level from "./Level";
 import GameStats from "../common/GameStats";
@@ -7,11 +7,9 @@ import LevelManager from "../common/LevelManager";
 
 export default class Vowels extends Phaser.Scene {
   private image?: Phaser.GameObjects.Image;
-  private button1: LetterButton | undefined;
-  private button2: LetterButton | undefined;
-  private button3: LetterButton | undefined;
   private gameStats: GameStats;
   private levelManager: LevelManager;
+  private buttonManager: ButtonManager;
 
   constructor() {
     super("Vowels");
@@ -22,6 +20,7 @@ export default class Vowels extends Phaser.Scene {
 
     this.gameStats = new GameStats();
     this.levelManager = new LevelManager(levels);
+    this.buttonManager = new ButtonManager(this);
   }
 
   preload() {
@@ -38,53 +37,31 @@ export default class Vowels extends Phaser.Scene {
       .getCurrentLevel()
       .defineButtonsLetters(3);
 
-    this.button1 = new LetterButton(
-      this,
-      200,
-      500,
-      "defaultButton",
-      "hoverButton",
-      "clickedButton",
-    );
-    this.button2 = new LetterButton(
-      this,
-      400,
-      500,
-      "defaultButton",
-      "hoverButton",
-      "clickedButton",
-    );
-    this.button3 = new LetterButton(
-      this,
-      600,
-      500,
-      "defaultButton",
-      "hoverButton",
-      "clickedButton",
+    this.buttonManager.createButtons(
+      [
+        { x: 200, y: 500 },
+        { x: 400, y: 500 },
+        { x: 600, y: 500 },
+      ],
+      ["defaultButton", "hoverButton", "clickedButton"],
     );
 
-    const button1 = this.button1;
-    const button2 = this.button2;
-    const button3 = this.button3;
+    this.buttonManager.setButtonTexts(letterArray);
 
-    button1.setButtonText(letterArray[0]);
-    button2.setButtonText(letterArray[1]);
-    button3.setButtonText(letterArray[2]);
+    this.add.existing(this.buttonManager.buttons[0]);
+    this.add.existing(this.buttonManager.buttons[1]);
+    this.add.existing(this.buttonManager.buttons[2]);
 
-    this.add.existing(button1);
-    this.add.existing(button2);
-    this.add.existing(button3);
-
-    button1.on("pointerdown", () => {
-      this.changeLevel(button1.getButtonText());
+    this.buttonManager.buttons[0].on("pointerdown", () => {
+      this.changeLevel(this.buttonManager.buttons[0].getButtonText());
     });
 
-    button2.on("pointerdown", () => {
-      this.changeLevel(button2.getButtonText());
+    this.buttonManager.buttons[1].on("pointerdown", () => {
+      this.changeLevel(this.buttonManager.buttons[1].getButtonText());
     });
 
-    button3.on("pointerdown", () => {
-      this.changeLevel(button3.getButtonText());
+    this.buttonManager.buttons[2].on("pointerdown", () => {
+      this.changeLevel(this.buttonManager.buttons[2].getButtonText());
     });
 
     const firstImage = this.levelManager.getCurrentLevel().getName();
@@ -121,9 +98,7 @@ export default class Vowels extends Phaser.Scene {
         this.image.setTexture(currentLevel.getName());
 
         let letterArray = currentLevel.defineButtonsLetters(3);
-        this.button1?.setButtonText(letterArray[0]);
-        this.button2?.setButtonText(letterArray[1]);
-        this.button3?.setButtonText(letterArray[2]);
+        this.buttonManager.setButtonTexts(letterArray);
       } else {
         this.gameStats.addMiss();
       }
