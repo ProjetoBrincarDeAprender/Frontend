@@ -24,7 +24,7 @@ export default class Vowels extends Phaser.Scene {
     this.gameStats = new GameStats();
     this.levelManager = new LevelManager(levels);
     this.buttonManager = new ButtonManager(this);
-    this.logic = new Logic();
+    this.logic = new Logic(this, this.gameStats, this.levelManager);
   }
 
   preload() {
@@ -71,48 +71,29 @@ export default class Vowels extends Phaser.Scene {
 
     this.buttonManager.buttons.forEach((button) => {
       button.once("pointerdown", () => {
-        this.handleButtonClick(button);
+        const result = this.logic.handleAnswer(
+          button.getButtonText(),
+          this.time.now,
+        );
+
+        if (result) {
+          this.onCorrectButton();
+        }
       });
     });
   }
 
-  handleButtonClick(button: Button) {
+  onCorrectButton() {
     let currentLevel: Level = this.levelManager.getCurrentLevel();
-    const text: string = button.getButtonText();
 
-    if (this.image) {
-      if (currentLevel.isCorrectLetter(text)) {
-        const currentIndex: number = this.levelManager.getCurrentIndex();
+    if (this.logic.isGameFinished()) {
+      this.scene.start("vowelsCredits");
+    } else if (this.image) {
+      this.image.setTexture(currentLevel.getLevelName());
 
-        this.gameStats.addHitTime(this.time.now);
-        console.log(`Tempo: ${this.gameStats.hitTimes[currentIndex]}`);
-        this.gameStats.resetInitialLevelTime(this.time.now);
-
-        this.gameStats.addMissCount();
-        console.log(`Erros: ${this.gameStats.missCounts[currentIndex]}`);
-        this.gameStats.resetActualLevelMisses();
-
-        this.levelManager.nextLevel();
-
-        if (this.levelManager.isFinished()) {
-          this.scene.start("vowelsCredits");
-          return;
-        }
-
-        currentLevel = this.levelManager.getCurrentLevel();
-        const answer: string = this.levelManager.getCurrentLevel().getAnswer();
-        const buttonsNumber: number = this.buttonManager.buttons.length;
-
-        this.image.setTexture(currentLevel.getLevelName());
-
-        let buttonTexts = this.logic.generateButtonsLetters(
-          buttonsNumber,
-          answer,
-        );
-        this.buttonManager.setButtonTexts(buttonTexts);
-      } else {
-        this.gameStats.addMiss();
-      }
+      const buttonsNumber: number = this.buttonManager.buttons.length;
+      const buttonTexts = this.logic.generateButtonTexts(buttonsNumber);
+      this.buttonManager.setButtonTexts(buttonTexts);
     }
   }
 }
