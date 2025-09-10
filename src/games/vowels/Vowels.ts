@@ -24,7 +24,7 @@ export default class Vowels extends Phaser.Scene {
     this.gameStats = new GameStats();
     this.levelManager = new LevelManager(levels);
     this.buttonManager = new ButtonManager(this);
-    this.logic = new Logic(this, this.gameStats, this.levelManager);
+    this.logic = new Logic(this.gameStats, this.levelManager);
   }
 
   preload() {
@@ -50,9 +50,7 @@ export default class Vowels extends Phaser.Scene {
     this.buttonManager.createButtons(positions, textures);
     this.setupLevel();
 
-    const firstImage: string = this.levelManager
-      .getCurrentLevel()
-      .getLevelName();
+    const firstImage: string = this.levelManager.getCurrentLevel().getName();
     this.image = this.add.image(400, 300, firstImage);
     console.log("Jogo das vogais carregado!");
   }
@@ -61,37 +59,39 @@ export default class Vowels extends Phaser.Scene {
 
   setupLevel() {
     const answer: string = this.levelManager.getCurrentLevel().getAnswer();
-    const buttonsNumber: number = this.buttonManager.buttons.length;
+    const buttonsNumber: number = this.buttonManager.getButtons().length;
     const buttonTexts: string[] = this.logic.generateButtonsLetters(
       buttonsNumber,
       answer,
     );
     this.buttonManager.setButtonTexts(buttonTexts);
-    this.buttonManager.addButtonsOnScene();
 
-    this.buttonManager.buttons.forEach((button) => {
-      button.once("pointerdown", () => {
+    this.buttonManager.getButtons().forEach((button) => {
+      button.off("pointerdown");
+      button.on("pointerdown", () => {
         const result = this.logic.handleAnswer(
           button.getButtonText(),
           this.time.now,
         );
 
-        if (result) {
-          this.onCorrectButton();
+        if (result.correct) {
+          if (result.finished) {
+            this.scene.start("vowelsCredits");
+          } else {
+            this.prepareNextLevel();
+          }
         }
       });
     });
   }
 
-  onCorrectButton() {
+  prepareNextLevel() {
     let currentLevel: Level = this.levelManager.getCurrentLevel();
 
-    if (this.logic.isGameFinished()) {
-      this.scene.start("vowelsCredits");
-    } else if (this.image) {
-      this.image.setTexture(currentLevel.getLevelName());
+    if (this.image) {
+      this.image.setTexture(currentLevel.getName());
 
-      const buttonsNumber: number = this.buttonManager.buttons.length;
+      const buttonsNumber: number = this.buttonManager.getButtons().length;
       const buttonTexts = this.logic.generateButtonTexts(buttonsNumber);
       this.buttonManager.setButtonTexts(buttonTexts);
     }

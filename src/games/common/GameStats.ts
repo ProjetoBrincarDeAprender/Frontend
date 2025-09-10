@@ -2,14 +2,14 @@ export default class GameStats {
   public hitTimes: number[];
   public missCounts: number[];
 
-  private acutalLevelMisses: number;
+  private actualLevelMisses: number;
   private initialLevelTime: number;
 
   constructor() {
     this.hitTimes = [];
     this.missCounts = [];
 
-    this.acutalLevelMisses = 0;
+    this.actualLevelMisses = 0;
     this.initialLevelTime = 0;
   }
 
@@ -20,11 +20,11 @@ export default class GameStats {
   }
 
   addMissCount(): void {
-    this.missCounts.push(this.acutalLevelMisses);
+    this.missCounts.push(this.actualLevelMisses);
   }
 
   addMiss(): void {
-    this.acutalLevelMisses++;
+    this.actualLevelMisses++;
   }
 
   resetInitialLevelTime(newTime: number = 0): void {
@@ -32,7 +32,7 @@ export default class GameStats {
   }
 
   resetActualLevelMisses(): void {
-    this.acutalLevelMisses = 0;
+    this.actualLevelMisses = 0;
   }
 
   resetAllData(): void {

@@ -4,21 +4,18 @@ import randomGenerator from "../common/utils/RandomGenerator";
 import type Level from "./Level";
 
 export default class Logic {
-  private scene: Phaser.Scene;
   private gameStats: GameStats;
   private levelManager: LevelManager;
 
-  constructor(
-    scene: Phaser.Scene,
-    gameStats: GameStats,
-    levelManager: LevelManager,
-  ) {
-    this.scene = scene;
+  constructor(gameStats: GameStats, levelManager: LevelManager) {
     this.gameStats = gameStats;
     this.levelManager = levelManager;
   }
 
-  handleAnswer(text: string, timeNow: number): boolean {
+  handleAnswer(
+    text: string,
+    timeNow: number,
+  ): { correct: boolean; finished: boolean } {
     const currentLevel: Level = this.levelManager.getCurrentLevel();
     const isCorrect: boolean = currentLevel.isCorrectLetter(text);
 
@@ -28,12 +25,11 @@ export default class Logic {
       this.gameStats.addMissCount();
       this.gameStats.resetActualLevelMisses();
 
-      this.levelManager.nextLevel();
-
-      return true;
+      const finished = !this.levelManager.nextLevel();
+      return { correct: true, finished };
     } else {
       this.gameStats.addMiss();
-      return false;
+      return { correct: false, finished: false };
     }
   }
 

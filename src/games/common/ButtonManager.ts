@@ -3,7 +3,7 @@ import Phaser from "phaser";
 
 export default class ButtonManager {
   protected scene: Phaser.Scene;
-  public buttons: Button[];
+  private buttons: Button[];
 
   constructor(scene: Phaser.Scene) {
     this.scene = scene;
@@ -28,15 +28,13 @@ export default class ButtonManager {
     });
   }
 
+  getButtons(): Button[] {
+    return this.buttons;
+  }
+
   setButtonTexts(texts: string[]): void {
     this.buttons.forEach((button, index) => {
       button.setButtonText(texts[index]);
-    });
-  }
-
-  addButtonsOnScene(): void {
-    this.buttons.forEach((button) => {
-      this.scene.add.existing(button);
     });
   }
 }

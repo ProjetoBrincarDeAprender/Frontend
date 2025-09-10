@@ -1,9 +1,9 @@
 export default class Level {
-  private levelName: string;
+  private name: string;
   private answer: string;
 
   constructor(name: string, answer: string) {
-    this.levelName = name;
+    this.name = name;
     this.answer = answer;
   }
 
@@ -12,8 +12,8 @@ export default class Level {
     return false;
   }
 
-  getLevelName() {
-    return this.levelName;
+  getName() {
+    return this.name;
   }
 
   getAnswer() {
