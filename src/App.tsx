@@ -13,7 +13,6 @@ import { Home } from "./pages/Home/Home";
 import { default as LoginForm } from "./pages/Login/Login";
 import Logout from "./pages/Logout/Logout";
 import { Profile } from "./pages/Profile/Profile";
-import VowelsGame from "./components/features/games/VowelsGame";
 
 function App() {
   return (
