@@ -1,12 +1,13 @@
 import { SkeletonTable } from "@/components/ui/skeleton-table";
 import { DataTable } from "@/components/utils/DataTable/DataTable";
 import api from "@/utils/api";
+import type { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router";
 
 export type UnlinkedStudents = {
-  id: string;
+  codigo_usuario: string;
   nome_completo: string;
   email: string;
   escola: string;
@@ -30,7 +31,7 @@ export function StudentsUnlinkedTable({
         let linkedStudents: UnlinkedStudents[] = [];
         if (teacherId) {
           const linkedRes = await api.get(
-            `/responsible/list/${teacherId}/students`,
+            `/teacher/list/${teacherId}/students`,
           );
           if (linkedRes.status === 200 && Array.isArray(linkedRes.data)) {
             linkedStudents = linkedRes.data;
@@ -57,9 +58,9 @@ export function StudentsUnlinkedTable({
     );
   };
 
-  const columns = [
+  const columns: ColumnDef<UnlinkedStudents>[] = [
     {
-      accessorKey: "id",
+      accessorKey: "codigo_usuario",
       header: ({ column }: { column: any }) => (
         <button
           type="button"
@@ -117,11 +118,11 @@ export function StudentsUnlinkedTable({
     {
       id: "vinculo",
       header: "Vínculo",
-      cell: ({ row }: { row: any }) => (
+      cell: ({ row }) => (
         <input
           type="checkbox"
-          checked={selectedIds.includes(row.original.id)}
-          onChange={() => toggleSelect(row.original.id)}
+          checked={selectedIds.includes(Number(row.original.codigo_usuario))}
+          onChange={() => toggleSelect(Number(row.original.codigo_usuario))}
         />
       ),
       enableSorting: false,
@@ -136,7 +137,12 @@ export function StudentsUnlinkedTable({
       ) : (
         <DataTable
           columns={columns}
-          data={data?.map((item) => ({ ...item, id: String(item.id) })) ?? []}
+          data={
+            data?.map((item) => ({
+              ...item,
+              id: String(item.codigo_usuario),
+            })) ?? []
+          }
         />
       )}
     </>

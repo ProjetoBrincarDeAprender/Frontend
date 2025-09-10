@@ -3,7 +3,7 @@ import { Form } from "@/components/forms/Root";
 import { PasswordInput } from "@/components/ui/password-input";
 import { Link } from "@/components/utils/Link/Link";
 import { useUser } from "@/hooks/User/useUser";
-import type { UserProfile } from "@/types/user";
+import type { User, UserProfile } from "@/types/user";
 import api from "@/utils/api";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AxiosError } from "axios";
@@ -35,6 +35,9 @@ const formSchema = z
       }),
     escolaId: z.string().optional(),
     usersIds: z.array(z.string()).optional(),
+    parentesco: z
+      .string()
+      .max(50, { error: "Parentesco deve ter no máximo 50 caracteres" }),
   })
   .refine((data) => data.senha == data.confirmar_senha, {
     error: "As senhas devem ser iguais",
@@ -83,18 +86,23 @@ export function ResponsableSignUpForm({ onSuccess }: SignUpFormProps) {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const escolaId = user?.perfil === "Admin" ? escolaSelecionada : user?.escola?.id;
-        if (!escolaId) return setUsers([]);
+        const escola =
+          user?.perfil === "Admin"
+            ? schools?.find((school) => school.id === Number(escolaSelecionada))
+            : user?.escola;
+        if (!escola) return setUsers([]);
 
-        const response = await api.get(`/user/list?type=Aluno${escolaId ? `&escolaId=${escolaId}` : ""}`);
-  
+        const response = await api.get(
+          `/student/list/relations/responsible?isNull=true`,
+        );
+
         // const response = await api.get(
         //   `/user/list?type=Aluno${user?.perfil == "Admin" ? "" : `&escolaId=${user?.escola?.id}`}`,
         // );
 
         if (response.status == 200) {
           const users = response.data;
-          setUsers(users);
+          setUsers(users.filter((u: User) => u.escola == escola.nome));
           if (users.length === 0) {
             setErrorMessage("Não há alunos cadastrados nesta escola!");
           } else {
@@ -106,12 +114,11 @@ export function ResponsableSignUpForm({ onSuccess }: SignUpFormProps) {
       }
     };
 
-   
     fetchUsers();
-  }, [user, form, escolaSelecionada]);
+  }, [user, form, escolaSelecionada, schools]);
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
-    const { usersIds, ...userData } = data;
+    const { usersIds, parentesco, ...userData } = data;
 
     const payload = {
       ...userData,
@@ -124,8 +131,9 @@ export function ResponsableSignUpForm({ onSuccess }: SignUpFormProps) {
 
       if (usersIds && usersIds.length > 0) {
         const responseLinking = await api.post("/responsible/register", {
-          userId: response.data.id,
+          userId: response.data.codigo_usuario,
           educandosIds: usersIds.map((value) => Number(value)),
+          parentesco,
         });
 
         if (response.status == 201 && responseLinking.status == 201) {
@@ -192,6 +200,17 @@ export function ResponsableSignUpForm({ onSuccess }: SignUpFormProps) {
             />
           )}
         />
+        <Form.Field
+          form={form}
+          name="parentesco"
+          render={({ field }) => (
+            <Form.Input
+              {...field}
+              label="Parentesco"
+              placeholder="Insira qual seu parentesco"
+            />
+          )}
+        />
         {user?.perfil == "Admin" && schools && (
           <Form.Field
             form={form}
@@ -254,20 +273,22 @@ export function ResponsableSignUpForm({ onSuccess }: SignUpFormProps) {
           name="usersIds"
           render={({ field }) => (
             <>
-            <FancyMultiSelect
-              onSelect={field.onChange}
-              label="Alunos do Responsável"
-              placeholder="Selecione os alunos do responsável..."
-              data={
-                users
-                  ? users.map(({ id, email }) => ({
-                      value: String(id),
-                      label: email,
-                    }))
-                  : []
-              }
-            />
-             {errorMensage && <p className="text-sm text-yellow-800 mt-1">{errorMensage}</p>}
+              <FancyMultiSelect
+                onSelect={field.onChange}
+                label="Alunos do Responsável"
+                placeholder="Selecione os alunos do responsável..."
+                data={
+                  users
+                    ? users.map(({ codigo_usuario, email }) => ({
+                        value: codigo_usuario,
+                        label: email,
+                      }))
+                    : []
+                }
+              />
+              {errorMensage && (
+                <p className="mt-1 text-sm text-yellow-800">{errorMensage}</p>
+              )}
             </>
           )}
         />

@@ -45,10 +45,7 @@ export default function StudentTable() {
       ) : (
         <DataTable
           columns={StudentColumns}
-          data={
-            data?.map((student) => ({ ...student, id: String(student.id) })) ??
-            []
-          }
+          data={data ?? []}
           {...{
             page: searchParams.get("page")
               ? parseInt(searchParams.get("page")!)

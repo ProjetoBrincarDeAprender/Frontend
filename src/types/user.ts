@@ -1,10 +1,8 @@
 export type UserProfile = {
-  id: string;
+  codigo_usuario: string;
   nome_completo: string;
   email: string;
-  perfil: {
-    nome: string;
-  };
+  perfil: string;
   escola: {
     nome: string;
   };
@@ -14,7 +12,7 @@ export type UserProfile = {
 };
 
 export type User = {
-  id: string;
+  codigo_usuario: string;
   nome_completo: string;
   email: string;
   perfil: string;
