@@ -9,6 +9,9 @@ import { EditTeacherModal } from "@/components/features/users/teacher/edit/Teach
 import { Header } from "@/components/Header/Header";
 import { TableProvider } from "@/contexts/Table/provider";
 
+import NuvemSVG from "../../assets/nuvem.svg";
+import StarSVG from "../../assets/star.svg";
+
 export function Profile() {
   const navigate = useNavigate();
   const { profile } = useAuth();
@@ -45,28 +48,79 @@ export function Profile() {
   }
 
   return (
-    <div
-      className="flex min-h-screen items-center justify-center bg-cover bg-bottom bg-no-repeat"
-      style={{ backgroundImage: "url('../../assets/nuvem.svg')" }}
-    >
+    <div className="relative min-h-screen overflow-hidden bg-purplish-blue-dark">
+      <div className="absolute inset-0 z-0">
+        <img
+          src={StarSVG}
+          alt="Estrela decorativa"
+          className="absolute -left-1 top-60 h-10 w-10"
+        />
+        <img
+          src={StarSVG}
+          alt="Estrela decorativa"
+          className="absolute -right-10 bottom-20 h-10 w-10 rotate-12"
+        />
+        <img
+          src={StarSVG}
+          alt="Estrela decorativa"
+          className="absolute bottom-1/2 right-1/4 h-12 w-12 -rotate-6"
+        />
+        <img
+          src={NuvemSVG}
+          alt="Nuvem decorativa"
+          className="absolute bottom-0 left-0 h-auto w-full object-cover object-bottom opacity-70"
+        />
+      </div>
+
       <Header />
 
-      <div className="bg-purplish-blue-dark/95 relative z-10 mt-30 flex w-[900px] items-center rounded-3xl p-8 shadow-2xl">
-        <div className="flex w-1/4 flex-col items-center justify-center">
-          {/* Pensei em colocar o avatar do usuário - Implementação futura */}
-          {/* {user.avatar_url ? (
-            <img
-              src={user.avatar_url}
-              alt="Foto de perfil"
-              className="w-36 h-36 rounded-full border-4 border-am0 object-cover shadow-lg"
-            />
-          ) : ( */}
-          <div className="bg-am2 border-am1 flex h-36 w-36 items-center justify-center rounded-full border-7 text-4xl font-bold text-white shadow-lg">
-            {user.nome_completo.charAt(0).toUpperCase()}
+      <main className="relative z-10 mt-28 px-6">
+        <div className="relative h-28 w-full rounded-b-md bg-gradient-to-r from-am0 to-az3 shadow-lg">
+          <div className="absolute -bottom-12 left-10 flex items-center space-x-4">
+            <div className="flex h-24 w-24 items-center justify-center rounded-full border-4 border-white bg-gray-200 text-3xl font-bold text-am0 shadow-lg">
+              {user.nome_completo.charAt(0).toUpperCase()}
+            </div>
+            <div>
+              <h2 className="text-2xl font-bold text-white">
+                {user.nome_completo}
+              </h2>
+              <p className="text-gray-200">{user.email}</p>
+            </div>
           </div>
-          {/* )} */}
+        </div>
 
-          <div className="font-1 mt-18 flex w-full flex-col gap-3">
+        <div className="mt-32 grid grid-cols-1 gap-6 md:grid-cols-3">
+          <div className="col-span-2 rounded-xl bg-purplish-blue/40 p-6 text-white shadow-lg backdrop-blur-sm">
+            <h3 className="mb-4 border-b border-gray-500 pb-2 text-xl font-semibold">
+              Informações Gerais
+            </h3>
+            <p>
+              <strong>ID:</strong> {user.codigo_usuario}
+            </p>
+            <p>
+              <strong>Nome:</strong> {user.nome_completo}
+            </p>
+            <p>
+              <strong>Email:</strong> {user.email}
+            </p>
+            <p>
+              <strong>Perfil:</strong> {user.perfil}
+            </p>
+            <p>
+              <strong>Escola:</strong> {user.escola?.nome ?? "Não vinculado"}
+            </p>
+            <p>
+              <strong>Data de criação:</strong>{" "}
+              {new Date(user.created_At).toLocaleDateString()}
+            </p>
+          </div>
+
+          <div className="rounded-xl bg-purplish-blue/50 p-6 text-white shadow-lg backdrop-blur-sm">
+            <h3 className="mb-4 border-b border-gray-500 pb-2 text-xl font-semibold">
+              Ações
+            </h3>
+
+            <div className="font-1 mt-10 flex w-full flex-col gap-3 ">
             <TableProvider>
               {user.perfil?.toLowerCase() === "aluno" && (
                 <EditStudentModal id={Number(user.codigo_usuario)} />
@@ -78,48 +132,23 @@ export function Profile() {
                 <EditTeacherModal id={Number(user.codigo_usuario)} />
               )}
             </TableProvider>
-
+            </div>
             <button
               onClick={() => alert("Funcionalidade em desenvolvimento!")}
-              className="bg-az3 hover:bg-az2 rounded-lg px-5 py-2 font-semibold text-white transition"
+              className="mt-4 w-full rounded-lg bg-az1 px-5 py-2 font-semibold text-white transition hover:bg-az2"
             >
               Alterar Senha
             </button>
-          </div>
-        </div>
-
-        <div className="font-1 flex-1 flex-col justify-between space-y-4 pl-11 text-2xl text-white">
-          <h1 className="mb-4 border-b border-gray-500 pb-2 text-4xl font-bold">
-            Perfil do Usuário
-          </h1>
-          <p>
-            <strong>ID:</strong> {user.codigo_usuario}
-          </p>
-          <p>
-            <strong>Nome:</strong> {user.nome_completo}
-          </p>
-          <p>
-            <strong>Email:</strong> {user.email}
-          </p>
-          <p>
-            <strong>Perfil:</strong> {user.perfil}
-          </p>
-          <p>
-            <strong>Escola:</strong> {user.escola?.nome ?? "Não vinculado"}
-          </p>
-          <p>
-            <strong>Data de criação:</strong>{" "}
-            {new Date(user.created_At).toLocaleDateString()}
-          </p>
-
-          <button
+               
+               <button
             onClick={() => navigate(-1)}
-            className="bg-am0 text-az3 hover:bg-am4 mt-6 self-end rounded px-4 py-2 font-semibold transition hover:text-white"
+            className=" mt-4 w-full rounded-lg bg-yellow-400 px-6 py-2 font-semibold text-black shadow-md transition hover:bg-yellow-300"
           >
             Voltar
           </button>
+          </div>
         </div>
-      </div>
+      </main>
     </div>
   );
 }
