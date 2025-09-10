@@ -5,8 +5,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { AxiosError } from "axios";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
-import z from "zod";
 import { IMaskInput } from "react-imask";
+import z from "zod";
 
 const formSchema = z.object({
   nome: z
@@ -73,19 +73,12 @@ export default function EditSchoolForm({ id, onSuccess }: EditSchoolFormProps) {
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     try {
-
-       const normalizedData = {
+      const normalizedData = {
         ...data,
         descricao: data.descricao?.trim() === "" ? undefined : data.descricao,
       };
 
-
-      console.log("Dados enviados:", data);
-      const verifiedData = Object.fromEntries(
-        Object.entries(normalizedData).filter(
-          ([_, value]) => value !== undefined && value !== null,
-        ),
-      );
+      const verifiedData = Object.fromEntries(Object.entries(normalizedData));
 
       const payload = verifiedData;
 
@@ -187,8 +180,8 @@ export default function EditSchoolForm({ id, onSuccess }: EditSchoolFormProps) {
                 <IMaskInput
                   mask={[
                     { mask: "(00) 0000-0000" },
-                    { mask:"(00) 00000-0000"}
-                ]}
+                    { mask: "(00) 00000-0000" },
+                  ]}
                   value={field.value || ""}
                   onAccept={(value: string) => {
                     field.onChange(value);

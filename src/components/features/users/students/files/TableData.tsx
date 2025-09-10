@@ -7,7 +7,7 @@ import { Button } from "../../../../ui/button";
 import { EditStudentModal } from "../edit/StudentEditModal";
 
 export type Student = {
-  id: string;
+  codigo_usuario: string;
   nome_completo: string;
   email: string;
   perfil: string;
@@ -20,7 +20,7 @@ export type Student = {
 
 export const StudentColumns: ColumnDef<Student>[] = [
   {
-    accessorKey: "id",
+    accessorKey: "codigo_usuario",
     header: ({ column }) => (
       <Button
         variant="ghost"
@@ -83,13 +83,13 @@ export const StudentColumns: ColumnDef<Student>[] = [
       if (!actualDate) return "-";
 
       const match = actualDate.match(/^(\d{4})-(\d{2})-(\d{2})/);
-      if (!match) return actualDate; 
+      if (!match) return actualDate;
 
       const [, year, month, day] = match.map(Number);
 
-      const date = new Date(year, month - 1, day); 
+      const date = new Date(year, month - 1, day);
 
-      return date.toLocaleDateString("pt-BR"); 
+      return date.toLocaleDateString("pt-BR");
 
       // const formattedDate = new Date(actualDate).toLocaleDateString("pt-BR");
       // return formattedDate;
@@ -112,8 +112,11 @@ export const StudentColumns: ColumnDef<Student>[] = [
     header: "Ações",
     cell: ({ row }) => (
       <div className="flex items-center justify-center gap-2">
-        <EditStudentModal id={+row.original.id} />
-        <DeleteModal route="/student/remove" id={+row.original.id} />
+        <EditStudentModal id={+row.original.codigo_usuario} />
+        <DeleteModal
+          route="/student/remove"
+          id={+row.original.codigo_usuario}
+        />
       </div>
     ),
   },

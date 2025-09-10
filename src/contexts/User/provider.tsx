@@ -21,10 +21,10 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
       }
 
       setUser({
-        id: response.id,
+        codigo_usuario: response.codigo_usuario,
         nome_completo: response.nome_completo,
         email: response.email,
-        perfil: response.perfil.nome,
+        perfil: response.perfil,
         escola: {
           id: response.escolaId,
           nome: response.escola?.nome,

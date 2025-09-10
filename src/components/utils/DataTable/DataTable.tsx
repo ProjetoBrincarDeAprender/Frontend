@@ -40,7 +40,8 @@ export function DataTable<TData, TValue>({
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-  const [selectedColumn, setSelectedColumn] = useState<string>("id");
+  const [selectedColumn, setSelectedColumn] =
+    useState<string>("codigo_usuario");
 
   const table = useReactTable({
     data,
