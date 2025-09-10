@@ -32,11 +32,13 @@ interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   page?: number;
+  renderExtra?: () => React.ReactNode;
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
+  renderExtra,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -97,6 +99,7 @@ export function DataTable<TData, TValue>({
             })}
           </SelectContent>
         </Select>
+        {renderExtra && renderExtra()}
       </div>
       <div className="w-full overflow-hidden overflow-x-auto rounded-md border">
         <Table className="custom-table bg-blue-50">
