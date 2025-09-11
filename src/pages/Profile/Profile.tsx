@@ -6,7 +6,7 @@ import { useNavigate } from "react-router";
 import { EditResponsableModal } from "@/components/features/users/responsible/edit/ResponsibleEditModal";
 import { EditStudentModal } from "@/components/features/users/students/edit/StudentEditModal";
 import { EditTeacherModal } from "@/components/features/users/teacher/edit/TeacherEditModal";
-import { Header } from "@/components/Header/Header";
+import { Header } from "@/components/header/Header";
 import { TableProvider } from "@/contexts/Table/provider";
 
 import NuvemSVG from "../../assets/nuvem.svg";
