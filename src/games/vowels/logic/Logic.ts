@@ -1,25 +1,35 @@
-import type GameStats from "../../common/managers/GameStats";
+import GameStats from "../../common/managers/GameStats";
 import LevelManager from "../../common/managers/LevelManager";
 import randomGenerator from "../../common/utils/RandomGenerator";
 import type Level from "../../common/models/Level";
+import EffectManager from "@/games/common/managers/effectManager";
+import type Button from "@/games/common/models/Button";
 
 export default class Logic {
+  private scene: Phaser.Scene;
   private gameStats: GameStats;
   private levelManager: LevelManager;
+  private effectManager: EffectManager;
 
-  constructor(gameStats: GameStats, levelManager: LevelManager) {
-    this.gameStats = gameStats;
+  constructor(scene: Phaser.Scene, levelManager: LevelManager) {
+    this.scene = scene;
+    this.gameStats = new GameStats();
     this.levelManager = levelManager;
+    this.effectManager = new EffectManager(this.scene);
   }
 
   handleAnswer(
-    text: string,
+    button: Button,
     timeNow: number,
   ): { correct: boolean; finished: boolean } {
     const currentLevel: Level = this.levelManager.getCurrentLevel();
-    const isCorrect: boolean = currentLevel.isCorrectLetter(text);
+    const isCorrect: boolean = currentLevel.isCorrectLetter(
+      button.getButtonText(),
+    );
 
     if (isCorrect) {
+      this.effectManager.growup(button);
+
       this.gameStats.addHitTime(timeNow);
       this.gameStats.resetInitialLevelTime(timeNow);
       this.gameStats.addMissCount();
@@ -33,15 +43,15 @@ export default class Logic {
     }
   }
 
+  isGameFinished(): boolean {
+    if (this.levelManager.isFinished()) return true;
+    return false;
+  }
+
   generateButtonTexts(buttonsNumber: number): string[] {
     const answer: string = this.levelManager.getCurrentLevel().getAnswer();
     let buttonTexts = this.generateButtonsLetters(buttonsNumber, answer);
     return buttonTexts;
-  }
-
-  isGameFinished(): boolean {
-    if (this.levelManager.isFinished()) return true;
-    return false;
   }
 
   generateButtonsLetters(buttonsNumber: number = 1, answer: string) {

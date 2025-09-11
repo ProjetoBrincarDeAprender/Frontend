@@ -1,13 +1,11 @@
 import ButtonManager from "../../common/managers/ButtonManager";
 import Phaser from "phaser";
 import Level from "../../common/models/Level";
-import GameStats from "../../common/managers/GameStats";
 import LevelManager from "@/games/common/managers/LevelManager";
 import Logic from "../logic/Logic";
 
 export default class Vowels extends Phaser.Scene {
   private image?: Phaser.GameObjects.Image;
-  private gameStats: GameStats;
   private levelManager: LevelManager;
   private buttonManager: ButtonManager;
   private logic: Logic;
@@ -19,10 +17,9 @@ export default class Vowels extends Phaser.Scene {
     levels.push(new Level("abelha", "A"));
     levels.push(new Level("elefante", "E"));
 
-    this.gameStats = new GameStats();
     this.levelManager = new LevelManager(levels);
     this.buttonManager = new ButtonManager(this);
-    this.logic = new Logic(this.gameStats, this.levelManager);
+    this.logic = new Logic(this, this.levelManager);
   }
 
   preload() {
@@ -67,10 +64,7 @@ export default class Vowels extends Phaser.Scene {
     this.buttonManager.getButtons().forEach((button) => {
       button.off("pointerdown");
       button.on("pointerdown", () => {
-        const result = this.logic.handleAnswer(
-          button.getButtonText(),
-          this.time.now,
-        );
+        const result = this.logic.handleAnswer(button, this.time.now);
 
         if (result.correct) {
           if (result.finished) {
