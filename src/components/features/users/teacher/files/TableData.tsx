@@ -3,11 +3,11 @@ import type { ColumnDef } from "@tanstack/react-table";
 import DeleteModal from "../../../../utils/DataTable/DeleteModal";
 // import { Link } from "../utils/Link/Link";
 import { ArrowUpDown, Share2 } from "lucide-react";
-import { EditTeacherModal } from "../edit/TeacherEditModal";
 import { Button } from "../../../../ui/button";
+import { EditTeacherModal } from "../edit/TeacherEditModal";
 
 export type Teacher = {
-  id: number;
+  codigo_usuario: string;
   nome_completo: string;
   email: string;
   escola: string;
@@ -15,7 +15,7 @@ export type Teacher = {
 
 export const TeacherColumns: ColumnDef<Teacher>[] = [
   {
-    accessorKey: "id",
+    accessorKey: "codigo_usuario",
     header: ({ column }) => (
       <Button
         variant="ghost"
@@ -67,9 +67,14 @@ export const TeacherColumns: ColumnDef<Teacher>[] = [
     header: "Ações",
     cell: ({ row }) => (
       <div className="flex items-center justify-center gap-2">
-        <EditTeacherModal id={row.original.id} />
-        <a className="bg-blue-400 px-3 py-2 shadow-sm rounded-sm transition hover:bg-blue-500" href={`/dashboard/link-students?id=${row.original.id}`}><Share2 className="text-slate-100" /></a>
-        <DeleteModal route="/user/remove" id={row.original.id} />
+        <EditTeacherModal id={+row.original.codigo_usuario} />
+        <a
+          className="rounded-sm bg-blue-400 px-3 py-2 shadow-sm transition hover:bg-blue-500"
+          href={`/dashboard/link-students?id=${row.original.codigo_usuario}`}
+        >
+          <Share2 className="text-slate-100" />
+        </a>
+        <DeleteModal route="/user/remove" id={+row.original.codigo_usuario} />
       </div>
     ),
   },

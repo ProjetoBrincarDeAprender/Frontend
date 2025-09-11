@@ -10,9 +10,9 @@ const useAuth = () => {
     Cookies.set("authToken", token);
   };
 
-  const login = async (email: string, senha: string) => {
+  const login = async (login: string, senha: string) => {
     try {
-      const response = await api.post("/auth/login", { email, senha });
+      const response = await api.post("/auth/login", { login, senha });
       const { access_token } = response.data;
       setToken(access_token);
       setIsLoggedIn(true);

@@ -1,11 +1,11 @@
 import type { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown } from "lucide-react";
-import { EditSchoolUserModal } from "../edit/SchoolUserEditModal";
 import { Button } from "../../../../ui/button";
 import DeleteModal from "../../../../utils/DataTable/DeleteModal";
+import { EditSchoolUserModal } from "../edit/SchoolUserEditModal";
 
 export type SchoolUser = {
-  id: number;
+  codigo_usuario: string;
   nome: string;
   email?: string;
   escola?: string;
@@ -14,7 +14,7 @@ export type SchoolUser = {
 
 export const SchoolUserColumns: ColumnDef<SchoolUser>[] = [
   {
-    accessorKey: "id",
+    accessorKey: "codigo_usuario",
     header: ({ column }) => (
       <Button
         variant="ghost"
@@ -66,8 +66,8 @@ export const SchoolUserColumns: ColumnDef<SchoolUser>[] = [
     header: "Ações",
     cell: ({ row }) => (
       <div className="flex items-center justify-center gap-2">
-        <EditSchoolUserModal schoolId={row.original.id} />
-        <DeleteModal route="/user/remove" id={row.original.id} />
+        <EditSchoolUserModal schoolId={+row.original.codigo_usuario} />
+        <DeleteModal route="/user/remove" id={+row.original.codigo_usuario} />
       </div>
     ),
   },

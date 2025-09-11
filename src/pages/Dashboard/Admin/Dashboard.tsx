@@ -5,12 +5,12 @@ import { Link } from "react-router";
 import { Footer } from "@/components/footer/Footer";
 import { Header } from "@/components/header/Header";
 import { useUser } from "@/hooks/User/useUser";
-import { LateralMenu } from "../../components/sideBar/sideBar";
-import { InfoBadge } from "../../components/utils/InfoBadge/InfoBadge";
+import { LateralMenu } from "../../../components/sideBar/sideBar";
+import { InfoBadge } from "../../../components/utils/InfoBadge/InfoBadge";
 
 // imagens
-import graphic from "../../assets/graphic.svg";
-import saturn from "../../assets/saturn.svg";
+import graphic from "../../../assets/graphic.svg";
+import saturn from "../../../assets/saturn.svg";
 
 // estilos
 import "./Dashboard.css";

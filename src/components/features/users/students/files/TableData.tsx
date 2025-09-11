@@ -3,11 +3,11 @@ import type { ColumnDef } from "@tanstack/react-table";
 import DeleteModal from "../../../../utils/DataTable/DeleteModal";
 // import { Link } from "../utils/Link/Link";
 import { ArrowUpDown } from "lucide-react";
-import { EditStudentModal } from "../edit/StudentEditModal";
 import { Button } from "../../../../ui/button";
+import { EditStudentModal } from "../edit/StudentEditModal";
 
 export type Student = {
-  id: number;
+  codigo_usuario: string;
   nome_completo: string;
   email: string;
   perfil: string;
@@ -16,11 +16,15 @@ export type Student = {
   data_nascimento: string | null;
   avatar_url: string | null;
   tema_preferido: string | null;
+  // professor?: {
+  //   nome_completo: string;
+  //   codigo_usuario: string;
+  // } | null;
 };
 
 export const StudentColumns: ColumnDef<Student>[] = [
   {
-    accessorKey: "id",
+    accessorKey: "codigo_usuario",
     header: ({ column }) => (
       <Button
         variant="ghost"
@@ -80,8 +84,19 @@ export const StudentColumns: ColumnDef<Student>[] = [
     ),
     cell: ({ row }) => {
       const actualDate = row.getValue<string>("data_nascimento");
-      const formattedDate = new Date(actualDate).toLocaleDateString("pt-BR");
-      return formattedDate;
+      if (!actualDate) return "-";
+
+      const match = actualDate.match(/^(\d{4})-(\d{2})-(\d{2})/);
+      if (!match) return actualDate;
+
+      const [, year, month, day] = match.map(Number);
+
+      const date = new Date(year, month - 1, day);
+
+      return date.toLocaleDateString("pt-BR");
+
+      // const formattedDate = new Date(actualDate).toLocaleDateString("pt-BR");
+      // return formattedDate;
     },
   },
   {
@@ -96,13 +111,32 @@ export const StudentColumns: ColumnDef<Student>[] = [
       </Button>
     ),
   },
+  // {
+  //   accessorKey: "professor",
+  //   header: ({ column }) => (
+  //     <Button
+  //       variant="ghost"
+  //       onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+  //     >
+  //       Professor
+  //       <ArrowUpDown className="ml-2 h-4 w-4" />
+  //     </Button>
+  //   ),
+  //   cell: ({ row }) => {
+  //     const professor = row.original.professor;
+  //     return professor ? professor.nome_completo : "Não atribuído";
+  //   },
+  // },
   {
     accessorKey: "actions",
     header: "Ações",
     cell: ({ row }) => (
       <div className="flex items-center justify-center gap-2">
-        <EditStudentModal id={row.original.id} />
-        <DeleteModal route="/student/remove" id={row.original.id} />
+        <EditStudentModal id={+row.original.codigo_usuario} />
+        <DeleteModal
+          route="/student/remove"
+          id={+row.original.codigo_usuario}
+        />
       </div>
     ),
   },

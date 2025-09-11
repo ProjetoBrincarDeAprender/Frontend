@@ -1,15 +1,16 @@
 import { Header } from "@/components/header/Header";
 import { LateralMenu } from "@/components/sideBar/sideBar";
 import { useUser } from "@/hooks/User/useUser";
-import { useEffect, useState } from "react";
 import api from "@/utils/api";
+import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router";
 
-import saturn from "../../../../assets/saturn.svg";
-import { TableProvider } from "@/contexts/Table/provider";
 import { Button } from "@/components/ui/button";
-import { StudentsUnlinkedTable } from "./StudentsUnlinkedTable/StudentsUnlinkedTable";
+import { TableProvider } from "@/contexts/Table/provider";
+import type { User } from "@/types/user";
 import { toast } from "sonner";
+import saturn from "../../../../assets/saturn.svg";
+import { StudentsUnlinkedTable } from "./StudentsUnlinkedTable/StudentsUnlinkedTable";
 
 export function LinkStudents() {
   const [studentsIdToLink, setStudentsIdToLink] = useState<number[]>([]);
@@ -29,12 +30,12 @@ export function LinkStudents() {
     }
     const fetchLinkedStudents = async () => {
       try {
-        const response = await api.get(
-          `/responsible/list/${teacherId}/students`,
-        );
+        const response = await api.get(`/teacher/list/${teacherId}/students`);
         if (response.status === 200 && Array.isArray(response.data)) {
           setStudentsIdToLink(
-            response.data.map((student: { id: number }) => student.id),
+            response.data.map((student: User) =>
+              Number(student.codigo_usuario),
+            ),
           );
         }
       } catch (error) {
@@ -80,8 +81,8 @@ export function LinkStudents() {
                   if (studentsIdToLink.length === 0) return;
                   try {
                     const response = await api.put(
-                      `/responsible/update/${teacherId}`,
-                      { usersIds: studentsIdToLink },
+                      `/teacher/update/${teacherId}`,
+                      { usersIds: studentsIdToLink.map((id) => Number(id)) },
                     );
                     if (!response || response.status !== 200) {
                       toast.error(

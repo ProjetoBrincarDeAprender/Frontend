@@ -57,12 +57,7 @@ export default function EditSchoolUserForm({
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     try {
-      console.log("Dados enviados:", data);
-      const verifiedData = Object.fromEntries(
-        Object.entries(data).filter(
-          ([_, value]) => value !== undefined && value !== null,
-        ),
-      );
+      const verifiedData = Object.fromEntries(Object.entries(data));
 
       const payload = verifiedData;
 

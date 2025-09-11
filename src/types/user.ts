@@ -1,20 +1,16 @@
 export type UserProfile = {
-  id: string;
+  codigo_usuario: string;
   nome_completo: string;
   email: string;
-  perfil: {
-    nome: string;
-  };
-  escola: {
-    nome: string;
-  };
+  perfil: string;
+  escola: string;
   created_At: string;
   perfil_id: number;
   escolaId: number | null;
 };
 
 export type User = {
-  id: string;
+  codigo_usuario: string;
   nome_completo: string;
   email: string;
   perfil: string;

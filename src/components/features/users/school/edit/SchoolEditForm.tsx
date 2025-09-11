@@ -5,9 +5,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { AxiosError } from "axios";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
-import z from "zod";
-// No topo do EditForm.tsx
 import { IMaskInput } from "react-imask";
+import z from "zod";
 
 const formSchema = z.object({
   nome: z
@@ -18,7 +17,7 @@ const formSchema = z.object({
   descricao: z.string().optional(),
   localizacao: z
     .string({ error: "O endereço da escola é obrigatório" })
-    .optional(),
+    .min(1, { message: "A localização da escola é obrigatória" }),
   telefone: z
     .string()
     .refine(
@@ -50,7 +49,7 @@ export default function EditSchoolForm({ id, onSuccess }: EditSchoolFormProps) {
         if (response.status === 200) {
           const formData = {
             nome: response.data.nome || "",
-            descricao: response.data.descricao || "",
+            descricao: response.data.descricao ?? undefined,
             localizacao: response.data.localizacao || "",
             telefone: response.data.telefone || "",
             email: response.data.email || "",
@@ -74,20 +73,20 @@ export default function EditSchoolForm({ id, onSuccess }: EditSchoolFormProps) {
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     try {
-      console.log("Dados enviados:", data);
-      const verifiedData = Object.fromEntries(
-        Object.entries(data).filter(
-          ([_, value]) => value !== undefined && value !== null,
-        ),
-      );
+   const payload = {
+      ...data,
+      descricao: data.descricao?.trim() === "" ? null : data.descricao,
+      nome: data.nome?.trim() || undefined,
+      localizacao: data.localizacao?.trim() || undefined,
+      email: data.email?.trim() || undefined,
+      telefone: data.telefone?.trim() || undefined
+    };
 
-      const payload = verifiedData;
+    const response = await api.put(`/school/update/${id}`, payload);
 
-      const response = await api.put(`/school/update/${id}`, payload);
-
-      if (response.status === 200) {
-        onSuccess();
-      }
+    if (response.status === 200) {
+      onSuccess();
+    }
     } catch (error) {
       console.error("Erro ao atualizar escola:", error);
       if (error instanceof AxiosError) {
@@ -135,6 +134,7 @@ export default function EditSchoolForm({ id, onSuccess }: EditSchoolFormProps) {
             />
           )}
         />
+
         <Form.Field
           form={form}
           name="descricao"
@@ -178,7 +178,10 @@ export default function EditSchoolForm({ id, onSuccess }: EditSchoolFormProps) {
                   Telefone
                 </label>
                 <IMaskInput
-                  mask="(00) 00000-0000"
+                  mask={[
+                    { mask: "(00) 0000-0000" },
+                    { mask: "(00) 00000-0000" },
+                  ]}
                   value={field.value || ""}
                   onAccept={(value: string) => {
                     field.onChange(value);
