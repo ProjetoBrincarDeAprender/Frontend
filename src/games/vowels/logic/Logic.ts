@@ -24,11 +24,12 @@ export default class Logic {
   ): { correct: boolean; finished: boolean } {
     const currentLevel: Level = this.levelManager.getCurrentLevel();
     const isCorrect: boolean = currentLevel.isCorrectLetter(
-      button.getButtonText(),
+      button.getButtonStringText(),
     );
 
     if (isCorrect) {
       this.effectManager.growup(button);
+      this.effectManager.changeColor(button.getButtonText());
 
       this.gameStats.addHitTime(timeNow);
       this.gameStats.resetInitialLevelTime(timeNow);

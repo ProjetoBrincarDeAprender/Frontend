@@ -66,13 +66,15 @@ export default class Vowels extends Phaser.Scene {
       button.on("pointerdown", () => {
         const result = this.logic.handleAnswer(button, this.time.now);
 
-        if (result.correct) {
-          if (result.finished) {
-            this.scene.start("vowelsCredits");
-          } else {
-            this.prepareNextLevel();
+        this.time.delayedCall(1000, () => {
+          if (result.correct) {
+            if (result.finished) {
+              this.scene.start("vowelsCredits");
+            } else {
+              this.prepareNextLevel();
+            }
           }
-        }
+        });
       });
     });
   }
@@ -80,12 +82,10 @@ export default class Vowels extends Phaser.Scene {
   prepareNextLevel() {
     let currentLevel: Level = this.levelManager.getCurrentLevel();
 
-    this.time.delayedCall(1000, () => {
-      this.image ? this.image.setTexture(currentLevel.getName()) : null;
+    this.image ? this.image.setTexture(currentLevel.getName()) : null;
 
-      const buttonsNumber: number = this.buttonManager.getButtons().length;
-      const buttonTexts = this.logic.generateButtonTexts(buttonsNumber);
-      this.buttonManager.setButtonTexts(buttonTexts);
-    });
+    const buttonsNumber: number = this.buttonManager.getButtons().length;
+    const buttonTexts = this.logic.generateButtonTexts(buttonsNumber);
+    this.buttonManager.setButtonTexts(buttonTexts);
   }
 }

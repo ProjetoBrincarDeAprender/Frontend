@@ -23,6 +23,7 @@ export default class Button extends Phaser.GameObjects.Container {
     this.clickImage = scene.add.image(0, 0, clickImage);
     this.buttonText = scene.add
       .text(0, 0, buttonText, {
+        fontFamily: "Arial",
         fontSize: `${fontSize}px`,
       })
       .setOrigin(0.5);
@@ -62,9 +63,13 @@ export default class Button extends Phaser.GameObjects.Container {
     this.clickImage.setVisible(true);
   }
 
-  getButtonText(): string {
+  getButtonStringText(): string {
     const stringText = this.buttonText.text;
     return stringText;
+  }
+
+  getButtonText(): Phaser.GameObjects.Text {
+    return this.buttonText;
   }
 
   setButtonText(buttonText: string): void {

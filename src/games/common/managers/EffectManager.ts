@@ -1,4 +1,5 @@
 import Phaser from "phaser";
+import ChangeColor from "../effects/ChangeColor";
 import GrowupEffect from "../effects/GrowupEffect";
 
 export default class EffectManager {
@@ -6,6 +7,10 @@ export default class EffectManager {
 
   constructor(scene: Phaser.Scene) {
     this.scene = scene;
+  }
+
+  changeColor(text: Phaser.GameObjects.Text) {
+    ChangeColor(this.scene, text);
   }
 
   growup(target: Phaser.GameObjects.GameObject) {
