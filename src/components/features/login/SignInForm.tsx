@@ -43,7 +43,7 @@ export default function SignInForm() {
           perfil: profileData.perfil,
           escola: {
             id: profileData.escolaId || null,
-            nome: profileData.escola?.nome || "",
+            nome: profileData.escola || "",
           },
         });
 
