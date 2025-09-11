@@ -1,6 +1,7 @@
 import Phaser from "phaser";
 import ChangeColor from "../effects/ChangeColor";
 import GrowupEffect from "../effects/GrowupEffect";
+import Particles from "../effects/Particles";
 
 export default class EffectManager {
   private scene: Phaser.Scene;
@@ -15,5 +16,9 @@ export default class EffectManager {
 
   growup(target: Phaser.GameObjects.GameObject) {
     GrowupEffect(this.scene, target);
+  }
+
+  particles(image: string) {
+    Particles(this.scene, image);
   }
 }

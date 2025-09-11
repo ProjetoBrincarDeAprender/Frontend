@@ -26,6 +26,8 @@ export default class Vowels extends Phaser.Scene {
     this.load.image("abelha", "/assets/vowelsGame/abelha.svg");
     this.load.image("elefante", "/assets/vowelsGame/elefante.svg");
 
+    this.load.image("star", "/assets/common/star.svg");
+
     this.load.image("defaultButton", "/assets/common/defaultButton.svg");
     this.load.image("hoverButton", "/assets/common/hoverButton.svg");
     this.load.image("clickedButton", "/assets/common/clickedButton.svg");
@@ -64,7 +66,7 @@ export default class Vowels extends Phaser.Scene {
     this.buttonManager.getButtons().forEach((button) => {
       button.off("pointerdown");
       button.on("pointerdown", () => {
-        const result = this.logic.handleAnswer(button, this.time.now);
+        const result = this.logic.handleAnswer(button, this.time.now, "star");
 
         this.time.delayedCall(1000, () => {
           if (result.correct) {

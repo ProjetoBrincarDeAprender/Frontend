@@ -21,6 +21,7 @@ export default class Logic {
   handleAnswer(
     button: Button,
     timeNow: number,
+    image: string,
   ): { correct: boolean; finished: boolean } {
     const currentLevel: Level = this.levelManager.getCurrentLevel();
     const isCorrect: boolean = currentLevel.isCorrectLetter(
@@ -30,6 +31,7 @@ export default class Logic {
     if (isCorrect) {
       this.effectManager.growup(button);
       this.effectManager.changeColor(button.getButtonText());
+      this.effectManager.particles(image);
 
       this.gameStats.addHitTime(timeNow);
       this.gameStats.resetInitialLevelTime(timeNow);
