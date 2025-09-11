@@ -151,7 +151,7 @@ export function StudentEditForm({ id, onSuccess }: StudentFormProps) {
 
     const studentPayload = Object.fromEntries(
       Object.entries({
-        avatar_url: data.avatar_url,
+        avatar_url: data.avatar_url?.trim() === "" ? null : data.avatar_url,
         tema_preferido: data.tema_preferido,
         data_nascimento: data.data_nascimento
           ? (() => {
@@ -163,7 +163,6 @@ export function StudentEditForm({ id, onSuccess }: StudentFormProps) {
           : undefined,
       }),
     );
-
     try {
       const userResponse = await api.put(`/user/update/${id}`, userPayload);
 
@@ -272,25 +271,27 @@ export function StudentEditForm({ id, onSuccess }: StudentFormProps) {
             />
           )}
         />
-        {user?.perfil == "Admin" && schools ? (
-          <Form.Field
-            form={form}
-            name="escolaId"
-            render={({ field }) => (
-              <Form.Select
-                value={String(field.value)}
-                onChange={field.onChange}
-                label="Escola"
-                placeholder="Selecione a Escola"
-                options={schools.map((school) => ({
-                  value: String(school.id),
-                  label: school.nome,
-                }))}
-              />
-            )}
-          />
-        ) : (
-          <span>Loading...</span>
+       {user?.perfil == "Admin" && (
+          schools ? (
+            <Form.Field
+              form={form}
+              name="escolaId"
+              render={({ field }) => (
+                <Form.Select
+                  value={String(field.value)}
+                  onChange={field.onChange}
+                  label="Escola"
+                  placeholder="Selecione a Escola"
+                  options={schools.map((school) => ({
+                    value: String(school.id),
+                    label: school.nome,
+                  }))}
+                />
+              )}
+            />
+          ) : (
+            <span>Carregando escolas...</span>
+          )
         )}
         <Form.Submit>Atualizar Dados</Form.Submit>
       </Form.Main>

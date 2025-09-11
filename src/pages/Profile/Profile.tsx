@@ -107,7 +107,7 @@ export function Profile() {
               <strong>Perfil:</strong> {user.perfil}
             </p>
             <p>
-              <strong>Escola:</strong> {user.escola?.nome ?? "Não vinculado"}
+              <strong>Escola:</strong> {user.escola || "Não vinculado"}
             </p>
             <p>
               <strong>Data de criação:</strong>{" "}
