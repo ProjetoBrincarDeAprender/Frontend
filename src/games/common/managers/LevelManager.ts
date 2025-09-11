@@ -1,4 +1,4 @@
-import type Level from "../vowels/Level";
+import Level from "../models/Level";
 
 export default class LevelManager {
   private levels: Level[];

@@ -1,9 +1,9 @@
-import { Header } from "@/components/Header/Header";
+import { Header } from "@/components/header/Header";
+import { Footer } from "@/components/footer/Footer";
 import { Introduction } from "./components/Introduction/Introduction";
 import { PopularGames } from "./components/PopularGames/PopularGames";
 import { SkillGroup } from "./components/SkillGroup/SkillGroup";
 
-import { Footer } from "@/components/Footer/Footer";
 import "./Home.css";
 
 export function Home() {

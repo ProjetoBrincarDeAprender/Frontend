@@ -4,8 +4,8 @@ import { Card, type CardProps } from "../../components/utils/Card/Card";
 
 import gamesData from "./games.json";
 
-import { Footer } from "@/components/Footer/Footer";
-import { Header } from "@/components/Header/Header";
+import { Footer } from "@/components/footer/Footer";
+import { Header } from "@/components/header/Header";
 import { BiSearch } from "react-icons/bi";
 import "./Games.css";
 

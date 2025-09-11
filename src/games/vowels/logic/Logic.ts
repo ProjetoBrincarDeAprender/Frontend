@@ -1,7 +1,7 @@
 import GameStats from "../../common/managers/GameStats";
 import LevelManager from "../../common/managers/LevelManager";
 import Level from "../../common/models/Level";
-import EffectManager from "@/games/common/managers/effectManager";
+import EffectManager from "../../common/managers/EffectManager";
 import type Button from "@/games/common/models/Button";
 import ButtonManager from "@/games/common/managers/ButtonManager";
 

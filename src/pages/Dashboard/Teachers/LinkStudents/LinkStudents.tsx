@@ -1,4 +1,4 @@
-import { Header } from "@/components/Header/Header";
+import { Header } from "@/components/header/Header";
 import { LateralMenu } from "@/components/sideBar/sideBar";
 import { useUser } from "@/hooks/User/useUser";
 import { useEffect, useState } from "react";
