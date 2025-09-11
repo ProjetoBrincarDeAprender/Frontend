@@ -6,7 +6,7 @@ export default function GrowupEffect(
 ): void {
   scene.tweens.add({
     duration: 500,
-    ease: "Cubic",
+    ease: "Cubic.out",
     scale: 2,
     targets: target,
     yoyo: true,

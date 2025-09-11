@@ -1,20 +1,26 @@
 import GameStats from "../../common/managers/GameStats";
 import LevelManager from "../../common/managers/LevelManager";
 import randomGenerator from "../../common/utils/RandomGenerator";
-import type Level from "../../common/models/Level";
+import Level from "../../common/models/Level";
 import EffectManager from "@/games/common/managers/effectManager";
 import type Button from "@/games/common/models/Button";
+import type ButtonManager from "@/games/common/managers/ButtonManager";
 
 export default class Logic {
   private scene: Phaser.Scene;
   private gameStats: GameStats;
   private levelManager: LevelManager;
   private effectManager: EffectManager;
+  private image?: Phaser.GameObjects.Image;
 
-  constructor(scene: Phaser.Scene, levelManager: LevelManager) {
+  constructor(scene: Phaser.Scene) {
+    const levels: Level[] = [];
+    levels.push(new Level("abelha", "A"));
+    levels.push(new Level("elefante", "E"));
+
+    this.levelManager = new LevelManager(levels);
     this.scene = scene;
     this.gameStats = new GameStats();
-    this.levelManager = levelManager;
     this.effectManager = new EffectManager(this.scene);
   }
 
@@ -46,6 +52,10 @@ export default class Logic {
     }
   }
 
+  accessCurrentLevel(): Level {
+    return this.levelManager.getCurrentLevel();
+  }
+
   isGameFinished(): boolean {
     if (this.levelManager.isFinished()) return true;
     return false;
@@ -66,5 +76,21 @@ export default class Logic {
     const answerIndex = randomGenerator.randomIndex(buttonsNumber);
     letterArray[answerIndex] = answer;
     return letterArray;
+  }
+
+  createImage(texture: string): void {
+    this.image = this.scene.add.image(400, 300, texture);
+  }
+
+  setImageTexture(texture: string): void {
+    if (this.image) this.image.setTexture(texture);
+  }
+
+  nextLevel(buttonManager: ButtonManager): void {
+    let currentLevel: Level = this.accessCurrentLevel();
+    this.setImageTexture(currentLevel.getName());
+    const buttonsNumber: number = buttonManager.getButtons().length;
+    const buttonTexts = this.generateButtonTexts(buttonsNumber);
+    buttonManager.setButtonTexts(buttonTexts);
   }
 }

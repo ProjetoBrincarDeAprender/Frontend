@@ -3,7 +3,7 @@ import { Footer } from "@/components/footer/Footer";
 import { useEffect, useRef } from "react";
 import Credits from "@/games/vowels/scenes/CreditsScene";
 import Phaser from "phaser";
-import Vowels from "@/games/vowels/scenes/GameScene";
+import GameScene from "@/games/vowels/scenes/GameScene";
 
 export interface IRefVowelsGame {
   game: Phaser.Game | null;
@@ -18,7 +18,7 @@ const VowelsGame: React.FC = () => {
       type: Phaser.AUTO,
       width: 800,
       height: 600,
-      scene: [Vowels, Credits],
+      scene: [GameScene, Credits],
       parent: "game-container",
       backgroundColor: "#ffffff",
     };
