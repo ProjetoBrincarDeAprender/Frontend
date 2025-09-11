@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { MusicCatalog } from "./MusicCatalog";
 import { BreathingCatalog } from "./BreathingCatalog";
-import { Music, Wind, Heart, Brain } from "lucide-react";
+import { Music, Wind } from "lucide-react";
 
 const categories = [
   {

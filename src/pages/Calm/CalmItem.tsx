@@ -16,7 +16,7 @@ export function CalmItem({
   duration,
   variant,
   isPlaying = false,
-  onClick,
+  onClick: _onClick,
   onPlayPause,
 }: CalmItemProps) {
   const isMusic = variant === "music";
