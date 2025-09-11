@@ -1,11 +1,9 @@
-import { EventBus } from "../common/utils/EventBus";
-import ButtonManager from "../common/ButtonManager";
+import ButtonManager from "../../common/managers/ButtonManager";
 import Phaser from "phaser";
-import Level from "./Level";
-import GameStats from "../common/GameStats";
-import LevelManager from "../common/LevelManager";
-import Logic from "./Logic";
-import type Button from "../common/Button";
+import Level from "../../common/models/Level";
+import GameStats from "../../common/managers/GameStats";
+import LevelManager from "@/games/common/managers/LevelManager";
+import Logic from "../logic/Logic";
 
 export default class Vowels extends Phaser.Scene {
   private image?: Phaser.GameObjects.Image;

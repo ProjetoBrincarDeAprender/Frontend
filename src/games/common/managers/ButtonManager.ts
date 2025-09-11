@@ -1,4 +1,4 @@
-import Button from "./Button";
+import Button from "../models/Button";
 import Phaser from "phaser";
 
 export default class ButtonManager {

@@ -1,7 +1,7 @@
-import type GameStats from "../common/GameStats";
-import type LevelManager from "../common/LevelManager";
-import randomGenerator from "../common/utils/RandomGenerator";
-import type Level from "./Level";
+import type GameStats from "../../common/managers/GameStats";
+import LevelManager from "../../common/managers/LevelManager";
+import randomGenerator from "../../common/utils/RandomGenerator";
+import type Level from "../../common/models/Level";
 
 export default class Logic {
   private gameStats: GameStats;
