@@ -1,4 +1,4 @@
-export default class randomGenerator {
+export default class RandomGenerator {
   static randomIndex(multiplier: number = 1) {
     let index: number;
     index = Math.floor(Math.random() * multiplier);
