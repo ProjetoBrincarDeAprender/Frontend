@@ -80,12 +80,12 @@ export default class Vowels extends Phaser.Scene {
   prepareNextLevel() {
     let currentLevel: Level = this.levelManager.getCurrentLevel();
 
-    if (this.image) {
-      this.image.setTexture(currentLevel.getName());
+    this.time.delayedCall(1000, () => {
+      this.image ? this.image.setTexture(currentLevel.getName()) : null;
 
       const buttonsNumber: number = this.buttonManager.getButtons().length;
       const buttonTexts = this.logic.generateButtonTexts(buttonsNumber);
       this.buttonManager.setButtonTexts(buttonTexts);
-    }
+    });
   }
 }
