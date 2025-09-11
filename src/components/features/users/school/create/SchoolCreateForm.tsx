@@ -18,7 +18,8 @@ const formSchema = z.object({
   .string()
   .transform((val) => (val.trim() === "" ? undefined : val))
   .optional(),
-  localizacao: z.string({ error: "O endereço da escola é obrigatório" }),
+  localizacao: z.string({ error: "O endereço da escola é obrigatório" })
+    .min(1, { message: "A localização da escola é obrigatória" }),
   telefone: z
     .string()
     .optional()
@@ -32,7 +33,7 @@ const formSchema = z.object({
         message: "Formato inválido.",
       },
     ),
-  email: z.email({ error: "Email inválido" }).optional(),
+  email: z.email({ error: "Email inválido" }),
 });
 
 export default function CreateSchoolForm({ onSuccess }: SignUpFormProps) {

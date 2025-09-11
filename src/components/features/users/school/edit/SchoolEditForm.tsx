@@ -17,7 +17,7 @@ const formSchema = z.object({
   descricao: z.string().optional(),
   localizacao: z
     .string({ error: "O endereço da escola é obrigatório" })
-    .optional(),
+    .min(1, { message: "A localização da escola é obrigatória" }),
   telefone: z
     .string()
     .refine(
@@ -73,20 +73,20 @@ export default function EditSchoolForm({ id, onSuccess }: EditSchoolFormProps) {
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     try {
-      const normalizedData = {
-        ...data,
-        descricao: data.descricao?.trim() === "" ? undefined : data.descricao,
-      };
+   const payload = {
+      ...data,
+      descricao: data.descricao?.trim() === "" ? null : data.descricao,
+      nome: data.nome?.trim() || undefined,
+      localizacao: data.localizacao?.trim() || undefined,
+      email: data.email?.trim() || undefined,
+      telefone: data.telefone?.trim() || undefined
+    };
 
-      const verifiedData = Object.fromEntries(Object.entries(normalizedData));
+    const response = await api.put(`/school/update/${id}`, payload);
 
-      const payload = verifiedData;
-
-      const response = await api.put(`/school/update/${id}`, payload);
-
-      if (response.status === 200) {
-        onSuccess();
-      }
+    if (response.status === 200) {
+      onSuccess();
+    }
     } catch (error) {
       console.error("Erro ao atualizar escola:", error);
       if (error instanceof AxiosError) {

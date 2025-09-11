@@ -1,7 +1,7 @@
-import { FancyMultiSelect } from "@/components/forms/MultiSelect";
+// import { FancyMultiSelect } from "@/components/forms/MultiSelect";
 import { Form } from "@/components/forms/Root";
 import { useUser } from "@/hooks/User/useUser";
-import type { User } from "@/types/user";
+// import type { User } from "@/types/user";
 import api from "@/utils/api";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AxiosError } from "axios";
@@ -33,10 +33,10 @@ export function TeacherEditForm({ id, onSuccess }: TeacherFormProps) {
   const [schools, setSchools] = useState<{ id: number; nome: string }[] | null>(
     null,
   );
-  const [students, setStudents] = useState<User[] | null>(null);
-  const [allStudents, setAllStudents] = useState<User[] | null>(null);
+  // const [students, setStudents] = useState<User[] | null>(null);
+  // const [allStudents, setAllStudents] = useState<User[] | null>(null);
 
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  // const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const escolaSelecionada = form.watch("escolaId");
 
   useEffect(() => {
@@ -81,7 +81,7 @@ export function TeacherEditForm({ id, onSuccess }: TeacherFormProps) {
         const response = await api.get(`/teacher/list/${id}/students`);
         if (response.status == 200) {
           const users = response.data;
-          setStudents(users);
+          // setStudents(users);
           const originalIds = users.map((user: { id: number }) =>
             String(user.id),
           );
@@ -94,11 +94,11 @@ export function TeacherEditForm({ id, onSuccess }: TeacherFormProps) {
 
     const fetchAllStudents = async () => {
       try {
-        const escola =
-          user?.perfil === "Admin"
-            ? schools?.find((school) => school.id === Number(escolaSelecionada))
-            : user?.escola;
-        if (!escola) return setAllStudents([]);
+        // const escola =
+        //   user?.perfil === "Admin"
+        //     ? schools?.find((school) => school.id === Number(escolaSelecionada))
+        //     : user?.escola;
+        // if (!escola) return setAllStudents([]);
 
         const response = await api.get(
           `/student/list/relations/teacher?isNull=true`,
@@ -108,15 +108,15 @@ export function TeacherEditForm({ id, onSuccess }: TeacherFormProps) {
         //   `/user/list?type=Aluno${user?.perfil == "Admin" ? "" : `&escolaId=${user?.escola?.id}`}`,
         // );
         if (response.status == 200) {
-          const users = response.data;
-          setAllStudents(
-            users.filter((user: User) => user.escola == escola.nome),
-          );
-          if (users.length === 0) {
-            setErrorMessage("Não há alunos cadastrados nesta escola!");
-          } else {
-            setErrorMessage(null);
-          }
+          // const users = response.data;
+          // setAllStudents(
+          //   users.filter((user: User) => user.escola == escola.nome),
+          // );
+          // if (users.length === 0) {
+          //   setErrorMessage("Não há alunos cadastrados nesta escola!");
+          // } else {
+          //   setErrorMessage(null);
+          // }
         }
       } catch (error) {
         console.log(error);
@@ -204,28 +204,30 @@ export function TeacherEditForm({ id, onSuccess }: TeacherFormProps) {
             />
           )}
         />
-        {user?.perfil == "Admin" && schools ? (
-          <Form.Field
-            form={form}
-            name="escolaId"
-            render={({ field }) => (
-              <Form.Select
-                value={field.value || ""}
-                onChange={field.onChange}
-                label="Escola"
-                placeholder="Selecione a Escola"
-                options={schools.map((school) => ({
-                  value: String(school.id),
-                  label: school.nome,
-                }))}
-              />
-            )}
-          />
-        ) : (
-          <span>Loading...</span>
+         {user?.perfil == "Admin" && (
+          schools ? (
+            <Form.Field
+              form={form}
+              name="escolaId"
+              render={({ field }) => (
+                <Form.Select
+                  value={String(field.value)}
+                  onChange={field.onChange}
+                  label="Escola"
+                  placeholder="Selecione a Escola"
+                  options={schools.map((school) => ({
+                    value: String(school.id),
+                    label: school.nome,
+                  }))}
+                />
+              )}
+            />
+          ) : (
+            <span>Carregando escolas...</span>
+          )
         )}
 
-        {allStudents && students && (
+        {/* {allStudents && students && (
           <Form.Field
             form={form}
             name="usersIds"
@@ -252,7 +254,7 @@ export function TeacherEditForm({ id, onSuccess }: TeacherFormProps) {
               </>
             )}
           />
-        )}
+        )} */}
         <Form.Submit>Atualizar Dados</Form.Submit>
       </Form.Main>
     </Form.Wrapper>

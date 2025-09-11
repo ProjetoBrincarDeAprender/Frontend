@@ -21,8 +21,6 @@ export function Profile() {
   useEffect(() => {
     profile()
       .then((data) => {
-              console.log("Perfil retornado:", data); // 👀 ver aqui
-
         if (data) setUser(data);
       })
       .catch(() => {
@@ -109,7 +107,7 @@ export function Profile() {
               <strong>Perfil:</strong> {user.perfil}
             </p>
             <p>
-              <strong>Escola:</strong> {user.escola?.nome ?? "Não vinculado"}
+              <strong>Escola:</strong> {user.escola || "Não vinculado"}
             </p>
             <p>
               <strong>Data de criação:</strong>{" "}

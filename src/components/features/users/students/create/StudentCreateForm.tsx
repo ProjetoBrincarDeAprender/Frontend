@@ -222,7 +222,7 @@ export function StudentSignUpForm({ onSuccess }: SignUpFormProps) {
             <Form.Input
               {...field}
               // value={field.value || ""}
-              label="URL do Avatar Personalizado"
+              label="URL do Avatar Personalizado (Opcional)"
               placeholder="https://urlDoAvatarPersonalizado.jpg"
               type="text"
             />
@@ -234,7 +234,7 @@ export function StudentSignUpForm({ onSuccess }: SignUpFormProps) {
           render={({ field }) => (
             <Form.Input
               {...field}
-              label="Tema Preferido"
+              label="Tema Preferido (Opcional)"
               placeholder="Ex: Fundo do Mar, Espaço"
             />
           )}
