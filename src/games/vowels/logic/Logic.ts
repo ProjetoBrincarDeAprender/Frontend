@@ -1,6 +1,5 @@
 import GameStats from "../../common/managers/GameStats";
 import LevelManager from "../../common/managers/LevelManager";
-import randomGenerator from "../../common/utils/RandomGenerator";
 import Level from "../../common/models/Level";
 import EffectManager from "@/games/common/managers/effectManager";
 import type Button from "@/games/common/models/Button";
@@ -35,10 +34,6 @@ export default class Logic {
       button.getButtonStringText(),
     );
     if (isCorrect) {
-      this.effectManager.growup(button);
-      this.effectManager.changeColor(button.getButtonText());
-      this.effectManager.particles("star");
-
       this.gameStats.addHitTime(timeNow);
       this.gameStats.resetInitialLevelTime(timeNow);
       this.gameStats.addMissCount();
@@ -52,6 +47,23 @@ export default class Logic {
     }
   }
 
+  buttonSuccessEffect(
+    button: Button,
+    particleTexture?: string,
+    successColor: number = 0x00ff00,
+  ): void {
+    this.effectManager.growup(button);
+    this.effectManager.changeColor(button.getButtonText(), successColor);
+    if (particleTexture) this.effectManager.particles(particleTexture);
+  }
+
+  buttonFailEffect(button: Button, failColor: number = 0xff0000): void {
+    this.effectManager.growup(button, "Bounce", 1.2, 200);
+    this.effectManager.changeColor(button.getButtonText(), failColor);
+  }
+
+  failEffect(): void {}
+
   accessCurrentLevel(): Level {
     return this.levelManager.getCurrentLevel();
   }
@@ -64,19 +76,11 @@ export default class Logic {
   setButtonTexts(): void {
     const answer: string = this.levelManager.getCurrentLevel().getAnswer();
     const buttonsNumber: number = this.buttonManager.getButtons().length;
-    const buttonTexts = this.generateButtonsLetters(buttonsNumber, answer);
+    const buttonTexts = this.buttonManager.generateButtonsLetters(
+      buttonsNumber,
+      answer,
+    );
     this.buttonManager.setButtonTexts(buttonTexts);
-  }
-
-  generateButtonsLetters(buttonsNumber: number = 1, answer: string) {
-    const letterArray = new Array(buttonsNumber);
-    for (let i = 0; i < buttonsNumber; i++) {
-      let randomLetter = randomGenerator.randomCharacter();
-      letterArray[i] = randomLetter;
-    }
-    const answerIndex = randomGenerator.randomIndex(buttonsNumber);
-    letterArray[answerIndex] = answer;
-    return letterArray;
   }
 
   createImage(texture: string): void {

@@ -10,12 +10,17 @@ export default class EffectManager {
     this.scene = scene;
   }
 
-  changeColor(text: Phaser.GameObjects.Text) {
-    ChangeColor(this.scene, text);
+  changeColor(text: Phaser.GameObjects.Text, color: number) {
+    ChangeColor(this.scene, text, color);
   }
 
-  growup(target: Phaser.GameObjects.GameObject) {
-    GrowupEffect(this.scene, target);
+  growup(
+    target: Phaser.GameObjects.GameObject,
+    ease: string = "Cubic.out",
+    scale: number = 2,
+    duration: number = 500,
+  ) {
+    GrowupEffect(this.scene, target, ease, scale, duration);
   }
 
   particles(image: string) {
