@@ -4,13 +4,14 @@ import randomGenerator from "../../common/utils/RandomGenerator";
 import Level from "../../common/models/Level";
 import EffectManager from "@/games/common/managers/effectManager";
 import type Button from "@/games/common/models/Button";
-import type ButtonManager from "@/games/common/managers/ButtonManager";
+import ButtonManager from "@/games/common/managers/ButtonManager";
 
 export default class Logic {
   private scene: Phaser.Scene;
   private gameStats: GameStats;
-  private levelManager: LevelManager;
+  private buttonManager: ButtonManager;
   private effectManager: EffectManager;
+  private levelManager: LevelManager;
   private image?: Phaser.GameObjects.Image;
 
   constructor(scene: Phaser.Scene) {
@@ -22,22 +23,21 @@ export default class Logic {
     this.scene = scene;
     this.gameStats = new GameStats();
     this.effectManager = new EffectManager(this.scene);
+    this.buttonManager = new ButtonManager(this.scene);
   }
 
-  handleAnswer(
+  handleClick(
     button: Button,
     timeNow: number,
-    image: string,
   ): { correct: boolean; finished: boolean } {
     const currentLevel: Level = this.levelManager.getCurrentLevel();
     const isCorrect: boolean = currentLevel.isCorrectLetter(
       button.getButtonStringText(),
     );
-
     if (isCorrect) {
       this.effectManager.growup(button);
       this.effectManager.changeColor(button.getButtonText());
-      this.effectManager.particles(image);
+      this.effectManager.particles("star");
 
       this.gameStats.addHitTime(timeNow);
       this.gameStats.resetInitialLevelTime(timeNow);
@@ -61,10 +61,11 @@ export default class Logic {
     return false;
   }
 
-  generateButtonTexts(buttonsNumber: number): string[] {
+  setButtonTexts(): void {
     const answer: string = this.levelManager.getCurrentLevel().getAnswer();
-    let buttonTexts = this.generateButtonsLetters(buttonsNumber, answer);
-    return buttonTexts;
+    const buttonsNumber: number = this.buttonManager.getButtons().length;
+    const buttonTexts = this.generateButtonsLetters(buttonsNumber, answer);
+    this.buttonManager.setButtonTexts(buttonTexts);
   }
 
   generateButtonsLetters(buttonsNumber: number = 1, answer: string) {
@@ -86,11 +87,21 @@ export default class Logic {
     if (this.image) this.image.setTexture(texture);
   }
 
-  nextLevel(buttonManager: ButtonManager): void {
-    let currentLevel: Level = this.accessCurrentLevel();
-    this.setImageTexture(currentLevel.getName());
-    const buttonsNumber: number = buttonManager.getButtons().length;
-    const buttonTexts = this.generateButtonTexts(buttonsNumber);
-    buttonManager.setButtonTexts(buttonTexts);
+  createButtons(): void {
+    const buttonPositions: { x: number; y: number }[] = [
+      { x: 200, y: 500 },
+      { x: 400, y: 500 },
+      { x: 600, y: 500 },
+    ];
+    const buttonTextures: string[] = [
+      "defaultButton",
+      "hoverButton",
+      "clickedButton",
+    ];
+    this.buttonManager.createButtons(buttonPositions, buttonTextures);
+  }
+
+  getButtons(): Button[] {
+    return this.buttonManager.getButtons();
   }
 }
