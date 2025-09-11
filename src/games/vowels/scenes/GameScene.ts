@@ -1,14 +1,26 @@
 import Logic from "../logic/Logic";
 import Phaser from "phaser";
 
+/**
+ * Cena principal do jogo das vogais.
+ * Gerencia ciclo de vida, integração com lógica e recursos visuais.
+ */
 export default class GameScene extends Phaser.Scene {
+  /** Instância da lógica do jogo (orquestra regras e progresso) */
   private logic: Logic;
 
+  /**
+   * Construtor da cena do jogo das vogais.
+   * Inicializa lógica do jogo.
+   */
   constructor() {
     super("vowelsGameScene");
     this.logic = new Logic(this);
   }
 
+  /**
+   * Pré-carrega os recursos visuais necessários para o jogo.
+   */
   preload() {
     this.load.image("abelha", "/assets/vowelsGame/abelha.svg");
     this.load.image("elefante", "/assets/vowelsGame/elefante.svg");
@@ -18,6 +30,9 @@ export default class GameScene extends Phaser.Scene {
     this.load.image("clickedButton", "/assets/common/clickedButton.svg");
   }
 
+  /**
+   * Cria elementos visuais e inicia o primeiro nível do jogo.
+   */
   create() {
     this.logic.createImage(this.logic.accessCurrentLevel().getName());
     this.logic.createButtons();
@@ -26,8 +41,15 @@ export default class GameScene extends Phaser.Scene {
     console.log("Jogo das vogais carregado!");
   }
 
+  /**
+   * Atualização do ciclo de jogo (não utilizada).
+   */
   update() {}
 
+  /**
+   * Configura o nível atual: atualiza imagem, textos dos botões e listeners.
+   * Reinicia listeners dos botões para evitar duplicidade.
+   */
   setupLevel() {
     this.logic.setImageTexture(this.logic.accessCurrentLevel().getName());
     this.logic.setButtonTexts();
