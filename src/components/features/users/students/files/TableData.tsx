@@ -16,6 +16,10 @@ export type Student = {
   data_nascimento: string | null;
   avatar_url: string | null;
   tema_preferido: string | null;
+  // professor?: {
+  //   nome_completo: string;
+  //   codigo_usuario: string;
+  // } | null;
 };
 
 export const StudentColumns: ColumnDef<Student>[] = [
@@ -107,6 +111,22 @@ export const StudentColumns: ColumnDef<Student>[] = [
       </Button>
     ),
   },
+  // {
+  //   accessorKey: "professor",
+  //   header: ({ column }) => (
+  //     <Button
+  //       variant="ghost"
+  //       onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+  //     >
+  //       Professor
+  //       <ArrowUpDown className="ml-2 h-4 w-4" />
+  //     </Button>
+  //   ),
+  //   cell: ({ row }) => {
+  //     const professor = row.original.professor;
+  //     return professor ? professor.nome_completo : "Não atribuído";
+  //   },
+  // },
   {
     accessorKey: "actions",
     header: "Ações",
