@@ -27,7 +27,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
         perfil: response.perfil,
         escola: {
           id: response.escolaId,
-          nome: response.escola?.nome,
+          nome: response.escola || "",
         },
       });
     };

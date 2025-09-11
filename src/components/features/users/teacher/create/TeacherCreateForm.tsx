@@ -1,9 +1,9 @@
-import { FancyMultiSelect } from "@/components/forms/MultiSelect";
+// import { FancyMultiSelect } from "@/components/forms/MultiSelect";
 import { Form } from "@/components/forms/Root";
 import { PasswordInput } from "@/components/ui/password-input";
 import { Link } from "@/components/utils/Link/Link";
 import { useUser } from "@/hooks/User/useUser";
-import type { User, UserProfile } from "@/types/user";
+// import type { User, UserProfile } from "@/types/user";
 import api from "@/utils/api";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AxiosError } from "axios";
@@ -56,9 +56,9 @@ export default function TeacherSignUpForm({ onSuccess }: SignUpFormProps) {
   const [schools, setSchools] = useState<{ id: number; nome: string }[] | null>(
     null,
   );
-  const [users, setUsers] = useState<UserProfile[] | null>(null);
+  // const [users, setUsers] = useState<UserProfile[] | null>(null);
 
-  const [errorMensage, setErrorMessage] = useState<string | null>(null);
+  // const [errorMensage, setErrorMessage] = useState<string | null>(null);
   const escolaSelecionada = form.watch("escolaId");
 
   useEffect(() => {
@@ -85,11 +85,11 @@ export default function TeacherSignUpForm({ onSuccess }: SignUpFormProps) {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const escola =
-          user?.perfil === "Admin"
-            ? schools?.find((school) => school.id === Number(escolaSelecionada))
-            : user?.escola;
-        if (!escola) return setUsers([]);
+        // const escola =
+        //   user?.perfil === "Admin"
+        //     ? schools?.find((school) => school.id === Number(escolaSelecionada))
+        //     : user?.escola;
+        // if (!escola) return setUsers([]);
 
         const response = await api.get(
           `/student/list/relations/teacher?isNull=true`,
@@ -101,14 +101,14 @@ export default function TeacherSignUpForm({ onSuccess }: SignUpFormProps) {
         // );
 
         if (response.status == 200) {
-          const users = response.data;
-          setUsers(users.filter((user: User) => user.escola == escola.nome));
+          // const users = response.data;
+          // setUsers(users.filter((user: User) => user.escola == escola.nome));
 
-          if (users.length === 0) {
-            setErrorMessage("Não há alunos cadastrados nesta escola!");
-          } else {
-            setErrorMessage(null);
-          }
+          // if (users.length === 0) {
+          //   setErrorMessage("Não há alunos cadastrados nesta escola!");
+          // } else {
+          //   setErrorMessage(null);
+          // }
         }
       } catch (error) {
         console.log(error);
@@ -254,7 +254,7 @@ export default function TeacherSignUpForm({ onSuccess }: SignUpFormProps) {
             </>
           )}
         />
-        <Form.Field
+        {/* <Form.Field
           form={form}
           name="usersIds"
           render={({ field }) => (
@@ -277,7 +277,7 @@ export default function TeacherSignUpForm({ onSuccess }: SignUpFormProps) {
               )}
             </>
           )}
-        />
+        /> */}
         <Form.Submit>Criar Conta</Form.Submit>
       </Form.Main>
       <p className="mt-6 w-full text-center text-lg">
