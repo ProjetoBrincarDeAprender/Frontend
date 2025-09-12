@@ -1,5 +1,5 @@
 import { useUser } from "@/hooks/User/useUser";
-import { LogOut } from "lucide-react";
+import { LogOut, Heart } from "lucide-react";
 import { BiHome } from "react-icons/bi";
 import { FaRegQuestionCircle } from "react-icons/fa";
 import { FiLogIn } from "react-icons/fi";
@@ -62,6 +62,12 @@ export function Header() {
           </li>
           {user ? (
             <>
+              <li className="button-nav bg-yellow rounded-2xl px-5 py-2 shadow-lg">
+                <Link to="/calm" className="flex items-center gap-2">
+                  <Heart />
+                  <span>Relaxar</span>
+                </Link>
+              </li>
               <li className="button-nav bg-yellow rounded-2xl px-5 py-2 shadow-lg">
                 <Link to="/logout" className="flex items-center gap-2">
                   <LogOut />

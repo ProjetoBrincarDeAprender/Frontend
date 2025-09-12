@@ -14,6 +14,7 @@ import { SchoolUsers } from "./pages/Dashboard/SchoolUsers/SchoolUsers";
 import { LinkStudents } from "./pages/Dashboard/Teachers/LinkStudents/LinkStudents";
 import { ResponsibleDashboard } from "./pages/Dashboard/Responsible/ResponsibleDashboard/ReponsibleDashboard";
 import { NotFound } from "./pages/Errors/NotFound/NotFound";
+import { Calm } from "./pages/Calm/Calm";
 
 function App() {
   return (
@@ -43,6 +44,7 @@ function App() {
 
       <Route element={<AuthGuard requireAuth />}>
         <Route path="/profile" element={<Profile />} />
+        <Route path="/calm" element={<Calm />} />
       </Route>
 
       <Route path="*" element={<NotFound />} />

@@ -28,20 +28,41 @@ export function StudentsUnlinkedTable({
   useEffect(() => {
     const fetchData = async () => {
       try {
-        let linkedStudents: UnlinkedStudents[] = [];
-        if (teacherId) {
-          const linkedRes = await api.get(
-            `/teacher/list/${teacherId}/students`,
-          );
-          if (linkedRes.status === 200 && Array.isArray(linkedRes.data)) {
-            linkedStudents = linkedRes.data;
-          }
+        if (!teacherId) {
+          setLoading(false);
+          return;
         }
+
+        // Buscar informações do professor para obter a escola
+        const teacherRes = await api.get(`/user/list/${teacherId}`);
+        if (teacherRes.status !== 200 || !teacherRes.data?.escola) {
+          console.log("Erro ao buscar informações do professor");
+          setLoading(false);
+          return;
+        }
+
+        const teacherSchool = teacherRes.data.escola;
+
+        // Buscar alunos vinculados ao professor
+        let linkedStudents: UnlinkedStudents[] = [];
+        const linkedRes = await api.get(`/teacher/list/${teacherId}/students`);
+        if (linkedRes.status === 200 && Array.isArray(linkedRes.data)) {
+          // Filtrar apenas alunos da mesma escola
+          linkedStudents = linkedRes.data.filter(
+            (student: UnlinkedStudents) => student.escola === teacherSchool,
+          );
+        }
+
+        // Buscar alunos sem professor
         const response = await api.get("/student/list?responsibleId=null", {});
         let unlinkedStudents: UnlinkedStudents[] = [];
         if (response.status === 200 && Array.isArray(response.data)) {
-          unlinkedStudents = response.data;
+          // Filtrar apenas alunos da mesma escola
+          unlinkedStudents = response.data.filter(
+            (student: UnlinkedStudents) => student.escola === teacherSchool,
+          );
         }
+
         setData([...linkedStudents, ...unlinkedStudents]);
       } catch (error) {
         console.log(error);
