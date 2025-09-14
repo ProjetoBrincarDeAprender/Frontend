@@ -8,6 +8,7 @@ import { EditStudentModal } from "@/components/features/users/students/edit/Stud
 import { EditTeacherModal } from "@/components/features/users/teacher/edit/TeacherEditModal";
 import { Header } from "@/components/Header/Header";
 import { TableProvider } from "@/contexts/Table/provider";
+import { ChangePasswordModal } from "@/components/features/users/password/ChangePasswordModal";
 
 import NuvemSVG from "../../assets/nuvem.svg";
 import StarSVG from "../../assets/star.svg";
@@ -133,12 +134,14 @@ export function Profile() {
               )}
             </TableProvider>
             </div>
-            <button
+
+            <ChangePasswordModal />
+            {/* <button
               onClick={() => alert("Funcionalidade em desenvolvimento!")}
               className="mt-4 w-full rounded-lg bg-az1 px-5 py-2 font-semibold text-white transition hover:bg-az2"
             >
               Alterar Senha
-            </button>
+            </button> */}
                
                <button
             onClick={() => navigate(-1)}
