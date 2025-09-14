@@ -16,8 +16,8 @@ export default function Login() {
 
     case "Aluno":
       return <Navigate to="/profile" replace />;
-    
-     case "Professor":
+
+    case "Professor":
       return <Navigate to="/profile" replace />;
 
     case "Responsavel":

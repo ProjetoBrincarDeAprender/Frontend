@@ -48,12 +48,12 @@ export function Profile() {
   }
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-purplish-blue-dark">
+    <div className="bg-purplish-blue-dark relative min-h-screen overflow-hidden">
       <div className="absolute inset-0 z-0">
         <img
           src={StarSVG}
           alt="Estrela decorativa"
-          className="absolute -left-1 top-60 h-10 w-10"
+          className="absolute top-60 -left-1 h-10 w-10"
         />
         <img
           src={StarSVG}
@@ -63,7 +63,7 @@ export function Profile() {
         <img
           src={StarSVG}
           alt="Estrela decorativa"
-          className="absolute bottom-1/2 right-1/4 h-12 w-12 -rotate-6"
+          className="absolute right-1/4 bottom-1/2 h-12 w-12 -rotate-6"
         />
         <img
           src={NuvemSVG}
@@ -75,9 +75,9 @@ export function Profile() {
       <Header />
 
       <main className="relative z-10 mt-28 px-6">
-        <div className="relative h-28 w-full rounded-b-md bg-gradient-to-r from-am0 to-az3 shadow-lg">
+        <div className="from-am0 to-az3 relative h-28 w-full rounded-b-md bg-gradient-to-r shadow-lg">
           <div className="absolute -bottom-12 left-10 flex items-center space-x-4">
-            <div className="flex h-24 w-24 items-center justify-center rounded-full border-4 border-white bg-gray-200 text-3xl font-bold text-am0 shadow-lg">
+            <div className="text-am0 flex h-24 w-24 items-center justify-center rounded-full border-4 border-white bg-gray-200 text-3xl font-bold shadow-lg">
               {user.nome_completo.charAt(0).toUpperCase()}
             </div>
             <div>
@@ -90,7 +90,7 @@ export function Profile() {
         </div>
 
         <div className="mt-32 grid grid-cols-1 gap-6 md:grid-cols-3">
-          <div className="col-span-2 rounded-xl bg-purplish-blue/40 p-6 text-white shadow-lg backdrop-blur-sm">
+          <div className="bg-purplish-blue/40 col-span-2 rounded-xl p-6 text-white shadow-lg backdrop-blur-sm">
             <h3 className="mb-4 border-b border-gray-500 pb-2 text-xl font-semibold">
               Informações Gerais
             </h3>
@@ -115,37 +115,37 @@ export function Profile() {
             </p>
           </div>
 
-          <div className="rounded-xl bg-purplish-blue/50 p-6 text-white shadow-lg backdrop-blur-sm">
+          <div className="bg-purplish-blue/50 rounded-xl p-6 text-white shadow-lg backdrop-blur-sm">
             <h3 className="mb-4 border-b border-gray-500 pb-2 text-xl font-semibold">
               Ações
             </h3>
 
-            <div className="font-1 mt-10 flex w-full flex-col gap-3 ">
-            <TableProvider>
-              {user.perfil?.toLowerCase() === "aluno" && (
-                <EditStudentModal id={Number(user.codigo_usuario)} />
-              )}
-              {user.perfil?.toLowerCase() === "responsavel" && (
-                <EditResponsableModal id={Number(user.codigo_usuario)} />
-              )}
-              {user.perfil?.toLowerCase() === "professor" && (
-                <EditTeacherModal id={Number(user.codigo_usuario)} />
-              )}
-            </TableProvider>
+            <div className="font-1 mt-10 flex w-full flex-col gap-3">
+              <TableProvider>
+                {user.perfil?.toLowerCase() === "aluno" && (
+                  <EditStudentModal id={Number(user.codigo_usuario)} />
+                )}
+                {user.perfil?.toLowerCase() === "responsavel" && (
+                  <EditResponsableModal id={Number(user.codigo_usuario)} />
+                )}
+                {user.perfil?.toLowerCase() === "professor" && (
+                  <EditTeacherModal id={Number(user.codigo_usuario)} />
+                )}
+              </TableProvider>
             </div>
             <button
               onClick={() => alert("Funcionalidade em desenvolvimento!")}
-              className="mt-4 w-full rounded-lg bg-az1 px-5 py-2 font-semibold text-white transition hover:bg-az2"
+              className="bg-az1 hover:bg-az2 mt-4 w-full rounded-lg px-5 py-2 font-semibold text-white transition"
             >
               Alterar Senha
             </button>
-               
-               <button
-            onClick={() => navigate(-1)}
-            className=" mt-4 w-full rounded-lg bg-yellow-400 px-6 py-2 font-semibold text-black shadow-md transition hover:bg-yellow-300"
-          >
-            Voltar
-          </button>
+
+            <button
+              onClick={() => navigate(-1)}
+              className="mt-4 w-full rounded-lg bg-yellow-400 px-6 py-2 font-semibold text-black shadow-md transition hover:bg-yellow-300"
+            >
+              Voltar
+            </button>
           </div>
         </div>
       </main>
