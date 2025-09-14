@@ -1,4 +1,4 @@
-import { Header } from "@/components/header/Header";
+import { Header } from "@/components/Header/Header";
 import { LateralMenu } from "@/components/sideBar/sideBar";
 import { useUser } from "@/hooks/User/useUser";
 import api from "@/utils/api";

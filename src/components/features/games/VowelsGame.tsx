@@ -1,9 +1,9 @@
+import { Footer } from "@/components/Footer/Footer";
 import { EventBus } from "@/games/common/utils/EventBus";
-import { Footer } from "@/components/footer/Footer";
-import { useEffect, useRef } from "react";
 import Credits from "@/games/vowels/scenes/CreditsScene";
-import Phaser from "phaser";
 import GameScene from "@/games/vowels/scenes/GameScene";
+import Phaser from "phaser";
+import { useEffect, useRef } from "react";
 
 export interface IRefVowelsGame {
   game: Phaser.Game | null;

@@ -6,8 +6,8 @@ import saturn from "../../../assets/saturn.svg";
 //import { RegisterSchoolModal } from "@/components/modals/RegisterSchoolModal";
 
 import { RegisterSchoolUserModal } from "@/components/features/users/schoolUser/create/SchoolUserCreateModal";
-import { Footer } from "@/components/footer/Footer";
-import { Header } from "@/components/header/Header";
+import { Footer } from "@/components/Footer/Footer";
+import { Header } from "@/components/Header/Header";
 import { TableProvider } from "@/contexts/Table/provider";
 import { useUser } from "@/hooks/User/useUser";
 import { Link } from "react-router";

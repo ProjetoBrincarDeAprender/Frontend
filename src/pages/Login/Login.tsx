@@ -1,6 +1,6 @@
 import SignInForm from "@/components/features/login/SignInForm";
-import { Footer } from "@/components/footer/Footer";
-import { Header } from "@/components/header/Header";
+import { Footer } from "@/components/Footer/Footer";
+import { Header } from "@/components/Header/Header";
 import { useUser } from "@/hooks/User/useUser";
 import { Navigate } from "react-router";
 
@@ -16,8 +16,8 @@ export default function Login() {
 
     case "Aluno":
       return <Navigate to="/profile" replace />;
-    
-     case "Professor":
+
+    case "Professor":
       return <Navigate to="/profile" replace />;
 
     case "Responsavel":

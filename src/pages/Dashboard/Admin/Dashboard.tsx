@@ -2,8 +2,8 @@
 import { Link } from "react-router";
 
 // componentes do site
-import { Footer } from "@/components/footer/Footer";
-import { Header } from "@/components/header/Header";
+import { Footer } from "@/components/Footer/Footer";
+import { Header } from "@/components/Header/Header";
 import { useUser } from "@/hooks/User/useUser";
 import { LateralMenu } from "../../../components/sideBar/sideBar";
 import { InfoBadge } from "../../../components/utils/InfoBadge/InfoBadge";

@@ -1,6 +1,6 @@
-import Button from "../models/Button";
 import Phaser from "phaser";
-import RandomGenerator from "../utils/RandomGenerator";
+import Button from "../models/Button";
+import RandomGenerator from "../utils/randomGenerator";
 
 export default class ButtonManager {
   protected scene: Phaser.Scene;
@@ -42,7 +42,7 @@ export default class ButtonManager {
   generateButtonsLetters(buttonsNumber: number = 1, answer: string) {
     const letterArray = new Array(buttonsNumber);
     for (let i = 0; i < buttonsNumber; i++) {
-      let randomLetter = RandomGenerator.randomCharacter();
+      const randomLetter = RandomGenerator.randomCharacter();
       letterArray[i] = randomLetter;
     }
     const answerIndex = RandomGenerator.randomIndex(buttonsNumber);
