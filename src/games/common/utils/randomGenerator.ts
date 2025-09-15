@@ -1,8 +1,6 @@
 export default class RandomGenerator {
   static randomIndex(multiplier: number = 1) {
-    let index: number;
-    index = Math.floor(Math.random() * multiplier);
-    return index;
+    return Math.floor(Math.random() * multiplier);
   }
 
   static randomCharacter() {

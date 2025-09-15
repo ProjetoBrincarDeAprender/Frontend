@@ -1,21 +1,22 @@
 import { Route, Routes } from "react-router";
+import { MemoryGame } from "./components/features/games/MemoryGame";
+import VowelsGame from "./components/features/games/VowelsGame";
 import { AuthGuard } from "./guards/AuthGuard";
+import { Calm } from "./pages/Calm/Calm";
 import Dashboard from "./pages/Dashboard/Admin/Dashboard";
+import { ResponsibleDashboard } from "./pages/Dashboard/Responsible/ResponsibleDashboard/ReponsibleDashboard";
 import { Responsibles } from "./pages/Dashboard/Responsible/Responsibles";
 import { Schools } from "./pages/Dashboard/Schools/Schools";
 import { SchoolUsers } from "./pages/Dashboard/SchoolUsers/SchoolUsers";
 import { Students } from "./pages/Dashboard/Students/Students";
+import { LinkStudents } from "./pages/Dashboard/Teachers/LinkStudents/LinkStudents";
 import { Teachers } from "./pages/Dashboard/Teachers/Teachers";
+import { NotFound } from "./pages/Errors/NotFound/NotFound";
 import { Games } from "./pages/Games/Games";
 import { Home } from "./pages/Home/Home";
 import { default as LoginForm } from "./pages/Login/Login";
 import Logout from "./pages/Logout/Logout";
 import { Profile } from "./pages/Profile/Profile";
-import { LinkStudents } from "./pages/Dashboard/Teachers/LinkStudents/LinkStudents";
-import { ResponsibleDashboard } from "./pages/Dashboard/Responsible/ResponsibleDashboard/ReponsibleDashboard";
-import { NotFound } from "./pages/Errors/NotFound/NotFound";
-import { Calm } from "./pages/Calm/Calm";
-import VowelsGame from "./components/features/games/VowelsGame";
 
 function App() {
   return (
@@ -23,7 +24,6 @@ function App() {
       <Route index element={<Home />} />
       <Route path="/logout" element={<Logout />} />
       <Route path="/login" element={<LoginForm />} />
-      <Route path="/games" element={<Games />} />
 
       {/* URL apenas de testes */}
       <Route path="/responsibledashboard" element={<ResponsibleDashboard />} />
@@ -44,7 +44,9 @@ function App() {
       </Route>
 
       <Route path="/games">
+        <Route index element={<Games />} />
         <Route path="vowels" element={<VowelsGame />} />
+        <Route path="memory" element={<MemoryGame />} />
       </Route>
 
       <Route element={<AuthGuard requireAuth />}>
