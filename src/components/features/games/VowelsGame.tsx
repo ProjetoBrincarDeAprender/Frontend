@@ -1,5 +1,6 @@
 import { Footer } from "@/components/Footer/Footer";
 import { EventBus } from "@/games/common/utils/EventBus";
+import StartScene from "@/games/vowels/scenes/StartScene";
 import Credits from "@/games/vowels/scenes/CreditsScene";
 import GameScene from "@/games/vowels/scenes/GameScene";
 import Phaser from "phaser";
@@ -18,7 +19,7 @@ const VowelsGame: React.FC = () => {
       type: Phaser.AUTO,
       width: 800,
       height: 600,
-      scene: [GameScene, Credits],
+      scene: [StartScene, GameScene, Credits],
       parent: "game-container",
       backgroundColor: "#ffffff",
     };
