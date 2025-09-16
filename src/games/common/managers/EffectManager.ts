@@ -2,6 +2,7 @@ import Phaser from "phaser";
 import ChangeColor from "../effects/ChangeColor";
 import GrowupEffect from "../effects/GrowupEffect";
 import Particles from "../effects/Particles";
+import FloatingEffect from "../effects/FloatingEffect";
 
 export default class EffectManager {
   private scene: Phaser.Scene;
@@ -10,7 +11,7 @@ export default class EffectManager {
     this.scene = scene;
   }
 
-  changeColor(text: Phaser.GameObjects.Text, color: number) {
+  changeColor(text: Phaser.GameObjects.Text, color: number): void {
     ChangeColor(this.scene, text, color);
   }
 
@@ -19,11 +20,19 @@ export default class EffectManager {
     ease: string = "Cubic.out",
     scale: number = 2,
     duration: number = 500,
-  ) {
+  ): void {
     GrowupEffect(this.scene, target, ease, scale, duration);
   }
 
-  particles(image: string) {
+  particles(image: string): void {
     Particles(this.scene, image);
+  }
+
+  floatingElement(
+    target: Phaser.GameObjects.GameObject,
+    ease: string = "Sine.easeInOut",
+    y: number = 310,
+  ): void {
+    FloatingEffect(this.scene, target, ease, y);
   }
 }
