@@ -10,6 +10,11 @@ export class MemoryGameScene extends Phaser.Scene {
 
   preload() {
     this.load.image("star", "/assets/common/star.svg");
+    this.load.image("card-0", "/assets/memoryGame/banguela.png");
+    this.load.image("card-1", "/assets/memoryGame/peppa.png");
+    this.load.image("card-2", "/assets/memoryGame/gato.png");
+    this.load.image("card-3", "/assets/memoryGame/papagaio.png");
+    this.load.image("card-4", "/assets/memoryGame/cavalo.png");
   }
 
   create() {
@@ -17,12 +22,13 @@ export class MemoryGameScene extends Phaser.Scene {
   }
 
   update() {
-    if (this.logic.isGameFinished()) {
-      this.scene.start("MemoryEndScene");
-    }
     if (this.logic.isLevelFinished()) {
-      this.scene.restart();
       this.logic.finishLevel();
+      this.scene.restart();
+    }
+    if (this.logic.isGameFinished()) {
+      this.scene.stop(this.scene.key);
+      this.scene.start("MemoryEndScene");
     }
   }
 }

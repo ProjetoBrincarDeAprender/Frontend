@@ -8,7 +8,14 @@ export class MemoryEndScene extends Phaser.Scene {
   }
 
   create() {
-    // Create the end scene UI
+    this.add
+      .text(
+        Math.floor(this.scale.width / 2),
+        Math.floor(this.scale.height / 2),
+        "Jogo Finalizado",
+        { fontSize: "32px", color: "#000" },
+      )
+      .setOrigin(0.5, 0.5);
   }
 
   update() {
