@@ -1,23 +1,33 @@
+import EffectManager from "@/games/common/managers/EffectManager";
 import Phaser from "phaser";
-import { EventBus } from "@/games/common/utils/EventBus";
 
 export default class Vowels extends Phaser.Scene {
+  private effectManager: EffectManager;
+
   constructor() {
     super("vowelsStart");
+    this.effectManager = new EffectManager(this);
   }
 
   preload() {
-    this.load.image("start_screen", "/assets/vowelsGame/start_screen.svg");
+    this.load.image("startScreen", "/assets/vowelsGame/startScreen.png");
   }
 
   create() {
-    // Coloca a imagem centralizada
-    const img = this.add.image(400, 300, "start_screen");
-    img.setDisplaySize(800, 600);
+    const gameWidth = this.cameras.main.width;
+    const gameHeight = this.cameras.main.height;
+    this.add.image(gameWidth / 2, gameHeight / 2, "startScreen");
+    this.add.rectangle(
+      gameWidth / 2,
+      gameHeight / 2,
+      gameWidth,
+      gameHeight,
+      0x000000,
+      0.5,
+    );
 
-    // Texto complementar (para interação acessível)
-    const startText = this.add
-      .text(400, 480, "Clique para começar", {
+    const text = this.add
+      .text(gameWidth / 2, gameHeight / 2, "Clique para começar", {
         fontFamily: "Verdana, Geneva, sans-serif",
         fontSize: "22px",
         color: "#ffffff",
@@ -26,20 +36,8 @@ export default class Vowels extends Phaser.Scene {
       .setOrigin(0.5)
       .setDepth(10);
 
-    // Pequena animação para chamar atenção
-    this.tweens.add({
-      targets: startText,
-      y: 470,
-      duration: 600,
-      yoyo: true,
-      repeat: -1,
-      ease: "Sine.easeInOut",
-    });
+    this.effectManager.floatingElement(text);
 
-    // Emite evento para informar que a cena está pronta
-    EventBus.emit("current-scene-ready", "StartScene pronta");
-
-    // Ao clicar na tela, inicia a cena do jogo
     this.input.once("pointerdown", () => {
       this.scene.start("vowelsGameScene");
     });
