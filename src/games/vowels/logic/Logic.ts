@@ -17,6 +17,8 @@ export default class Logic {
     const levels: Level[] = [];
     levels.push(new Level("abelha", "A"));
     levels.push(new Level("elefante", "E"));
+    levels.push(new Level("ovos", "O"));
+    levels.push(new Level("urso", "U"));
 
     this.levelManager = new LevelManager(levels);
     this.scene = scene;

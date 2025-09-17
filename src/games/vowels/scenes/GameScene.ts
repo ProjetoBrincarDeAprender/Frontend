@@ -24,6 +24,8 @@ export default class GameScene extends Phaser.Scene {
   preload() {
     this.load.image("abelha", "/assets/vowelsGame/abelha.svg");
     this.load.image("elefante", "/assets/vowelsGame/elefante.svg");
+    this.load.image("ovos", "/assets/vowelsGame/ovos.png");
+    this.load.image("urso", "/assets/vowelsGame/urso.svg");
     this.load.image("star", "/assets/common/star.svg");
     this.load.image("defaultButton", "/assets/common/defaultButton.svg");
     this.load.image("hoverButton", "/assets/common/hoverButton.svg");
