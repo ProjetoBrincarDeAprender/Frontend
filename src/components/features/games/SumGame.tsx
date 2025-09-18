@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from "react";
 import Phaser from "phaser";
 import MathGame from "@/games/sum/scenes/GameScene";
 import { useUser } from "@/hooks/User/useUser";
+import { Footer } from "@/components/Footer/Footer";
 
 interface SumGameProps {
   activityId?: number;
@@ -45,9 +46,17 @@ const SumGame: React.FC<SumGameProps> = ({ activityId = 1 }) => {
   }, [user, activityId]);
 
   return (
-    <div style={{ width: "100%", height: "100vh", display: "flex", justifyContent: "center", alignItems: "center" }}>
-      <div id="game-container" style={{ width: "800px", height: "600px" }} />
-    </div>
+   <>
+      <div className="mt-5 mb-20 flex justify-center">
+        {/* <Header /> */}
+        <div
+          id="game-container"
+          className="relative"
+          style={{ width: 800, height: 600 }}
+        ></div>
+      </div>
+      <Footer />
+    </>
   );
 };
 

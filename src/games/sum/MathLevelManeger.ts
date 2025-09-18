@@ -3,15 +3,15 @@ import type { SumGameSession, SumLevelData } from './SumGameData';
 import api from '@/utils/api';
 
 interface UserInteraction {
-  studentId?: number;
-  activityId?: number;
-  questionId?: number;
-  answer: string;
-  isCorrect: boolean;
-  timeSpent: number;
-  attempts: number;
-  neededHint?: boolean;
-  responseDate: Date;
+  aluno_id?: number; // Mudança: usar o nome correto do campo no banco
+  atividade_id?: number; // Mudança: usar o nome correto do campo no banco
+  questao_id?: number; // Mudança: usar o nome correto do campo no banco
+  resposta: string; // Mudança: usar o nome correto do campo no banco
+  esta_correta: boolean; // Mudança: usar o nome correto do campo no banco
+  tempo_resposta: number; // Mudança: usar o nome correto do campo no banco (em segundos)
+  numero_tentativas: number; // Mudança: usar o nome correto do campo no banco
+  usou_ajuda?: boolean; // Mudança: usar o nome correto do campo no banco
+  data_resposta: Date; // Mudança: usar o nome correto do campo no banco
 }
 
 export default class MathLevelManager {
@@ -131,13 +131,14 @@ export class SumGameDataManager {
     try {
       const gameInteraction = this.createGameSummaryInteraction();
       
-      console.log('Enviando interação do jogo:', gameInteraction);
+      // console.log('Dados mapeados para o banco:');
+      // console.log(JSON.stringify(gameInteraction, null, 2));
       
       await api.post('/adaptiveSystem/interaction/register', gameInteraction);
       
-      console.log('Interação do jogo enviada com sucesso');
+      console.log('Dados salvos com sucesso');
     } catch (error) {
-      console.error('Erro ao enviar dados do jogo:', error);
+      console.error(' Erro ao enviar dados do jogo:', error);
       throw error;
     }
   }
@@ -159,15 +160,15 @@ export class SumGameDataManager {
     };
 
     return {
-      studentId: parseInt(this.gameSession.userId),
-      activityId: this.activityId,
-      questionId: 1,
-      answer: JSON.stringify(gameResult),
-      isCorrect: totalCorrectAnswers === this.gameSession.levelsCompleted,
-      timeSpent: Math.round(totalTime * 1000), 
-      attempts: 1, 
-      neededHint: false,
-      responseDate: new Date()
+      aluno_id: parseInt(this.gameSession.userId), 
+      atividade_id: this.activityId,
+      questao_id: 1, 
+      resposta: JSON.stringify(gameResult), 
+      esta_correta: totalCorrectAnswers === this.gameSession.levelsCompleted, 
+      tempo_resposta: Math.round(totalTime), 
+      numero_tentativas: 1, 
+      usou_ajuda: false,
+      data_resposta: new Date()
     };
   }
 
