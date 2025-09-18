@@ -11,14 +11,14 @@ export default class Logic {
   private buttonManager: ButtonManager;
   private effectManager: EffectManager;
   private levelManager: LevelManager;
-  private image?: Phaser.GameObjects.Image;
+  private sequenceText?: Phaser.GameObjects.Text;
 
   constructor(scene: Phaser.Scene) {
     const levels: Level[] = [];
-    levels.push(new Level("abelha", "A"));
-    levels.push(new Level("elefante", "E"));
-    levels.push(new Level("ovos", "O"));
-    levels.push(new Level("urso", "U"));
+    levels.push(new Level("1, 2, 3, _", "4"));
+    levels.push(new Level("2, 4, 6, _", "8"));
+    levels.push(new Level("5, 6, 7, _", "8"));
+    levels.push(new Level("10, 20, 30, _", "40"));
 
     this.levelManager = new LevelManager(levels);
     this.scene = scene;
@@ -37,7 +37,6 @@ export default class Logic {
     );
     if (isCorrect) {
       this.gameStats.addHitTime(timeNow);
-      this.gameStats.resetInitialLevelTime(timeNow);
       this.gameStats.addMissCount();
       this.gameStats.resetActualLevelMisses();
 
@@ -78,26 +77,57 @@ export default class Logic {
   setButtonTexts(): void {
     const answer: string = this.levelManager.getCurrentLevel().getAnswer();
     const buttonsNumber: number = this.buttonManager.getButtons().length;
-    const buttonTexts = this.buttonManager.generateButtonsLetters(
+    const buttonTexts = this.buttonManager.generateButtonsNumbers(
       buttonsNumber,
       answer,
     );
     this.buttonManager.setButtonTexts(buttonTexts);
   }
 
-  createImage(texture: string): void {
-    this.image = this.scene.add.image(400, 300, texture);
+  createSequenceDisplay(): void {
+    // Adicionar fundo colorido suave
+    this.scene.add.rectangle(400, 300, 760, 560, 0xe3f2fd, 0.8);
+
+    // Título mais amigável e colorido
+    this.scene.add
+      .text(400, 120, "Qual número vem depois?", {
+        fontSize: "36px",
+        color: "#1976D2",
+        fontFamily: "Arial Black",
+        stroke: "#FFFFFF",
+        strokeThickness: 4,
+        shadow: {
+          offsetX: 2,
+          offsetY: 2,
+          color: "#000000",
+          blur: 3,
+          fill: true,
+        },
+      })
+      .setOrigin(0.5);
+    // Caixa da sequência mais destacada
+    const sequenceBox = this.scene.add.rectangle(400, 200, 500, 80, 0xffffff);
+    sequenceBox.setStrokeStyle(4, 0x4caf50);
+
+    this.sequenceText = this.scene.add
+      .text(400, 200, "", {
+        fontSize: "52px",
+        color: "#2E7D32",
+        fontFamily: "Arial Black",
+        align: "center",
+      })
+      .setOrigin(0.5);
   }
 
-  setImageTexture(texture: string): void {
-    if (this.image) this.image.setTexture(texture);
+  setSequenceText(sequence: string): void {
+    if (this.sequenceText) this.sequenceText.setText(sequence);
   }
 
   createButtons(): void {
     const buttonPositions: { x: number; y: number }[] = [
-      { x: 200, y: 500 },
-      { x: 400, y: 500 },
-      { x: 600, y: 500 },
+      { x: 250, y: 350 },
+      { x: 400, y: 350 },
+      { x: 550, y: 350 },
     ];
     const buttonTextures: string[] = [
       "defaultButton",
@@ -105,9 +135,22 @@ export default class Logic {
       "clickedButton",
     ];
     this.buttonManager.createButtons(buttonPositions, buttonTextures);
+
+    // Adicionar instrução visual para os botões
+    this.scene.add
+      .text(400, 290, "Clique no número correto:", {
+        fontSize: "24px",
+        color: "#FF6F00",
+        fontFamily: "Arial",
+      })
+      .setOrigin(0.5);
   }
 
   getButtons(): Button[] {
     return this.buttonManager.getButtons();
+  }
+
+  resetInitialLevelTime(newTime: number = 0): void {
+    this.gameStats.resetInitialLevelTime(newTime);
   }
 }

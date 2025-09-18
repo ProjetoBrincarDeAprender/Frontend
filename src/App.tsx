@@ -17,6 +17,7 @@ import { NotFound } from "./pages/Errors/NotFound/NotFound";
 import { Calm } from "./pages/Calm/Calm";
 import VowelsGame from "./components/features/games/VowelsGame";
 import SumGame from "./components/features/games/SumGame";
+import NumbersGame from "./components/features/games/NumbersGame";
 
 function App() {
   return (
@@ -47,7 +48,7 @@ function App() {
       <Route path="/games">
         <Route path="vowels" element={<VowelsGame />} />
         <Route path="sum" element={<SumGame />} />   
-
+        <Route path="numbers" element={<NumbersGame />} />
       </Route>
 
       <Route element={<AuthGuard requireAuth />}>
