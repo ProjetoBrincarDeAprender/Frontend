@@ -29,6 +29,8 @@ export default class MathGame extends Phaser.Scene {
     this.load.image("um", "/assets/sumGame/um.png");
     this.load.image("dois", "/assets/sumGame/dois.png");
     this.load.image("tres", "/assets/sumGame/tres.png");
+    this.load.image("quatro", "/assets/sumGame/quatro.png");
+    this.load.image("cinco", "/assets/sumGame/cinco.png");
     this.load.image("star", "/assets/common/star.svg");
   }
 
@@ -37,7 +39,7 @@ export default class MathGame extends Phaser.Scene {
       const levels: MathLevel[] = [];
       for (let i = 0; i < 5; i++) {
         levels.push(
-          new MathLevel(Phaser.Math.Between(1, 3), Phaser.Math.Between(1, 3))
+          new MathLevel(Phaser.Math.Between(1, 5), Phaser.Math.Between(1, 5))
         );
       }
       this.logic = new MathLogic(this, levels, this.userId, this.activityId);
@@ -233,6 +235,8 @@ export default class MathGame extends Phaser.Scene {
       1: 'um',
       2: 'dois',
       3: 'tres',
+      4: 'quatro',
+      5: 'cinco',
     };
     
     return numbers.map(num => numberToImageKey[num] || null);
