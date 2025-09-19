@@ -1,6 +1,7 @@
 import EffectManager from "@/games/common/managers/EffectManager";
 import GameStats from "@/games/common/managers/GameStats";
 import LevelManager from "@/games/common/managers/LevelManager";
+import api from "@/utils/api";
 import { MemoryGameLevel } from "../utils/memoryGameLevel";
 
 export class MemoryGameLogic {
@@ -202,6 +203,36 @@ export class MemoryGameLogic {
     this.gameStats.addMissCount();
     this.gameStats.resetActualLevelMisses();
     this.LevelManager.nextLevel();
+    try {
+      const sendData = async () => {
+        const questaoIds: { [key: number]: number } = { 0: 2, 1: 3, 2: 4 };
+
+        const levelData = {
+          activityId: 9,
+          questionId: questaoIds[this.LevelManager.getCurrentIndex()],
+          isCorrect: true,
+          answer: "ok",
+          timeSpent: levelEndTime - this.levelStartTime,
+          attempts: this.gameStats.missCounts[0],
+          responseDate: this.scene.time.now,
+        };
+
+        const response = await api.post(
+          "/adaptiveSystem/interaction/register",
+          levelData,
+          {},
+        );
+
+        if (response.status === 201) {
+          console.log("Data sent successfully");
+          console.log(response);
+        }
+      };
+
+      sendData();
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   public isGameFinished() {
