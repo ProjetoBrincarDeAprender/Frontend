@@ -1,5 +1,7 @@
 import { Route, Routes } from "react-router";
 import { MemoryGame } from "./components/features/games/MemoryGame";
+import NumbersGame from "./components/features/games/NumbersGame";
+import SumGame from "./components/features/games/SumGame";
 import VowelsGame from "./components/features/games/VowelsGame";
 import { AuthGuard } from "./guards/AuthGuard";
 import { Calm } from "./pages/Calm/Calm";
@@ -47,6 +49,8 @@ function App() {
         <Route index element={<Games />} />
         <Route path="vowels" element={<VowelsGame />} />
         <Route path="memory" element={<MemoryGame />} />
+        <Route path="sum" element={<SumGame />} />
+        <Route path="numbers" element={<NumbersGame />} />
       </Route>
 
       <Route element={<AuthGuard requireAuth />}>

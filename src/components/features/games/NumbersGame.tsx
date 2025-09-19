@@ -1,17 +1,16 @@
 import { Footer } from "@/components/Footer/Footer";
 import { EventBus } from "@/games/common/utils/EventBus";
-import StartScene from "@/games/vowels/scenes/StartScene";
-import Credits from "@/games/vowels/scenes/CreditsScene";
-import GameScene from "@/games/vowels/scenes/GameScene";
+import CreditsScene from "@/games/numbers/scenes/CreditsScene";
+import GameScene from "@/games/numbers/scenes/GameScene";
 import Phaser from "phaser";
 import { useEffect, useRef } from "react";
 
-export interface IRefVowelsGame {
+export interface IRefNumbersGame {
   game: Phaser.Game | null;
   scene: Phaser.Scene | null;
 }
 
-const VowelsGame: React.FC = () => {
+const NumbersGame: React.FC = () => {
   const gameRef = useRef<Phaser.Game | null>(null);
 
   useEffect(() => {
@@ -19,8 +18,8 @@ const VowelsGame: React.FC = () => {
       type: Phaser.AUTO,
       width: 800,
       height: 600,
-      scene: [StartScene, GameScene, Credits],
-      parent: "game-container",
+      scene: [GameScene, CreditsScene], // Removido StartScene
+      parent: "numbers-game-container",
       backgroundColor: "#ffffff",
     };
 
@@ -42,7 +41,7 @@ const VowelsGame: React.FC = () => {
       <div className="mt-5 mb-20 flex justify-center">
         {/* <Header /> */}
         <div
-          id="game-container"
+          id="numbers-game-container"
           className="relative"
           style={{ width: 800, height: 600 }}
         ></div>
@@ -52,4 +51,4 @@ const VowelsGame: React.FC = () => {
   );
 };
 
-export default VowelsGame;
+export default NumbersGame;

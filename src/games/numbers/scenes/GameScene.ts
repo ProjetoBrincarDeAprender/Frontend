@@ -2,7 +2,7 @@ import Logic from "../logic/Logic";
 import Phaser from "phaser";
 
 /**
- * Cena principal do jogo das vogais.
+ * Cena principal do jogo de sequência numérica.
  * Gerencia ciclo de vida, integração com lógica e recursos visuais.
  */
 export default class GameScene extends Phaser.Scene {
@@ -10,11 +10,11 @@ export default class GameScene extends Phaser.Scene {
   private logic: Logic;
 
   /**
-   * Construtor da cena do jogo das vogais.
+   * Construtor da cena do jogo de sequência numérica.
    * Inicializa lógica do jogo.
    */
   constructor() {
-    super("vowelsGameScene");
+    super("numbersGameScene");
     this.logic = new Logic(this);
   }
 
@@ -22,10 +22,6 @@ export default class GameScene extends Phaser.Scene {
    * Pré-carrega os recursos visuais necessários para o jogo.
    */
   preload() {
-    this.load.image("abelha", "/assets/vowelsGame/abelha.svg");
-    this.load.image("elefante", "/assets/vowelsGame/elefante.svg");
-    this.load.image("ovos", "/assets/vowelsGame/ovos.png");
-    this.load.image("urso", "/assets/vowelsGame/urso.svg");
     this.load.image("star", "/assets/common/star.svg");
     this.load.image("defaultButton", "/assets/common/defaultButton.svg");
     this.load.image("hoverButton", "/assets/common/hoverButton.svg");
@@ -36,11 +32,11 @@ export default class GameScene extends Phaser.Scene {
    * Cria elementos visuais e inicia o primeiro nível do jogo.
    */
   create() {
-    this.logic.createImage(this.logic.accessCurrentLevel().getName());
+    this.logic.createSequenceDisplay();
     this.logic.createButtons();
     this.setupLevel();
 
-    console.log("Jogo das vogais carregado!");
+    console.log("Jogo de sequência numérica carregado!");
   }
 
   /**
@@ -49,11 +45,14 @@ export default class GameScene extends Phaser.Scene {
   update() {}
 
   /**
-   * Configura o nível atual: atualiza imagem, textos dos botões e listeners.
+   * Configura o nível atual: atualiza sequência, textos dos botões e listeners.
    * Reinicia listeners dos botões para evitar duplicidade.
    */
   setupLevel() {
-    this.logic.setImageTexture(this.logic.accessCurrentLevel().getName());
+    // Inicializa o tempo do nível atual
+    this.logic.resetInitialLevelTime(this.time.now);
+
+    this.logic.setSequenceText(this.logic.accessCurrentLevel().getName());
     this.logic.setButtonTexts();
 
     this.logic.getButtons().forEach((button) => {
@@ -65,7 +64,7 @@ export default class GameScene extends Phaser.Scene {
           this.logic.buttonSuccessEffect(button, "star");
           this.time.delayedCall(1000, () => {
             if (result.finished) {
-              this.scene.start("vowelsCredits");
+              this.scene.start("numbersCredits");
             } else {
               this.setupLevel();
             }

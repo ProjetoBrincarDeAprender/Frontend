@@ -1,7 +1,8 @@
 [
   {
-    "title": "Jogo da Velha",
-    "gameIdUrl": "1"
+    "title": "Jogo da Soma",
+    "gameIdUrl": "sum",
+    "image": "/assets/sumGame/image.png"
   },
   {
     "title": "Sudoku",
