@@ -3,6 +3,7 @@ import { Header } from "@/components/Header/Header";
 import { EventBus } from "@/games/common/utils/EventBus";
 import { MemoryEndScene } from "@/games/memory/scenes/EndScene";
 import { MemoryGameScene } from "@/games/memory/scenes/GameScene";
+import { MemoryLevelCompleteScene } from "@/games/memory/scenes/LevelCompleteScene";
 import { MemoryMenuScene } from "@/games/memory/scenes/MenuScene";
 import Phaser from "phaser";
 import { useEffect, useRef } from "react";
@@ -20,9 +21,14 @@ export const MemoryGame = () => {
       type: Phaser.AUTO,
       width: 800,
       height: 600,
-      scene: [MemoryMenuScene, MemoryGameScene, MemoryEndScene],
+      scene: [
+        MemoryMenuScene,
+        MemoryGameScene,
+        MemoryLevelCompleteScene,
+        MemoryEndScene,
+      ],
       parent: "game-container",
-      backgroundColor: "#ffffff",
+      backgroundColor: "#96D6F3",
     };
 
     gameRef.current = new Phaser.Game(config);

@@ -27,4 +27,8 @@ export default class LevelManager<T extends Level> {
   getCurrentIndex(): number {
     return this.currentIndex;
   }
+
+  reset(): void {
+    this.currentIndex = 0;
+  }
 }

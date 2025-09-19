@@ -1,13 +1,25 @@
 import { MemoryGameLogic } from "../logic/MemoryGameLogic";
 
 export class MemoryGameScene extends Phaser.Scene {
-  private logic: MemoryGameLogic;
+  private logic!: MemoryGameLogic;
 
   constructor() {
     super({ key: "MemoryGameScene" });
-    this.logic = new MemoryGameLogic(this);
   }
 
+  init(data: { resetGame?: boolean } = {}) {
+    this.logic = new MemoryGameLogic(this);
+
+    if (data.resetGame) {
+      this.logic.resetGame();
+      this.registry.set("currentLevel", 0);
+    } else {
+      const savedLevel = this.registry.get("currentLevel");
+      if (savedLevel !== undefined && savedLevel > 0) {
+        this.logic.setCurrentLevelFromRegistry(savedLevel);
+      }
+    }
+  }
   preload() {
     this.load.image("star", "/assets/common/star.svg");
     this.load.image("card-0", "/assets/memoryGame/banguela.png");
@@ -18,17 +30,28 @@ export class MemoryGameScene extends Phaser.Scene {
   }
 
   create() {
+    this.logic.initializeLevel();
     this.logic.createCards();
   }
 
   update() {
     if (this.logic.isLevelFinished()) {
+      const currentLevel = this.logic.getCurrentLevel();
+
       this.logic.finishLevel();
-      this.scene.restart();
-    }
-    if (this.logic.isGameFinished()) {
-      this.scene.stop(this.scene.key);
-      this.scene.start("MemoryEndScene");
+
+      const isGameFinished = this.logic.isGameFinished();
+
+      this.registry.set("currentLevel", this.logic.getCurrentLevel());
+
+      if (isGameFinished) {
+        this.scene.start("MemoryEndScene");
+      } else {
+        this.scene.start("MemoryLevelCompleteScene", {
+          level: currentLevel,
+          isLastLevel: false,
+        });
+      }
     }
   }
 }
