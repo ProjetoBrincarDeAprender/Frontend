@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 
 import { Card, type CardProps } from "../../components/utils/Card/Card";
+import { useNavigate } from "react-router";
 
 import gamesData from "./games.json";
 
@@ -10,6 +11,8 @@ import { BiSearch } from "react-icons/bi";
 import "./Games.css";
 
 export function Games() {
+  const navigate = useNavigate();
+  const gameIdUrl = window.location.pathname.split("/").pop() || "";
   const [games, setGames] = useState<CardProps[]>([]);
 
   useEffect(() => {
@@ -17,7 +20,13 @@ export function Games() {
   }, []);
 
   const handleSubmitSearch = () => {
-    return null;
+     if (gameIdUrl === "sum") {
+      navigate("/games/sum");
+    } else if (gameIdUrl === "vowels") {
+      navigate("/games/vowels");
+    } else {
+      navigate(`/games/${gameIdUrl}`);
+    }
   };
 
   return (
