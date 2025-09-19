@@ -1,16 +1,16 @@
+import ButtonManager from "@/games/common/managers/ButtonManager";
+import Button from "@/games/common/models/Button";
+import EffectManager from "../../common/managers/EffectManager";
 import GameStats from "../../common/managers/GameStats";
 import LevelManager from "../../common/managers/LevelManager";
 import Level from "../../common/models/Level";
-import EffectManager from "../../common/managers/EffectManager";
-import Button from "@/games/common/models/Button";
-import ButtonManager from "@/games/common/managers/ButtonManager";
 
 export default class Logic {
   private scene: Phaser.Scene;
   private gameStats: GameStats;
   private buttonManager: ButtonManager;
   private effectManager: EffectManager;
-  private levelManager: LevelManager;
+  private levelManager: LevelManager<Level>;
   private sequenceText?: Phaser.GameObjects.Text;
 
   constructor(scene: Phaser.Scene) {
