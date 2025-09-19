@@ -14,8 +14,10 @@ export default class ButtonManager {
   createButtons(
     positions: { x: number; y: number }[],
     textures: string[],
+    texts?: string[],
+    fontSizes?: number[],
   ): void {
-    this.buttons = positions.map((pos) => {
+    this.buttons = positions.map((pos, index) => {
       const button = new Button(
         this.scene,
         pos.x,
@@ -23,6 +25,8 @@ export default class ButtonManager {
         textures[0], // Imagem padrão (defaultImage)
         textures[1], // Imagem hover (hoverImage)
         textures[2], // Imagem do clique (clickImage)
+        texts ? texts[index] : "", // Texto do botão (buttonText)
+        fontSizes ? fontSizes[index] : undefined, // Tamanho da fonte padrão (defaultFontSize)
       );
       this.scene.add.existing(button);
       return button;

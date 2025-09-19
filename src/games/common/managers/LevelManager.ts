@@ -1,10 +1,10 @@
 import Level from "../models/Level";
 
-export default class LevelManager {
-  private levels: Level[];
+export default class LevelManager<T extends Level> {
+  private levels: T[];
   private currentIndex: number;
 
-  constructor(levels: Level[]) {
+  constructor(levels: T[]) {
     this.levels = levels;
     this.currentIndex = 0;
   }
@@ -20,11 +20,15 @@ export default class LevelManager {
     return false;
   }
 
-  getCurrentLevel(): Level {
+  getCurrentLevel(): T {
     return this.levels[this.currentIndex];
   }
 
   getCurrentIndex(): number {
     return this.currentIndex;
+  }
+
+  reset(): void {
+    this.currentIndex = 0;
   }
 }
