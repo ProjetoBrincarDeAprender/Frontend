@@ -5,12 +5,12 @@
     "image": "/assets/sumGame/image.png"
   },
   {
-    "title": "Sudoku",
-    "gameIdUrl": "2"
+    "title": "Sequência de Números",
+    "gameIdUrl": "numbers"
   },
   {
-    "title": "Bomberman",
-    "gameIdUrl": "3"
+    "title": "Jogo das Vogais",
+    "gameIdUrl": "vowels"
   },
   {
     "title": "Top Gear",
