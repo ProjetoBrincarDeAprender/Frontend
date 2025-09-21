@@ -1,7 +1,9 @@
+import api from "@/utils/api";
 import { MemoryGameLogic } from "../logic/MemoryGameLogic";
 
 export class MemoryGameScene extends Phaser.Scene {
   private logic!: MemoryGameLogic;
+  private gameDataTimer?: Phaser.Time.TimerEvent;
 
   constructor() {
     super({ key: "MemoryGameScene" });
@@ -32,11 +34,67 @@ export class MemoryGameScene extends Phaser.Scene {
   create() {
     this.logic.initializeLevel();
     this.logic.createCards();
+    this.startGameDataTimer();
+  }
+
+  private startGameDataTimer() {
+    // Remove timer anterior se existir
+    if (this.gameDataTimer) {
+      this.gameDataTimer.destroy();
+    }
+
+    // Criar timer que executa a cada 10 segundos
+    this.gameDataTimer = this.time.addEvent({
+      delay: 10000, // 10 segundos em milissegundos
+      callback: this.sendGameData,
+      callbackScope: this,
+      loop: true,
+    });
+  }
+
+  private async sendGameData() {
+    try {
+      const attempts = this.logic.getCurrentAttempts();
+      const levelTime = this.logic.getCurrentLevelTime();
+      const currentLevel = this.logic.getCurrentLevel();
+
+      const gameData = {
+        activityId: 1,
+        questionId: currentLevel + 1,
+        attempts: attempts,
+        timeSpent: levelTime,
+        responseDate: this.time.now,
+        isCorrect: false,
+        answer: "playing",
+      };
+
+      console.log("Enviando dados do jogo:", gameData);
+
+      const response = await api.post(
+        "/adaptiveSystem/interaction/register",
+        gameData,
+      );
+
+      if (response.status === 201) {
+        console.log("Dados enviados com sucesso");
+        console.log("Resposta do servidor:", response.data);
+      } else {
+        console.error("Erro ao enviar dados:", response.status);
+      }
+    } catch (error) {
+      console.error("Erro ao enviar dados do jogo:", error);
+    }
   }
 
   update() {
     if (this.logic.isLevelFinished()) {
-      const currentLevel = this.logic.getCurrentLevel();
+      const completedLevel = this.logic.getCurrentLevel();
+
+      // Limpar timer quando o nível termina
+      if (this.gameDataTimer) {
+        this.gameDataTimer.destroy();
+        this.gameDataTimer = undefined;
+      }
 
       this.logic.finishLevel();
 
@@ -48,10 +106,18 @@ export class MemoryGameScene extends Phaser.Scene {
         this.scene.start("MemoryEndScene");
       } else {
         this.scene.start("MemoryLevelCompleteScene", {
-          level: currentLevel,
+          level: completedLevel,
           isLastLevel: false,
         });
       }
+    }
+  }
+
+  shutdown() {
+    // Limpar timer quando a cena é encerrada
+    if (this.gameDataTimer) {
+      this.gameDataTimer.destroy();
+      this.gameDataTimer = undefined;
     }
   }
 }
