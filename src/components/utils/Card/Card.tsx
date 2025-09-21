@@ -16,18 +16,18 @@ export function Card({
 }: CardProps) {
   return (
     <div
-      className={`card-${variant} z-2 max-w-80 p-2 font-2 font-medium text-center m-auto flex flex-col gap-6 rounded-4xl shadow-2xl`}
+      className={`card-${variant} font-2 z-2 m-auto flex max-w-80 flex-col gap-6 rounded-4xl p-2 text-center font-medium shadow-2xl`}
     >
-      <header className="rounded-3xl overflow-hidden">
+      <header className="overflow-hidden rounded-3xl">
         <img src={image} alt="game logo" />
       </header>
       <main className="flex flex-col gap-4 py-4">
         <h1 className="text-3xl">{title}</h1>
         <a
           href={
-            variant === "game" ? `games/${gameIdUrl}` : `skills/${gameIdUrl}`
+            variant === "game" ? `/games/${gameIdUrl}` : `skills/${gameIdUrl}`
           }
-          className="m-auto px-4 py-2 rounded-xl transition mb-8"
+          className="m-auto mb-8 rounded-xl px-4 py-2 transition"
         >
           Jogar
         </a>
