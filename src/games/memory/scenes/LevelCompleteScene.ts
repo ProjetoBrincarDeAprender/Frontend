@@ -145,7 +145,8 @@ export class MemoryLevelCompleteScene extends Phaser.Scene {
         yoyo: true,
         ease: "Power2.easeInOut",
         onComplete: () => {
-          this.scene.start("MemoryGameScene");
+          this.registry.set("resetGame", false);
+          this.scene.start("MemoryGameScene", { resetGame: false });
         },
       });
     });

@@ -5,8 +5,9 @@
     "image": "/assets/sumGame/image.png"
   },
   {
-    "title": "Sudoku",
-    "gameIdUrl": "2"
+    "title": "Jogo da Memoria",
+    "gameIdUrl": "memory",
+    "image": "/assets/memoryGame/image.png"
   },
   {
     "title": "Bomberman",
