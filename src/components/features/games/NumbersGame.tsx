@@ -2,6 +2,7 @@ import { Footer } from "@/components/Footer/Footer";
 import { EventBus } from "@/games/common/utils/EventBus";
 import CreditsScene from "@/games/numbers/scenes/CreditsScene";
 import GameScene from "@/games/numbers/scenes/GameScene";
+import StartScene from "@/games/numbers/scenes/StartScene";
 import Phaser from "phaser";
 import { useEffect, useRef } from "react";
 
@@ -18,7 +19,7 @@ const NumbersGame: React.FC = () => {
       type: Phaser.AUTO,
       width: 800,
       height: 600,
-      scene: [GameScene, CreditsScene], // Removido StartScene
+      scene: [StartScene, GameScene, CreditsScene], // StartScene como primeira cena
       parent: "numbers-game-container",
       backgroundColor: "#ffffff",
     };
