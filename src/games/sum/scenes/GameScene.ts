@@ -1,6 +1,7 @@
 import Phaser from "phaser";
-import MathLevel from "../MathLevel";
+import MathLevel, { LevelType } from "../MathLevel";
 import MathLogic from "../logic/logic";
+import Button from "../../common/models/Button";
 
 export default class MathGame extends Phaser.Scene {
   private logic!: MathLogic;
@@ -9,6 +10,7 @@ export default class MathGame extends Phaser.Scene {
   private numberImages: Phaser.GameObjects.GameObject[] = [];
   private userId: string = "default_user";
   private activityId?: number;
+  private choiceButtons: Button[] = [];
 
   constructor() {
     super("MathGame");
@@ -32,16 +34,35 @@ export default class MathGame extends Phaser.Scene {
     this.load.image("quatro", "/assets/sumGame/quatro.png");
     this.load.image("cinco", "/assets/sumGame/cinco.png");
     this.load.image("star", "/assets/common/star.svg");
+    this.load.image("defaultButton", "/assets/common/defaultButton.svg");
+    this.load.image("hoverButton", "/assets/common/hoverButton.svg");
+    this.load.image("clickedButton", "/assets/common/clickedButton.svg");
   }
 
   create() {
     if (!this.logic) {
       const levels: MathLevel[] = [];
+      
       for (let i = 0; i < 5; i++) {
         levels.push(
-          new MathLevel(Phaser.Math.Between(1, 5), Phaser.Math.Between(1, 5))
+          new MathLevel(
+            Phaser.Math.Between(1, 3), 
+            Phaser.Math.Between(1, 5),
+            LevelType.MULTIPLE_CHOICE
+          )
         );
       }
+      
+      for (let i = 0; i < 5; i++) {
+        levels.push(
+          new MathLevel(
+            Phaser.Math.Between(1, 5), 
+            Phaser.Math.Between(1, 5),
+            LevelType.INPUT
+          )
+        );
+      }
+      
       this.logic = new MathLogic(this, levels, this.userId, this.activityId);
       this.createStartScene();
     } else {
@@ -64,31 +85,46 @@ export default class MathGame extends Phaser.Scene {
     }).setOrigin(0.5); 
     
     title.active = true;
+    
+    const startButtonContainer = this.add.container(400, 500);
+    
     const startButtonBg = this.add.graphics();
     startButtonBg.fillStyle(0x228b22, 1);
-    startButtonBg.fillRoundedRect(300, 470, 200, 60, 15);
+    startButtonBg.fillRoundedRect(-100, -30, 200, 60, 15);
 
-    const startButton = this.add.text(400, 500, "Jogar", {
+    const startButton = this.add.text(0, 0, "Jogar", {
       fontSize: "32px",
       color: "#fff",
       fontFamily: "Baloobhai",
-    }).setOrigin(0.5).setInteractive();
+    }).setOrigin(0.5);
 
-    startButton.on("pointerover", () => {
+    const clickArea = this.add.rectangle(0, 0, 200, 60, 0x000000, 0)
+      .setInteractive({ cursor: 'pointer' });
+
+    startButtonContainer.add([startButtonBg, startButton, clickArea]);
+
+    clickArea.on("pointerover", () => {
       startButton.setStyle({ color: "#ff0" }); 
       startButtonBg.clear();
       startButtonBg.fillStyle(0x2e8b57, 1); 
-      startButtonBg.fillRoundedRect(300, 470, 200, 60, 15);
+      startButtonBg.fillRoundedRect(-100, -30, 200, 60, 15);
+      startButtonContainer.setScale(1.05);
     });
 
-    startButton.on("pointerout", () => {
+    clickArea.on("pointerout", () => {
       startButton.setStyle({ color: "#fff" });
       startButtonBg.clear();
       startButtonBg.fillStyle(0x228b22, 1);
-      startButtonBg.fillRoundedRect(300, 470, 200, 60, 15);
+      startButtonBg.fillRoundedRect(-100, -30, 200, 60, 15);
+      startButtonContainer.setScale(1.0);
     });
 
-    startButton.on("pointerdown", () => {
+    clickArea.on("pointerdown", () => {
+      startButtonContainer.setScale(0.95);
+    });
+
+    clickArea.on("pointerup", () => {
+      startButtonContainer.setScale(1.05); 
       this.scene.restart();
       this.createLevelScene();
     });
@@ -96,13 +132,13 @@ export default class MathGame extends Phaser.Scene {
 
   createLevelScene() {
     this.clearNumberImages();
+    this.clearChoiceButtons(); 
     
     const currentLevel = this.logic.getCurrentLevel();
     if (!currentLevel) {
       console.error("Nível atual não encontrado");
       return;
     }
-
 
     this.add.image(340, 330, "backgroundStart").setScale(1.5);
     this.add.image(350, 310, "sapoFala").setScale(0.8);
@@ -121,6 +157,54 @@ export default class MathGame extends Phaser.Scene {
       fontStyle: "bold",
     });
 
+    if (currentLevel.isMultipleChoice()) {
+      this.createMultipleChoiceInterface(currentLevel);
+    } else {
+      this.createInputInterface();
+    }
+  }
+
+  private createMultipleChoiceInterface(currentLevel: MathLevel) {
+    const choices = currentLevel.getChoices();
+    if (!choices) return;
+
+    // this.add.text(300, 380, "Escolha a resposta:", {
+    //   fontSize: "32px",
+    //   color: "#000",
+    //   fontStyle: "bold",
+    // }).setOrigin(0.5);
+
+    // Criar 3 botões em linha
+    const buttonPositions = [
+      { x: 200, y: 480 },
+      { x: 400, y: 480 },
+      { x: 600, y: 480 }
+    ];
+
+    this.choiceButtons = [];
+    
+    choices.forEach((choice, index) => {
+      const button = new Button(
+        this,
+        buttonPositions[index].x,
+        buttonPositions[index].y,
+        "defaultButton",
+        "hoverButton", 
+        "clickedButton",
+        choice.toString(),
+        48
+      );
+
+      this.add.existing(button);
+      this.choiceButtons.push(button);
+
+      button.on("pointerdown", () => {
+        this.handleMultipleChoiceAnswer(choice, button);
+      });
+    });
+  }
+
+  private createInputInterface() {
     this.add.text(150, 480, "Resposta: ", {
       fontSize: "38px",
       color: "#000",
@@ -145,6 +229,11 @@ export default class MathGame extends Phaser.Scene {
         this.handleAnswer();
       }
     });
+  }
+
+  private clearChoiceButtons() {
+    this.choiceButtons.forEach(button => button.destroy());
+    this.choiceButtons = [];
   }
 
   private clearNumberImages() {
@@ -242,14 +331,77 @@ export default class MathGame extends Phaser.Scene {
     return numbers.map(num => numberToImageKey[num] || null);
   }
 
+  handleMultipleChoiceAnswer(selectedAnswer: number, clickedButton: Button) {
+    const result = this.logic.checkAnswer(selectedAnswer);
+    
+    console.log(`Resposta ${selectedAnswer}: ${result.correct ? 'CORRETA' : 'INCORRETA'}`);
+    
+    if (result.correct) {
+      this.showButtonEffect(clickedButton, true);
+      
+      const levelStats = this.logic.getCurrentLevelStats();
+      console.log('Estatísticas do nível atual:', levelStats);
+      
+      this.time.delayedCall(1500, () => {
+        if (!result.finished) {
+          this.scene.restart();
+          this.clearNumberImages();
+          this.clearChoiceButtons();
+        } else {
+          const gameStats = this.logic.getGameStats();
+          console.log('Estatísticas finais do jogo:', gameStats);
+          
+          this.showEndScene();
+          this.clearNumberImages();
+          this.clearChoiceButtons();
+        }
+      });
+    } else {
+      this.showButtonEffect(clickedButton, false);
+    }
+  }
+
+  private showButtonEffect(button: Button, isCorrect: boolean) {
+    if (isCorrect) {
+      button.getButtonText().setTint(0x00ff00);
+      
+      const star = this.add.image(button.x, button.y - 50, "star");
+      star.setScale(0.8);
+      this.tweens.add({
+        targets: star,
+        y: button.y - 100,
+        alpha: 0,
+        duration: 1000,
+        onComplete: () => star.destroy()
+      });
+    } else {
+      button.getButtonText().setTint(0xff0000);
+      
+      this.tweens.add({
+        targets: button,
+        x: button.x - 10,
+        duration: 50,
+        yoyo: true,
+        repeat: 3,
+        onComplete: () => {
+          this.time.delayedCall(500, () => {
+            button.getButtonText().clearTint();
+          });
+        }
+      });
+    }
+  }
+
   handleAnswer() {
     const result = this.logic.checkAnswer(parseInt(this.inputText));
+    
+    console.log(`Resposta ${this.inputText}: ${result.correct ? 'CORRETA' : 'INCORRETA'}`);
     
     if (result.correct) {
       this.logic.successEffect(this.answerText);
       
       const levelStats = this.logic.getCurrentLevelStats();
-      console.log('Estatísticas do nível:', levelStats);
+      console.log('Estatísticas do nível atual:', levelStats);
       
       this.time.delayedCall(1500, () => {
         if (!result.finished) {
@@ -258,8 +410,7 @@ export default class MathGame extends Phaser.Scene {
           this.answerText.setText(" ");
           this.clearNumberImages();
         } else {
-          const gameStats = this.logic.getGameStats();
-          console.log('Estatísticas finais do jogo:', gameStats);
+          // const gameStats = this.logic.getGameStats();
           
           this.showEndScene();
           this.clearNumberImages();
@@ -274,8 +425,6 @@ export default class MathGame extends Phaser.Scene {
 
   showEndScene() {
     this.clearNumberImages();
-
-    // const gameStats = this.logic.getGameStats();
     
     this.cameras.main.setBackgroundColor("#AED3E3");
     this.children.removeAll();
@@ -299,20 +448,79 @@ export default class MathGame extends Phaser.Scene {
       color: "#000",
     }).setOrigin(0.5);
 
-    // Estatísticas finais
-    // this.add.text(400, 300, `Tempo total: ${gameStats.totalTime.toFixed(1)}s`, {
-    //   fontSize: "20px",
-    //   color: "#000",
-    // }).setOrigin(0.5);
+    this.add.image(200, 150, "star").setScale(0.3).setTint(0xFFD700);
+    this.add.image(600, 150, "star").setScale(0.3).setTint(0xFFD700);
+    this.add.image(150, 250, "star").setScale(0.2).setTint(0xFFD700);
+    this.add.image(650, 250, "star").setScale(0.2).setTint(0xFFD700);
 
-    // this.add.text(400, 330, `Erros totais: ${gameStats.totalWrongAnswers}`, {
-    //   fontSize: "20px",
-    //   color: "#000",
-    // }).setOrigin(0.5);
+    const backButtonContainer = this.add.container(400, 450);
+    
+    const backButtonBg = this.add.graphics();
+    backButtonBg.fillStyle(0x228b22, 1); 
+    backButtonBg.lineStyle(4, 0xFFFFFF, 1);
+    backButtonBg.fillRoundedRect(-120, -35, 240, 70, 20);
+    backButtonBg.strokeRoundedRect(-120, -35, 240, 70, 20);
 
-    // this.add.text(400, 360, `Níveis completados: ${gameStats.levelsCompleted}`, {
-    //   fontSize: "20px",
-    //   color: "#000",
-    // }).setOrigin(0.5);
+    const backButtonText = this.add.text(0, 0, "🎮 Mais Jogos", {
+      fontSize: "28px",
+      color: "#fff",
+      fontFamily: "Baloobhai",
+    }).setOrigin(0.5);
+
+    const backClickArea = this.add.rectangle(0, 0, 240, 70, 0x000000, 0)
+      .setInteractive({ cursor: 'pointer' });
+
+    backButtonContainer.add([backButtonBg, backButtonText, backClickArea]);
+
+    backClickArea.on("pointerover", () => {
+      backButtonText.setStyle({ color: "#FFD700" });
+      backButtonBg.clear();
+      backButtonBg.fillStyle(0x228b22, 1); 
+      backButtonBg.lineStyle(4, 0xFFD700, 1);
+      backButtonBg.fillRoundedRect(-120, -35, 240, 70, 20);
+      backButtonBg.strokeRoundedRect(-120, -35, 240, 70, 20);
+      backButtonContainer.setScale(1.1);
+      
+      this.tweens.add({
+        targets: backButtonContainer,
+        angle: { from: -2, to: 2 },
+        duration: 200,
+        yoyo: true,
+        repeat: -1
+      });
+    });
+
+    backClickArea.on("pointerout", () => {
+      backButtonText.setStyle({ color: "#fff" });
+      backButtonBg.clear();
+      backButtonBg.fillStyle(0x228b22, 1);
+      backButtonBg.lineStyle(4, 0xFFFFFF, 1);
+      backButtonBg.fillRoundedRect(-120, -35, 240, 70, 20);
+      backButtonBg.strokeRoundedRect(-120, -35, 240, 70, 20);
+      backButtonContainer.setScale(1.0);
+      
+      this.tweens.killTweensOf(backButtonContainer);
+      backButtonContainer.setAngle(0);
+    });
+
+    backClickArea.on("pointerdown", () => {
+      backButtonContainer.setScale(0.95);
+    });
+
+    backClickArea.on("pointerup", () => {
+      backButtonContainer.setScale(1.1);
+      
+      this.tweens.add({
+        targets: backButtonContainer,
+        scaleX: 0,
+        scaleY: 0,
+        angle: 360,
+        duration: 500,
+        ease: 'Back.easeIn',
+        onComplete: () => {
+          window.location.href = '/games';
+        }
+      });
+    });
   }
 }
