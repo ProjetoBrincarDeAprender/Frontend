@@ -5,28 +5,37 @@ export default class StartScene extends Phaser.Scene {
     super("numbersStart");
   }
 
-  preload() {}
+  preload() {
+    this.load.image("numbersStartBg", "/assets/numbersGame/startScreen.png");
+  }
 
   create() {
+    // Fundo espacial
+    this.add.image(400, 300, "numbersStartBg");
+
+    // Texto principal centralizado
     this.add
-      .text(400, 300, "Jogo de Sequência Numérica", {
-        fontSize: "36px",
-        color: "#2196F3",
-        fontFamily: "Arial Black",
-      })
-      .setOrigin(0.5);
-
-    const startButton = this.add
-      .text(400, 400, "INICIAR", {
-        fontSize: "24px",
+      .text(400, 480, "Clique para iniciar o jogo", {
+        fontSize: "32px",
         color: "#ffffff",
-        backgroundColor: "#4CAF50",
-        padding: { x: 30, y: 15 },
+        fontFamily: "Georgia, serif",
+        fontStyle: "bold",
+        stroke: "#000080",
+        strokeThickness: 6,
+        shadow: {
+          offsetX: 3,
+          offsetY: 3,
+          color: "rgba(0,0,0,0.9)",
+          blur: 8,
+          fill: true,
+        },
       })
       .setOrigin(0.5);
 
-    startButton.setInteractive();
-    startButton.on("pointerdown", () => {
+    // Área clicável cobrindo toda a tela
+    const clickArea = this.add.rectangle(400, 300, 800, 600, 0x000000, 0);
+    clickArea.setInteractive();
+    clickArea.on("pointerdown", () => {
       this.scene.start("numbersGameScene");
     });
   }
