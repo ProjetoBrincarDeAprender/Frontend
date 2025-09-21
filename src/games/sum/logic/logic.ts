@@ -49,7 +49,7 @@ export default class MathLogic {
       
       if (this.currentLevelIndex >= this.levels.length) {
         this.dataManager.completeGame();
-        this.dataManager.sendGameData();
+        console.log('Jogo completo! Todos os dados foram enviados por nível.');
         return { correct: true, finished: true };
       } else {
         this.startCurrentLevel();
