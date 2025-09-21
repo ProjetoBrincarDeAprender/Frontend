@@ -3,15 +3,40 @@ import type { SumGameSession, SumLevelData } from './SumGameData';
 import api from '@/utils/api';
 
 interface UserInteraction {
-  aluno_id?: number; // Mudança: usar o nome correto do campo no banco
-  atividade_id?: number; // Mudança: usar o nome correto do campo no banco
-  questao_id?: number; // Mudança: usar o nome correto do campo no banco
-  resposta: string; // Mudança: usar o nome correto do campo no banco
-  esta_correta: boolean; // Mudança: usar o nome correto do campo no banco
-  tempo_resposta: number; // Mudança: usar o nome correto do campo no banco (em segundos)
-  numero_tentativas: number; // Mudança: usar o nome correto do campo no banco
-  usou_ajuda?: boolean; // Mudança: usar o nome correto do campo no banco
-  data_resposta: Date; // Mudança: usar o nome correto do campo no banco
+  activityId: number;
+  questionId: number;
+  answer: string;
+  isCorrect: boolean;
+  timeSpent: number;
+  attempts: number;
+  responseDate: number;
+}
+
+
+function getCurrentUser(): { id: number | string; name?: string } {
+  try {
+    const userData = localStorage.getItem('user');
+    if (userData) {
+      const user = JSON.parse(userData);
+      return {
+        id: user.codigo_usuario_id || user.id || 'usuario_publico',
+        name: user.nome || user.name
+      };
+    }
+    
+    const authToken = document.cookie
+      .split('; ')
+      .find(row => row.startsWith('authToken='));
+    
+    if (authToken) {
+      return { id: 'usuario_logado' };
+    }
+    
+    return { id: 'usuario_publico' };
+  } catch (error) {
+    console.warn('Erro ao obter usuário:', error);
+    return { id: 'usuario_publico' };
+  }
 }
 
 export default class MathLevelManager {
@@ -44,7 +69,7 @@ export default class MathLevelManager {
 export class SumGameDataManager {
   private gameSession: SumGameSession;
   private currentLevelData: SumLevelData | null = null;
-  private activityId: number = 1; // ID padrão, pode ser configurado
+  private activityId: number = 1; 
 
   constructor(userId: string, activityId?: number) {
     this.gameSession = {
@@ -98,11 +123,58 @@ export class SumGameDataManager {
     this.currentLevelData.endTime = Date.now();
     this.currentLevelData.timeSpent = (this.currentLevelData.endTime - this.currentLevelData.startTime) / 1000;
     this.currentLevelData.completed = true;
+    this.sendLevelData(this.currentLevelData);
 
     this.gameSession.levelsData.push(this.currentLevelData);
     this.gameSession.levelsCompleted++;
     
     this.currentLevelData = null;
+  }
+  async sendLevelData(levelData: SumLevelData): Promise<void> {
+    try {
+      const user = getCurrentUser();
+      const levelInteraction = this.createLevelInteraction(levelData, user);
+      
+      console.log(JSON.stringify(levelInteraction, null, 2));
+      
+      const response = await api.post('/adaptiveSystem/interaction/register', levelInteraction);
+      
+      console.log('Resposta:', response.data);
+    } catch (error: unknown) {
+      
+      if (error && typeof error === 'object' && 'response' in error) {
+        const axiosError = error as { response?: { status?: number; data?: unknown } };
+        console.error('Status do erro:', axiosError.response?.status);
+        console.error('Dados do erro:', axiosError.response?.data);
+      }
+          }
+  }
+
+  private createLevelInteraction(levelData: SumLevelData, user: { id: number | string; name?: string }): UserInteraction {
+    const isCorrect = levelData.userAnswers.length > 0 && 
+                     levelData.userAnswers[levelData.userAnswers.length - 1] === levelData.correctAnswer;
+    
+    const levelResult = {
+      levelNumber: levelData.level,
+      operation: `${levelData.number1} + ${levelData.number2}`,
+      correctAnswer: levelData.correctAnswer,
+      userAnswers: levelData.userAnswers,
+      isCorrect: isCorrect,
+      wrongAnswers: levelData.wrongAnswers,
+      timeSpent: Math.round(levelData.timeSpent),
+      userId: user.id,
+      userName: user.name || 'Usuário Anônimo'
+    };
+
+    return {
+      activityId: this.activityId,
+      questionId: levelData.level,
+      answer: JSON.stringify(levelResult),
+      isCorrect: isCorrect,
+      timeSpent: Math.round(levelData.timeSpent * 1000), 
+      attempts: levelData.userAnswers.length,
+      responseDate: Date.now()
+    };
   }
 
   completeGame(): void {
@@ -131,14 +203,19 @@ export class SumGameDataManager {
     try {
       const gameInteraction = this.createGameSummaryInteraction();
       
-      // console.log('Dados mapeados para o banco:');
-      // console.log(JSON.stringify(gameInteraction, null, 2));
+      console.log(JSON.stringify(gameInteraction, null, 2));
       
-      await api.post('/adaptiveSystem/interaction/register', gameInteraction);
+      const response = await api.post('/adaptiveSystem/interaction/register', gameInteraction);
       
-      console.log('Dados salvos com sucesso');
-    } catch (error) {
-      console.error(' Erro ao enviar dados do jogo:', error);
+      console.log('✅ SUCESSO! Status:', response.status);
+    } catch (error: unknown) {
+      if (error && typeof error === 'object' && 'response' in error) {
+        const axiosError = error as { response?: { status?: number; statusText?: string; data?: unknown } };
+        console.error('Status:', axiosError.response?.status);
+        console.error('Status Text:', axiosError.response?.statusText);
+        console.error('Response Data:', axiosError.response?.data);
+      }
+      console.error('Full Error:', error);
       throw error;
     }
   }
@@ -160,19 +237,17 @@ export class SumGameDataManager {
     };
 
     return {
-      aluno_id: parseInt(this.gameSession.userId), 
-      atividade_id: this.activityId,
-      questao_id: 1, 
-      resposta: JSON.stringify(gameResult), 
-      esta_correta: totalCorrectAnswers === this.gameSession.levelsCompleted, 
-      tempo_resposta: Math.round(totalTime), 
-      numero_tentativas: 1, 
-      usou_ajuda: false,
-      data_resposta: new Date()
+      activityId: this.activityId,
+      questionId: 1, 
+      answer: JSON.stringify(gameResult),
+      isCorrect: totalCorrectAnswers === this.gameSession.levelsCompleted,
+      timeSpent: Math.round(totalTime * 1000), 
+      attempts: this.gameSession.totalWrongAnswers + 1, 
+      responseDate: Date.now() 
     };
   }
 
-  // Método para debug - mostra um resumo do que será enviado
+
   getInteractionSummary(): { 
     studentId: string, 
     activityId: number, 
