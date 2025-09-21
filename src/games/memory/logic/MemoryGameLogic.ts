@@ -12,6 +12,8 @@ export class MemoryGameLogic {
   private cards: Phaser.GameObjects.Container[] = [];
   private feedbackMessage: Phaser.GameObjects.Text | null = null;
   private levelStartTime: number = 0;
+  private isShowingInitialCards: boolean = false;
+  private gameStarted: boolean = false;
 
   constructor(scene: Phaser.Scene) {
     const levels: MemoryGameLevel[] = [
@@ -102,6 +104,29 @@ export class MemoryGameLogic {
   createCards() {
     this.randomizeCards();
     this.cardLogic();
+    this.showAllCardsTemporarily();
+  }
+
+  private showAllCardsTemporarily() {
+    this.isShowingInitialCards = true;
+
+    this.cards.forEach((card) => {
+      card.disableInteractive();
+      this.setCardDisplay(card, true);
+    });
+
+    this.scene.time.delayedCall(2000, () => {
+      this.cards.forEach((card) => {
+        this.flipCard(card, false, () => {
+          card.setInteractive();
+        });
+      });
+
+      this.scene.time.delayedCall(500, () => {
+        this.isShowingInitialCards = false;
+        this.gameStarted = true;
+      });
+    });
   }
 
   private cardLogic() {
@@ -191,7 +216,10 @@ export class MemoryGameLogic {
   }
 
   public isLevelFinished() {
-    if (this.cards.every((card) => card.getData("flipped"))) {
+    if (this.isShowingInitialCards || !this.gameStarted) {
+      return false;
+    }
+    if (this.cards.every((card) => card.getData("matched"))) {
       return true;
     }
     return false;
@@ -205,11 +233,9 @@ export class MemoryGameLogic {
     this.LevelManager.nextLevel();
     try {
       const sendData = async () => {
-        const questaoIds: { [key: number]: number } = { 0: 2, 1: 3, 2: 4 };
-
         const levelData = {
-          activityId: 9,
-          questionId: questaoIds[this.LevelManager.getCurrentIndex()],
+          activityId: 1,
+          questionId: this.getCurrentLevel(),
           isCorrect: true,
           answer: "ok",
           timeSpent: levelEndTime - this.levelStartTime,
@@ -243,10 +269,23 @@ export class MemoryGameLogic {
     return this.LevelManager.getCurrentIndex();
   }
 
+  public getCurrentAttempts() {
+    return (
+      this.gameStats.missCounts.reduce((total, misses) => total + misses, 0) +
+      this.gameStats.getCurrentLevelMisses()
+    );
+  }
+
+  public getCurrentLevelTime() {
+    return this.scene.time.now - this.levelStartTime;
+  }
+
   public resetGame() {
     this.LevelManager.reset();
     this.gameStats = new GameStats();
     this.levelStartTime = 0;
+    this.isShowingInitialCards = false;
+    this.gameStarted = false;
     if (this.feedbackMessage) {
       this.feedbackMessage.destroy();
       this.feedbackMessage = null;
@@ -256,6 +295,8 @@ export class MemoryGameLogic {
   public initializeLevel() {
     this.levelStartTime = this.scene.time.now;
     this.gameStats.resetInitialLevelTime(this.levelStartTime);
+    this.gameStarted = false;
+    this.isShowingInitialCards = false;
   }
 
   public setCurrentLevelFromRegistry(levelIndex: number) {

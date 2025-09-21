@@ -37,6 +37,10 @@ export default class GameStats {
     this.actualLevelMisses = 0;
   }
 
+  getCurrentLevelMisses(): number {
+    return this.actualLevelMisses;
+  }
+
   resetAllData(): void {
     this.hitTimes = [];
     this.missCounts = [];

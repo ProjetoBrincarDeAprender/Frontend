@@ -5,15 +5,16 @@
     "image": "/assets/sumGame/image.png"
   },
   {
-    "title": "Sequência de Números",
-    "gameIdUrl": "numbers"
+    "title": "Jogo da Memoria",
+    "gameIdUrl": "memory",
+    "image": "/assets/memoryGame/image.png"
   },
   {
     "title": "Jogo das Vogais",
     "gameIdUrl": "vowels"
   },
   {
-    "title": "Jogo da Memória",
-    "gameIdUrl": "memory"
+    "title": "Sequência de Números",
+    "gameIdUrl": "numbers"
   }
 ]
