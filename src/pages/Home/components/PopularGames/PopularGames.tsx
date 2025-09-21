@@ -13,9 +13,10 @@ export function PopularGames({ className = "" }: PopularGamesProps) {
         DESTAQUES
       </h2>
       <div className="flex gap-8 px-8 py-16">
-        <Card gameIdUrl="1" title="Jogo da Velha" variant="game" />
-        <Card gameIdUrl="2" title="Sudoku" variant="game" />
-        <Card gameIdUrl="3" title="Tetris" variant="game" />
+        <Card gameIdUrl="sum" title="Jogo da Soma" variant="game" />
+        <Card gameIdUrl="numbers" title="Sequência de Números" variant="game" />
+        <Card gameIdUrl="vowels" title="Jogo das Vogais" variant="game" />
+        <Card gameIdUrl="memory" title="Jogo da Memória" variant="game" />
       </div>
     </section>
   );
