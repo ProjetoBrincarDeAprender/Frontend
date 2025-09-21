@@ -13,27 +13,7 @@
     "gameIdUrl": "vowels"
   },
   {
-    "title": "Top Gear",
-    "gameIdUrl": "4"
-  },
-  {
-    "title": "Counter Strike",
-    "gameIdUrl": "5"
-  },
-  {
-    "title": "Snake",
-    "gameIdUrl": "6"
-  },
-  {
-    "title": "Batman",
-    "gameIdUrl": "7"
-  },
-  {
-    "title": "Campo Minado",
-    "gameIdUrl": "8"
-  },
-  {
-    "title": "Batalha Naval",
-    "gameIdUrl": "9"
+    "title": "Jogo da Memória",
+    "gameIdUrl": "memory"
   }
 ]
