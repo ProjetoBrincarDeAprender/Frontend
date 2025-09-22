@@ -4,7 +4,7 @@ import type { SumGameSession, SumLevelData } from "./SumGameData";
 
 interface UserInteraction {
   activityId: number;
-  questionId: number;
+  // questionId: number;
   answer: string;
   isCorrect: boolean;
   timeSpent: number;
@@ -176,7 +176,7 @@ export class SumGameDataManager {
 
     return {
       activityId: this.activityId,
-      questionId: levelData.level,
+      // questionId: levelData.level,
       answer: JSON.stringify(levelResult),
       isCorrect: isCorrect,
       timeSpent: Math.round(levelData.timeSpent * 1000),
@@ -260,7 +260,7 @@ export class SumGameDataManager {
 
     return {
       activityId: this.activityId,
-      questionId: 1,
+      // questionId: 1,
       answer: JSON.stringify(gameResult),
       isCorrect: totalCorrectAnswers === this.gameSession.levelsCompleted,
       timeSpent: Math.round(totalTime * 1000),
