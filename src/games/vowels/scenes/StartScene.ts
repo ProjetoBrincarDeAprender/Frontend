@@ -26,8 +26,18 @@ export default class Vowels extends Phaser.Scene {
       0.5,
     );
 
-    const text = this.add
-      .text(gameWidth / 2, gameHeight / 2, "Clique para começar", {
+    this.add
+      .text(gameWidth / 2, gameHeight / 2 - 100, "Jogo das Vogais", {
+        fontFamily: "Verdana, Geneva, sans-serif",
+        fontSize: "64px",
+        color: "#ffffff",
+        fontStyle: "bold",
+      })
+      .setOrigin(0.5)
+      .setDepth(10);
+
+    const startText = this.add
+      .text(gameWidth / 2, gameHeight / 2 + 50, "Clique para começar", {
         fontFamily: "Verdana, Geneva, sans-serif",
         fontSize: "22px",
         color: "#ffffff",
@@ -36,7 +46,7 @@ export default class Vowels extends Phaser.Scene {
       .setOrigin(0.5)
       .setDepth(10);
 
-    this.effectManager.floatingElement(text);
+    this.effectManager.floatingElement(startText);
 
     this.input.once("pointerdown", () => {
       this.scene.start("vowelsGameScene");
