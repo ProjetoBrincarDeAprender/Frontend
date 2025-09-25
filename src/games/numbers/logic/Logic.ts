@@ -15,10 +15,27 @@ export default class Logic {
 
   constructor(scene: Phaser.Scene) {
     const levels: Level[] = [];
+
+    // Nivel 1
     levels.push(new Level("1, 2, 3, _", "4"));
     levels.push(new Level("3, 4, 5, _", "6"));
     levels.push(new Level("6, 7, 8, _", "9"));
-    levels.push(new Level("8, 9, 10, _", "11"));
+    levels.push(new Level("2, 3, 4, _", "5"));
+    levels.push(new Level("5, 6, 7, _", "8"));
+
+    // Nivel 2
+    levels.push(new Level("10, 11, 12, _", "13"));
+    levels.push(new Level("15, 16, 17, _", "18"));
+    levels.push(new Level("12, 13, 14, _", "15"));
+    levels.push(new Level("17, 18, 19, _", "20"));
+    levels.push(new Level("11, 12, 13, _", "14"));
+
+    // Nivel 3
+    levels.push(new Level("10, 12, 14, _", "16"));
+    levels.push(new Level("16, 18, 20, _", "22"));
+    levels.push(new Level("11, 13, 15, _", "17"));
+    levels.push(new Level("20, 23, 26, _", "29"));
+    levels.push(new Level("15, 17, 19, _", "21"));
 
     this.levelManager = new LevelManager(levels);
     this.scene = scene;

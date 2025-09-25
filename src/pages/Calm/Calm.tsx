@@ -3,6 +3,7 @@ import { MusicCatalog } from "./MusicCatalog";
 import { BreathingCatalog } from "./BreathingCatalog";
 import { Music, Wind } from "lucide-react";
 import { Header } from "@/components/Header/Header";
+import { BackButton } from "@/components/utils/BackButton";
 
 const categories = [
   {
@@ -27,6 +28,7 @@ export function Calm() {
   return (
     <>
       <Header />
+      <BackButton />
       <div className="from-purplish-blue via-purplish-blue-dark to-purplish-blue mt-16 min-h-screen bg-gradient-to-br">
         {/* Hero Section */}
         <div className="relative overflow-hidden">
