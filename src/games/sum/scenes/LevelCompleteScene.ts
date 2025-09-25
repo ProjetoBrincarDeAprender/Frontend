@@ -1,13 +1,11 @@
 export class SumLevelCompleteScene extends Phaser.Scene {
-  private currentLevel: number = 0;
   private isLastLevel: boolean = false;
 
   constructor() {
     super({ key: "SumLevelCompleteScene" });
   }
 
-  init(data: { level: number; isLastLevel: boolean }) {
-    this.currentLevel = data.level || 0;
+  init(data: { isLastLevel: boolean }) {
     this.isLastLevel = data.isLastLevel || false;
   }
 

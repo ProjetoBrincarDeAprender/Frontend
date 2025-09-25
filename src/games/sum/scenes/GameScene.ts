@@ -415,9 +415,7 @@ export default class MathGame extends Phaser.Scene {
       
       this.time.delayedCall(1500, () => {
         if (!result.finished) {
-          const levelStats = this.logic.getCurrentLevelStats();
           this.scene.start("SumLevelCompleteScene", { 
-            level: levelStats ? levelStats.level - 1 : 0,
             isLastLevel: false 
           });
           this.clearNumberImages();
@@ -480,9 +478,7 @@ export default class MathGame extends Phaser.Scene {
       
       this.time.delayedCall(1500, () => {
         if (!result.finished) {
-          const levelStats = this.logic.getCurrentLevelStats();
           this.scene.start("SumLevelCompleteScene", { 
-            level: levelStats ? levelStats.level - 1 : 0,
             isLastLevel: false 
           });
           this.inputText = "";
