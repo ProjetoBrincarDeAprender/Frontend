@@ -7,6 +7,7 @@ import { MemoryLevelCompleteScene } from "@/games/memory/scenes/LevelCompleteSce
 import { MemoryMenuScene } from "@/games/memory/scenes/MenuScene";
 import Phaser from "phaser";
 import { useEffect, useRef } from "react";
+import { BackButton } from "@/components/utils/BackButton";
 
 export interface IRefMemoryGame {
   game: Phaser.Game | null;
@@ -48,6 +49,7 @@ export const MemoryGame = () => {
     <>
       <div className="mt-28 mb-20 flex justify-center py-4">
         <Header />
+        <BackButton />
         <div
           id="game-container"
           className="relative h-fit min-h-[600px] w-fit min-w-[800px]"

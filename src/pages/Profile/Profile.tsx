@@ -8,6 +8,7 @@ import { EditStudentModal } from "@/components/features/users/students/edit/Stud
 import { EditTeacherModal } from "@/components/features/users/teacher/edit/TeacherEditModal";
 import { Header } from "@/components/Header/Header";
 import { TableProvider } from "@/contexts/Table/provider";
+import { BackButton } from "@/components/utils/BackButton";
 // import { ChangePasswordModal } from "@/components/features/users/password/ChangePasswordModal";
 
 import NuvemSVG from "../../assets/nuvem.svg";
@@ -74,6 +75,7 @@ export function Profile() {
       </div>
 
       <Header />
+      <BackButton />
 
       <main className="relative z-10 mt-28 px-6">
         <div className="from-am0 to-az3 relative h-28 w-full rounded-b-md bg-gradient-to-r shadow-lg">
