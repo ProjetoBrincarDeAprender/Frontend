@@ -3,6 +3,8 @@ import Phaser from "phaser";
 import MathGame from "@/games/sum/scenes/GameScene";
 import { useUser } from "@/hooks/User/useUser";
 import { Footer } from "@/components/Footer/Footer";
+import { BackButton } from "@/components/utils/BackButton";
+import { Header } from "@/components/Header/Header";
 
 interface SumGameProps {
   activityId?: number;
@@ -47,8 +49,9 @@ const SumGame: React.FC<SumGameProps> = ({ activityId = 1 }) => {
 
   return (
    <>
-      <div className="mt-5 mb-20 flex justify-center">
-        {/* <Header /> */}
+      <div className="mt-28 mb-20 flex justify-center py-4">
+        <Header /> 
+        <BackButton />
         <div
           id="game-container"
           className="relative"

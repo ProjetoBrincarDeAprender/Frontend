@@ -36,8 +36,7 @@ export function ResponsibleDashboard() {
         <div className="flex items-center gap-4">
           <img className="max-w-24" src={saturn} alt="Saturn" />
           <div className="flex flex-col gap-2">
-            <h1 className="text-2xl font-semibold">Bem vindo {username},</h1>
-            <h1 className="text-5xl font-bold">Alunos sob sua tutela</h1>
+            <h1 className="text-4xl font-bold">Bem vindo, {username}</h1>
           </div>
         </div>
       </section>
