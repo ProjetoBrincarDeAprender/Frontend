@@ -415,7 +415,11 @@ export default class MathGame extends Phaser.Scene {
       
       this.time.delayedCall(1500, () => {
         if (!result.finished) {
-          this.scene.restart();
+          const levelStats = this.logic.getCurrentLevelStats();
+          this.scene.start("SumLevelCompleteScene", { 
+            level: levelStats ? levelStats.level - 1 : 0,
+            isLastLevel: false 
+          });
           this.clearNumberImages();
           this.clearChoiceButtons();
         } else {
@@ -476,13 +480,15 @@ export default class MathGame extends Phaser.Scene {
       
       this.time.delayedCall(1500, () => {
         if (!result.finished) {
-          this.scene.restart();
+          const levelStats = this.logic.getCurrentLevelStats();
+          this.scene.start("SumLevelCompleteScene", { 
+            level: levelStats ? levelStats.level - 1 : 0,
+            isLastLevel: false 
+          });
           this.inputText = "";
           this.answerText.setText(" ");
           this.clearNumberImages();
-        } else {
-          // const gameStats = this.logic.getGameStats();
-          
+        } else {          
           this.showEndScene();
           this.clearNumberImages();
         }
