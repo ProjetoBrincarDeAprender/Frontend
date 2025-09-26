@@ -63,6 +63,18 @@ export const ResponsibleColumns: ColumnDef<Responsible>[] = [
     ),
   },
   {
+   accessorKey: "parentesco",
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+      >
+        Parentesco
+        <ArrowUpDown className="ml-2 h-4 w-4" />
+      </Button>
+    ),
+  },
+  {
     accessorKey: "actions",
     header: "Ações",
     cell: ({ row }) => (

@@ -106,10 +106,6 @@ export function ResponsibleEditForm({ id, onSuccess }: ResponsibleFormProps) {
         const response = await api.get(
           `/student/list/relations/responsible?isNull=true`,
         );
-        // ANTIGO
-        //const response = await api.get(
-        //   `/user/list?type=Aluno${user?.perfil == "Admin" ? "" : `&escolaId=${user?.escola?.id}`}`,
-        // );
         if (response.status == 200) {
           const users = response.data;
           setAllStudents(users.filter((u: User) => u.escola == escola.nome));
