@@ -17,14 +17,7 @@ export default class Vowels extends Phaser.Scene {
     const gameWidth = this.cameras.main.width;
     const gameHeight = this.cameras.main.height;
     this.add.image(gameWidth / 2, gameHeight / 2, "startScreen");
-    this.add.rectangle(
-      gameWidth / 2,
-      gameHeight / 2,
-      gameWidth,
-      gameHeight,
-      0x000000,
-      0.5,
-    );
+    this.effectManager.overlay(0.5);
 
     this.add
       .text(gameWidth / 2, gameHeight / 2 - 100, "Jogo das Vogais", {

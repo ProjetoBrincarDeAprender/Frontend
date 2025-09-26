@@ -22,6 +22,7 @@ export default class GameScene extends Phaser.Scene {
    * Pré-carrega os recursos visuais necessários para o jogo.
    */
   preload() {
+    this.load.image("background", "/assets/vowelsGame/background.jpeg");
     this.load.image("abelha", "/assets/vowelsGame/abelha.svg");
     this.load.image("elefante", "/assets/vowelsGame/elefante.svg");
     this.load.image("ovos", "/assets/vowelsGame/ovos.png");
@@ -36,6 +37,7 @@ export default class GameScene extends Phaser.Scene {
    * Cria elementos visuais e inicia o primeiro nível do jogo.
    */
   create() {
+    this.logic.createBackground("background");
     this.logic.createImage(this.logic.accessCurrentLevel().getName());
     this.logic.createButtons();
     this.setupLevel();

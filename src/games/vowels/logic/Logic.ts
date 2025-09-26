@@ -121,6 +121,15 @@ export default class Logic {
     this.image = this.scene.add.image(400, 300, texture);
   }
 
+  createBackground(texture: string): void {
+    const background = this.scene.add.image(400, 300, texture);
+    const scaleX = this.scene.cameras.main.width / background.width;
+    const scaleY = this.scene.cameras.main.height / background.height;
+    const scale = Math.max(scaleX, scaleY);
+    background.setScale(scale);
+    this.effectManager.overlay(0.3);
+  }
+
   setImageTexture(texture: string): void {
     if (this.image) this.image.setTexture(texture);
   }
