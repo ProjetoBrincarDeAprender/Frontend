@@ -7,6 +7,7 @@ import gamesData from "./games.json";
 
 import { Footer } from "@/components/Footer/Footer";
 import { Header } from "@/components/Header/Header";
+import { BackButton } from "@/components/utils/BackButton";
 import { BiSearch } from "react-icons/bi";
 import "./Games.css";
 
@@ -32,6 +33,7 @@ export function Games() {
   return (
     <>
       <Header />
+      <BackButton />
       <main className="bg-slate-200 pt-48">
         <div className="border-am2 mx-auto mb-16 flex max-w-md items-center rounded-xl border-4 text-gray-900">
           <input type="text" className="w-full px-6 py-2 focus:outline-0" />

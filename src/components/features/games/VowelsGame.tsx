@@ -5,6 +5,8 @@ import Credits from "@/games/vowels/scenes/CreditsScene";
 import GameScene from "@/games/vowels/scenes/GameScene";
 import Phaser from "phaser";
 import { useEffect, useRef } from "react";
+import { Header } from "@/components/Header/Header";
+import { BackButton } from "@/components/utils/BackButton";
 
 export interface IRefVowelsGame {
   game: Phaser.Game | null;
@@ -39,8 +41,9 @@ const VowelsGame: React.FC = () => {
 
   return (
     <>
-      <div className="mt-5 mb-20 flex justify-center">
-        {/* <Header /> */}
+      <div className="mt-28 mb-20 flex justify-center py-4">
+        <Header /> 
+        <BackButton />
         <div
           id="game-container"
           className="relative"
