@@ -4,6 +4,7 @@ import EffectManager from "../../common/managers/EffectManager";
 import GameStats from "../../common/managers/GameStats";
 import LevelManager from "../../common/managers/LevelManager";
 import Level from "../../common/models/Level";
+import api from "@/utils/api";
 
 export default class Logic {
   private scene: Phaser.Scene;
@@ -36,6 +37,8 @@ export default class Logic {
       button.getButtonStringText(),
     );
     if (isCorrect) {
+      this.sendData();
+
       this.gameStats.addHitTime(timeNow);
       this.gameStats.resetInitialLevelTime(timeNow);
       this.gameStats.addMissCount();
@@ -48,6 +51,35 @@ export default class Logic {
       return { correct: false, finished: false };
     }
   }
+
+  private sendData = async () => {
+    try {
+      const levelData = {
+        activityId: 3,
+        questionId: this.levelManager.getCurrentIndex(),
+        isCorrect: true,
+        answer: this.accessCurrentLevel().getAnswer(),
+        timeSpent: this.gameStats.getCurrentLevelTimeSpent(this.scene.time.now),
+        attempts: this.gameStats.getCurrentLevelMisses(),
+        responseDate: this.scene.time.now,
+      };
+
+      console.log("Sending data:", levelData);
+
+      const response = await api.post(
+        "/adaptiveSystem/interaction/register",
+        levelData,
+        {},
+      );
+
+      if (response.status === 201) {
+        console.log("Data sent successfully");
+        console.log(response);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   buttonSuccessEffect(
     button: Button,
