@@ -13,12 +13,14 @@ export default class Logic {
   private effectManager: EffectManager;
   private levelManager: LevelManager<Level>;
   private image?: Phaser.GameObjects.Image;
+  private imageMaxSize: number;
 
   constructor(scene: Phaser.Scene) {
     const levels: Level[] = [];
     levels.push(new Level("abelha", "A"));
     levels.push(new Level("elefante", "E"));
-    levels.push(new Level("ovos", "O"));
+    levels.push(new Level("hiena", "I"));
+    levels.push(new Level("ovelha", "O"));
     levels.push(new Level("urso", "U"));
 
     this.levelManager = new LevelManager(levels);
@@ -26,6 +28,7 @@ export default class Logic {
     this.gameStats = new GameStats();
     this.effectManager = new EffectManager(this.scene);
     this.buttonManager = new ButtonManager(this.scene);
+    this.imageMaxSize = 800;
   }
 
   handleClick(
@@ -118,7 +121,17 @@ export default class Logic {
   }
 
   createImage(texture: string): void {
-    this.image = this.scene.add.image(400, 300, texture);
+    this.image = this.scene.add.image(400, 280, texture);
+
+    const imgWidth = this.image.width;
+    const imgHeight = this.image.height;
+
+    const maxSize = this.imageMaxSize;
+    const scaleX = maxSize / imgWidth;
+    const scaleY = maxSize / imgHeight;
+    const scale = Math.min(scaleX, scaleY);
+
+    this.image.setScale(scale);
   }
 
   createBackground(texture: string): void {
