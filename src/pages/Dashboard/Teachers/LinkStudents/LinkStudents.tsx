@@ -69,19 +69,8 @@ export function LinkStudents() {
           <div className="mt-16 flex items-center justify-between">
             <div className="flex items-center gap-8 text-2xl font-bold">
               <Button
-                className={`${
-                  studentsIdToLink.length > 0
-                    ? "hover:bg-purplish-blue hover:text-yellow opacity-100"
-                    : "opacity-50"
-                } bg-yellow text-purplish-blue px-14 py-7 text-xl font-bold shadow-md`}
-                disabled={studentsIdToLink.length === 0}
-                title={
-                  studentsIdToLink.length === 0
-                    ? "Deve ser selecionado algum aluno primeiro"
-                    : undefined
-                }
+                className={`bg-yellow text-purplish-blue px-14 py-7 text-xl font-bold shadow-md hover:bg-purplish-blue hover:text-yellow`}
                 onClick={async () => {
-                  if (studentsIdToLink.length === 0) return;
                   try {
                     const response = await api.put(
                       `/teacher/update/${teacherId}`,
@@ -89,21 +78,25 @@ export function LinkStudents() {
                     );
                     if (!response || response.status !== 200) {
                       toast.error(
-                        "Erro ao vincular alunos ao professor. Tente novamente.",
+                        "Erro ao atualizar vínculos do professor. Tente novamente.",
                       );
                     } else {
-                      toast.success("Alunos vinculados com sucesso!");
+                      if (studentsIdToLink.length === 0) {
+                        toast.success("Todos os alunos foram desvinculados do professor!");
+                      } else {
+                        toast.success("Alunos vinculados com sucesso!");
+                      }
                       navigate("/dashboard/teachers");
                     }
                   } catch (error) {
                     toast.error(
-                      "Erro ao vincular alunos ao professor. Tente novamente.",
+                      "Erro ao atualizar vínculos do professor. Tente novamente.",
                     );
                     console.error(error);
                   }
                 }}
               >
-                Vincular Aluno(s)
+                {studentsIdToLink.length === 0 ? "Desvincular Todos" : "Vincular Aluno(s)"}
               </Button>
             </div>
           </div>
