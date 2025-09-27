@@ -11,6 +11,8 @@ import type { User } from "@/types/user";
 import { toast } from "sonner";
 import saturn from "../../../../assets/saturn.svg";
 import { StudentsUnlinkedTable } from "./StudentsUnlinkedTable/StudentsUnlinkedTable";
+import { Footer } from "@/components/Footer/Footer";
+import { BackButton } from "@/components/utils/BackButton";
 
 export function LinkStudents() {
   const [studentsIdToLink, setStudentsIdToLink] = useState<number[]>([]);
@@ -48,6 +50,7 @@ export function LinkStudents() {
   return (
     <>
       <Header />
+      <BackButton />
       <LateralMenu username={username} />
       <main className="font-1 h-full bg-neutral-200 px-32 pt-32 pb-32 text-gray-800">
         <section className="mb-8 flex items-center gap-6">
@@ -57,7 +60,7 @@ export function LinkStudents() {
               Bem-vindo, {username}
             </h1>
             <h2 className="text-4xl font-bold">
-              Vincular Alunos a(o) {username}
+              Vincular Alunos a(o) Professor(a)
             </h2>
             <p className="mt-2 text-lg text-gray-600"></p>
           </div>
@@ -66,19 +69,8 @@ export function LinkStudents() {
           <div className="mt-16 flex items-center justify-between">
             <div className="flex items-center gap-8 text-2xl font-bold">
               <Button
-                className={`${
-                  studentsIdToLink.length > 0
-                    ? "hover:bg-purplish-blue hover:text-yellow opacity-100"
-                    : "opacity-50"
-                } bg-yellow text-purplish-blue px-14 py-7 text-xl font-bold shadow-md`}
-                disabled={studentsIdToLink.length === 0}
-                title={
-                  studentsIdToLink.length === 0
-                    ? "Deve ser selecionado algum aluno primeiro"
-                    : undefined
-                }
+                className={`bg-yellow text-purplish-blue px-14 py-7 text-xl font-bold shadow-md hover:bg-purplish-blue hover:text-yellow`}
                 onClick={async () => {
-                  if (studentsIdToLink.length === 0) return;
                   try {
                     const response = await api.put(
                       `/teacher/update/${teacherId}`,
@@ -86,20 +78,25 @@ export function LinkStudents() {
                     );
                     if (!response || response.status !== 200) {
                       toast.error(
-                        "Erro ao vincular alunos ao professor. Tente novamente.",
+                        "Erro ao atualizar vínculos do professor. Tente novamente.",
                       );
                     } else {
-                      toast.success("Alunos vinculados com sucesso!");
+                      if (studentsIdToLink.length === 0) {
+                        toast.success("Todos os alunos foram desvinculados do professor!");
+                      } else {
+                        toast.success("Alunos vinculados com sucesso!");
+                      }
+                      navigate("/dashboard/teachers");
                     }
                   } catch (error) {
                     toast.error(
-                      "Erro ao vincular alunos ao professor. Tente novamente.",
+                      "Erro ao atualizar vínculos do professor. Tente novamente.",
                     );
                     console.error(error);
                   }
                 }}
               >
-                Vincular Aluno(s)
+                {studentsIdToLink.length === 0 ? "Desvincular Todos" : "Vincular Aluno(s)"}
               </Button>
             </div>
           </div>
@@ -108,7 +105,9 @@ export function LinkStudents() {
             setSelectedIds={setStudentsIdToLink}
           />
         </TableProvider>
+      
       </main>
+      <Footer />
     </>
   );
 }

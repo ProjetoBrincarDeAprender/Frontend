@@ -5,6 +5,8 @@ import { FaRegQuestionCircle } from "react-icons/fa";
 import { FiLogIn } from "react-icons/fi";
 import { Link } from "react-router";
 import { useNavigate } from "react-router";
+import { BiJoystick } from "react-icons/bi";
+
 
 // imagens
 import profile from "../../assets/astronauta-profile.svg";
@@ -55,11 +57,13 @@ export function Header() {
               <BiHome /> <span>Inicio</span>
             </button>
           </li>
-          <li className="button-nav bg-yellow rounded-2xl px-5 py-2 shadow-lg">
-            <Link to="/about" className="flex items-center gap-2">
-              <FaRegQuestionCircle /> <span>Sobre</span>
+           <li className="button-nav bg-yellow rounded-2xl px-5 py-2 shadow-lg">
+            <Link to="/games" className="flex items-center gap-2">
+              <BiJoystick /> 
+              <span>Jogar</span>
             </Link>
           </li>
+          
           {user ? (
             <>
               {user.perfil === "Aluno" && (
@@ -92,6 +96,11 @@ export function Header() {
             </>
           ) : (
             <>
+              <li className="button-nav bg-yellow rounded-2xl px-5 py-2 shadow-lg">
+                <Link to="/about" className="flex items-center gap-2">
+                  <FaRegQuestionCircle /> <span>Sobre</span>
+                </Link>
+              </li>
               <li className="button-nav bg-yellow rounded-2xl px-5 py-2 shadow-lg">
                 <Link to="/login" className="flex items-center gap-2">
                   <FiLogIn />

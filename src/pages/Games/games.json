@@ -11,10 +11,14 @@
   },
   {
     "title": "Jogo das Vogais",
-    "gameIdUrl": "vowels"
+    "gameIdUrl": "vowels",
+    "image": "/assets/vowelsGame/startScreen.jpeg"
+
   },
   {
     "title": "Sequência de Números",
-    "gameIdUrl": "numbers"
+    "gameIdUrl": "numbers",
+    "image": "/assets/numbersGame/startScreen.png"
+
   }
 ]
