@@ -8,7 +8,6 @@ import { AxiosError } from "axios";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-//import { PasswordInput } from "@/components/ui/password-input";
 
 const formSchema = z.object({
   nome_completo: z
@@ -49,7 +48,6 @@ export function ResponsibleEditForm({ id, onSuccess }: ResponsibleFormProps) {
 
         if (response.status === 200) {
           const userData = {
-            //...response.data,
             nome_completo: response.data.nome_completo,
             email: response.data.email,
             escolaId:
@@ -85,8 +83,8 @@ export function ResponsibleEditForm({ id, onSuccess }: ResponsibleFormProps) {
         if (response.status == 200) {
           const users = response.data;
           setStudents(users);
-          const originalIds = users.map((user: { id: number }) =>
-            String(user.id),
+          const originalIds = users.map((user: { codigo_usuario: number }) =>
+            String(user.codigo_usuario),
           );
           form.setValue("usersIds", originalIds);
         }
