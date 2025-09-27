@@ -42,7 +42,7 @@ const VowelsGame: React.FC = () => {
   return (
     <>
       <div className="mt-28 mb-20 flex justify-center py-4">
-        <Header /> 
+        <Header />
         <BackButton />
         <div
           id="game-container"
