@@ -108,7 +108,7 @@ export function ResponsibleEditForm({ id, onSuccess }: ResponsibleFormProps) {
           const users = response.data;
           setAllStudents(users.filter((u: User) => u.escola == escola.nome));
           if (users.length === 0) {
-            setErrorMessage("Não há alunos cadastrados nesta escola!");
+            setErrorMessage("Não há alunos disponíveis nesta escola!");
           } else {
             setErrorMessage(null);
           }
