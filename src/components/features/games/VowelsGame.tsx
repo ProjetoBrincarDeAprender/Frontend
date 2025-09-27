@@ -21,7 +21,7 @@ const VowelsGame: React.FC = () => {
       type: Phaser.AUTO,
       width: 800,
       height: 600,
-      scene: [Credits],
+      scene: [StartScene, GameScene, Credits],
       parent: "game-container",
       backgroundColor: "#ffffff",
     };
