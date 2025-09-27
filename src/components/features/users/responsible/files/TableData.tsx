@@ -1,7 +1,5 @@
 import type { ColumnDef } from "@tanstack/react-table";
-// import { Edit } from "lucide-react";
 import DeleteModal from "@/components/utils/DataTable/DeleteModal";
-// import { Link } from "../utils/Link/Link";
 import { Button } from "@/components/ui/button";
 import { ArrowUpDown } from "lucide-react";
 import { EditResponsableModal } from "../edit/ResponsibleEditModal";
@@ -11,6 +9,7 @@ export type Responsible = {
   nome_completo: string;
   email: string;
   escola: string;
+  parentesco: string;
 };
 
 export const ResponsibleColumns: ColumnDef<Responsible>[] = [
