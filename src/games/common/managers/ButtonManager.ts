@@ -33,6 +33,27 @@ export default class ButtonManager {
     });
   }
 
+  createButton(
+    positions: { x: number; y: number },
+    textures: string[],
+    text?: string,
+    fontSize?: number,
+    scale: number = 1,
+  ): Button {
+    const button = new Button(
+      this.scene,
+      positions.x,
+      positions.y,
+      textures[0], // Imagem padrão (defaultImage)
+      textures[1], // Imagem hover (hoverImage)
+      textures[2], // Imagem do clique (clickImage)
+      text ? text : "", // Texto do botão (buttonText)
+      fontSize ? fontSize : undefined, // Tamanho da fonte padrão (defaultFontSize)
+    );
+    this.scene.add.existing(button).setScale(scale);
+    return button;
+  }
+
   getButtons(): Button[] {
     return this.buttons;
   }
