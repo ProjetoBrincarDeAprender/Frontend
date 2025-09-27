@@ -22,6 +22,11 @@ export default class Logic {
     levels.push(new Level("hiena", "I"));
     levels.push(new Level("ovelha", "O"));
     levels.push(new Level("urso", "U"));
+    levels.push(new Level("gato", "A"));
+    levels.push(new Level("esquilo", "E"));
+    levels.push(new Level("iguana", "I"));
+    levels.push(new Level("onca", "O"));
+    levels.push(new Level("urubu", "U"));
 
     this.levelManager = new LevelManager(levels);
     this.scene = scene;
