@@ -1,12 +1,8 @@
-import EffectManager from "@/games/common/managers/EffectManager";
 import Phaser from "phaser";
 
 export default class Credits extends Phaser.Scene {
-  private effectManager: EffectManager;
-
   constructor() {
     super("vowelsCredits");
-    this.effectManager = new EffectManager(this);
   }
 
   preload() {
