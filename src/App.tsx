@@ -54,7 +54,9 @@ function App() {
       </Route>
 
       <Route element={<AuthGuard requireAuth />}>
-        <Route path="/profile" element={<Profile />} />
+        <Route path="/profile">
+          <Route index element={<Profile />} />
+        </Route>
         <Route path="/calm" element={<Calm />} />
       </Route>
 
