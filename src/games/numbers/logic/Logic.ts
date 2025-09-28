@@ -4,6 +4,7 @@ import EffectManager from "../../common/managers/EffectManager";
 import GameStats from "../../common/managers/GameStats";
 import LevelManager from "../../common/managers/LevelManager";
 import Level from "../../common/models/Level";
+import api from "@/utils/api";
 
 export default class Logic {
   private scene: Phaser.Scene;
@@ -15,10 +16,27 @@ export default class Logic {
 
   constructor(scene: Phaser.Scene) {
     const levels: Level[] = [];
+
+    // Nivel 1
     levels.push(new Level("1, 2, 3, _", "4"));
     levels.push(new Level("3, 4, 5, _", "6"));
     levels.push(new Level("6, 7, 8, _", "9"));
-    levels.push(new Level("8, 9, 10, _", "11"));
+    levels.push(new Level("2, 3, 4, _", "5"));
+    levels.push(new Level("5, 6, 7, _", "8"));
+
+    // Nivel 2
+    levels.push(new Level("10, 11, 12, _", "13"));
+    levels.push(new Level("15, 16, 17, _", "18"));
+    levels.push(new Level("12, 13, 14, _", "15"));
+    levels.push(new Level("17, 18, 19, _", "20"));
+    levels.push(new Level("11, 12, 13, _", "14"));
+
+    // Nivel 3
+    levels.push(new Level("10, 12, 14, _", "16"));
+    levels.push(new Level("16, 18, 20, _", "22"));
+    levels.push(new Level("11, 13, 15, _", "17"));
+    levels.push(new Level("20, 23, 26, _", "29"));
+    levels.push(new Level("15, 17, 19, _", "21"));
 
     this.levelManager = new LevelManager(levels);
     this.scene = scene;
@@ -36,6 +54,9 @@ export default class Logic {
       button.getButtonStringText(),
     );
     if (isCorrect) {
+      // Envia dados desta tentativa correta antes de atualizar os contadores
+      this.sendData();
+
       this.gameStats.addHitTime(timeNow);
       this.gameStats.addMissCount();
       this.gameStats.resetActualLevelMisses();
@@ -48,6 +69,34 @@ export default class Logic {
     }
   }
 
+  private sendData = async () => {
+    try {
+      const levelData = {
+        activityId: 4, // Sequência numérica
+        questionId: this.levelManager.getCurrentIndex(),
+        isCorrect: true,
+        answer: this.accessCurrentLevel().getAnswer(),
+        timeSpent: this.gameStats.getCurrentLevelTimeSpent(this.scene.time.now),
+        attempts: this.gameStats.getCurrentLevelMisses(),
+        responseDate: this.scene.time.now,
+      };
+
+      // console.log("Sending numbers level data:", levelData);
+
+      const response = await api.post(
+        "/adaptiveSystem/interaction/register",
+        levelData,
+        {},
+      );
+
+      if (response.status === 201) {
+        // console.log("Numbers data sent successfully");
+      }
+    } catch (error) {
+      // console.log(error);
+    }
+  };
+
   buttonSuccessEffect(
     button: Button,
     particleTexture?: string,
@@ -59,8 +108,13 @@ export default class Logic {
   }
 
   buttonFailEffect(button: Button, failColor: number = 0xff0000): void {
+    // Aumenta levemente o botão, pinta o texto e o fundo de vermelho
     this.effectManager.growup(button, "Bounce", 1.2, 200);
     this.effectManager.changeColor(button.getButtonText(), failColor);
+    // Pinta o botão de vermelho no erro
+    button.setTint(failColor);
+    // Remove o tint após um curto intervalo para não persistir entre níveis
+    this.scene.time.delayedCall(500, () => button.clearTint());
   }
 
   failEffect(): void {}
@@ -85,41 +139,34 @@ export default class Logic {
   }
 
   createSequenceDisplay(): void {
-    // Fundo principal ocupando toda a tela sem bordas
-    const gradient = this.scene.add.graphics();
-    gradient.fillGradientStyle(0x1a237e, 0x3f51b5, 0x1a237e, 0x3f51b5, 1);
-    gradient.fillRect(0, 0, 800, 600);
+    // Imagem de fundo ocupando toda a tela
+    const background = this.scene.add.image(400, 300, "numbersBackground");
+    background.setDisplaySize(800, 600);
 
-    // Área central com design moderno
-    const centralArea = this.scene.add.graphics();
-    centralArea.fillStyle(0xfafafa, 0.95);
-    centralArea.fillRoundedRect(60, 60, 680, 480, 20);
+    // Container com cor que harmoniza com o fundo
+    const container = this.scene.add.graphics();
+    container.fillStyle(0x1e1b4b, 0.8); // Roxo escuro com 80% de opacidade
+    container.fillRoundedRect(50, 50, 700, 500, 25);
+    container.lineStyle(3, 0xfbbf24, 1); // Borda dourada que combina com as estrelas
+    container.strokeRoundedRect(50, 50, 700, 500, 25);
 
-    // Título com estilo mais sofisticado
+    // Título em CAPSLOCK para pessoas com síndrome de Down
     this.scene.add
-      .text(400, 140, "Qual número vem depois?", {
-        fontSize: "42px",
-        color: "#2e3192",
-        fontFamily: "Georgia, serif",
-        fontStyle: "bold",
+      .text(400, 130, "QUAL NÚMERO VEM DEPOIS?", {
+        fontSize: "38px",
+        color: "#4338ca",
+        fontFamily: "Arial Black",
         stroke: "#ffffff",
-        strokeThickness: 3,
+        strokeThickness: 4,
         shadow: {
-          offsetX: 1,
+          offsetX: 2,
           offsetY: 2,
-          color: "rgba(0,0,0,0.3)",
-          blur: 4,
+          color: "rgba(0,0,0,0.5)",
+          blur: 3,
           fill: true,
         },
       })
       .setOrigin(0.5);
-
-    // Linha decorativa sob o título
-    const decorativeLine = this.scene.add.graphics();
-    decorativeLine.lineStyle(3, 0x7986cb, 1);
-    decorativeLine.moveTo(300, 165);
-    decorativeLine.lineTo(500, 165);
-    decorativeLine.strokePath();
   }
 
   setSequenceText(sequence: string): void {
@@ -131,8 +178,8 @@ export default class Logic {
     const sequenceWithoutCommas = sequence.replace(/,/g, "");
     const numbers = sequenceWithoutCommas.trim().split(/\s+/);
 
-    // Posições para as caixas da sequência com espaçamento elegante
-    const spacing = 110;
+    // Posições para as caixas da sequência
+    const spacing = 55;
     const startX = 400 - ((numbers.length - 1) * spacing) / 2;
     const y = 220;
 
@@ -140,61 +187,62 @@ export default class Logic {
       const x = startX + index * spacing;
 
       if (num === "_") {
-        // Caixa vazia estática e elegante
+        // Caixa vazia para o próximo número
         const graphics = this.scene.add.graphics();
-        graphics.lineStyle(3, 0x5c6bc0, 1);
-        graphics.fillStyle(0xffffff, 0.8);
-        graphics.fillRoundedRect(x - 40, y - 40, 80, 80, 15);
-        graphics.strokeRoundedRect(x - 40, y - 40, 80, 80, 15);
+        graphics.fillStyle(0xff6b6b, 0.8);
+        graphics.fillRoundedRect(x - 25, y - 25, 50, 50, 10);
+        graphics.lineStyle(3, 0xffffff, 1);
+        graphics.strokeRoundedRect(x - 25, y - 25, 50, 50, 10);
 
-        this.sequenceBoxes.push(graphics);
-      } else {
-        // Caixas dos números com design elegante
-        const graphics = this.scene.add.graphics();
-        graphics.fillGradientStyle(0x3f51b5, 0x5c6bc0, 0x3f51b5, 0x5c6bc0, 1);
-        graphics.fillRoundedRect(x - 40, y - 40, 80, 80, 15);
-        graphics.lineStyle(2, 0x283593, 1);
-        graphics.strokeRoundedRect(x - 40, y - 40, 80, 80, 15);
-
-        // Highlight superior para efeito 3D
-        const highlight = this.scene.add.graphics();
-        highlight.fillStyle(0xffffff, 0.3);
-        highlight.fillRoundedRect(x - 38, y - 38, 76, 25, 12);
-
-        const numberText = this.scene.add
-          .text(x, y, num, {
-            fontFamily: "Georgia, serif",
-            fontSize: "36px",
+        // Ponto de interrogação
+        const questionMark = this.scene.add
+          .text(x, y, "?", {
+            fontSize: "32px",
             color: "#ffffff",
+            fontFamily: "Arial Black",
             fontStyle: "bold",
-            stroke: "rgba(0,0,0,0.3)",
-            strokeThickness: 2,
           })
           .setOrigin(0.5);
 
-        this.sequenceBoxes.push(graphics, highlight, numberText);
+        this.sequenceBoxes.push(graphics, questionMark);
+      } else {
+        // Caixas dos números
+        const graphics = this.scene.add.graphics();
+        graphics.fillStyle(0x3b82f6, 0.9);
+        graphics.fillRoundedRect(x - 25, y - 25, 50, 50, 10);
+        graphics.lineStyle(2, 0xffffff, 1);
+        graphics.strokeRoundedRect(x - 25, y - 25, 50, 50, 10);
+
+        // Número em CAPSLOCK (mesmo que seja número)
+        const numberText = this.scene.add
+          .text(x, y, num.toString(), {
+            fontSize: "28px",
+            color: "#ffffff",
+            fontFamily: "Arial Black",
+            fontStyle: "bold",
+          })
+          .setOrigin(0.5);
+
+        this.sequenceBoxes.push(graphics, numberText);
       }
     });
-  }
 
-  createButtons(): void {
-    // Área dos botões com design sofisticado
-    const buttonArea = this.scene.add.graphics();
-    buttonArea.fillStyle(0xf8f9fa, 0.7);
-    buttonArea.fillRoundedRect(150, 320, 500, 120, 15);
-    buttonArea.lineStyle(1, 0xdee2e6, 1);
-    buttonArea.strokeRoundedRect(150, 320, 500, 120, 15);
-
-    // Instrução com tipografia elegante
-    this.scene.add
-      .text(400, 340, "Escolha o número correto:", {
-        fontSize: "22px",
-        color: "#495057",
-        fontFamily: "Georgia, serif",
-        fontStyle: "italic",
+    // Instrução em CAPSLOCK
+    const instruction = this.scene.add
+      .text(400, 300, "ESCOLHA O PRÓXIMO NÚMERO:", {
+        fontSize: "24px",
+        color: "#4338ca",
+        fontFamily: "Arial Black",
+        fontStyle: "bold",
+        stroke: "#ffffff",
+        strokeThickness: 2,
       })
       .setOrigin(0.5);
 
+    this.sequenceBoxes.push(instruction);
+  }
+
+  createButtons(): void {
     const buttonPositions: { x: number; y: number }[] = [
       { x: 250, y: 390 },
       { x: 400, y: 390 },
@@ -206,23 +254,6 @@ export default class Logic {
       "clickedButton",
     ];
     this.buttonManager.createButtons(buttonPositions, buttonTextures);
-
-    // Adicionar efeitos visuais aos botões criados
-    this.getButtons().forEach((button, index) => {
-      // Sombra sutil para os botões
-      const shadow = this.scene.add.graphics();
-      shadow.fillStyle(0x000000, 0.1);
-      shadow.fillRoundedRect(
-        buttonPositions[index].x - 37,
-        buttonPositions[index].y - 32,
-        74,
-        64,
-        8,
-      );
-
-      // Inserir a sombra atrás do botão
-      this.scene.children.bringToTop(button);
-    });
   }
 
   getButtons(): Button[] {
@@ -231,5 +262,25 @@ export default class Logic {
 
   resetInitialLevelTime(newTime: number = 0): void {
     this.gameStats.resetInitialLevelTime(newTime);
+  }
+
+  // Utilitários para a cena enviar telemetria periódica (similar ao Memory)
+  getCurrentLevelTime(): number {
+    return this.gameStats.getCurrentLevelTimeSpent(this.scene.time.now);
+  }
+
+  getCurrentLevelMisses(): number {
+    return this.gameStats.getCurrentLevelMisses();
+  }
+
+  getCurrentAttempts(): number {
+    return (
+      this.gameStats.missCounts.reduce((total, misses) => total + misses, 0) +
+      this.gameStats.getCurrentLevelMisses()
+    );
+  }
+
+  getCurrentIndex(): number {
+    return this.levelManager.getCurrentIndex();
   }
 }

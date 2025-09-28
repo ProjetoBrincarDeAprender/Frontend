@@ -1,8 +1,11 @@
 import React, { useEffect, useRef } from "react";
 import Phaser from "phaser";
 import MathGame from "@/games/sum/scenes/GameScene";
+import { SumLevelCompleteScene } from "@/games/sum/scenes/LevelCompleteScene";
 import { useUser } from "@/hooks/User/useUser";
 import { Footer } from "@/components/Footer/Footer";
+import { BackButton } from "@/components/utils/BackButton";
+import { Header } from "@/components/Header/Header";
 
 interface SumGameProps {
   activityId?: number;
@@ -21,7 +24,7 @@ const SumGame: React.FC<SumGameProps> = ({ activityId = 1 }) => {
       height: 600,
       parent: "game-container",
       backgroundColor: "#AED3E3",
-      scene: [MathGame],
+      scene: [MathGame, SumLevelCompleteScene],
       scale: {
         mode: Phaser.Scale.FIT,
         autoCenter: Phaser.Scale.CENTER_BOTH, 
@@ -47,8 +50,9 @@ const SumGame: React.FC<SumGameProps> = ({ activityId = 1 }) => {
 
   return (
    <>
-      <div className="mt-5 mb-20 flex justify-center">
-        {/* <Header /> */}
+      <div className="mt-28 mb-20 flex justify-center py-4">
+        <Header /> 
+        <BackButton />
         <div
           id="game-container"
           className="relative"

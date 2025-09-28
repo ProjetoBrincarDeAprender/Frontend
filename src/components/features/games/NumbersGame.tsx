@@ -5,6 +5,8 @@ import GameScene from "@/games/numbers/scenes/GameScene";
 import StartScene from "@/games/numbers/scenes/StartScene";
 import Phaser from "phaser";
 import { useEffect, useRef } from "react";
+import { Header } from "@/components/Header/Header";
+import { BackButton } from "@/components/utils/BackButton";
 
 export interface IRefNumbersGame {
   game: Phaser.Game | null;
@@ -39,8 +41,9 @@ const NumbersGame: React.FC = () => {
 
   return (
     <>
-      <div className="mt-5 mb-20 flex justify-center">
-        {/* <Header /> */}
+      <div className="mt-28 mb-20 flex justify-center py-4">
+        <Header /> 
+        <BackButton />
         <div
           id="numbers-game-container"
           className="relative"

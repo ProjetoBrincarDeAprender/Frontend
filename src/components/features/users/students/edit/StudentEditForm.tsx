@@ -141,16 +141,11 @@ export function StudentEditForm({ id, onSuccess }: StudentFormProps) {
   }, [id, form, user?.perfil]);
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
-    const userPayload = Object.fromEntries(
+    const studentPayload = Object.fromEntries(
       Object.entries({
         nome_completo: data.nome_completo,
         email: data.email,
         escolaId: user?.perfil == "Admin" ? data.escolaId : undefined,
-      }),
-    );
-
-    const studentPayload = Object.fromEntries(
-      Object.entries({
         avatar_url: data.avatar_url?.trim() === "" ? null : data.avatar_url,
         tema_preferido: data.tema_preferido,
         data_nascimento: data.data_nascimento
@@ -164,14 +159,12 @@ export function StudentEditForm({ id, onSuccess }: StudentFormProps) {
       }),
     );
     try {
-      const userResponse = await api.put(`/user/update/${id}`, userPayload);
-
       const studentResponse = await api.put(
         `/student/update/${id}`,
         studentPayload,
       );
 
-      if (studentResponse.status === 200 && userResponse.status === 200) {
+      if (studentResponse.status === 200) {
         onSuccess();
       }
     } catch (error) {
@@ -271,8 +264,8 @@ export function StudentEditForm({ id, onSuccess }: StudentFormProps) {
             />
           )}
         />
-       {user?.perfil == "Admin" && (
-          schools ? (
+        {user?.perfil == "Admin" &&
+          (schools ? (
             <Form.Field
               form={form}
               name="escolaId"
@@ -291,8 +284,7 @@ export function StudentEditForm({ id, onSuccess }: StudentFormProps) {
             />
           ) : (
             <span>Carregando escolas...</span>
-          )
-        )}
+          ))}
         <Form.Submit>Atualizar Dados</Form.Submit>
       </Form.Main>
     </Form.Wrapper>

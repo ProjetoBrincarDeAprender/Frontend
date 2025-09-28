@@ -15,13 +15,13 @@ export default function Login() {
       return <Navigate to="/dashboard" replace />;
 
     case "Aluno":
-      return <Navigate to="/profile" replace />;
+      return <Navigate to="/games" replace />;
 
     case "Professor":
       return <Navigate to="/profile" replace />;
 
     case "Responsavel":
-      return <Navigate to="/profile" replace />;
+      return <Navigate to="/responsibledashboard" replace />;
   }
 
   return (
