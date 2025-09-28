@@ -18,16 +18,11 @@ export class MemoryLevelCompleteScene extends Phaser.Scene {
     this.load.image("defaultButton", "/assets/common/defaultButton.svg");
     this.load.image("hoverButton", "/assets/common/hoverButton.svg");
     this.load.image("clickedButton", "/assets/common/clickedButton.svg");
+    this.load.image("background", "/assets/memoryGame/fundo.png");
   }
 
   create() {
-    this.add.rectangle(
-      this.scale.width / 2,
-      this.scale.height / 2,
-      this.scale.width,
-      this.scale.height,
-      0x96d6f3,
-    );
+    this.createBackground();
 
     this.add.image(this.scale.width / 2, 120, "trophy").setScale(0.3);
 
@@ -55,8 +50,7 @@ export class MemoryLevelCompleteScene extends Phaser.Scene {
           {
             fontFamily: "Arial, sans-serif",
             fontSize: "24px",
-            color: "#333",
-            backgroundColor: "#96D6F3",
+            color: "#FFFFFF",
             padding: { left: 15, right: 15, top: 8, bottom: 8 },
           },
         )
@@ -100,7 +94,7 @@ export class MemoryLevelCompleteScene extends Phaser.Scene {
       this.scale.width / 2 - 120,
       420,
     );
-    const continueButton = this.add.rectangle(0, 0, 220, 70, 0x22c55e);
+    const continueButton = this.add.rectangle(0, 0, 220, 70, 0x2d5eff);
     const continueIcon = this.add.image(-80, 0, "continue-icon").setScale(0.1);
     const continueText = this.add
       .text(20, 0, "PRÓXIMO NÍVEL", {
@@ -210,4 +204,12 @@ export class MemoryLevelCompleteScene extends Phaser.Scene {
   }
 
   update() {}
+
+  private createBackground(): void {
+    const background = this.add.image(400, 300, "background");
+    const scaleX = this.cameras.main.width / background.width;
+    const scaleY = this.cameras.main.height / background.height;
+    const scale = Math.max(scaleX, scaleY);
+    background.setScale(scale);
+  }
 }

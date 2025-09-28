@@ -320,9 +320,8 @@ export class MemoryGameLogic {
         fontSize: "28px",
         fontFamily: "Arial, sans-serif",
         color: color,
-        backgroundColor: "#96D6F3",
         padding: { left: 20, right: 20, top: 10, bottom: 10 },
-        stroke: color,
+        stroke: "#FFFFFF",
         strokeThickness: 2,
         shadow: {
           offsetX: 2,

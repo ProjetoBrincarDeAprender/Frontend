@@ -11,9 +11,12 @@ export class MemoryMenuScene extends Phaser.Scene {
     this.load.image("exit-icon", "/assets/memoryGame/exit.png");
     this.load.image("mascot", "/assets/common/dudaSentada.png");
     this.load.image("star", "/assets/common/star.svg");
+    this.load.image("background", "/assets/memoryGame/fundo.png");
   }
 
   create() {
+    this.createBackground();
+
     this.add.image(this.scale.width / 2, 80, "mascot").setScale(0.3);
 
     this.add
@@ -22,7 +25,7 @@ export class MemoryMenuScene extends Phaser.Scene {
         fontSize: "40px",
         color: "#2D5EFF",
         fontStyle: "bold",
-        stroke: "#2D5EF0",
+        stroke: "#FFFFFF",
         strokeThickness: 4,
       })
       .setOrigin(0.5);
@@ -31,8 +34,7 @@ export class MemoryMenuScene extends Phaser.Scene {
       .text(this.scale.width / 2, 210, "CLIQUE EM COMEÇAR PARA JOGAR!", {
         fontFamily: "Arial, sans-serif",
         fontSize: "24px",
-        color: "#333",
-        backgroundColor: "#96D6F3",
+        color: "#FFF",
         padding: { left: 10, right: 10, top: 4, bottom: 4 },
       })
       .setOrigin(0.5);
@@ -107,4 +109,12 @@ export class MemoryMenuScene extends Phaser.Scene {
   }
 
   update() {}
+
+  private createBackground(): void {
+    const background = this.add.image(400, 300, "background");
+    const scaleX = this.cameras.main.width / background.width;
+    const scaleY = this.cameras.main.height / background.height;
+    const scale = Math.max(scaleX, scaleY);
+    background.setScale(scale);
+  }
 }

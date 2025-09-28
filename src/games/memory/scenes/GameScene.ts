@@ -29,9 +29,12 @@ export class MemoryGameScene extends Phaser.Scene {
     this.load.image("card-2", "/assets/memoryGame/gato.png");
     this.load.image("card-3", "/assets/memoryGame/papagaio.png");
     this.load.image("card-4", "/assets/memoryGame/cavalo.png");
+    this.load.image("background", "/assets/memoryGame/fundo.png");
   }
 
   create() {
+    this.createBackground();
+
     this.logic.initializeLevel();
     this.logic.createCards();
     this.startGameDataTimer();
@@ -119,5 +122,13 @@ export class MemoryGameScene extends Phaser.Scene {
       this.gameDataTimer.destroy();
       this.gameDataTimer = undefined;
     }
+  }
+
+  private createBackground(): void {
+    const background = this.add.image(400, 300, "background");
+    const scaleX = this.cameras.main.width / background.width;
+    const scaleY = this.cameras.main.height / background.height;
+    const scale = Math.max(scaleX, scaleY);
+    background.setScale(scale);
   }
 }
