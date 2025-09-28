@@ -67,7 +67,10 @@ export const SchoolUserColumns: ColumnDef<SchoolUser>[] = [
     cell: ({ row }) => (
       <div className="flex items-center justify-center gap-2">
         <EditSchoolUserModal schoolId={+row.original.codigo_usuario} />
-        <DeleteModal route="/user/remove" id={+row.original.codigo_usuario} />
+        <DeleteModal
+          route="/school-admin/remove"
+          id={+row.original.codigo_usuario}
+        />
       </div>
     ),
   },

@@ -1,4 +1,5 @@
 import { Form } from "@/components/forms/Root";
+import { Link } from "@/components/utils/Link/Link";
 import useAuth from "@/hooks/Auth/useAuth";
 import { useUser } from "@/hooks/User/useUser";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -96,7 +97,7 @@ export default function SignInForm() {
           form={form}
           name="senha"
           render={({ field }) => (
-            <div className="relative w-full mt-4">
+            <div className="relative mt-4 w-full">
               <Form.Input
                 {...field}
                 label="Senha"
@@ -118,6 +119,12 @@ export default function SignInForm() {
 
         <Form.Submit>Entrar</Form.Submit>
       </Form.Main>
+      <p className="mt-4 text-sm text-gray-600">
+        Não lembra a sua senha?{" "}
+        <Link variant="secondary" href="/get-password-token">
+          Recuperar senha
+        </Link>
+      </p>
     </Form.Wrapper>
   );
 }

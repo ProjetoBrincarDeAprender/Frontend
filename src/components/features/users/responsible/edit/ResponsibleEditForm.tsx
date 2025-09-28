@@ -44,12 +44,13 @@ export function ResponsibleEditForm({ id, onSuccess }: ResponsibleFormProps) {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await api.get(`/user/list/${id}`);
+        const response = await api.get(`/responsible/list/${id}`);
 
         if (response.status === 200) {
           const userData = {
             nome_completo: response.data.nome_completo,
             email: response.data.email,
+            parentesco: response.data.parentesco,
             escolaId:
               form.getValues("escolaId") || String(response.data.escolaId),
           };
@@ -134,9 +135,9 @@ export function ResponsibleEditForm({ id, onSuccess }: ResponsibleFormProps) {
     };
 
     try {
-      const responseUser = await api.put(`/user/update/${id}`, userData);
+      const responseUser = await api.put(`/responsible/update/${id}`, userData);
 
-      await api.put(`/responsible/update/${id}`, {
+      await api.put(`/responsible/update/${id}/relation`, {
         usersIds: data.usersIds?.map((id) => Number(id)) || [],
         parentesco: data.parentesco,
       });

@@ -11,6 +11,7 @@ import { TableProvider } from "@/contexts/Table/provider";
 import { BackButton } from "@/components/utils/BackButton";
 // import { ChangePasswordModal } from "@/components/features/users/password/ChangePasswordModal";
 
+import { ChangePasswordModal } from "@/components/features/users/password/ChangePasswordModal";
 import NuvemSVG from "../../assets/nuvem.svg";
 import StarSVG from "../../assets/star.svg";
 
@@ -137,20 +138,14 @@ export function Profile() {
               </TableProvider>
             </div>
 
-            {/* <ChangePasswordModal /> */}
+            <ChangePasswordModal />
+
             <button
-              onClick={() => alert("Funcionalidade em desenvolvimento!")}
-              className="bg-az1 hover:bg-az2 mt-4 w-full rounded-lg px-5 py-2 font-semibold text-white transition"
+              onClick={() => navigate(-1)}
+              className="mt-4 w-full rounded-lg bg-yellow-400 px-6 py-2 font-semibold text-black shadow-md transition hover:bg-yellow-300"
             >
-              Alterar Senha
+              Voltar
             </button>
-               
-               <button
-            onClick={() => navigate(-1)}
-            className=" mt-4 w-full rounded-lg bg-yellow-400 px-6 py-2 font-semibold text-black shadow-md transition hover:bg-yellow-300"
-          >
-            Voltar
-          </button>
           </div>
         </div>
       </main>

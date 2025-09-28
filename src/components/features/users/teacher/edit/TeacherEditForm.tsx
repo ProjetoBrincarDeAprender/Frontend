@@ -42,7 +42,7 @@ export function TeacherEditForm({ id, onSuccess }: TeacherFormProps) {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await api.get(`/user/list/${id}`);
+        const response = await api.get(`/teacher/list/${id}`);
 
         if (response.status === 200) {
           const userData = {
@@ -81,7 +81,7 @@ export function TeacherEditForm({ id, onSuccess }: TeacherFormProps) {
         const response = await api.get(`/teacher/list/${id}/students`);
         if (response.status === 200) {
           const users = response.data;
-          
+
           const originalIds = users.map((user: { codigo_usuario: number }) =>
             String(user.codigo_usuario),
           );
@@ -94,7 +94,6 @@ export function TeacherEditForm({ id, onSuccess }: TeacherFormProps) {
 
     const fetchAllStudents = async () => {
       try {
-
         const response = await api.get(
           `/student/list/relations/teacher?isNull=true`,
         );
@@ -126,16 +125,17 @@ export function TeacherEditForm({ id, onSuccess }: TeacherFormProps) {
     };
 
     try {
-      const responseUser = await api.put(`/user/update/${id}`, userData);
+      const responseUser = await api.put(`/teacher/update/${id}`, userData);
 
-      const validUserIds = data.usersIds
-        ?.map((id) => {
-          const numericId = Number(id);
-          return isNaN(numericId) ? null : numericId;
-        })
-        .filter((id): id is number => id !== null) || [];
+      const validUserIds =
+        data.usersIds
+          ?.map((id) => {
+            const numericId = Number(id);
+            return isNaN(numericId) ? null : numericId;
+          })
+          .filter((id): id is number => id !== null) || [];
 
-      await api.put(`/teacher/update/${id}`, {
+      await api.put(`/teacher/update/${id}/relation`, {
         usersIds: validUserIds,
       });
 
@@ -198,8 +198,8 @@ export function TeacherEditForm({ id, onSuccess }: TeacherFormProps) {
             />
           )}
         />
-         {user?.perfil == "Admin" && (
-          schools ? (
+        {user?.perfil == "Admin" &&
+          (schools ? (
             <Form.Field
               form={form}
               name="escolaId"
@@ -218,8 +218,7 @@ export function TeacherEditForm({ id, onSuccess }: TeacherFormProps) {
             />
           ) : (
             <span>Carregando escolas...</span>
-          )
-        )}
+          ))}
 
         <Form.Submit>Atualizar Dados</Form.Submit>
       </Form.Main>
