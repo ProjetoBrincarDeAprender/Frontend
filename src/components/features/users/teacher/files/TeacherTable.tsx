@@ -38,7 +38,7 @@ export default function TeacherTable() {
       setLoading(true);
       try {
         const response = await api.get(
-          `/teacher/list?${user?.perfil != "Admin" ? "?escolaId=" + user?.escola?.id : ""}`,
+          `/teacher/list${user?.perfil != "Admin" ? "?escolaId=" + user?.escola?.id : ""}`,
           {},
         );
 

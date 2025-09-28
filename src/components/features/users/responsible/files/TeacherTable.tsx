@@ -21,7 +21,7 @@ export default function ResponsibleTable() {
       setLoading(true);
       try {
         const response = await api.get(
-          `/responsible/list?${user?.perfil != "Admin" ? "?escolaId=" + user?.escola?.id : ""}`,
+          `/responsible/list${user?.perfil != "Admin" ? "?escolaId=" + user?.escola?.id : ""}`,
           {},
         );
         if (response.status === 200) {
