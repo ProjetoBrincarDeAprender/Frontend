@@ -20,7 +20,7 @@ export default function SchoolUserTable() {
       setLoading(true);
       try {
         const response = await api.get(
-          `/user/list?type=Escola${user?.perfil != "Admin" ? "?escolaId=" + user?.escola?.id : ""}`,
+          `/school-admin/list${user?.perfil != "Admin" ? "?escolaId=" + user?.escola?.id : ""}`,
           {},
         );
 

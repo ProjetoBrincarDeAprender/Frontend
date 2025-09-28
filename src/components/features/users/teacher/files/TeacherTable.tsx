@@ -8,9 +8,9 @@ import { DataTable } from "../../../../utils/DataTable/DataTable";
 import { TeacherColumns, type Teacher } from "./TableData";
 
 import { SkeletonTable } from "@/components/ui/skeleton-table";
-import { EditTeacherModal } from "../edit/TeacherEditModal";
 import DeleteModal from "@/components/utils/DataTable/DeleteModal";
 import { Share2 } from "lucide-react";
+import { EditTeacherModal } from "../edit/TeacherEditModal";
 
 export default function TeacherTable() {
   const [data, setData] = useState<Teacher[] | null>(null);
@@ -21,7 +21,7 @@ export default function TeacherTable() {
     if (selectedIds.length === 0) return;
     for (const id of selectedIds) {
       try {
-        await api.delete(`/user/remove/${id}`);
+        await api.delete(`/teacher/remove/${id}`);
       } catch (error) {
         console.error(`Erro ao deletar professor ${id}:`, error);
       }
@@ -38,7 +38,7 @@ export default function TeacherTable() {
       setLoading(true);
       try {
         const response = await api.get(
-          `/user/list?type=Professor${user?.perfil != "Admin" ? "&escolaId=" + user?.escola?.id : ""}`,
+          `/teacher/list?${user?.perfil != "Admin" ? "?escolaId=" + user?.escola?.id : ""}`,
           {},
         );
 
@@ -113,7 +113,7 @@ export default function TeacherTable() {
                 }
               >
                 <DeleteModal
-                  route="/user/remove"
+                  route="/teacher/remove"
                   id={+row.original.codigo_usuario}
                 />
               </button>

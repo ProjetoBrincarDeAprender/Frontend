@@ -94,15 +94,9 @@ export default function TeacherSignUpForm({ onSuccess }: SignUpFormProps) {
           `/student/list/relations/teacher?isNull=true`,
         );
 
-        //antigo
-        // const response = await api.get(
-        //   `/user/list?type=Aluno${user?.perfil == "Admin" ? "" : `&escolaId=${user?.escola?.id}`}`,
-        // );
-
         if (response.status == 200) {
           // const users = response.data;
           // setUsers(users.filter((user: User) => user.escola == escola.nome));
-
           // if (users.length === 0) {
           //   setErrorMessage("Não há alunos cadastrados nesta escola!");
           // } else {
@@ -126,10 +120,10 @@ export default function TeacherSignUpForm({ onSuccess }: SignUpFormProps) {
     };
 
     try {
-      const response = await api.post("/user/register", payload);
+      const response = await api.post("/teacher/register", payload);
 
       if (usersIds && usersIds.length > 0) {
-        const responseLinking = await api.post("/teacher/register", {
+        const responseLinking = await api.post("/teacher/register/relation", {
           userId: response.data.codigo_usuario,
           educandosIds: usersIds.map((value) => Number(value)),
         });

@@ -79,7 +79,10 @@ export const ResponsibleColumns: ColumnDef<Responsible>[] = [
     cell: ({ row }) => (
       <div className="flex items-center justify-center gap-2">
         <EditResponsableModal id={+row.original.codigo_usuario} />
-        <DeleteModal route="/user/remove" id={+row.original.codigo_usuario} />
+        <DeleteModal
+          route="/responsible/remove"
+          id={+row.original.codigo_usuario}
+        />
       </div>
     ),
   },

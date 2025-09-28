@@ -33,7 +33,7 @@ export default function EditSchoolUserForm({
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await api.get(`/user/list/${id}`);
+        const response = await api.get(`/school-admin/list/${id}`);
 
         if (response.status === 200) {
           const formData = {
@@ -61,7 +61,7 @@ export default function EditSchoolUserForm({
 
       const payload = verifiedData;
 
-      const response = await api.put(`/user/update/${id}`, payload);
+      const response = await api.put(`/school-admin/update/${id}`, payload);
 
       if (response.status === 200) {
         onSuccess();
