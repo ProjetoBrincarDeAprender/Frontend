@@ -26,6 +26,7 @@ export default class GameScene extends Phaser.Scene {
     this.load.image("defaultButton", "/assets/common/defaultButton.svg");
     this.load.image("hoverButton", "/assets/common/hoverButton.svg");
     this.load.image("clickedButton", "/assets/common/clickedButton.svg");
+    this.load.image("numbersBackground", "/assets/numbersGame/background.png");
   }
 
   /**
