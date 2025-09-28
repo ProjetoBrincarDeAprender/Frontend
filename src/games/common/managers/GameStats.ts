@@ -41,6 +41,10 @@ export default class GameStats {
     return this.actualLevelMisses;
   }
 
+  getCurrentLevelTimeSpent(finalTime: number): number {
+    return finalTime - this.initialLevelTime;
+  }
+
   resetAllData(): void {
     this.hitTimes = [];
     this.missCounts = [];

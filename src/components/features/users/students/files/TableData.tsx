@@ -1,7 +1,5 @@
 import type { ColumnDef } from "@tanstack/react-table";
-// import { Edit, Import } from "lucide-react";
 import DeleteModal from "../../../../utils/DataTable/DeleteModal";
-// import { Link } from "../utils/Link/Link";
 import { ArrowUpDown } from "lucide-react";
 import { Button } from "../../../../ui/button";
 import { EditStudentModal } from "../edit/StudentEditModal";
@@ -16,10 +14,6 @@ export type Student = {
   data_nascimento: string | null;
   avatar_url: string | null;
   tema_preferido: string | null;
-  // professor?: {
-  //   nome_completo: string;
-  //   codigo_usuario: string;
-  // } | null;
 };
 
 export const StudentColumns: ColumnDef<Student>[] = [
@@ -94,9 +88,6 @@ export const StudentColumns: ColumnDef<Student>[] = [
       const date = new Date(year, month - 1, day);
 
       return date.toLocaleDateString("pt-BR");
-
-      // const formattedDate = new Date(actualDate).toLocaleDateString("pt-BR");
-      // return formattedDate;
     },
   },
   {
@@ -110,23 +101,15 @@ export const StudentColumns: ColumnDef<Student>[] = [
         <ArrowUpDown className="ml-2 h-4 w-4" />
       </Button>
     ),
+    cell: ({ row }) => {
+      const temaPreferido = row.getValue<string>("tema_preferido");
+      return temaPreferido ? (
+        <span className="text-gray-900">{temaPreferido}</span>
+      ) : (
+        <span className="text-gray-500 italic">Não atribuído</span>
+      );
+    },
   },
-  // {
-  //   accessorKey: "professor",
-  //   header: ({ column }) => (
-  //     <Button
-  //       variant="ghost"
-  //       onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-  //     >
-  //       Professor
-  //       <ArrowUpDown className="ml-2 h-4 w-4" />
-  //     </Button>
-  //   ),
-  //   cell: ({ row }) => {
-  //     const professor = row.original.professor;
-  //     return professor ? professor.nome_completo : "Não atribuído";
-  //   },
-  // },
   {
     accessorKey: "actions",
     header: "Ações",

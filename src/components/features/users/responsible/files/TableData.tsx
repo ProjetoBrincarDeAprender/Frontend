@@ -1,7 +1,5 @@
 import type { ColumnDef } from "@tanstack/react-table";
-// import { Edit } from "lucide-react";
 import DeleteModal from "@/components/utils/DataTable/DeleteModal";
-// import { Link } from "../utils/Link/Link";
 import { Button } from "@/components/ui/button";
 import { ArrowUpDown } from "lucide-react";
 import { EditResponsableModal } from "../edit/ResponsibleEditModal";
@@ -11,6 +9,7 @@ export type Responsible = {
   nome_completo: string;
   email: string;
   escola: string;
+  parentesco: string;
 };
 
 export const ResponsibleColumns: ColumnDef<Responsible>[] = [
@@ -63,12 +62,27 @@ export const ResponsibleColumns: ColumnDef<Responsible>[] = [
     ),
   },
   {
+   accessorKey: "parentesco",
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+      >
+        Parentesco
+        <ArrowUpDown className="ml-2 h-4 w-4" />
+      </Button>
+    ),
+  },
+  {
     accessorKey: "actions",
     header: "Ações",
     cell: ({ row }) => (
       <div className="flex items-center justify-center gap-2">
         <EditResponsableModal id={+row.original.codigo_usuario} />
-        <DeleteModal route="/user/remove" id={+row.original.codigo_usuario} />
+        <DeleteModal
+          route="/responsible/remove"
+          id={+row.original.codigo_usuario}
+        />
       </div>
     ),
   },

@@ -36,21 +36,43 @@ export function ResponsibleDashboard() {
         <div className="flex items-center gap-4">
           <img className="max-w-24" src={saturn} alt="Saturn" />
           <div className="flex flex-col gap-2">
-            <h1 className="text-2xl font-semibold">Bem vindo {username},</h1>
-            <h1 className="text-5xl font-bold">Alunos sob sua tutela</h1>
+            <h1 className="text-4xl font-bold">Bem vindo, {username}</h1>
           </div>
         </div>
       </section>
-      {response.map(
-        (student: { avatar_url: string | null; nome_completo: string }) => {
-          return (
-            <StudentCard
-              imageUrl={student.avatar_url}
-              studentName={student.nome_completo}
-            />
-          );
-        },
-      )}
+
+      <main className="min-h-96 flex-1 px-78">
+        {response.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-16 text-center">
+            <h2 className="mb-4 text-3xl font-bold text-gray-700">
+              Ops! Nenhum estudante encontrado
+            </h2>
+            <div className="max-w-sm rounded-2xl border-2 border-dashed border-gray-300 bg-white p-8 shadow-lg">
+              <div className="mx-auto mb-4 h-16 w-16 rounded-full bg-gray-200"></div>
+              <div className="mb-2 h-4 rounded bg-gray-200"></div>
+              <div className="mx-auto mb-4 h-3 w-3/4 rounded bg-gray-100"></div>
+              <div className="h-8 rounded bg-blue-100"></div>
+            </div>
+            <p className="mt-8 max-w-md text-lg text-gray-500">
+              Parece que este usuário não é responsável por nenhum estudante no
+              momento.
+            </p>
+          </div>
+        ) : (
+          response.map(
+            (student: { avatar_url: string | null; nome_completo: string }) => {
+              return (
+                <StudentCard
+                  key={student.nome_completo}
+                  imageUrl={student.avatar_url}
+                  studentName={student.nome_completo}
+                />
+              );
+            },
+          )
+        )}
+      </main>
+
       <Footer />
     </div>
   );

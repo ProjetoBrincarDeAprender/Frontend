@@ -11,6 +11,7 @@ export default class MathGame extends Phaser.Scene {
   private userId: string = "default_user";
   private activityId?: number;
   private choiceButtons: Button[] = [];
+  private submitButton?: Phaser.GameObjects.Container;
 
   constructor() {
     super("MathGame");
@@ -168,13 +169,6 @@ export default class MathGame extends Phaser.Scene {
     const choices = currentLevel.getChoices();
     if (!choices) return;
 
-    // this.add.text(300, 380, "Escolha a resposta:", {
-    //   fontSize: "32px",
-    //   color: "#000",
-    //   fontStyle: "bold",
-    // }).setOrigin(0.5);
-
-    // Criar 3 botões em linha
     const buttonPositions = [
       { x: 200, y: 480 },
       { x: 400, y: 480 },
@@ -217,6 +211,7 @@ export default class MathGame extends Phaser.Scene {
       backgroundColor: "#ffffff",
       padding: { x: 10, y: 10 },
     }).setOrigin(0.5);
+    this.submitButton = this.createCustomSubmitButton(550, 500);
 
     this.input.keyboard!.on("keydown", (event: KeyboardEvent) => {
       if (event.key >= "0" && event.key <= "9") {
@@ -231,9 +226,85 @@ export default class MathGame extends Phaser.Scene {
     });
   }
 
+  private createCustomSubmitButton(x: number, y: number): Phaser.GameObjects.Container {
+    const buttonContainer = this.add.container(x, y);
+    
+    const buttonBackground = this.add.graphics();
+    const buttonWidth = 120;
+    const buttonHeight = 50;
+    const cornerRadius = 8;
+    
+    const defaultColor = 0x228b22; 
+    const hoverColor = 0x2e8b57;  
+    
+    buttonBackground.fillStyle(defaultColor);
+    buttonBackground.fillRoundedRect(-buttonWidth/2, -buttonHeight/2, buttonWidth, buttonHeight, cornerRadius);
+    
+    const buttonText = this.add.text(0, 0, "Enviar", {
+      fontSize: "24px",
+      color: "#ffffff"
+    }).setOrigin(0.5);
+    
+    buttonContainer.add(buttonBackground);
+    buttonContainer.add(buttonText);
+    
+    buttonContainer.setSize(buttonWidth, buttonHeight);
+    buttonContainer.setInteractive();
+    
+    buttonContainer.on('pointerover', () => {
+      buttonBackground.clear();
+      buttonBackground.fillStyle(hoverColor);
+      buttonBackground.fillRoundedRect(-buttonWidth/2, -buttonHeight/2, buttonWidth, buttonHeight, cornerRadius);
+      
+      this.tweens.add({
+        targets: buttonContainer,
+        scaleX: 1.05,
+        scaleY: 1.05,
+        duration: 150,
+        ease: 'Power2'
+      });
+    });
+    
+    buttonContainer.on('pointerout', () => {
+      buttonBackground.clear();
+      buttonBackground.fillStyle(defaultColor);
+      buttonBackground.fillRoundedRect(-buttonWidth/2, -buttonHeight/2, buttonWidth, buttonHeight, cornerRadius);
+      
+      this.tweens.add({
+        targets: buttonContainer,
+        scaleX: 1,
+        scaleY: 1,
+        duration: 150,
+        ease: 'Power2'
+      });
+    });
+    
+    buttonContainer.on('pointerdown', () => {
+      this.tweens.add({
+        targets: buttonContainer,
+        scaleX: 0.95,
+        scaleY: 0.95,
+        duration: 100,
+        ease: 'Power2',
+        yoyo: true
+      });
+    });
+    
+    buttonContainer.on('pointerup', () => {
+      this.handleAnswer();
+    });
+    
+    return buttonContainer;
+  }
+
   private clearChoiceButtons() {
     this.choiceButtons.forEach(button => button.destroy());
     this.choiceButtons = [];
+    
+    if (this.submitButton) {
+      this.submitButton.destroy();
+      this.submitButton = undefined;
+    }
   }
 
   private clearNumberImages() {
@@ -344,7 +415,9 @@ export default class MathGame extends Phaser.Scene {
       
       this.time.delayedCall(1500, () => {
         if (!result.finished) {
-          this.scene.restart();
+          this.scene.start("SumLevelCompleteScene", { 
+            isLastLevel: false 
+          });
           this.clearNumberImages();
           this.clearChoiceButtons();
         } else {
@@ -405,13 +478,13 @@ export default class MathGame extends Phaser.Scene {
       
       this.time.delayedCall(1500, () => {
         if (!result.finished) {
-          this.scene.restart();
+          this.scene.start("SumLevelCompleteScene", { 
+            isLastLevel: false 
+          });
           this.inputText = "";
           this.answerText.setText(" ");
           this.clearNumberImages();
-        } else {
-          // const gameStats = this.logic.getGameStats();
-          
+        } else {          
           this.showEndScene();
           this.clearNumberImages();
         }

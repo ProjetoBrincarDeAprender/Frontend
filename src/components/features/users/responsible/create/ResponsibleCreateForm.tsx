@@ -96,10 +96,6 @@ export function ResponsableSignUpForm({ onSuccess }: SignUpFormProps) {
           `/student/list/relations/responsible?isNull=true`,
         );
 
-        // const response = await api.get(
-        //   `/user/list?type=Aluno${user?.perfil == "Admin" ? "" : `&escolaId=${user?.escola?.id}`}`,
-        // );
-
         if (response.status == 200) {
           const users = response.data;
           setUsers(users.filter((u: User) => u.escola == escola.nome));
@@ -127,14 +123,17 @@ export function ResponsableSignUpForm({ onSuccess }: SignUpFormProps) {
     };
 
     try {
-      const response = await api.post("/user/register", payload);
+      const response = await api.post("/responsible/register", payload);
 
       if (usersIds && usersIds.length > 0) {
-        const responseLinking = await api.post("/responsible/register", {
-          userId: response.data.codigo_usuario,
-          educandosIds: usersIds.map((value) => Number(value)),
-          parentesco,
-        });
+        const responseLinking = await api.post(
+          "/responsible/register/relation",
+          {
+            userId: response.data.codigo_usuario,
+            educandosIds: usersIds.map((value) => Number(value)),
+            parentesco,
+          },
+        );
 
         if (response.status == 201 && responseLinking.status == 201) {
           return onSuccess();

@@ -6,13 +6,21 @@ export default class CreditsScene extends Phaser.Scene {
   }
 
   create() {
-    // Fundo celebrativo
-    this.add.rectangle(400, 300, 800, 600, 0xe8f5e8);
+    // Imagem de fundo
+    const background = this.add.image(400, 300, "numbersBackground");
+    background.setDisplaySize(800, 600);
+
+    // Container com blur e opacidade baixa
+    const container = this.add.graphics();
+    container.fillStyle(0xffffff, 0.5); // Mais opaco para celebração
+    container.fillRoundedRect(50, 50, 700, 500, 25);
+    container.lineStyle(3, 0x4caf50, 0.8); // Borda verde celebrativa
+    container.strokeRoundedRect(50, 50, 700, 500, 25);
 
     // Estrelas decorativas
     for (let i = 0; i < 20; i++) {
-      const x = Phaser.Math.Between(50, 750);
-      const y = Phaser.Math.Between(50, 550);
+      const x = Phaser.Math.Between(80, 720);
+      const y = Phaser.Math.Between(80, 520);
       const star = this.add.text(x, y, "⭐", {
         fontSize: "24px",
       });
@@ -27,30 +35,41 @@ export default class CreditsScene extends Phaser.Scene {
       });
     }
 
-    // Mensagem principal
+    // Mensagem principal em CAPSLOCK
     this.add
-      .text(400, 250, "🎉 Parabéns! 🎉", {
+      .text(400, 220, "PARABÉNS!", {
         color: "#4CAF50",
-        fontSize: "48px",
+        fontSize: "56px",
         fontFamily: "Arial Black",
         stroke: "#FFFFFF",
-        strokeThickness: 4,
+        strokeThickness: 5,
+        shadow: {
+          offsetX: 3,
+          offsetY: 3,
+          color: "rgba(0,0,0,0.5)",
+          blur: 4,
+          fill: true,
+        },
       })
       .setOrigin(0.5);
 
     this.add
-      .text(400, 320, "Você completou todas as sequências!", {
+      .text(400, 300, "VOCÊ COMPLETOU TODAS AS SEQUÊNCIAS!", {
         color: "#2E7D32",
         fontSize: "28px",
-        fontFamily: "Arial",
+        fontFamily: "Arial Black",
+        stroke: "#FFFFFF",
+        strokeThickness: 3,
       })
       .setOrigin(0.5);
 
     this.add
-      .text(400, 380, "Muito bem! Continue aprendendo! 📚✨", {
+      .text(400, 380, "MUITO BEM! CONTINUE APRENDENDO!", {
         color: "#FF6F00",
-        fontSize: "24px",
-        fontFamily: "Arial",
+        fontSize: "26px",
+        fontFamily: "Arial Black",
+        stroke: "#FFFFFF",
+        strokeThickness: 3,
       })
       .setOrigin(0.5);
   }
