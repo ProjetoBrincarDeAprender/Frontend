@@ -1,5 +1,6 @@
 import Logic from "../logic/Logic";
 import Phaser from "phaser";
+import api from "@/utils/api";
 
 /**
  * Cena principal do jogo de sequência numérica.
@@ -8,6 +9,7 @@ import Phaser from "phaser";
 export default class GameScene extends Phaser.Scene {
   /** Instância da lógica do jogo (orquestra regras e progresso) */
   private logic: Logic;
+  private gameDataTimer?: Phaser.Time.TimerEvent;
 
   /**
    * Construtor da cena do jogo de sequência numérica.
@@ -38,6 +40,8 @@ export default class GameScene extends Phaser.Scene {
     this.setupLevel();
 
     console.log("Jogo de sequência numérica carregado!");
+
+    this.startGameDataTimer();
   }
 
   /**
@@ -65,6 +69,7 @@ export default class GameScene extends Phaser.Scene {
           this.logic.buttonSuccessEffect(button, "star");
           this.time.delayedCall(1000, () => {
             if (result.finished) {
+              this.stopGameDataTimer();
               this.scene.start("numbersCredits");
             } else {
               this.setupLevel();
@@ -75,5 +80,50 @@ export default class GameScene extends Phaser.Scene {
         }
       });
     });
+  }
+
+  private startGameDataTimer() {
+    if (this.gameDataTimer) {
+      this.gameDataTimer.destroy();
+    }
+    this.gameDataTimer = this.time.addEvent({
+      delay: 10000,
+      callback: this.sendGameData,
+      callbackScope: this,
+      loop: true,
+    });
+  }
+
+  private stopGameDataTimer() {
+    if (this.gameDataTimer) {
+      this.gameDataTimer.destroy();
+      this.gameDataTimer = undefined;
+    }
+  }
+
+  private async sendGameData() {
+    try {
+      const attempts = this.logic.getCurrentAttempts();
+      const levelTime = this.logic.getCurrentLevelTime();
+      const currentLevel = this.logic.getCurrentIndex();
+
+      const gameData = {
+        activityId: 4,
+        questionId: currentLevel + 1,
+        attempts: attempts,
+        timeSpent: levelTime,
+        responseDate: this.time.now,
+        isCorrect: false,
+        answer: "playing",
+      };
+
+      await api.post("/adaptiveSystem/interaction/register", gameData);
+    } catch (error) {
+      // Silencia erros periódicos para não interferir na experiência
+    }
+  }
+
+  shutdown() {
+    this.stopGameDataTimer();
   }
 }
