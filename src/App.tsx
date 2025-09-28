@@ -19,6 +19,8 @@ import { Home } from "./pages/Home/Home";
 import { default as LoginForm } from "./pages/Login/Login";
 import Logout from "./pages/Logout/Logout";
 import { Profile } from "./pages/Profile/Profile";
+import { RecoverPassword } from "./pages/RecoverPassword/RecoverPassword";
+import { SendPasswordToken } from "./pages/SendPasswordToken/SendPasswordToken";
 
 function App() {
   return (
@@ -26,6 +28,8 @@ function App() {
       <Route index element={<Home />} />
       <Route path="/logout" element={<Logout />} />
       <Route path="/login" element={<LoginForm />} />
+      <Route path="/get-password-token" element={<SendPasswordToken />} />
+      <Route path="/recover-password" element={<RecoverPassword />} />
 
       {/* URL apenas de testes */}
       <Route path="/responsibledashboard" element={<ResponsibleDashboard />} />

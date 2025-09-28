@@ -10,7 +10,6 @@ import {
 import api from "@/utils/api";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AxiosError } from "axios";
-import { Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -29,10 +28,6 @@ type FormData = z.infer<typeof formSchema>;
 
 export function ChangePasswordModal() {
   const [open, setOpen] = useState(false);
-  const [showPassword, setShowPassword] = useState<{
-    old: boolean;
-    new: boolean;
-  }>({ old: false, new: false });
 
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
@@ -81,64 +76,22 @@ export function ChangePasswordModal() {
               form={form}
               name="senhaAntiga"
               render={({ field }) => (
-                <div className="relative mt-4 w-full">
-                  <Form.Input
-                    {...field}
-                    label="Senha Antiga"
-                    placeholder="Digite sua senha antiga"
-                    type={showPassword.old ? "text" : "password"}
-                  />
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setShowPassword((prev) => {
-                        return { ...prev, old: !prev.old };
-                      })
-                    }
-                    className="absolute top-9 right-3 text-gray-500 hover:text-gray-700"
-                    aria-label={
-                      showPassword.old ? "Ocultar senha" : "Mostrar senha"
-                    }
-                  >
-                    {showPassword.old ? (
-                      <EyeOff size={20} />
-                    ) : (
-                      <Eye size={20} />
-                    )}
-                  </button>
-                </div>
+                <Form.PasswordInput
+                  {...field}
+                  label="Senha Antiga"
+                  placeholder="Digite sua senha antiga"
+                />
               )}
             />
             <Form.Field
               form={form}
               name="novaSenha"
               render={({ field }) => (
-                <div className="relative mt-4 w-full">
-                  <Form.Input
-                    {...field}
-                    label="Nova senha"
-                    placeholder="Digite sua nova senha"
-                    type={showPassword.new ? "text" : "password"}
-                  />
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setShowPassword((prev) => {
-                        return { ...prev, new: !prev.new };
-                      })
-                    }
-                    className="absolute top-9 right-3 text-gray-500 hover:text-gray-700"
-                    aria-label={
-                      showPassword.new ? "Ocultar senha" : "Mostrar senha"
-                    }
-                  >
-                    {showPassword.new ? (
-                      <EyeOff size={20} />
-                    ) : (
-                      <Eye size={20} />
-                    )}
-                  </button>
-                </div>
+                <Form.PasswordInput
+                  {...field}
+                  label="Nova Senha"
+                  placeholder="Digite sua nova senha"
+                />
               )}
             />
             <Form.Submit>Alterar Senha</Form.Submit>

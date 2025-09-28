@@ -9,6 +9,7 @@ import Item from "./Item";
 import type { FromMainProps } from "./Main";
 import Main from "./Main";
 import { FancyMultiSelect, type MultiSelectProps } from "./MultiSelect";
+import PasswordInput, { type FormPasswordInputProps } from "./PasswordInput";
 import type { FormSelectProps } from "./Select";
 import Select from "./Select";
 import Wrapper, { type FormWrapperProps } from "./Wrapper";
@@ -35,6 +36,9 @@ export const Form = {
     />
   ),
   Input: (props: FormInputProps) => <Input {...props} />,
+  PasswordInput: (props: FormPasswordInputProps) => (
+    <PasswordInput {...props} />
+  ),
   Select: (props: FormSelectProps) => <Select {...props} />,
   Item: (props: FormItemProps) => <Item {...props} />,
   MultiSelect: (props: MultiSelectProps) => <FancyMultiSelect {...props} />,

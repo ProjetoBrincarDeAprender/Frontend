@@ -136,10 +136,6 @@ export function Profile() {
               </TableProvider>
             </div>
 
-            {/* <ChangePasswordModal /> */}
-            {/* <Link className="bg-az1 hover:bg-az2 mt-4 w-full rounded-lg px-5 py-2 font-semibold text-white transition text-center block text-lg" href="/change-password" variant="none">
-              Alterar Senha
-            </Link> */}
             <ChangePasswordModal />
 
             <button
