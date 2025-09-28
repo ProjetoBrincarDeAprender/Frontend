@@ -3,6 +3,7 @@ import ChangeColor from "../effects/ChangeColor";
 import GrowupEffect from "../effects/GrowupEffect";
 import Particles from "../effects/Particles";
 import FloatingEffect from "../effects/FloatingEffect";
+import OverlayEffect from "../effects/OverlayEffect";
 
 export default class EffectManager {
   private scene: Phaser.Scene;
@@ -34,5 +35,9 @@ export default class EffectManager {
     y: number = 310,
   ): void {
     FloatingEffect(this.scene, target, ease, y);
+  }
+
+  overlay(overlay: number): void {
+    OverlayEffect(this.scene, overlay);
   }
 }

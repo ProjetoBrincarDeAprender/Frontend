@@ -32,7 +32,8 @@ export function RecoverPassword() {
   });
 
   if (!searchParams.get("token")) {
-    return navigate("/login", { replace: true });
+    navigate("/login", { replace: true });
+    return;
   }
 
   const handleSubmit = async (data: z.infer<typeof formSchema>) => {

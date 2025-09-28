@@ -4,6 +4,7 @@ import EffectManager from "../../common/managers/EffectManager";
 import GameStats from "../../common/managers/GameStats";
 import LevelManager from "../../common/managers/LevelManager";
 import Level from "../../common/models/Level";
+import api from "@/utils/api";
 
 export default class Logic {
   private scene: Phaser.Scene;
@@ -12,19 +13,27 @@ export default class Logic {
   private effectManager: EffectManager;
   private levelManager: LevelManager<Level>;
   private image?: Phaser.GameObjects.Image;
+  private imageMaxSize: number;
 
   constructor(scene: Phaser.Scene) {
     const levels: Level[] = [];
     levels.push(new Level("abelha", "A"));
     levels.push(new Level("elefante", "E"));
-    levels.push(new Level("ovos", "O"));
+    levels.push(new Level("hiena", "I"));
+    levels.push(new Level("ovelha", "O"));
     levels.push(new Level("urso", "U"));
+    levels.push(new Level("gato", "A"));
+    levels.push(new Level("esquilo", "E"));
+    levels.push(new Level("iguana", "I"));
+    levels.push(new Level("onca", "O"));
+    levels.push(new Level("urubu", "U"));
 
     this.levelManager = new LevelManager(levels);
     this.scene = scene;
     this.gameStats = new GameStats();
     this.effectManager = new EffectManager(this.scene);
     this.buttonManager = new ButtonManager(this.scene);
+    this.imageMaxSize = 800;
   }
 
   handleClick(
@@ -36,6 +45,8 @@ export default class Logic {
       button.getButtonStringText(),
     );
     if (isCorrect) {
+      this.sendData();
+
       this.gameStats.addHitTime(timeNow);
       this.gameStats.resetInitialLevelTime(timeNow);
       this.gameStats.addMissCount();
@@ -48,6 +59,35 @@ export default class Logic {
       return { correct: false, finished: false };
     }
   }
+
+  private sendData = async () => {
+    try {
+      const levelData = {
+        activityId: 3,
+        questionId: this.levelManager.getCurrentIndex(),
+        isCorrect: true,
+        answer: this.accessCurrentLevel().getAnswer(),
+        timeSpent: this.gameStats.getCurrentLevelTimeSpent(this.scene.time.now),
+        attempts: this.gameStats.getCurrentLevelMisses(),
+        responseDate: this.scene.time.now,
+      };
+
+      console.log("Sending data:", levelData);
+
+      const response = await api.post(
+        "/adaptiveSystem/interaction/register",
+        levelData,
+        {},
+      );
+
+      if (response.status === 201) {
+        console.log("Data sent successfully");
+        console.log(response);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   buttonSuccessEffect(
     button: Button,
@@ -86,7 +126,26 @@ export default class Logic {
   }
 
   createImage(texture: string): void {
-    this.image = this.scene.add.image(400, 300, texture);
+    this.image = this.scene.add.image(400, 280, texture);
+
+    const imgWidth = this.image.width;
+    const imgHeight = this.image.height;
+
+    const maxSize = this.imageMaxSize;
+    const scaleX = maxSize / imgWidth;
+    const scaleY = maxSize / imgHeight;
+    const scale = Math.min(scaleX, scaleY);
+
+    this.image.setScale(scale);
+  }
+
+  createBackground(texture: string): void {
+    const background = this.scene.add.image(400, 300, texture);
+    const scaleX = this.scene.cameras.main.width / background.width;
+    const scaleY = this.scene.cameras.main.height / background.height;
+    const scale = Math.max(scaleX, scaleY);
+    background.setScale(scale);
+    this.effectManager.overlay(0.3);
   }
 
   setImageTexture(texture: string): void {

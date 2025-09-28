@@ -1,7 +1,5 @@
-// import { FancyMultiSelect } from "@/components/forms/MultiSelect";
 import { Form } from "@/components/forms/Root";
 import { useUser } from "@/hooks/User/useUser";
-// import type { User } from "@/types/user";
 import api from "@/utils/api";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AxiosError } from "axios";
@@ -27,16 +25,18 @@ type TeacherFormProps = {
 export function TeacherEditForm({ id, onSuccess }: TeacherFormProps) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
+    defaultValues: {
+      nome_completo: "",
+      email: "",
+      escolaId: "",
+      usersIds: [],
+    },
   });
   const { user } = useUser();
 
   const [schools, setSchools] = useState<{ id: number; nome: string }[] | null>(
     null,
   );
-  // const [students, setStudents] = useState<User[] | null>(null);
-  // const [allStudents, setAllStudents] = useState<User[] | null>(null);
-
-  // const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const escolaSelecionada = form.watch("escolaId");
 
   useEffect(() => {
@@ -79,11 +79,11 @@ export function TeacherEditForm({ id, onSuccess }: TeacherFormProps) {
     const fetchRelations = async () => {
       try {
         const response = await api.get(`/teacher/list/${id}/students`);
-        if (response.status == 200) {
+        if (response.status === 200) {
           const users = response.data;
-          // setStudents(users);
-          const originalIds = users.map((user: { id: number }) =>
-            String(user.id),
+
+          const originalIds = users.map((user: { codigo_usuario: number }) =>
+            String(user.codigo_usuario),
           );
           form.setValue("usersIds", originalIds);
         }
@@ -94,38 +94,28 @@ export function TeacherEditForm({ id, onSuccess }: TeacherFormProps) {
 
     const fetchAllStudents = async () => {
       try {
-        // const escola =
-        //   user?.perfil === "Admin"
-        //     ? schools?.find((school) => school.id === Number(escolaSelecionada))
-        //     : user?.escola;
-        // if (!escola) return setAllStudents([]);
-
         const response = await api.get(
           `/student/list/relations/teacher?isNull=true`,
         );
-        if (response.status == 200) {
+        if (response.status === 200) {
           // const users = response.data;
-          // setAllStudents(
-          //   users.filter((user: User) => user.escola == escola.nome),
-          // );
-          // if (users.length === 0) {
-          //   setErrorMessage("Não há alunos cadastrados nesta escola!");
-          // } else {
-          //   setErrorMessage(null);
-          // }
         }
       } catch (error) {
         console.log(error);
       }
     };
 
-    if (user?.perfil == "Admin") {
-      fetchSchools();
-    }
-    fetchRelations();
-    fetchAllStudents();
-    fetchUserData();
-  }, [id, form, escolaSelecionada, user]);
+    const loadData = async () => {
+      if (user?.perfil === "Admin") {
+        await fetchSchools();
+      }
+      await fetchUserData();
+      await fetchRelations();
+      await fetchAllStudents();
+    };
+
+    loadData();
+  }, [id, user?.perfil, escolaSelecionada, form]);
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     const userData = {
@@ -137,8 +127,16 @@ export function TeacherEditForm({ id, onSuccess }: TeacherFormProps) {
     try {
       const responseUser = await api.put(`/teacher/update/${id}`, userData);
 
+      const validUserIds =
+        data.usersIds
+          ?.map((id) => {
+            const numericId = Number(id);
+            return isNaN(numericId) ? null : numericId;
+          })
+          .filter((id): id is number => id !== null) || [];
+
       await api.put(`/teacher/update/${id}/relation`, {
-        usersIds: data.usersIds?.map((id) => Number(id)) || [],
+        usersIds: validUserIds,
       });
 
       if (responseUser.status === 200) {
@@ -207,7 +205,7 @@ export function TeacherEditForm({ id, onSuccess }: TeacherFormProps) {
               name="escolaId"
               render={({ field }) => (
                 <Form.Select
-                  value={String(field.value)}
+                  value={field.value || ""}
                   onChange={field.onChange}
                   label="Escola"
                   placeholder="Selecione a Escola"
@@ -222,34 +220,6 @@ export function TeacherEditForm({ id, onSuccess }: TeacherFormProps) {
             <span>Carregando escolas...</span>
           ))}
 
-        {/* {allStudents && students && (
-          <Form.Field
-            form={form}
-            name="usersIds"
-            render={({ field }) => (
-              <>
-                <FancyMultiSelect
-                  onSelect={field.onChange}
-                  label="Alunos do Professor"
-                  placeholder="Selecione os alunos do professor..."
-                  data={allStudents.map(({ codigo_usuario, email }) => ({
-                    value: String(codigo_usuario),
-                    label: email,
-                  }))}
-                  preSelectedData={students.map(
-                    ({ codigo_usuario, email }) => ({
-                      value: String(codigo_usuario),
-                      label: email,
-                    }),
-                  )}
-                />
-                {errorMessage && (
-                  <p className="mt-1 text-sm text-yellow-800">{errorMessage}</p>
-                )}
-              </>
-            )}
-          />
-        )} */}
         <Form.Submit>Atualizar Dados</Form.Submit>
       </Form.Main>
     </Form.Wrapper>
