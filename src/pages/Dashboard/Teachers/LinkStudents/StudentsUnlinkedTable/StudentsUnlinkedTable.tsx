@@ -34,7 +34,7 @@ export function StudentsUnlinkedTable({
         }
 
         // Buscar informações do professor para obter a escola
-        const teacherRes = await api.get(`/user/list/${teacherId}`);
+        const teacherRes = await api.get(`/teacher/list/${teacherId}`);
         if (teacherRes.status !== 200 || !teacherRes.data?.escola) {
           console.log("Erro ao buscar informações do professor");
           setLoading(false);
