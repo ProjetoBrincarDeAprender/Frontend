@@ -75,4 +75,23 @@ export default class Button extends Phaser.GameObjects.Container {
   setButtonText(buttonText: string): void {
     this.buttonText.text = buttonText;
   }
+
+  /**
+   * Aplica uma cor (tint) às imagens do botão (default/hover/click).
+   * Útil para destacar estados como erro (vermelho) ou acerto.
+   */
+  setTint(color: number): void {
+    this.defaultImage.setTint(color);
+    this.hoverImage.setTint(color);
+    this.clickImage.setTint(color);
+  }
+
+  /**
+   * Remove qualquer tint aplicado às imagens do botão.
+   */
+  clearTint(): void {
+    this.defaultImage.clearTint();
+    this.hoverImage.clearTint();
+    this.clickImage.clearTint();
+  }
 }
