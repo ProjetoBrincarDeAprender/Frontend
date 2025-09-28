@@ -4,6 +4,7 @@ import EffectManager from "../../common/managers/EffectManager";
 import GameStats from "../../common/managers/GameStats";
 import LevelManager from "../../common/managers/LevelManager";
 import Level from "../../common/models/Level";
+import api from "@/utils/api";
 
 export default class Logic {
   private scene: Phaser.Scene;
@@ -53,6 +54,9 @@ export default class Logic {
       button.getButtonStringText(),
     );
     if (isCorrect) {
+      // Envia dados desta tentativa correta antes de atualizar os contadores
+      this.sendData();
+
       this.gameStats.addHitTime(timeNow);
       this.gameStats.addMissCount();
       this.gameStats.resetActualLevelMisses();
@@ -64,6 +68,34 @@ export default class Logic {
       return { correct: false, finished: false };
     }
   }
+
+  private sendData = async () => {
+    try {
+      const levelData = {
+        activityId: 4, // Sequência numérica
+        questionId: this.levelManager.getCurrentIndex(),
+        isCorrect: true,
+        answer: this.accessCurrentLevel().getAnswer(),
+        timeSpent: this.gameStats.getCurrentLevelTimeSpent(this.scene.time.now),
+        attempts: this.gameStats.getCurrentLevelMisses(),
+        responseDate: this.scene.time.now,
+      };
+
+      // console.log("Sending numbers level data:", levelData);
+
+      const response = await api.post(
+        "/adaptiveSystem/interaction/register",
+        levelData,
+        {},
+      );
+
+      if (response.status === 201) {
+        // console.log("Numbers data sent successfully");
+      }
+    } catch (error) {
+      // console.log(error);
+    }
+  };
 
   buttonSuccessEffect(
     button: Button,
@@ -230,5 +262,25 @@ export default class Logic {
 
   resetInitialLevelTime(newTime: number = 0): void {
     this.gameStats.resetInitialLevelTime(newTime);
+  }
+
+  // Utilitários para a cena enviar telemetria periódica (similar ao Memory)
+  getCurrentLevelTime(): number {
+    return this.gameStats.getCurrentLevelTimeSpent(this.scene.time.now);
+  }
+
+  getCurrentLevelMisses(): number {
+    return this.gameStats.getCurrentLevelMisses();
+  }
+
+  getCurrentAttempts(): number {
+    return (
+      this.gameStats.missCounts.reduce((total, misses) => total + misses, 0) +
+      this.gameStats.getCurrentLevelMisses()
+    );
+  }
+
+  getCurrentIndex(): number {
+    return this.levelManager.getCurrentIndex();
   }
 }
