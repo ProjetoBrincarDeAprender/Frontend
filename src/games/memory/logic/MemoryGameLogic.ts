@@ -362,12 +362,12 @@ export class MemoryGameLogic {
   }
 
   private showSuccessMessage() {
-    this.showFeedbackMessage("Muito bem! Parabéns! 🎉", "#22c55e", 2000);
+    this.showFeedbackMessage("MUITO BEM! PARABÉNS! 🎉", "#22c55e", 2000);
   }
 
   private showErrorMessage() {
     this.showFeedbackMessage(
-      "Tente novamente! Você consegue! 😊",
+      "TENTE NOVAMENTE! VOCÊ CONSEGUE! 😊",
       "#ef4444",
       2500,
     );

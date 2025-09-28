@@ -9,7 +9,7 @@ export class MemoryMenuScene extends Phaser.Scene {
     this.load.image("clickedButton", "/assets/common/clickedButton.svg");
     this.load.image("play-icon", "/assets/memoryGame/play.png");
     this.load.image("exit-icon", "/assets/memoryGame/exit.png");
-    this.load.image("mascot", "/assets/memoryGame/mascot.png");
+    this.load.image("mascot", "/assets/common/dudaSentada.png");
     this.load.image("star", "/assets/common/star.svg");
   }
 
@@ -28,7 +28,7 @@ export class MemoryMenuScene extends Phaser.Scene {
       .setOrigin(0.5);
 
     this.add
-      .text(this.scale.width / 2, 210, "Clique em Começar para jogar!", {
+      .text(this.scale.width / 2, 210, "CLIQUE EM COMEÇAR PARA JOGAR!", {
         fontFamily: "Arial, sans-serif",
         fontSize: "24px",
         color: "#333",
@@ -41,7 +41,7 @@ export class MemoryMenuScene extends Phaser.Scene {
     const playButton = this.add.rectangle(0, 0, 200, 60, 0x2d5eff);
     const playIcon = this.add.image(-70, 0, "play-icon").setScale(0.08);
     const playText = this.add
-      .text(10, 0, "Começar", {
+      .text(10, 0, "COMEÇAR", {
         fontFamily: "Arial, sans-serif",
         fontSize: "18px",
         color: "#FFFFFF",
@@ -59,7 +59,7 @@ export class MemoryMenuScene extends Phaser.Scene {
     const exitButton = this.add.rectangle(0, 0, 200, 60, 0xff5555);
     const exitIcon = this.add.image(-70, 0, "exit-icon").setScale(0.08);
     const exitText = this.add
-      .text(10, 0, "Sair", {
+      .text(10, 0, "SAIR", {
         fontFamily: "Arial, sans-serif",
         fontSize: "18px",
         color: "#FFFFFF",
