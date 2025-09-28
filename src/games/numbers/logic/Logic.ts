@@ -76,8 +76,13 @@ export default class Logic {
   }
 
   buttonFailEffect(button: Button, failColor: number = 0xff0000): void {
+    // Aumenta levemente o botão, pinta o texto e o fundo de vermelho
     this.effectManager.growup(button, "Bounce", 1.2, 200);
     this.effectManager.changeColor(button.getButtonText(), failColor);
+    // Pinta o botão de vermelho no erro
+    button.setTint(failColor);
+    // Remove o tint após um curto intervalo para não persistir entre níveis
+    this.scene.time.delayedCall(500, () => button.clearTint());
   }
 
   failEffect(): void {}
@@ -108,9 +113,9 @@ export default class Logic {
 
     // Container com cor que harmoniza com o fundo
     const container = this.scene.add.graphics();
-    container.fillStyle(0x1e1b4b, 0.6); // Roxo escuro com 60% de opacidade
+    container.fillStyle(0x1e1b4b, 0.8); // Roxo escuro com 80% de opacidade
     container.fillRoundedRect(50, 50, 700, 500, 25);
-    container.lineStyle(3, 0xfbbf24, 0.8); // Borda dourada que combina com as estrelas
+    container.lineStyle(3, 0xfbbf24, 1); // Borda dourada que combina com as estrelas
     container.strokeRoundedRect(50, 50, 700, 500, 25);
 
     // Título em CAPSLOCK para pessoas com síndrome de Down
