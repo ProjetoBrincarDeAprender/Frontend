@@ -42,7 +42,7 @@ export function TeacherEditForm({ id, onSuccess }: TeacherFormProps) {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await api.get(`/user/list/${id}`);
+        const response = await api.get(`/teacher/list/${id}`);
 
         if (response.status === 200) {
           const userData = {
@@ -103,10 +103,6 @@ export function TeacherEditForm({ id, onSuccess }: TeacherFormProps) {
         const response = await api.get(
           `/student/list/relations/teacher?isNull=true`,
         );
-        //  ANTIGO
-        //const response = await api.get(
-        //   `/user/list?type=Aluno${user?.perfil == "Admin" ? "" : `&escolaId=${user?.escola?.id}`}`,
-        // );
         if (response.status == 200) {
           // const users = response.data;
           // setAllStudents(
@@ -139,9 +135,9 @@ export function TeacherEditForm({ id, onSuccess }: TeacherFormProps) {
     };
 
     try {
-      const responseUser = await api.put(`/user/update/${id}`, userData);
+      const responseUser = await api.put(`/teacher/update/${id}`, userData);
 
-      await api.put(`/teacher/update/${id}`, {
+      await api.put(`/teacher/update/${id}/relation`, {
         usersIds: data.usersIds?.map((id) => Number(id)) || [],
       });
 
@@ -204,8 +200,8 @@ export function TeacherEditForm({ id, onSuccess }: TeacherFormProps) {
             />
           )}
         />
-         {user?.perfil == "Admin" && (
-          schools ? (
+        {user?.perfil == "Admin" &&
+          (schools ? (
             <Form.Field
               form={form}
               name="escolaId"
@@ -224,8 +220,7 @@ export function TeacherEditForm({ id, onSuccess }: TeacherFormProps) {
             />
           ) : (
             <span>Carregando escolas...</span>
-          )
-        )}
+          ))}
 
         {/* {allStudents && students && (
           <Form.Field

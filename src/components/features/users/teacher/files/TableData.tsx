@@ -74,7 +74,10 @@ export const TeacherColumns: ColumnDef<Teacher>[] = [
         >
           <Share2 className="text-slate-100" />
         </a>
-        <DeleteModal route="/user/remove" id={+row.original.codigo_usuario} />
+        <DeleteModal
+          route="/teacher/remove"
+          id={+row.original.codigo_usuario}
+        />
       </div>
     ),
   },
