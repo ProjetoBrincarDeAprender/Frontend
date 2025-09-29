@@ -22,17 +22,69 @@ export default class GameScene extends Phaser.Scene {
    * Pré-carrega os recursos visuais necessários para o jogo.
    */
   preload() {
-    this.load.image("background", "/assets/vowelsGame/background.jpeg");
-    this.load.image("abelha", "/assets/vowelsGame/abelha.svg");
-    this.load.image("elefante", "/assets/vowelsGame/elefante.svg");
-    this.load.image("hiena", "/assets/vowelsGame/hiena.svg");
-    this.load.image("ovelha", "/assets/vowelsGame/ovelha.svg");
-    this.load.image("urso", "/assets/vowelsGame/urso.svg");
-    this.load.image("gato", "/assets/vowelsGame/gato.svg");
-    this.load.image("esquilo", "/assets/vowelsGame/esquilo.svg");
-    this.load.image("iguana", "/assets/vowelsGame/iguana.svg");
-    this.load.image("onca", "/assets/vowelsGame/onca.svg");
-    this.load.image("urubu", "/assets/vowelsGame/urubu.svg");
+    this.load.image(
+      "backgroundMain",
+      "/assets/vowelsGame/images/backgroundMain.jpeg",
+    );
+    this.load.image("abelha", "/assets/vowelsGame/animals/abelha.svg");
+    this.load.image(
+      "abelhaCompleta",
+      "/assets/vowelsGame/animals/abelhaCompleta.svg",
+    );
+
+    this.load.image("elefante", "/assets/vowelsGame/animals/elefante.svg");
+    this.load.image(
+      "elefanteCompleta",
+      "/assets/vowelsGame/animals/elefanteCompleta.svg",
+    );
+
+    this.load.image("hiena", "/assets/vowelsGame/animals/hiena.svg");
+    this.load.image(
+      "hienaCompleta",
+      "/assets/vowelsGame/animals/hienaCompleta.svg",
+    );
+
+    this.load.image("ovelha", "/assets/vowelsGame/animals/ovelha.svg");
+    this.load.image(
+      "ovelhaCompleta",
+      "/assets/vowelsGame/animals/ovelhaCompleta.svg",
+    );
+
+    this.load.image("urso", "/assets/vowelsGame/animals/urso.svg");
+    this.load.image(
+      "ursoCompleta",
+      "/assets/vowelsGame/animals/ursoCompleta.svg",
+    );
+
+    this.load.image("gato", "/assets/vowelsGame/animals/gato.svg");
+    this.load.image(
+      "gatoCompleta",
+      "/assets/vowelsGame/animals/gatoCompleta.svg",
+    );
+
+    this.load.image("esquilo", "/assets/vowelsGame/animals/esquilo.svg");
+    this.load.image(
+      "esquiloCompleta",
+      "/assets/vowelsGame/animals/esquiloCompleta.svg",
+    );
+
+    this.load.image("iguana", "/assets/vowelsGame/animals/iguana.svg");
+    this.load.image(
+      "iguanaCompleta",
+      "/assets/vowelsGame/animals/iguanaCompleta.svg",
+    );
+
+    this.load.image("onca", "/assets/vowelsGame/animals/onca.svg");
+    this.load.image(
+      "oncaCompleta",
+      "/assets/vowelsGame/animals/oncaCompleta.svg",
+    );
+
+    this.load.image("urubu", "/assets/vowelsGame/animals/urubu.svg");
+    this.load.image(
+      "urubuCompleta",
+      "/assets/vowelsGame/animals/urubuCompleta.svg",
+    );
 
     this.load.image("star", "/assets/common/star.svg");
     this.load.image("defaultButton", "/assets/common/defaultButton.svg");
@@ -44,7 +96,7 @@ export default class GameScene extends Phaser.Scene {
    * Cria elementos visuais e inicia o primeiro nível do jogo.
    */
   create() {
-    this.logic.createBackground("background");
+    this.logic.createBackground("backgroundMain");
     this.logic.createImage(this.logic.accessCurrentLevel().getName());
     this.logic.createButtons();
     this.setupLevel();

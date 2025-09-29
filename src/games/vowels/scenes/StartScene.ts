@@ -13,7 +13,10 @@ export default class Vowels extends Phaser.Scene {
   }
 
   preload() {
-    this.load.image("background", "/assets/vowelsGame/background.jpeg");
+    this.load.image(
+      "backgroundStart",
+      "/assets/vowelsGame/images/backgroundMain.jpeg",
+    );
     this.load.image(
       "hoverButtonRectangle",
       "/assets/common/hoverButtonRectangle.svg",
@@ -87,7 +90,7 @@ export default class Vowels extends Phaser.Scene {
   update() {}
 
   private createBackground(): void {
-    const background = this.add.image(400, 300, "background");
+    const background = this.add.image(400, 300, "backgroundStart");
     const scaleX = this.cameras.main.width / background.width;
     const scaleY = this.cameras.main.height / background.height;
     const scale = Math.max(scaleX, scaleY);
