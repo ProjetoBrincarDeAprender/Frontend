@@ -52,6 +52,8 @@ export default class Logic {
       this.gameStats.addMissCount();
       this.gameStats.resetActualLevelMisses();
 
+      this.setImageTexture(this.accessCurrentLevel().getCompleteAnimalKey());
+
       const finished = !this.levelManager.nextLevel();
       return { correct: true, finished };
     } else {
