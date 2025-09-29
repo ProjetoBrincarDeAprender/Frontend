@@ -41,5 +41,7 @@ export default class AssetLoader {
   preloadClouds() {
     this.scene.load.image("cloud", "/assets/vowelsGame/images/cloud.png");
     this.scene.load.image("cloud2", "/assets/vowelsGame/images/cloud2.png");
+    this.scene.load.image("cloud3", "/assets/vowelsGame/images/cloud3.png");
+    this.scene.load.image("cloud4", "/assets/vowelsGame/images/cloud4.png");
   }
 }

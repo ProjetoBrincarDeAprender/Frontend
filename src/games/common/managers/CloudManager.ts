@@ -22,7 +22,7 @@ export default class CloudManager {
   private scene: Phaser.Scene;
   private effectManager: EffectManager;
   private readonly cloudConfig: CloudConfig = {
-    textures: ["cloud", "cloud2"],
+    textures: ["cloud", "cloud2", "cloud3", "cloud4"],
     count: { min: 4, max: 6 },
     scale: { min: 15, max: 55 },
     position: {
@@ -31,7 +31,7 @@ export default class CloudManager {
       spaceBetweenClouds: 50,
     },
     animation: {
-      speed: { min: 2000, max: 4000 },
+      speed: { min: 20000, max: 25000 },
       delay: { min: 0, max: 1000 },
       endX: 920,
     },
