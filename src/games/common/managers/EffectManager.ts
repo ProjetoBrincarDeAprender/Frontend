@@ -5,7 +5,6 @@ import Particles from "../effects/Particles";
 import FloatingEffect from "../effects/FloatingEffect";
 import OverlayEffect from "../effects/OverlayEffect";
 import MoveEffect from "../effects/MoveEffect";
-import type { T } from "node_modules/react-router/dist/development/route-data-DjzmHYNR.d.mts";
 
 export default class EffectManager {
   private scene: Phaser.Scene;
