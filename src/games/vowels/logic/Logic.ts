@@ -3,7 +3,7 @@ import Button from "@/games/common/models/Button";
 import EffectManager from "../../common/managers/EffectManager";
 import GameStats from "../../common/managers/GameStats";
 import LevelManager from "../../common/managers/LevelManager";
-import Level from "../../common/models/Level";
+import VowelsLevel from "./VowelsLevel";
 import api from "@/utils/api";
 
 export default class Logic {
@@ -11,22 +11,22 @@ export default class Logic {
   private gameStats: GameStats;
   private buttonManager: ButtonManager;
   private effectManager: EffectManager;
-  private levelManager: LevelManager<Level>;
+  private levelManager: LevelManager<VowelsLevel>;
   private image?: Phaser.GameObjects.Image;
   private imageMaxSize: number;
 
   constructor(scene: Phaser.Scene) {
-    const levels: Level[] = [];
-    levels.push(new Level("abelha", "A"));
-    levels.push(new Level("elefante", "E"));
-    levels.push(new Level("hiena", "I"));
-    levels.push(new Level("ovelha", "O"));
-    levels.push(new Level("urso", "U"));
-    levels.push(new Level("gato", "A"));
-    levels.push(new Level("esquilo", "E"));
-    levels.push(new Level("iguana", "I"));
-    levels.push(new Level("onca", "O"));
-    levels.push(new Level("urubu", "U"));
+    const levels: VowelsLevel[] = [];
+    levels.push(new VowelsLevel("abelha", "abelhaCompleta", "A"));
+    levels.push(new VowelsLevel("elefante", "elefanteCompleta", "E"));
+    levels.push(new VowelsLevel("hiena", "hienaCompleta", "I"));
+    levels.push(new VowelsLevel("ovelha", "ovelhaCompleta", "O"));
+    levels.push(new VowelsLevel("urso", "ursoCompleta", "U"));
+    levels.push(new VowelsLevel("gato", "gatoCompleta", "A"));
+    levels.push(new VowelsLevel("esquilo", "esquiloCompleta", "E"));
+    levels.push(new VowelsLevel("iguana", "iguanaCompleta", "I"));
+    levels.push(new VowelsLevel("onca", "oncaCompleta", "O"));
+    levels.push(new VowelsLevel("urubu", "urubuCompleta", "U"));
 
     this.levelManager = new LevelManager(levels);
     this.scene = scene;
@@ -40,7 +40,7 @@ export default class Logic {
     button: Button,
     timeNow: number,
   ): { correct: boolean; finished: boolean } {
-    const currentLevel: Level = this.levelManager.getCurrentLevel();
+    const currentLevel: VowelsLevel = this.levelManager.getCurrentLevel();
     const isCorrect: boolean = currentLevel.isCorrectLetter(
       button.getButtonStringText(),
     );
@@ -51,6 +51,8 @@ export default class Logic {
       this.gameStats.resetInitialLevelTime(timeNow);
       this.gameStats.addMissCount();
       this.gameStats.resetActualLevelMisses();
+
+      this.setImageTexture(this.accessCurrentLevel().getCompleteAnimalKey());
 
       const finished = !this.levelManager.nextLevel();
       return { correct: true, finished };
@@ -106,7 +108,7 @@ export default class Logic {
 
   failEffect(): void {}
 
-  accessCurrentLevel(): Level {
+  accessCurrentLevel(): VowelsLevel {
     return this.levelManager.getCurrentLevel();
   }
 
