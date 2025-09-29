@@ -1,10 +1,12 @@
 import ButtonManager from "@/games/common/managers/ButtonManager";
 import EffectManager from "@/games/common/managers/EffectManager";
 import Phaser from "phaser";
+import RandomGenerator from "@/games/common/utils/randomGenerator";
 
 export default class Vowels extends Phaser.Scene {
   private buttonManager: ButtonManager;
   private effectManager: EffectManager;
+  clouds: any;
 
   constructor() {
     super("vowelsStart");
@@ -15,7 +17,7 @@ export default class Vowels extends Phaser.Scene {
   preload() {
     this.load.image(
       "backgroundStart",
-      "/assets/vowelsGame/images/backgroundMain.jpeg",
+      "/assets/vowelsGame/images/backgroundMain.png",
     );
     this.load.image(
       "hoverButtonRectangle",
@@ -41,6 +43,8 @@ export default class Vowels extends Phaser.Scene {
       "clickedRectangleRed",
       "/assets/common/clickedRectangleRed.svg",
     );
+    this.load.image("cloud", "/assets/vowelsGame/images/cloud.png");
+    this.load.image("cloud2", "/assets/vowelsGame/images/cloud2.png");
   }
 
   create() {
@@ -95,6 +99,49 @@ export default class Vowels extends Phaser.Scene {
     const scaleY = this.cameras.main.height / background.height;
     const scale = Math.max(scaleX, scaleY);
     background.setScale(scale);
+
+    const cloudTextures = ["cloud", "cloud2"];
+    const clouds = this.createClouds(cloudTextures);
+
+    for (let cloud of clouds) {
+      const randomSpeed =
+        RandomGenerator.randomNumber(20000, 40000) * (cloud.scale * 10);
+      this.effectManager.move(cloud, 900, randomSpeed, -1, 0);
+    }
+
     this.effectManager.overlay(0.3);
+  }
+
+  private createClouds(textures: string[]): Phaser.GameObjects.Image[] {
+    const clouds: Phaser.GameObjects.Image[] = [];
+    const numberOfClouds = RandomGenerator.randomNumber(4, 6);
+
+    const minY = 50;
+    const maxY = 400;
+    const spaceBetweenCloudsY = (maxY - minY) / (numberOfClouds + 1);
+
+    for (let i = 0; i < numberOfClouds; i++) {
+      let randomTextureIndex = RandomGenerator.randomNumber(
+        0,
+        textures.length - 1,
+      );
+      let randomTexture = textures[randomTextureIndex];
+      let randomScale = RandomGenerator.randomNumber(15, 55) / 100;
+      let randomX = RandomGenerator.randomNumber(-160, -180);
+      let randomY =
+        spaceBetweenCloudsY * (i + 1) -
+        minY +
+        RandomGenerator.randomNumber(0, 25);
+
+      clouds.push(
+        this.add
+          .image(randomX, randomY, randomTexture)
+          .setOrigin(0.5)
+          .setScale(randomScale),
+      );
+    }
+
+    this.clouds = clouds;
+    return clouds;
   }
 }
