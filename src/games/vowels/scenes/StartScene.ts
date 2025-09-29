@@ -1,45 +1,14 @@
 import ButtonManager from "@/games/common/managers/ButtonManager";
 import EffectManager from "@/games/common/managers/EffectManager";
 import Phaser from "phaser";
-import RandomGenerator from "@/games/common/utils/randomGenerator";
 import AssetLoader from "@/games/common/loaders/AssetLoader";
 import CloudManager from "@/games/common/managers/CloudManager";
-
-interface CloudConfig {
-  textures: string[];
-  count: { min: number; max: number };
-  scale: { min: number; max: number };
-  position: {
-    x: { min: number; max: number };
-    y: { min: number; max: number };
-  };
-  animation: {
-    speed: { min: number; max: number };
-    delay: { min: number; max: number };
-    endX: number;
-  };
-}
 
 export default class Vowels extends Phaser.Scene {
   private assetLoader: AssetLoader;
   private buttonManager: ButtonManager;
   private cloudManager: CloudManager;
   private effectManager: EffectManager;
-
-  private cloudConfig: CloudConfig = {
-    textures: ["cloud", "cloud2"],
-    count: { min: 4, max: 6 },
-    scale: { min: 15, max: 55 },
-    position: {
-      x: { min: -160, max: 600 },
-      y: { min: 50, max: 400 },
-    },
-    animation: {
-      speed: { min: 2000, max: 4000 },
-      delay: { min: 0, max: 1000 },
-      endX: 920,
-    },
-  };
 
   constructor() {
     super("vowelsStart");
