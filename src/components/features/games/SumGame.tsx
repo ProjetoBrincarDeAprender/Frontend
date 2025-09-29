@@ -50,7 +50,7 @@ const SumGame: React.FC<SumGameProps> = ({ activityId = 1 }) => {
 
   return (
    <>
-      <div className="mt-28 mb-20 flex justify-center py-4">
+      <div className="mt-28 mb-10 flex justify-center py-4">
         <Header /> 
         <BackButton />
         <div

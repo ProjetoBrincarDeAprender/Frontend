@@ -2,7 +2,7 @@ export class SumLevelCompleteScene extends Phaser.Scene {
   private isLastLevel: boolean = false;
 
   constructor() {
-    super({ key: "SumLevelCompleteScene" });
+    super("SumLevelCompleteScene");
   }
 
   init(data: { isLastLevel: boolean }) {
@@ -17,6 +17,10 @@ export class SumLevelCompleteScene extends Phaser.Scene {
   }
 
   create() {
+    if (this.sound.get('complete')) {
+      this.sound.play('complete', { volume: 0.7 });
+    }
+
     this.add.image(this.scale.width / 2, this.scale.height / 2, "backgroundStart");
     
     this.add.rectangle(
@@ -46,7 +50,7 @@ export class SumLevelCompleteScene extends Phaser.Scene {
       })
       .setOrigin(0.5);
 
-    const frog = this.add.image(this.scale.width / 2, 380, "frog").setScale(0.8);
+    const frog = this.add.image(this.scale.width / 2, 380, "frog").setScale(0.5);
     
     this.tweens.add({
       targets: frog,
