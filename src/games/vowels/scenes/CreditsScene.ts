@@ -7,8 +7,8 @@ export default class Credits extends Phaser.Scene {
 
   preload() {
     this.load.image(
-      "backgroundCreditsScene",
-      "/assets/vowelsGame/backgroundCreditsScene.png",
+      "backgroundCredits",
+      "/assets/vowelsGame/images/backgroundCredits.png",
     );
   }
 
@@ -38,7 +38,7 @@ export default class Credits extends Phaser.Scene {
   }
 
   private createBackground(): void {
-    const background = this.add.image(400, 300, "backgroundCreditsScene");
+    const background = this.add.image(400, 300, "backgroundCredits");
     const scaleX = this.cameras.main.width / background.width;
     const scaleY = this.cameras.main.height / background.height;
     const scale = Math.max(scaleX, scaleY);
