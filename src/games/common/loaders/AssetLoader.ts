@@ -12,7 +12,7 @@ export default class AssetLoader {
       "backgroundStart",
       "/assets/vowelsGame/images/backgroundMain.png",
     );
-
+    this.scene.load.image("title", "/assets/vowelsGame/images/title.png");
     this.scene.load.image(
       "hoverButtonRectangle",
       "/assets/common/hoverButtonRectangle.svg",
@@ -38,6 +38,7 @@ export default class AssetLoader {
       "/assets/common/clickedRectangleRed.svg",
     );
   }
+
   preloadClouds() {
     this.scene.load.image("cloud", "/assets/vowelsGame/images/cloud.png");
     this.scene.load.image("cloud2", "/assets/vowelsGame/images/cloud2.png");

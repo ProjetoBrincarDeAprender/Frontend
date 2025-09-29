@@ -44,20 +44,15 @@ export default class Vowels extends Phaser.Scene {
   }
 
   private createTitle(): void {
-    this.add
-      .text(
-        this.cameras.main.width / 2,
-        this.cameras.main.height / 2 - 100,
-        "Jogo das Vogais",
-        {
-          color: "#ffffff",
-          fontFamily: "Verdana, Geneva, sans-serif",
-          fontSize: "64px",
-          fontStyle: "bold",
-        },
-      )
-      .setOrigin(0.5)
-      .setDepth(10);
+    const title = this.add.image(
+      this.cameras.main.width / 2,
+      this.cameras.main.height / 2 - 150,
+      "title",
+    );
+    const scaleX = this.cameras.main.width / title.width;
+    const scaleY = this.cameras.main.height / title.height;
+    const scale = Math.max(scaleX, scaleY) / 1.2;
+    title.setScale(scale);
   }
 
   private createButtons(): void {
