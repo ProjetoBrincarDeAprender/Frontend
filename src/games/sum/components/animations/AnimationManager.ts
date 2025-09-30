@@ -15,29 +15,67 @@ export class AnimationManager {
       ease: 'Power2'
     });
 
-    if (target instanceof Phaser.GameObjects.Text) {
-      target.setTint(0x00ff00);
-      this.scene.time.delayedCall(1000, () => target.clearTint());
-    }
+    this.applyTint(target, 0x00ff00);
   }
 
   incorrectAnswerEffect(target: Phaser.GameObjects.GameObject) {
-    // Type guard para verificar se o objeto tem propriedade x
+    this.applyTint(target, 0xff0000);
+
     if ('x' in target && typeof target.x === 'number') {
+      const originalX = target.x;
+      
       this.scene.tweens.add({
         targets: target,
-        x: target.x - 10,
         duration: 50,
         yoyo: true,
         repeat: 3,
-        ease: 'Power2'
+        ease: 'Power2',
+        onComplete: () => {
+          target.x = originalX;
+        }
       });
     }
+  }
 
-    if (target instanceof Phaser.GameObjects.Text) {
-      target.setTint(0xff0000);
-      this.scene.time.delayedCall(1000, () => target.clearTint());
+  private applyTint(target: Phaser.GameObjects.GameObject, color: number) {
+    if (this.hasSetTint(target)) {
+      target.setTint(color);
+      this.scene.time.delayedCall(1000, () => {
+        if (this.hasClearTint(target)) {
+          target.clearTint();
+        }
+      });
+    } else if (target instanceof Phaser.GameObjects.Container) {
+      target.each((child: Phaser.GameObjects.GameObject) => {
+        if (this.hasSetTint(child)) {
+          child.setTint(color);
+        }
+      });
+      
+      this.scene.time.delayedCall(1000, () => {
+        target.each((child: Phaser.GameObjects.GameObject) => {
+          if (this.hasClearTint(child)) {
+            child.clearTint();
+          }
+        });
+      });
     }
+  }
+
+  private hasSetTint(obj: unknown): obj is { setTint: (tint: number) => void } {
+    return obj !== null && 
+           obj !== undefined && 
+           typeof obj === 'object' && 
+           'setTint' in obj && 
+           typeof (obj as { setTint?: unknown }).setTint === 'function';
+  }
+
+  private hasClearTint(obj: unknown): obj is { clearTint: () => void } {
+    return obj !== null && 
+           obj !== undefined && 
+           typeof obj === 'object' && 
+           'clearTint' in obj && 
+           typeof (obj as { clearTint?: unknown }).clearTint === 'function';
   }
 
   starEffect(x: number, y: number) {

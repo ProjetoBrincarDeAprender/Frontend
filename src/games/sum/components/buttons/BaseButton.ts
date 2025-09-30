@@ -3,8 +3,8 @@ export class BaseButton extends Phaser.GameObjects.Container {
   protected text!: Phaser.GameObjects.Text;
   protected clickArea!: Phaser.GameObjects.Rectangle;
   
-  protected defaultColor = 0x1e90ff;
-  protected hoverColor = 0x1565c0;
+  protected defaultColor = 0x5abb30;
+  protected hoverColor = 0x53a82d;
   protected buttonWidth: number;
   protected buttonHeight: number;
 

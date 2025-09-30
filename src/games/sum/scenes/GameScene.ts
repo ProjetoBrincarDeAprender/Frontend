@@ -6,7 +6,7 @@ import { AnimationManager } from "../components/animations/AnimationManager";
 import { NumberDisplay } from "../components/ui/NumberDisplay";
 import {SubmitButton}  from "../components/buttons/SubmitButton";
 import { StartButton } from "../components/buttons/StartButton";
-import { FullscreenButton } from "../components/buttons/FullscreenButton";
+// import { FullscreenButton } from "../components/buttons/FullscreenButton";
 import Button from "../../common/models/Button";
 
 export default class MathGame extends Phaser.Scene {
@@ -21,7 +21,7 @@ export default class MathGame extends Phaser.Scene {
   private activityId?: number;
   private choiceButtons: Button[] = [];
   private submitButton?: SubmitButton;
-  private fullscreenButton!: FullscreenButton;
+  // private fullscreenButton!: FullscreenButton;
 
   constructor() {
     super("MathGame");
@@ -58,7 +58,7 @@ export default class MathGame extends Phaser.Scene {
 
   create() {
     this.initializeManagers();
-    this.createFullscreenButton();
+    // this.createFullscreenButton();
     
     if (!this.logic) {
       this.initializeLogic();
@@ -74,13 +74,13 @@ export default class MathGame extends Phaser.Scene {
     this.numberDisplay = new NumberDisplay(this);
   }
 
-  private createFullscreenButton() {
-    const x = this.cameras.main.width - 35;
-    const y = this.cameras.main.height - 35;
+  // private createFullscreenButton() {
+  //   const x = this.cameras.main.width - 35;
+  //   const y = this.cameras.main.height - 35;
     
-    this.fullscreenButton = new FullscreenButton(this, x, y);
-    this.fullscreenButton.setDepth(1000);
-  }
+  //   this.fullscreenButton = new FullscreenButton(this, x, y);
+  //   this.fullscreenButton.setDepth(1000);
+  // }
 
   private initializeLogic() {
     const levels: MathLevel[] = [];
@@ -118,7 +118,7 @@ export default class MathGame extends Phaser.Scene {
 
   private createTitle() {
     const titleBg = this.add.graphics();
-    titleBg.fillStyle(0x1e90ff, 1);
+    titleBg.fillStyle(0x1e62a7, 1);
     titleBg.fillRoundedRect(180, 60, 448, 80, 20);
 
     this.add.text(400, 100, "AJUDE O SAPINHO A SOMAR!", {
@@ -193,9 +193,10 @@ export default class MathGame extends Phaser.Scene {
         "hoverButton", 
         "clickedButton",
         choice.toString(),
-        48
+        62
       );
 
+      button.setScale(1.3);
       this.add.existing(button);
       this.choiceButtons.push(button);
 
@@ -206,10 +207,11 @@ export default class MathGame extends Phaser.Scene {
   }
 
   private createInputInterface() {
-    this.add.text(150, 480, "RESPOSTA: ", {
-      fontSize: "38px",
+    this.add.text(90, 490, "DIGITE A RESPOSTA: ", {
+      fontSize: "24px",
       color: "#000",
       fontStyle: "bold",
+      backgroundColor: "#ffffff",
     });
 
     this.answerText = this.add.text(392, 500, " ", {
@@ -244,16 +246,19 @@ export default class MathGame extends Phaser.Scene {
     const result = this.logic.checkAnswer(selectedAnswer);
     
     if (result.correct) {
-      this.proceedToNextLevel(result.finished);
-
       this.audioManager.playCorrect();
       this.animationManager.correctAnswerEffect(clickedButton);
       this.animationManager.starExplosionEffect(clickedButton.x, clickedButton.y);
       
+      this.proceedToNextLevel(result.finished);
     } else {
       this.audioManager.playIncorrect();
       this.animationManager.incorrectAnswerEffect(clickedButton);
       
+      // // clickedButton.setTint(0xff5252);
+      // this.time.delayedCall(1000, () => {
+      //   clickedButton.clearTint();
+      // });
     }
   }
 
@@ -261,15 +266,20 @@ export default class MathGame extends Phaser.Scene {
     const result = this.logic.checkAnswer(parseInt(this.inputText));
     
     if (result.correct) {
-      this.audioManager.playCorrect2();    
-      this.proceedToNextLevel(result.finished);
-      this.animationManager.correctAnswerEffect(this.answerText);      
+      this.audioManager.playCorrect2();
+      this.animationManager.correctAnswerEffect(this.answerText);
       this.createMultipleStars(this.answerText.x, this.answerText.y);
       
+      this.proceedToNextLevel(result.finished);
     } else {
       this.audioManager.playIncorrect();
       this.animationManager.incorrectAnswerEffect(this.answerText);
-      this.resetInput();
+      
+      // this.answerText.setTint(0xff0000);
+      this.time.delayedCall(1000, () => {
+        // this.answerText.clearTint();
+        this.resetInput();
+      });
     }
   }
 
@@ -337,7 +347,7 @@ export default class MathGame extends Phaser.Scene {
     this.cameras.main.setBackgroundColor("#AED3E3");
     this.children.removeAll();
     
-    this.createFullscreenButton();
+    // this.createFullscreenButton();
     
     this.createEndSceneContent();
   }
@@ -387,7 +397,7 @@ export default class MathGame extends Phaser.Scene {
   }
 
   private createMoreGamesButton() {
-    const button = new StartButton(this, 400, 450, () => {
+    const button = new StartButton(this, 500, 450, () => {
       window.location.href = '/games';
     });
     
