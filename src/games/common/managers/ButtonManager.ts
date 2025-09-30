@@ -11,19 +11,12 @@ export default class ButtonManager {
     this.buttons = [];
   }
 
-  createButtons({
-    positions,
-    textures,
-    text,
-    fontSize,
-    scale = 1,
-  }: {
-    positions: { x: number; y: number }[];
-    textures: string[];
-    text?: string[];
-    fontSize?: number[];
-    scale?: number;
-  }): void {
+  createButtons(
+    positions: { x: number; y: number }[],
+    textures: string[],
+    texts?: string[],
+    fontSizes?: number[],
+  ): void {
     this.buttons = positions.map((pos, index) => {
       const button = new Button(
         this.scene,
@@ -32,27 +25,21 @@ export default class ButtonManager {
         textures[0], // Imagem padrão (defaultImage)
         textures[1], // Imagem hover (hoverImage)
         textures[2], // Imagem do clique (clickImage)
-        text ? text[index] : "", // Texto do botão (buttonText)
-        fontSize ? fontSize[index] : undefined, // Tamanho da fonte padrão (defaultFontSize)
+        texts ? texts[index] : "", // Texto do botão (buttonText)
+        fontSizes ? fontSizes[index] : undefined, // Tamanho da fonte padrão (defaultFontSize)
       );
-      this.scene.add.existing(button).setScale(scale);
+      this.scene.add.existing(button);
       return button;
     });
   }
 
-  createButton({
-    positions,
-    textures,
-    text,
-    fontSize,
-    scale = 1,
-  }: {
-    positions: { x: number; y: number };
-    textures: string[];
-    text?: string;
-    fontSize?: number;
-    scale?: number;
-  }): Button {
+  createButton(
+    positions: { x: number; y: number },
+    textures: string[],
+    text?: string,
+    fontSize?: number,
+    scale: number = 1,
+  ): Button {
     const button = new Button(
       this.scene,
       positions.x,
@@ -78,11 +65,10 @@ export default class ButtonManager {
   }
 
   generateButtonsLetters(buttonsNumber: number = 1, answer: string) {
-    const letterArray: string[] = [];
+    const letterArray = new Array(buttonsNumber);
     for (let i = 0; i < buttonsNumber; i++) {
-      const excludeArray = [...letterArray, answer];
-      const randomLetter = RandomGenerator.randomCharacter(excludeArray);
-      letterArray.push(randomLetter);
+      const randomLetter = RandomGenerator.randomCharacter();
+      letterArray[i] = randomLetter;
     }
     const answerIndex = RandomGenerator.randomIndex(buttonsNumber);
     letterArray[answerIndex] = answer;

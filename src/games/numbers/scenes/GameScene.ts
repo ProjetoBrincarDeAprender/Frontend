@@ -66,11 +66,8 @@ export default class GameScene extends Phaser.Scene {
         const result = this.logic.handleClick(button, this.time.now);
 
         if (result.correct) {
-          // Revela o número correto no lugar do ponto de interrogação
-          this.logic.revealAnswer();
           this.logic.buttonSuccessEffect(button, "star");
-          // Dá um pequeno tempo para a criança visualizar a sequência completa
-          this.time.delayedCall(1200, () => {
+          this.time.delayedCall(1000, () => {
             if (result.finished) {
               this.stopGameDataTimer();
               this.scene.start("numbersCredits");
