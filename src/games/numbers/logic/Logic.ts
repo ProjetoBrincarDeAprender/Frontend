@@ -13,6 +13,9 @@ export default class Logic {
   private effectManager: EffectManager;
   private levelManager: LevelManager<Level>;
   private sequenceBoxes: Phaser.GameObjects.GameObject[] = [];
+  private missingBoxGraphics?: Phaser.GameObjects.Graphics;
+  private missingBoxText?: Phaser.GameObjects.Text;
+  private lastCorrectAnswer?: string;
 
   constructor(scene: Phaser.Scene) {
     const levels: Level[] = [];
@@ -54,6 +57,8 @@ export default class Logic {
       button.getButtonStringText(),
     );
     if (isCorrect) {
+      // Guarda a resposta correta deste nível para exibi-la antes de avançar
+      this.lastCorrectAnswer = currentLevel.getAnswer();
       // Envia dados desta tentativa correta antes de atualizar os contadores
       this.sendData();
 
@@ -173,6 +178,8 @@ export default class Logic {
     // Limpar caixas anteriores
     this.sequenceBoxes.forEach((box) => box.destroy());
     this.sequenceBoxes = [];
+    this.missingBoxGraphics = undefined;
+    this.missingBoxText = undefined;
 
     // Remove vírgulas da sequência antes de processar
     const sequenceWithoutCommas = sequence.replace(/,/g, "");
@@ -205,6 +212,9 @@ export default class Logic {
           .setOrigin(0.5);
 
         this.sequenceBoxes.push(graphics, questionMark);
+        // Guardar referências para poder substituir pelo número correto
+        this.missingBoxGraphics = graphics;
+        this.missingBoxText = questionMark;
       } else {
         // Caixas dos números
         const graphics = this.scene.add.graphics();
@@ -240,6 +250,38 @@ export default class Logic {
       .setOrigin(0.5);
 
     this.sequenceBoxes.push(instruction);
+  }
+
+  // Revela o número correto no lugar do "?" ao acertar
+  revealAnswer(): void {
+    const answer =
+      this.lastCorrectAnswer || this.accessCurrentLevel().getAnswer();
+    if (this.missingBoxGraphics) {
+      // Redesenha a caixa como correta (verde) e borda branca
+      this.missingBoxGraphics.clear();
+      this.missingBoxGraphics.fillStyle(0x22c55e, 0.95); // verde de sucesso
+      // Para manter a posição, obtemos x/y do texto vinculado
+      const text = this.missingBoxText;
+      if (text) {
+        const x = text.x;
+        const y = text.y;
+        this.missingBoxGraphics.fillRoundedRect(x - 25, y - 25, 50, 50, 10);
+        this.missingBoxGraphics.lineStyle(2, 0xffffff, 1);
+        this.missingBoxGraphics.strokeRoundedRect(x - 25, y - 25, 50, 50, 10);
+      }
+    }
+    if (this.missingBoxText) {
+      this.missingBoxText.setText(answer);
+      this.missingBoxText.setStyle({ fontSize: "28px", color: "#ffffff" });
+      // Pequena animação de destaque
+      this.scene.tweens.add({
+        targets: this.missingBoxText,
+        scale: { from: 0.9, to: 1.1 },
+        duration: 150,
+        yoyo: true,
+        ease: "Back.easeOut",
+      });
+    }
   }
 
   createButtons(): void {
