@@ -56,24 +56,35 @@ export default class Vowels extends Phaser.Scene {
   }
 
   private createButtons(): void {
-    const startButton = this.buttonManager.createButton(
-      { x: this.cameras.main.width / 2, y: this.cameras.main.height / 2 + 60 },
-      [
+    const startButton = this.buttonManager.createButton({
+      positions: {
+        x: this.cameras.main.width / 2,
+        y: this.cameras.main.height / 2 + 60,
+      },
+      textures: [
         "defaultButtonRectangle",
         "hoverButtonRectangle",
         "clickedButtonRectangle",
       ],
-      "▶ Iniciar",
-      40,
-    );
+      text: "▶ Iniciar",
+      fontSize: 40,
+    });
 
-    const exitButton = this.buttonManager.createButton(
-      { x: this.cameras.main.width / 2, y: this.cameras.main.height / 2 + 140 },
-      ["defaultRectangleRed", "hoverRectangleRed", "clickedRectangleRed"],
-      "Sair",
-      40,
-      0.7,
-    );
+    const exitButton = this.buttonManager.createButton({
+      positions: {
+        x: this.cameras.main.width / 2,
+        y: this.cameras.main.height / 2 + 140,
+      },
+
+      textures: [
+        "defaultRectangleRed",
+        "hoverRectangleRed",
+        "clickedRectangleRed",
+      ],
+      text: "Sair",
+      fontSize: 40,
+      scale: 0.7,
+    });
 
     startButton.setInteractive().on("pointerup", () => {
       this.scene.start("vowelsGameScene");

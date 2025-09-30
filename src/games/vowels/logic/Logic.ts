@@ -131,7 +131,7 @@ export default class Logic {
   }
 
   createImage(texture: string): void {
-    this.image = this.scene.add.image(400, 280, texture);
+    this.image = this.scene.add.image(400, 250, texture);
 
     const imgWidth = this.image.width;
     const imgHeight = this.image.height;
@@ -169,7 +169,12 @@ export default class Logic {
       "hoverButton",
       "clickedButton",
     ];
-    this.buttonManager.createButtons(buttonPositions, buttonTextures);
+    this.buttonManager.createButtons({
+      positions: buttonPositions,
+      textures: buttonTextures,
+      scale: 1.5,
+      fontSize: [50, 50, 50],
+    });
   }
 
   getButtons(): Button[] {

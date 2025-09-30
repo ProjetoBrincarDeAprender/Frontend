@@ -70,31 +70,20 @@ export default class Credits extends Phaser.Scene {
   }
 
   private createButtons(): void {
-    // const startButton = this.buttonManager.createButton(
-    //   { x: this.cameras.main.width / 2, y: this.cameras.main.height / 2 + 60 },
-    //   [
-    //     "defaultButtonRectangle",
-    //     "hoverButtonRectangle",
-    //     "clickedButtonRectangle",
-    //   ],
-    //   "▶ Iniciar",
-    //   40,
-    // );
-
-    const exitButton = this.buttonManager.createButton(
-      {
+    const exitButton = this.buttonManager.createButton({
+      positions: {
         x: this.cameras.main.width / 2 + 100,
         y: this.cameras.main.height / 2 + 180,
       },
-      ["defaultRectangleRed", "hoverRectangleRed", "clickedRectangleRed"],
-      "Sair",
-      40,
-      0.7,
-    );
-
-    // startButton.setInteractive().on("pointerup", () => {
-    //   this.scene.start("vowelsGameScene");
-    // });
+      textures: [
+        "defaultRectangleRed",
+        "hoverRectangleRed",
+        "clickedRectangleRed",
+      ],
+      text: "Sair",
+      fontSize: 40,
+      scale: 0.7,
+    });
 
     exitButton.setInteractive().on("pointerup", () => {
       window.history.back();
