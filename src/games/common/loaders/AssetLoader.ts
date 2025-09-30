@@ -1,4 +1,5 @@
 import Phaser from "phaser";
+import { preload } from "react-dom";
 
 export default class AssetLoader {
   private scene: Phaser.Scene;
@@ -13,6 +14,12 @@ export default class AssetLoader {
       "/assets/vowelsGame/images/backgroundMain.png",
     );
     this.scene.load.image("title", "/assets/vowelsGame/images/title.png");
+
+    this.proLoadRectangleBlue();
+    this.preLoadRectangleRed();
+  }
+
+  proLoadRectangleBlue() {
     this.scene.load.image(
       "hoverButtonRectangle",
       "/assets/common/hoverButtonRectangle.svg",
@@ -25,6 +32,9 @@ export default class AssetLoader {
       "clickedButtonRectangle",
       "/assets/common/clickedButtonRectangle.svg",
     );
+  }
+
+  preLoadRectangleRed() {
     this.scene.load.image(
       "defaultRectangleRed",
       "/assets/common/defaultRectangleRed.svg",
