@@ -3,6 +3,10 @@ export default class RandomGenerator {
     return Math.floor(Math.random() * multiplier);
   }
 
+  static randomNumber(min: number, max: number) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
+
   static randomCharacter() {
     const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     const alphabetLength = alphabet.length;

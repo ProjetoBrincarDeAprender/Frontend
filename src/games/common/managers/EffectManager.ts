@@ -4,6 +4,7 @@ import GrowupEffect from "../effects/GrowupEffect";
 import Particles from "../effects/Particles";
 import FloatingEffect from "../effects/FloatingEffect";
 import OverlayEffect from "../effects/OverlayEffect";
+import MoveEffect from "../effects/MoveEffect";
 
 export default class EffectManager {
   private scene: Phaser.Scene;
@@ -23,6 +24,16 @@ export default class EffectManager {
     duration: number = 500,
   ): void {
     GrowupEffect(this.scene, target, ease, scale, duration);
+  }
+
+  move<T extends Phaser.GameObjects.GameObject>(
+    targets: T,
+    x: number = 900,
+    duration: number = 10000,
+    repeat: number = -1,
+    delay: number = Phaser.Math.Between(0, 5000),
+  ): void {
+    MoveEffect(this.scene, targets, x, duration, repeat, delay);
   }
 
   particles(image: string): void {

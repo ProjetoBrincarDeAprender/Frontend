@@ -4,12 +4,14 @@ import EffectManager from "../../common/managers/EffectManager";
 import GameStats from "../../common/managers/GameStats";
 import LevelManager from "../../common/managers/LevelManager";
 import VowelsLevel from "./VowelsLevel";
+import CloudManager from "@/games/common/managers/CloudManager";
 import api from "@/utils/api";
 
 export default class Logic {
   private scene: Phaser.Scene;
   private gameStats: GameStats;
   private buttonManager: ButtonManager;
+  private cloudManager: CloudManager;
   private effectManager: EffectManager;
   private levelManager: LevelManager<VowelsLevel>;
   private image?: Phaser.GameObjects.Image;
@@ -33,6 +35,7 @@ export default class Logic {
     this.gameStats = new GameStats();
     this.effectManager = new EffectManager(this.scene);
     this.buttonManager = new ButtonManager(this.scene);
+    this.cloudManager = new CloudManager(this.scene);
     this.imageMaxSize = 800;
   }
 
@@ -147,6 +150,7 @@ export default class Logic {
     const scaleY = this.scene.cameras.main.height / background.height;
     const scale = Math.max(scaleX, scaleY);
     background.setScale(scale);
+    this.cloudManager.generateClouds();
     this.effectManager.overlay(0.3);
   }
 
