@@ -78,10 +78,11 @@ export default class ButtonManager {
   }
 
   generateButtonsLetters(buttonsNumber: number = 1, answer: string) {
-    const letterArray = new Array(buttonsNumber);
+    const letterArray: string[] = [];
     for (let i = 0; i < buttonsNumber; i++) {
-      const randomLetter = RandomGenerator.randomCharacter();
-      letterArray[i] = randomLetter;
+      const excludeArray = [...letterArray, answer];
+      const randomLetter = RandomGenerator.randomCharacter(excludeArray);
+      letterArray.push(randomLetter);
     }
     const answerIndex = RandomGenerator.randomIndex(buttonsNumber);
     letterArray[answerIndex] = answer;

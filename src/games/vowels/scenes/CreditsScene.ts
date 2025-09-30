@@ -57,8 +57,8 @@ export default class Credits extends Phaser.Scene {
       .setScale(0.4);
 
     this.add
-      .image(gameWidth / 2 + 100, gameHeight / 2 + 50, "trophy")
-      .setScale(0.35);
+      .image(gameWidth / 2 + 100, gameHeight / 2 + 40, "trophy")
+      .setScale(0.25);
   }
 
   private createBackground(): void {
@@ -67,13 +67,14 @@ export default class Credits extends Phaser.Scene {
     const scaleY = this.cameras.main.height / background.height;
     const scale = Math.max(scaleX, scaleY);
     background.setScale(scale);
+    this.effectManager.overlay(0.3);
   }
 
   private createButtons(): void {
     const exitButton = this.buttonManager.createButton({
       positions: {
         x: this.cameras.main.width / 2 + 100,
-        y: this.cameras.main.height / 2 + 180,
+        y: this.cameras.main.height / 2 + 220,
       },
       textures: [
         "defaultRectangleRed",
@@ -85,8 +86,27 @@ export default class Credits extends Phaser.Scene {
       scale: 0.7,
     });
 
+    const playAgainButton = this.buttonManager.createButton({
+      positions: {
+        x: this.cameras.main.width / 2 + 100,
+        y: this.cameras.main.height / 2 + 160,
+      },
+      textures: [
+        "defaultButtonRectangle",
+        "hoverButtonRectangle",
+        "clickedButtonRectangle",
+      ],
+      text: "Jogar Novamente",
+      fontSize: 20,
+      scale: 1,
+    });
+
     exitButton.setInteractive().on("pointerup", () => {
       window.history.back();
+    });
+
+    playAgainButton.setInteractive().on("pointerup", () => {
+      window.location.reload();
     });
   }
 }

@@ -131,7 +131,7 @@ export default class Logic {
   }
 
   createImage(texture: string): void {
-    this.image = this.scene.add.image(400, 250, texture);
+    this.image = this.scene.add.image(400, 220, texture);
 
     const imgWidth = this.image.width;
     const imgHeight = this.image.height;

@@ -7,10 +7,13 @@ export default class RandomGenerator {
     return Math.floor(Math.random() * (max - min + 1)) + min;
   }
 
-  static randomCharacter() {
+  static randomCharacter(exclude: string[] = []): string {
     const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     const alphabetLength = alphabet.length;
-    const character = alphabet[this.randomIndex(alphabetLength)];
+    let character = alphabet[this.randomIndex(alphabetLength)];
+    while (exclude.includes(character)) {
+      character = alphabet[this.randomIndex(alphabetLength)];
+    }
     return character;
   }
 }
