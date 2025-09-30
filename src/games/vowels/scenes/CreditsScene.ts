@@ -1,15 +1,18 @@
 import Phaser from "phaser";
 import ButtonManager from "@/games/common/managers/ButtonManager";
 import AssetLoader from "@/games/common/loaders/AssetLoader";
+import EffectManager from "@/games/common/managers/EffectManager";
 
 export default class Credits extends Phaser.Scene {
   private buttonManager: ButtonManager;
   private assetLoader: AssetLoader;
+  private effectManager: EffectManager;
 
   constructor() {
     super("vowelsCredits");
     this.buttonManager = new ButtonManager(this);
     this.assetLoader = new AssetLoader(this);
+    this.effectManager = new EffectManager(this);
   }
 
   preload() {
@@ -29,6 +32,7 @@ export default class Credits extends Phaser.Scene {
 
     this.createBackground();
     this.createButtons();
+    this.effectManager.confetti();
 
     this.add
       .text(gameWidth / 2 + 100, gameHeight / 2 - 150, "Parabéns!", {

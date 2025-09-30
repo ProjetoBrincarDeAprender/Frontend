@@ -1,5 +1,4 @@
 import Phaser from "phaser";
-import { preload } from "react-dom";
 
 export default class AssetLoader {
   private scene: Phaser.Scene;

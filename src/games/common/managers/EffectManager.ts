@@ -5,6 +5,7 @@ import Particles from "../effects/Particles";
 import FloatingEffect from "../effects/FloatingEffect";
 import OverlayEffect from "../effects/OverlayEffect";
 import MoveEffect from "../effects/MoveEffect";
+import confettiEffect from "../effects/confettiEffect";
 
 export default class EffectManager {
   private scene: Phaser.Scene;
@@ -15,6 +16,18 @@ export default class EffectManager {
 
   changeColor(text: Phaser.GameObjects.Text, color: number): void {
     ChangeColor(this.scene, text, color);
+  }
+
+  confetti(): void {
+    confettiEffect(this.scene);
+  }
+
+  floatingElement(
+    target: Phaser.GameObjects.GameObject,
+    ease: string = "Sine.easeInOut",
+    y: number = 310,
+  ): void {
+    FloatingEffect(this.scene, target, ease, y);
   }
 
   growup(
@@ -36,19 +49,11 @@ export default class EffectManager {
     MoveEffect(this.scene, targets, x, duration, repeat, delay);
   }
 
-  particles(image: string): void {
-    Particles(this.scene, image);
-  }
-
-  floatingElement(
-    target: Phaser.GameObjects.GameObject,
-    ease: string = "Sine.easeInOut",
-    y: number = 310,
-  ): void {
-    FloatingEffect(this.scene, target, ease, y);
-  }
-
   overlay(overlay: number): void {
     OverlayEffect(this.scene, overlay);
+  }
+
+  particles(image: string): void {
+    Particles(this.scene, image);
   }
 }
