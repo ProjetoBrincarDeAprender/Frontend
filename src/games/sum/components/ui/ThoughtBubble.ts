@@ -1,9 +1,7 @@
 export class ThoughtBubble {
-  private scene: Phaser.Scene;
   private graphics: Phaser.GameObjects.Graphics;
 
   constructor(scene: Phaser.Scene) {
-    this.scene = scene;
     this.graphics = scene.add.graphics();
   }
 
