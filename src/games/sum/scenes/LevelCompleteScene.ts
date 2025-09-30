@@ -232,7 +232,7 @@ export class SumLevelCompleteScene extends Phaser.Scene {
         yoyo: true,
         ease: "Power2.easeInOut",
         onComplete: () => {
-          window.location.href = "/games/sum";
+          window.location.href = "/games";
         },
       });
     });
