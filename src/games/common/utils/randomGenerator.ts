@@ -3,17 +3,10 @@ export default class RandomGenerator {
     return Math.floor(Math.random() * multiplier);
   }
 
-  static randomNumber(min: number, max: number) {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-  }
-
-  static randomCharacter(exclude: string[] = []): string {
+  static randomCharacter() {
     const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     const alphabetLength = alphabet.length;
-    let character = alphabet[this.randomIndex(alphabetLength)];
-    while (exclude.includes(character)) {
-      character = alphabet[this.randomIndex(alphabetLength)];
-    }
+    const character = alphabet[this.randomIndex(alphabetLength)];
     return character;
   }
 }
