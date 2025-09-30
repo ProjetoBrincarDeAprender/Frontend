@@ -1,0 +1,50 @@
+export class ThoughtBubble {
+  private graphics: Phaser.GameObjects.Graphics;
+
+  constructor(scene: Phaser.Scene) {
+    this.graphics = scene.add.graphics();
+  }
+
+  create(centerX: number, centerY: number, spacing: number, numberCount: number): Phaser.GameObjects.Graphics {
+    const bubbleWidth = (numberCount === 1) ? 120 : spacing + 200;
+    const bubbleHeight = 130;
+    const bubbleX = (numberCount === 1) ? centerX : centerX + (spacing / 2) - 10;
+    
+    this.graphics.clear();
+    this.graphics.fillStyle(0xffffff, 0.95);
+    this.graphics.lineStyle(3, 0x000000, 1);
+    
+    this.graphics.fillRoundedRect(
+      bubbleX - bubbleWidth/2, 
+      centerY - bubbleHeight/2, 
+      bubbleWidth, 
+      bubbleHeight, 
+      20
+    );
+    this.graphics.strokeRoundedRect(
+      bubbleX - bubbleWidth/2, 
+      centerY - bubbleHeight/2, 
+      bubbleWidth, 
+      bubbleHeight, 
+      20
+    );
+    
+    const thoughtCircles = [
+      { x: bubbleX - 120, y: centerY + 70, radius: 8 },
+      { x: bubbleX - 135, y: centerY + 80, radius: 6 },
+      { x: bubbleX - 145, y: centerY + 95, radius: 4 }
+    ];
+    
+    thoughtCircles.forEach(circle => {
+      this.graphics.fillCircle(circle.x, circle.y, circle.radius);
+      this.graphics.strokeCircle(circle.x, circle.y, circle.radius);
+    });
+    
+    this.graphics.setDepth(10);
+    return this.graphics;
+  }
+
+  destroy() {
+    this.graphics.destroy();
+  }
+}
