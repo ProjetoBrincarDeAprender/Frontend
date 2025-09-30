@@ -295,7 +295,11 @@ export default class Logic {
       "hoverButton",
       "clickedButton",
     ];
-    this.buttonManager.createButtons(buttonPositions, buttonTextures);
+
+    this.buttonManager.createButtons({
+      positions: buttonPositions,
+      textures: buttonTextures,
+    });
   }
 
   getButtons(): Button[] {
