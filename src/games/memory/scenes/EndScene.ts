@@ -23,7 +23,7 @@ export class MemoryEndScene extends Phaser.Scene {
 
     // Texto de parabenização final
     this.add
-      .text(this.scale.width / 2, 220, "PARABÉNS!\nVocê é CAMPEÃ(O)!", {
+      .text(this.scale.width / 2, 220, "PARABÉNS!\nVOCÊ É CAMPEÃ(O)!", {
         fontSize: "40px",
         color: "#2D5EFF",
         fontFamily: "Comic Sans MS, Arial, sans-serif",
@@ -38,7 +38,7 @@ export class MemoryEndScene extends Phaser.Scene {
       .text(
         this.scale.width / 2,
         320,
-        "Você completou todos os níveis do\nJogo da Memória com sucesso!",
+        "VOCÊ COMPLETOU TODOS OS NÍVEIS DO\nJOGO DA MEMÓRIA COM SUCESSO!",
         {
           fontSize: "24px",
           color: "#333",
@@ -54,7 +54,7 @@ export class MemoryEndScene extends Phaser.Scene {
     const menuButton = this.add.rectangle(0, 0, 250, 80, 0xff6b35);
     const menuIcon = this.add.image(-90, 0, "menu-icon").setScale(0.12);
     const menuText = this.add
-      .text(20, 0, "Voltar ao Menu", {
+      .text(20, 0, "VOLTA AO MENU", {
         fontFamily: "Arial, sans-serif",
         fontSize: "22px",
         color: "#FFFFFF",
