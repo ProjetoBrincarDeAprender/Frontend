@@ -9,11 +9,14 @@ export class MemoryMenuScene extends Phaser.Scene {
     this.load.image("clickedButton", "/assets/common/clickedButton.svg");
     this.load.image("play-icon", "/assets/memoryGame/play.png");
     this.load.image("exit-icon", "/assets/memoryGame/exit.png");
-    this.load.image("mascot", "/assets/memoryGame/mascot.png");
+    this.load.image("mascot", "/assets/common/dudaSentada.png");
     this.load.image("star", "/assets/common/star.svg");
+    this.load.image("background", "/assets/memoryGame/fundo.png");
   }
 
   create() {
+    this.createBackground();
+
     this.add.image(this.scale.width / 2, 80, "mascot").setScale(0.3);
 
     this.add
@@ -22,17 +25,16 @@ export class MemoryMenuScene extends Phaser.Scene {
         fontSize: "40px",
         color: "#2D5EFF",
         fontStyle: "bold",
-        stroke: "#2D5EF0",
+        stroke: "#FFFFFF",
         strokeThickness: 4,
       })
       .setOrigin(0.5);
 
     this.add
-      .text(this.scale.width / 2, 210, "Clique em Começar para jogar!", {
+      .text(this.scale.width / 2, 210, "CLIQUE EM COMEÇAR PARA JOGAR!", {
         fontFamily: "Arial, sans-serif",
         fontSize: "24px",
-        color: "#333",
-        backgroundColor: "#96D6F3",
+        color: "#FFF",
         padding: { left: 10, right: 10, top: 4, bottom: 4 },
       })
       .setOrigin(0.5);
@@ -41,7 +43,7 @@ export class MemoryMenuScene extends Phaser.Scene {
     const playButton = this.add.rectangle(0, 0, 200, 60, 0x2d5eff);
     const playIcon = this.add.image(-70, 0, "play-icon").setScale(0.08);
     const playText = this.add
-      .text(10, 0, "Começar", {
+      .text(10, 0, "COMEÇAR", {
         fontFamily: "Arial, sans-serif",
         fontSize: "18px",
         color: "#FFFFFF",
@@ -59,7 +61,7 @@ export class MemoryMenuScene extends Phaser.Scene {
     const exitButton = this.add.rectangle(0, 0, 200, 60, 0xff5555);
     const exitIcon = this.add.image(-70, 0, "exit-icon").setScale(0.08);
     const exitText = this.add
-      .text(10, 0, "Sair", {
+      .text(10, 0, "SAIR", {
         fontFamily: "Arial, sans-serif",
         fontSize: "18px",
         color: "#FFFFFF",
@@ -107,4 +109,12 @@ export class MemoryMenuScene extends Phaser.Scene {
   }
 
   update() {}
+
+  private createBackground(): void {
+    const background = this.add.image(400, 300, "background");
+    const scaleX = this.cameras.main.width / background.width;
+    const scaleY = this.cameras.main.height / background.height;
+    const scale = Math.max(scaleX, scaleY);
+    background.setScale(scale);
+  }
 }

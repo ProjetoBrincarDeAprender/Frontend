@@ -320,9 +320,8 @@ export class MemoryGameLogic {
         fontSize: "28px",
         fontFamily: "Arial, sans-serif",
         color: color,
-        backgroundColor: "#96D6F3",
         padding: { left: 20, right: 20, top: 10, bottom: 10 },
-        stroke: color,
+        stroke: "#FFFFFF",
         strokeThickness: 2,
         shadow: {
           offsetX: 2,
@@ -362,12 +361,12 @@ export class MemoryGameLogic {
   }
 
   private showSuccessMessage() {
-    this.showFeedbackMessage("Muito bem! Parabéns! 🎉", "#22c55e", 2000);
+    this.showFeedbackMessage("MUITO BEM! PARABÉNS! 🎉", "#22c55e", 2000);
   }
 
   private showErrorMessage() {
     this.showFeedbackMessage(
-      "Tente novamente! Você consegue! 😊",
+      "TENTE NOVAMENTE! VOCÊ CONSEGUE! 😊",
       "#ef4444",
       2500,
     );
