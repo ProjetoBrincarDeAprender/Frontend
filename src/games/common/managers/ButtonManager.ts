@@ -1,6 +1,17 @@
 import Phaser from "phaser";
 import Button from "../models/Button";
-import RandomGenerator from "../utils/randomGenerator";
+
+interface ButtonConfig {
+  positions: { x: number; y: number };
+  textures: {
+    default: string;
+    hover?: string;
+    clicked?: string;
+  };
+  text?: string;
+  fontSize?: number;
+  scale?: number;
+}
 
 export default class ButtonManager {
   protected scene: Phaser.Scene;
@@ -11,55 +22,48 @@ export default class ButtonManager {
     this.buttons = [];
   }
 
-  createButtons({
-    positions,
-    textures,
-    text,
-    fontSize,
-    scale = 1,
-  }: {
-    positions: { x: number; y: number }[];
-    textures: string[];
-    text?: string[];
-    fontSize?: number[];
-    scale?: number;
-  }): void {
-    this.buttons = positions.map((pos, index) => {
-      const button = new Button(
-        this.scene,
-        pos.x,
-        pos.y,
-        textures[0], // Imagem padrão (defaultImage)
-        textures[1], // Imagem hover (hoverImage)
-        textures[2], // Imagem do clique (clickImage)
-        text ? text[index] : "", // Texto do botão (buttonText)
-        fontSize ? fontSize[index] : undefined, // Tamanho da fonte padrão (defaultFontSize)
-      );
-      this.scene.add.existing(button).setScale(scale);
-      return button;
-    });
+  /**
+   * Cria múltiplos botões na cena a partir de um array de configurações.
+   * @param config Array de objetos de configuração de botões.
+   * @returns Array de instâncias de Button criadas.
+   */
+  createButtons(config: ButtonConfig[]): Button[] {
+    const newButtons: Button[] = [];
+
+    for (let i = 0; i < config.length; i++) {
+      const newButton: Button = this.createButton({
+        positions: config[i].positions,
+        textures: config[i].textures,
+        text: config[i].text,
+        fontSize: config[i].fontSize,
+        scale: config[i].scale,
+      });
+      newButtons.push(newButton);
+    }
+
+    this.buttons = newButtons;
+    return newButtons;
   }
 
+  /**
+   * Cria um único botão na cena a partir de uma configuração.
+   * @param config Objeto de configuração do botão.
+   * @returns Instância de Button criada.
+   */
   createButton({
     positions,
     textures,
     text,
     fontSize,
     scale = 1,
-  }: {
-    positions: { x: number; y: number };
-    textures: string[];
-    text?: string;
-    fontSize?: number;
-    scale?: number;
-  }): Button {
+  }: ButtonConfig): Button {
     const button = new Button(
       this.scene,
       positions.x,
       positions.y,
-      textures[0], // Imagem padrão (defaultImage)
-      textures[1], // Imagem hover (hoverImage)
-      textures[2], // Imagem do clique (clickImage)
+      textures.default, // Imagem padrão (defaultImage)
+      textures.hover, // Imagem hover (hoverImage)
+      textures.clicked, // Imagem do clique (clickImage)
       text ? text : "", // Texto do botão (buttonText)
       fontSize ? fontSize : undefined, // Tamanho da fonte padrão (defaultFontSize)
     );
@@ -67,56 +71,21 @@ export default class ButtonManager {
     return button;
   }
 
+  /**
+   * Retorna o array atual de botões gerenciados por este manager.
+   * @returns Array de instâncias de Button.
+   */
   getButtons(): Button[] {
     return this.buttons;
   }
 
+  /**
+   * Atualiza o texto de todos os botões gerenciados.
+   * @param texts Array de strings para definir como texto de cada botão.
+   */
   setButtonTexts(texts: string[]): void {
     this.buttons.forEach((button, index) => {
       button.setButtonText(texts[index]);
     });
-  }
-
-  generateButtonsLetters(buttonsNumber: number = 1, answer: string) {
-    const letterArray: string[] = [];
-    for (let i = 0; i < buttonsNumber; i++) {
-      const excludeArray = [...letterArray, answer];
-      const randomLetter = RandomGenerator.randomCharacter(excludeArray);
-      letterArray.push(randomLetter);
-    }
-    const answerIndex = RandomGenerator.randomIndex(buttonsNumber);
-    letterArray[answerIndex] = answer;
-    return letterArray;
-  }
-
-  generateButtonsNumbers(buttonsNumber: number = 1, answer: string) {
-    const numberArray = new Array(buttonsNumber);
-    const answerNum = parseInt(answer);
-    const usedNumbers = new Set<string>();
-
-    // Adiciona a resposta correta ao conjunto de números usados
-    usedNumbers.add(answer);
-
-    for (let i = 0; i < buttonsNumber; i++) {
-      let randomNumber: number;
-      let randomNumberStr: string;
-
-      // Gera números únicos até encontrar um que não foi usado
-      do {
-        const randomOffset = RandomGenerator.randomIndex(10) - 5; // -5 a 4
-        randomNumber = answerNum + randomOffset;
-        if (randomNumber < 0) randomNumber = Math.abs(randomNumber);
-        randomNumberStr = randomNumber.toString();
-      } while (usedNumbers.has(randomNumberStr));
-
-      // Adiciona o número gerado ao conjunto e ao array
-      usedNumbers.add(randomNumberStr);
-      numberArray[i] = randomNumberStr;
-    }
-
-    // Coloca a resposta correta em uma posição aleatória
-    const answerIndex = RandomGenerator.randomIndex(buttonsNumber);
-    numberArray[answerIndex] = answer;
-    return numberArray;
   }
 }

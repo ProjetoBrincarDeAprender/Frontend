@@ -3,17 +3,20 @@ import EffectManager from "@/games/common/managers/EffectManager";
 import Phaser from "phaser";
 import AssetLoader from "@/games/common/loaders/AssetLoader";
 import CloudManager from "@/games/common/managers/CloudManager";
+import ButtonFactory from "@/games/common/factories/ButtonFactory";
 
-export default class Vowels extends Phaser.Scene {
+export default class VowelsStartScene extends Phaser.Scene {
   private assetLoader: AssetLoader;
   private buttonManager: ButtonManager;
   private cloudManager: CloudManager;
   private effectManager: EffectManager;
+  private buttonFactory: ButtonFactory;
 
   constructor() {
     super("vowelsStart");
     this.buttonManager = new ButtonManager(this);
     this.effectManager = new EffectManager(this);
+    this.buttonFactory = new ButtonFactory(this.buttonManager);
     this.assetLoader = new AssetLoader(this);
     this.cloudManager = new CloudManager(this);
   }
@@ -25,11 +28,9 @@ export default class Vowels extends Phaser.Scene {
 
   create() {
     this.createBackground();
-    this.createTitle();
-    this.createButtons();
+    this.createTitleImage();
+    this.createMenuButtons();
   }
-
-  update() {}
 
   private createBackground(): void {
     const background = this.add.image(400, 300, "backgroundStart");
@@ -43,7 +44,7 @@ export default class Vowels extends Phaser.Scene {
     this.effectManager.overlay(0.3);
   }
 
-  private createTitle(): void {
+  private createTitleImage(): void {
     const title = this.add.image(
       this.cameras.main.width / 2,
       this.cameras.main.height / 2 - 150,
@@ -55,43 +56,41 @@ export default class Vowels extends Phaser.Scene {
     title.setScale(scale);
   }
 
-  private createButtons(): void {
-    const startButton = this.buttonManager.createButton({
+  private createMenuButtons(): void {
+    this.buttonFactory.createButton({
       positions: {
         x: this.cameras.main.width / 2,
         y: this.cameras.main.height / 2 + 60,
       },
-      textures: [
-        "defaultButtonRectangle",
-        "hoverButtonRectangle",
-        "clickedButtonRectangle",
-      ],
+      textures: {
+        default: "defaultButtonRectangle",
+        hover: "hoverButtonRectangle",
+        clicked: "clickedButtonRectangle",
+      },
       text: "▶ Iniciar",
       fontSize: 40,
+      onClick: () => {
+        this.scene.start("vowelsGameScene");
+      },
     });
 
-    const exitButton = this.buttonManager.createButton({
+    this.buttonFactory.createButton({
       positions: {
         x: this.cameras.main.width / 2,
         y: this.cameras.main.height / 2 + 140,
       },
 
-      textures: [
-        "defaultRectangleRed",
-        "hoverRectangleRed",
-        "clickedRectangleRed",
-      ],
+      textures: {
+        default: "defaultRectangleRed",
+        hover: "hoverRectangleRed",
+        clicked: "clickedRectangleRed",
+      },
       text: "Sair",
       fontSize: 40,
       scale: 0.7,
-    });
-
-    startButton.setInteractive().on("pointerup", () => {
-      this.scene.start("vowelsGameScene");
-    });
-
-    exitButton.setInteractive().on("pointerup", () => {
-      window.history.back();
+      onClick: () => {
+        window.history.back();
+      },
     });
   }
 }

@@ -1,11 +1,7 @@
 import Logic from "../logic/Logic";
 import Phaser from "phaser";
 
-/**
- * Cena principal do jogo das vogais.
- * Gerencia ciclo de vida, integração com lógica e recursos visuais.
- */
-export default class GameScene extends Phaser.Scene {
+export default class VowelsGameScene extends Phaser.Scene {
   /** Instância da lógica do jogo (orquestra regras e progresso) */
   private logic: Logic;
 
