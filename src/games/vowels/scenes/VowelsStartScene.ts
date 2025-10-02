@@ -45,7 +45,10 @@ export default class VowelsStartScene extends Phaser.Scene {
   }
 
   private loadBackgroundImage(): void {
-    this.load.image("backgroundStart", this.gameData.backgroundUrl);
+    this.load.image(
+      "backgroundStart",
+      this.gameData.backgroundConfig.backgroundUrl,
+    );
   }
 
   private loadTitleImage(): void {
@@ -67,6 +70,8 @@ export default class VowelsStartScene extends Phaser.Scene {
   }
 
   private createBackground(): void {
+    const backgroundConfig = this.gameData.backgroundConfig;
+
     const background = this.add.image(400, 300, "backgroundStart");
     const scaleX = this.cameras.main.width / background.width;
     const scaleY = this.cameras.main.height / background.height;
@@ -75,7 +80,7 @@ export default class VowelsStartScene extends Phaser.Scene {
 
     this.cloudManager.generateClouds();
 
-    this.effectManager.overlay(0.3);
+    this.effectManager.overlay(backgroundConfig.overlayOpacity);
   }
 
   private createTitleImage(): void {
@@ -99,18 +104,17 @@ export default class VowelsStartScene extends Phaser.Scene {
   }
 
   private createStartButton(): void {
+    const buttonContent = this.gameData.buttons[0];
+
     this.buttonFactory.createButton({
-      positions: {
-        x: this.cameras.main.width / 2,
-        y: this.cameras.main.height / 2 + 60,
-      },
+      positions: buttonContent.positions,
       textures: {
         default: "defaultButtonRectangle",
         hover: "hoverButtonRectangle",
         clicked: "clickedButtonRectangle",
       },
-      text: "▶ Iniciar",
-      fontSize: 40,
+      text: buttonContent.text,
+      fontSize: buttonContent.fontSize,
       onClick: () => {
         this.scene.start("vowelsGameScene");
       },
@@ -118,19 +122,17 @@ export default class VowelsStartScene extends Phaser.Scene {
   }
 
   private createExitButton(): void {
-    this.buttonFactory.createButton({
-      positions: {
-        x: this.cameras.main.width / 2,
-        y: this.cameras.main.height / 2 + 140,
-      },
+    const buttonContent = this.gameData.buttons[1];
 
+    this.buttonFactory.createButton({
+      positions: buttonContent.positions,
       textures: {
         default: "defaultRectangleRed",
         hover: "hoverRectangleRed",
         clicked: "clickedRectangleRed",
       },
-      text: "Sair",
-      fontSize: 40,
+      text: buttonContent.text,
+      fontSize: buttonContent.fontSize,
       scale: 0.7,
       onClick: () => {
         window.history.back();

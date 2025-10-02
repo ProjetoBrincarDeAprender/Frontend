@@ -1,5 +1,8 @@
 {
-  "backgroundUrl": "/assets/vowelsGame/images/backgroundMain.png",
+  "backgroundConfig": {
+    "backgroundUrl": "/assets/vowelsGame/images/backgroundMain.png",
+    "overlayOpacity": 0.3
+  },
   "titleImageUrl": "/assets/vowelsGame/images/title.png",
   "titlePosition": { "x": 400, "y": 150 },
   "buttonTexturesUrl": {
@@ -16,7 +19,16 @@
   },
   "buttons": [
     {
-      "text": "Iniciar ▶"
+      "text": "▶ Iniciar",
+      "positions": { "x": 400, "y": 360 },
+      "fontSize": 40,
+      "scale": 1
+    },
+    {
+      "text": "Sair",
+      "positions": { "x": 400, "y": 440 },
+      "fontSize": 40,
+      "scale": 0.7
     }
   ]
 }
