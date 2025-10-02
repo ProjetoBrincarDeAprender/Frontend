@@ -21,6 +21,13 @@ export default class ButtonFactory {
     this.buttonManager = buttonManager;
   }
 
+  /**
+   * Cria um botão com as configurações fornecidas e associa um callback ao evento de clique.
+   * Valida os parâmetros obrigatórios antes de criar o botão.
+   * @param config Objeto de configuração do botão, incluindo posição, texturas, texto, tamanho da fonte, escala e callback de clique.
+   * @returns Instância de Button criada.
+   * @throws Error se parâmetros obrigatórios estiverem ausentes ou inválidos.
+   */
   createButton({
     positions,
     textures,
