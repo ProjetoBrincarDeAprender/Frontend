@@ -98,7 +98,7 @@ export default class VowelsStartScene extends Phaser.Scene {
     title.setScale(scale);
   }
 
-  private createMenuButtons(): void {
+  private createStartButton(): void {
     this.buttonFactory.createButton({
       positions: {
         x: this.cameras.main.width / 2,
@@ -115,7 +115,9 @@ export default class VowelsStartScene extends Phaser.Scene {
         this.scene.start("vowelsGameScene");
       },
     });
+  }
 
+  private createExitButton(): void {
     this.buttonFactory.createButton({
       positions: {
         x: this.cameras.main.width / 2,
@@ -134,5 +136,10 @@ export default class VowelsStartScene extends Phaser.Scene {
         window.history.back();
       },
     });
+  }
+
+  private createMenuButtons(): void {
+    this.createStartButton();
+    this.createExitButton();
   }
 }
