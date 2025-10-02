@@ -11,6 +11,7 @@ export default class VowelsStartScene extends Phaser.Scene {
   private cloudManager: CloudManager;
   private effectManager: EffectManager;
   private buttonFactory: ButtonFactory;
+  private gameData: any;
 
   constructor() {
     super("vowelsStart");
@@ -22,14 +23,47 @@ export default class VowelsStartScene extends Phaser.Scene {
   }
 
   preload() {
-    this.assetLoader.preloadVowelsStart();
+    this.load.json("gameData", "/assets/vowelsGame/gameData/gameData.JSON");
     this.assetLoader.preloadClouds();
   }
 
   create() {
-    this.createBackground();
-    this.createTitleImage();
-    this.createMenuButtons();
+    this.gameData = this.cache.json.get("gameData");
+
+    this.loadBackgroundImage();
+    this.loadTitleImage();
+    this.loadRectangleBlue();
+    this.loadRectangleRed();
+
+    this.load.once("complete", () => {
+      this.createBackground();
+      this.createTitleImage();
+      this.createMenuButtons();
+    });
+
+    this.load.start();
+  }
+
+  private loadBackgroundImage(): void {
+    this.load.image("backgroundStart", this.gameData.backgroundUrl);
+  }
+
+  private loadTitleImage(): void {
+    this.load.image("title", this.gameData.titleImageUrl);
+  }
+
+  private loadRectangleBlue(): void {
+    const buttonTexturesUrl = this.gameData.buttonTexturesUrl;
+    this.load.image("hoverButtonRectangle", buttonTexturesUrl.blue.hover);
+    this.load.image("defaultButtonRectangle", buttonTexturesUrl.blue.default);
+    this.load.image("clickedButtonRectangle", buttonTexturesUrl.blue.clicked);
+  }
+
+  private loadRectangleRed(): void {
+    const buttonTexturesUrl = this.gameData.buttonTexturesUrl;
+    this.load.image("hoverRectangleRed", buttonTexturesUrl.red.hover);
+    this.load.image("defaultRectangleRed", buttonTexturesUrl.red.default);
+    this.load.image("clickedRectangleRed", buttonTexturesUrl.red.clicked);
   }
 
   private createBackground(): void {
