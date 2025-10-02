@@ -29,6 +29,19 @@ export default class ButtonFactory {
     fontSize,
     scale,
   }: ButtonConfig): Button {
+    if (
+      !positions ||
+      typeof positions.x !== "number" ||
+      typeof positions.y !== "number"
+    ) {
+      throw new Error(
+        "Parâmetro 'positions' é obrigatório e deve conter x e y.",
+      );
+    }
+    if (!textures || !textures.default) {
+      throw new Error("Parâmetro 'textures.default' é obrigatório.");
+    }
+
     const button = this.buttonManager.createButton({
       positions: positions,
       textures: textures,
