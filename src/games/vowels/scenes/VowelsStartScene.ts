@@ -28,11 +28,9 @@ export default class VowelsStartScene extends Phaser.Scene {
 
   create() {
     this.createBackground();
-    this.createTitle();
-    this.createButtons();
+    this.createTitleImage();
+    this.createMenuButtons();
   }
-
-  update() {}
 
   private createBackground(): void {
     const background = this.add.image(400, 300, "backgroundStart");
@@ -46,7 +44,7 @@ export default class VowelsStartScene extends Phaser.Scene {
     this.effectManager.overlay(0.3);
   }
 
-  private createTitle(): void {
+  private createTitleImage(): void {
     const title = this.add.image(
       this.cameras.main.width / 2,
       this.cameras.main.height / 2 - 150,
@@ -58,7 +56,7 @@ export default class VowelsStartScene extends Phaser.Scene {
     title.setScale(scale);
   }
 
-  private createButtons(): void {
+  private createMenuButtons(): void {
     this.buttonFactory.createButton({
       positions: {
         x: this.cameras.main.width / 2,
