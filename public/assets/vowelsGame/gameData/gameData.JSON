@@ -1,6 +1,7 @@
 {
   "backgroundUrl": "/assets/vowelsGame/images/backgroundMain.png",
   "titleImageUrl": "/assets/vowelsGame/images/title.png",
+  "titlePosition": { "x": 400, "y": 150 },
   "buttonTexturesUrl": {
     "blue": {
       "default": "/assets/common/buttons/rectangleBlueDefault.svg",

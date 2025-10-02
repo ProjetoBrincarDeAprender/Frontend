@@ -79,11 +79,19 @@ export default class VowelsStartScene extends Phaser.Scene {
   }
 
   private createTitleImage(): void {
-    const title = this.add.image(
-      this.cameras.main.width / 2,
-      this.cameras.main.height / 2 - 150,
-      "title",
-    );
+    const titlePosition = this.gameData.titlePosition;
+    let title;
+
+    if (titlePosition) {
+      title = this.add.image(titlePosition.x, titlePosition.y, "title");
+    } else {
+      title = this.add.image(
+        this.cameras.main.width / 2,
+        this.cameras.main.height / 2 - 150,
+        "title",
+      );
+    }
+
     const scaleX = this.cameras.main.width / title.width;
     const scaleY = this.cameras.main.height / title.height;
     const scale = Math.max(scaleX, scaleY) / 1.2;
