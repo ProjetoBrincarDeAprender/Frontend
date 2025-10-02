@@ -3,14 +3,14 @@
   "titleImageUrl": "/assets/vowelsGame/images/title.png",
   "buttonTexturesUrl": {
     "blue": {
-      "default": "/assets/common/defaultButtonRectangle.svg",
-      "hover": "/assets/common/hoverButtonRectangle.svg",
-      "clicked": "/assets/common/clickedButtonRectangle.svg"
+      "default": "/assets/common/rectangleBlueDefault.svg",
+      "hover": "/assets/common/rectangleBlueHover.svg",
+      "clicked": "/assets/common/rectangleBlueClicked.svg"
     },
     "red": {
-      "default": "/assets/common/defaultRectangleRed.svg",
-      "hover": "/assets/common/hoverRectangleRed.svg",
-      "clicked": "/assets/common/clickedRectangleRed.svg"
+      "default": "/assets/common/rectangleRedDefault.svg",
+      "hover": "/assets/common/rectangleRedHover.svg",
+      "clicked": "/assets/common/rectangleRedClicked.svg"
     }
   }
 }

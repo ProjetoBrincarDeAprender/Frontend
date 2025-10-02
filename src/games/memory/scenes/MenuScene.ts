@@ -4,9 +4,9 @@ export class MemoryMenuScene extends Phaser.Scene {
   }
 
   preload() {
-    this.load.image("defaultButton", "/assets/common/defaultButton.svg");
-    this.load.image("hoverButton", "/assets/common/hoverButton.svg");
-    this.load.image("clickedButton", "/assets/common/clickedButton.svg");
+    this.load.image("defaultButton", "/assets/common/squareBlueDefault.svg");
+    this.load.image("hoverButton", "/assets/common/squareBlueHover.svg");
+    this.load.image("clickedButton", "/assets/common/squareBlueClicked.svg");
     this.load.image("play-icon", "/assets/memoryGame/play.png");
     this.load.image("exit-icon", "/assets/memoryGame/exit.png");
     this.load.image("mascot", "/assets/common/dudaSentada.png");

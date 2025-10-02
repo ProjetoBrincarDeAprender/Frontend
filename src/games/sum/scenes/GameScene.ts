@@ -4,7 +4,7 @@ import MathLogic from "../logic/logic";
 import { AudioManager } from "../audio/AudioManager";
 import { AnimationManager } from "../components/animations/AnimationManager";
 import { NumberDisplay } from "../components/ui/NumberDisplay";
-import {SubmitButton}  from "../components/buttons/SubmitButton";
+import { SubmitButton } from "../components/buttons/SubmitButton";
 import { StartButton } from "../components/buttons/StartButton";
 import Button from "../../common/models/Button";
 
@@ -14,9 +14,9 @@ export default class MathGame extends Phaser.Scene {
   private animationManager!: AnimationManager;
   private numberDisplay!: NumberDisplay;
   private answerText!: Phaser.GameObjects.Text;
-  private equationText!: Phaser.GameObjects.Text; 
+  private equationText!: Phaser.GameObjects.Text;
   private correctAnswer: number = 0;
-  private currentLevel: MathLevel | null = null; 
+  private currentLevel: MathLevel | null = null;
   private inputText: string = "";
   private userId: string = "default_user";
   private activityId?: number;
@@ -51,14 +51,14 @@ export default class MathGame extends Phaser.Scene {
     this.load.image("quatro", "/assets/sumGame/quatro.png");
     this.load.image("cinco", "/assets/sumGame/cinco.png");
     this.load.image("star", "/assets/common/star.svg");
-    this.load.image("defaultButton", "/assets/common/defaultButton.svg");
-    this.load.image("hoverButton", "/assets/common/hoverButton.svg");
+    this.load.image("defaultButton", "/assets/common/squareBlueDefault.svg");
+    this.load.image("hoverButton", "/assets/common/squareBlueHover.svg");
     this.load.image("clickedButton", "/assets/common/clickedButton.svg");
   }
 
   create() {
     this.initializeManagers();
-    
+
     if (!this.logic) {
       this.initializeLogic();
       this.createStartScene();
@@ -75,34 +75,34 @@ export default class MathGame extends Phaser.Scene {
 
   private initializeLogic() {
     const levels: MathLevel[] = [];
-    
+
     for (let i = 0; i < 5; i++) {
       levels.push(
         new MathLevel(
-          Phaser.Math.Between(1, 3), 
+          Phaser.Math.Between(1, 3),
           Phaser.Math.Between(1, 5),
-          LevelType.MULTIPLE_CHOICE
-        )
+          LevelType.MULTIPLE_CHOICE,
+        ),
       );
     }
-    
+
     for (let i = 0; i < 5; i++) {
       levels.push(
         new MathLevel(
-          Phaser.Math.Between(1, 5), 
           Phaser.Math.Between(1, 5),
-          LevelType.INPUT
-        )
+          Phaser.Math.Between(1, 5),
+          LevelType.INPUT,
+        ),
       );
     }
-    
+
     this.logic = new MathLogic(this, levels, this.userId, this.activityId);
   }
 
   createStartScene() {
     this.add.image(400, 300, "backgroundStart").setScale(0.8);
     this.add.image(320, 430, "frog").setScale(0.4);
-    
+
     this.createTitle();
     this.createStartButton();
   }
@@ -112,11 +112,13 @@ export default class MathGame extends Phaser.Scene {
     titleBg.fillStyle(0x1e62a7, 1);
     titleBg.fillRoundedRect(180, 60, 448, 80, 20);
 
-    this.add.text(400, 100, "AJUDE O SAPINHO A SOMAR!", {
-      fontSize: "30px",
-      fontFamily: "baloobhai",
-      color: "#fff",
-    }).setOrigin(0.5);
+    this.add
+      .text(400, 100, "AJUDE O SAPINHO A SOMAR!", {
+        fontSize: "30px",
+        fontFamily: "baloobhai",
+        color: "#fff",
+      })
+      .setOrigin(0.5);
   }
 
   private createStartButton() {
@@ -128,7 +130,7 @@ export default class MathGame extends Phaser.Scene {
 
   createLevelScene() {
     this.clearScene();
-    
+
     this.currentLevel = this.logic.getCurrentLevel();
     if (!this.currentLevel) {
       console.error("Nível atual não encontrado");
@@ -140,7 +142,10 @@ export default class MathGame extends Phaser.Scene {
 
     this.createLevelBackground();
     this.createEquationDisplay(this.currentLevel);
-    this.numberDisplay.display([this.currentLevel.number1, this.currentLevel.number2]);
+    this.numberDisplay.display([
+      this.currentLevel.number1,
+      this.currentLevel.number2,
+    ]);
 
     if (this.currentLevel.isMultipleChoice()) {
       this.createMultipleChoiceInterface(this.currentLevel);
@@ -156,12 +161,14 @@ export default class MathGame extends Phaser.Scene {
 
   private createEquationDisplay(level: MathLevel) {
     const equationString = `${level.getNumber1()} + ${level.getNumber2()} = ?`;
-    
-    this.equationText = this.add.text(430, 250, equationString, {
-      fontSize: "46px",
-      color: "#F67800",
-      fontStyle: "bold"
-    }).setOrigin(0.5); 
+
+    this.equationText = this.add
+      .text(430, 250, equationString, {
+        fontSize: "46px",
+        color: "#F67800",
+        fontStyle: "bold",
+      })
+      .setOrigin(0.5);
   }
 
   private updateEquationWithCorrectAnswer() {
@@ -171,13 +178,13 @@ export default class MathGame extends Phaser.Scene {
     }
 
     const equationString = `${this.currentLevel.getNumber1()} + ${this.currentLevel.getNumber2()} = ${this.correctAnswer}`;
-    
+
     this.tweens.add({
       targets: this.equationText,
       scaleX: 1.1,
       scaleY: 1.1,
       duration: 300,
-      ease: 'Back.easeOut',
+      ease: "Back.easeOut",
       yoyo: true,
       onStart: () => {
         this.equationText.setTint(0x00ff00);
@@ -189,7 +196,7 @@ export default class MathGame extends Phaser.Scene {
         this.time.delayedCall(2000, () => {
           this.equationText.clearTint();
         });
-      }
+      },
     });
   }
 
@@ -200,21 +207,21 @@ export default class MathGame extends Phaser.Scene {
     const buttonPositions = [
       { x: 200, y: 480 },
       { x: 400, y: 480 },
-      { x: 600, y: 480 }
+      { x: 600, y: 480 },
     ];
 
     this.choiceButtons = [];
-    
+
     choices.forEach((choice, index) => {
       const button = new Button(
         this,
         buttonPositions[index].x,
         buttonPositions[index].y,
         "defaultButton",
-        "hoverButton", 
+        "hoverButton",
         "clickedButton",
         choice.toString(),
-        62
+        62,
       );
 
       button.setScale(1.3);
@@ -235,12 +242,14 @@ export default class MathGame extends Phaser.Scene {
       backgroundColor: "#ffffff",
     });
 
-    this.answerText = this.add.text(392, 500, " ", {
-      fontSize: "48px",
-      color: "#000",
-      backgroundColor: "#ffffff",
-      padding: { x: 10, y: 10 },
-    }).setOrigin(0.5);
+    this.answerText = this.add
+      .text(392, 500, " ", {
+        fontSize: "48px",
+        color: "#000",
+        backgroundColor: "#ffffff",
+        padding: { x: 10, y: 10 },
+      })
+      .setOrigin(0.5);
 
     this.submitButton = new SubmitButton(this, 550, 500, () => {
       this.handleAnswer();
@@ -265,14 +274,17 @@ export default class MathGame extends Phaser.Scene {
 
   handleMultipleChoiceAnswer(selectedAnswer: number, clickedButton: Button) {
     const result = this.logic.checkAnswer(selectedAnswer);
-    
+
     if (result.correct) {
       this.audioManager.playCorrect();
       this.animationManager.correctAnswerEffect(clickedButton);
-      this.animationManager.starExplosionEffect(clickedButton.x, clickedButton.y);
-      
+      this.animationManager.starExplosionEffect(
+        clickedButton.x,
+        clickedButton.y,
+      );
+
       this.updateEquationWithCorrectAnswer();
-      
+
       this.proceedToNextLevel(result.finished);
     } else {
       this.audioManager.playIncorrect();
@@ -282,19 +294,19 @@ export default class MathGame extends Phaser.Scene {
 
   handleAnswer() {
     const result = this.logic.checkAnswer(parseInt(this.inputText));
-    
+
     if (result.correct) {
       this.audioManager.playCorrect2();
       this.animationManager.correctAnswerEffect(this.answerText);
       this.createMultipleStars(this.answerText.x, this.answerText.y);
-      
+
       this.updateEquationWithCorrectAnswer();
-      
+
       this.proceedToNextLevel(result.finished);
     } else {
       this.audioManager.playIncorrect();
       this.animationManager.incorrectAnswerEffect(this.answerText);
-      
+
       this.time.delayedCall(1000, () => {
         this.resetInput();
       });
@@ -303,13 +315,13 @@ export default class MathGame extends Phaser.Scene {
 
   private createMultipleStars(centerX: number, centerY: number) {
     const starPositions = [
-      { x: centerX, y: centerY - 50 },          
-      { x: centerX - 40, y: centerY - 30 },    
-      { x: centerX + 40, y: centerY - 30 },    
-      { x: centerX - 50, y: centerY },          
-      { x: centerX + 50, y: centerY },        
-      { x: centerX - 30, y: centerY + 30 },     
-      { x: centerX + 30, y: centerY + 30 },     
+      { x: centerX, y: centerY - 50 },
+      { x: centerX - 40, y: centerY - 30 },
+      { x: centerX + 40, y: centerY - 30 },
+      { x: centerX - 50, y: centerY },
+      { x: centerX + 50, y: centerY },
+      { x: centerX - 30, y: centerY + 30 },
+      { x: centerX + 30, y: centerY + 30 },
     ];
 
     starPositions.forEach((pos, index) => {
@@ -343,16 +355,16 @@ export default class MathGame extends Phaser.Scene {
     this.numberDisplay.clear();
     this.clearChoiceButtons();
     this.resetInput();
-    
+
     if (this.equationText) {
       this.equationText.destroy();
     }
   }
 
   private clearChoiceButtons() {
-    this.choiceButtons.forEach(button => button.destroy());
+    this.choiceButtons.forEach((button) => button.destroy());
     this.choiceButtons = [];
-    
+
     if (this.submitButton) {
       this.submitButton.destroy();
       this.submitButton = undefined;
@@ -361,10 +373,10 @@ export default class MathGame extends Phaser.Scene {
 
   showEndScene() {
     this.clearScene();
-    
+
     this.cameras.main.setBackgroundColor("#AED3E3");
     this.children.removeAll();
-    
+
     this.createEndSceneContent();
   }
 
@@ -383,18 +395,22 @@ export default class MathGame extends Phaser.Scene {
     titleBg.fillStyle(0x1e90ff, 0.8);
     titleBg.fillRoundedRect(100, 60, 600, 80, 20);
 
-    this.add.text(400, 100, "PARABÉNS! VOCÊ AJUDOU O SAPINHO!", {
-      fontSize: "30px",
-      fontFamily: "Arial",
-      color: "#fff",
-    }).setOrigin(0.5);
+    this.add
+      .text(400, 100, "PARABÉNS! VOCÊ AJUDOU O SAPINHO!", {
+        fontSize: "30px",
+        fontFamily: "Arial",
+        color: "#fff",
+      })
+      .setOrigin(0.5);
   }
 
   private createEndMessage() {
-    this.add.text(420, 265, "OBRIGADO!", {
-      fontSize: "30px",
-      color: "#000",
-    }).setOrigin(0.5);
+    this.add
+      .text(420, 265, "OBRIGADO!", {
+        fontSize: "30px",
+        color: "#000",
+      })
+      .setOrigin(0.5);
   }
 
   private createStars() {
@@ -402,21 +418,22 @@ export default class MathGame extends Phaser.Scene {
       { x: 200, y: 150, scale: 0.3 },
       { x: 600, y: 150, scale: 0.3 },
       { x: 150, y: 250, scale: 0.2 },
-      { x: 650, y: 250, scale: 0.2 }
+      { x: 650, y: 250, scale: 0.2 },
     ];
 
-    starPositions.forEach(star => {
-      this.add.image(star.x, star.y, "star")
+    starPositions.forEach((star) => {
+      this.add
+        .image(star.x, star.y, "star")
         .setScale(star.scale)
-        .setTint(0xFFD700);
+        .setTint(0xffd700);
     });
   }
 
   private createMoreGamesButton() {
     const button = new StartButton(this, 500, 450, () => {
-      window.location.href = '/games';
+      window.location.href = "/games";
     });
-    
+
     button.setText("MAIS JOGOS");
   }
 }

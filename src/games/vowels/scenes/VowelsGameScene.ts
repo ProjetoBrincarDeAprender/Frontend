@@ -83,9 +83,9 @@ export default class VowelsGameScene extends Phaser.Scene {
     );
 
     this.load.image("star", "/assets/common/star.svg");
-    this.load.image("defaultButton", "/assets/common/defaultButton.svg");
-    this.load.image("hoverButton", "/assets/common/hoverButton.svg");
-    this.load.image("clickedButton", "/assets/common/clickedButton.svg");
+    this.load.image("defaultButton", "/assets/common/squareBlueDefault.svg");
+    this.load.image("hoverButton", "/assets/common/squareBlueHover.svg");
+    this.load.image("clickedButton", "/assets/common/squareBlueClicked.svg");
   }
 
   /**

@@ -10,15 +10,15 @@ export default class AssetLoader {
   preLoadRectangleRed() {
     this.scene.load.image(
       "defaultRectangleRed",
-      "/assets/common/defaultRectangleRed.svg",
+      "/assets/common/rectangleRedDefault.svg",
     );
     this.scene.load.image(
       "hoverRectangleRed",
-      "/assets/common/hoverRectangleRed.svg",
+      "/assets/common/rectangleRedHover.svg",
     );
     this.scene.load.image(
       "clickedRectangleRed",
-      "/assets/common/clickedRectangleRed.svg",
+      "/assets/common/rectangleRedClicked.svg",
     );
   }
 

@@ -23,7 +23,6 @@ export default class VowelsCreditsScene extends Phaser.Scene {
     this.load.image("dudaClap", "/assets/common/duda/dudaClap.png");
     this.load.image("trophy", "/assets/common/trophy.png");
     this.assetLoader.preLoadRectangleRed();
-    this.assetLoader.proLoadRectangleBlue();
   }
 
   create() {
