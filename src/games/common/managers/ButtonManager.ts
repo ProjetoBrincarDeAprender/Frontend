@@ -22,6 +22,11 @@ export default class ButtonManager {
     this.buttons = [];
   }
 
+  /**
+   * Cria múltiplos botões na cena a partir de um array de configurações.
+   * @param config Array de objetos de configuração de botões.
+   * @returns Array de instâncias de Button criadas.
+   */
   createButtons(config: ButtonConfig[]): Button[] {
     const newButtons: Button[] = [];
 
@@ -40,6 +45,11 @@ export default class ButtonManager {
     return newButtons;
   }
 
+  /**
+   * Cria um único botão na cena a partir de uma configuração.
+   * @param config Objeto de configuração do botão.
+   * @returns Instância de Button criada.
+   */
   createButton({
     positions,
     textures,
@@ -61,10 +71,18 @@ export default class ButtonManager {
     return button;
   }
 
+  /**
+   * Retorna o array atual de botões gerenciados por este manager.
+   * @returns Array de instâncias de Button.
+   */
   getButtons(): Button[] {
     return this.buttons;
   }
 
+  /**
+   * Atualiza o texto de todos os botões gerenciados.
+   * @param texts Array de strings para definir como texto de cada botão.
+   */
   setButtonTexts(texts: string[]): void {
     this.buttons.forEach((button, index) => {
       button.setButtonText(texts[index]);
