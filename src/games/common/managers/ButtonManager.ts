@@ -2,6 +2,18 @@ import Phaser from "phaser";
 import Button from "../models/Button";
 import RandomGenerator from "../utils/randomGenerator";
 
+interface ButtonConfig {
+  positions: { x: number; y: number };
+  textures: {
+    default: string;
+    hover?: string;
+    clicked?: string;
+  };
+  text?: string;
+  fontSize?: number;
+  scale?: number;
+}
+
 export default class ButtonManager {
   protected scene: Phaser.Scene;
   private buttons: Button[];
@@ -46,20 +58,14 @@ export default class ButtonManager {
     text,
     fontSize,
     scale = 1,
-  }: {
-    positions: { x: number; y: number };
-    textures: string[];
-    text?: string;
-    fontSize?: number;
-    scale?: number;
-  }): Button {
+  }: ButtonConfig): Button {
     const button = new Button(
       this.scene,
       positions.x,
       positions.y,
-      textures[0], // Imagem padrão (defaultImage)
-      textures[1], // Imagem hover (hoverImage)
-      textures[2], // Imagem do clique (clickImage)
+      textures.default, // Imagem padrão (defaultImage)
+      textures.hover, // Imagem hover (hoverImage)
+      textures.clicked, // Imagem do clique (clickImage)
       text ? text : "", // Texto do botão (buttonText)
       fontSize ? fontSize : undefined, // Tamanho da fonte padrão (defaultFontSize)
     );
