@@ -1,12 +1,12 @@
 import { Footer } from "@/components/Footer/Footer";
 import { EventBus } from "@/games/common/utils/EventBus";
-import StartScene from "@/games/vowels/scenes/StartScene";
-import Credits from "@/games/vowels/scenes/CreditsScene";
-import GameScene from "@/games/vowels/scenes/GameScene";
-import Phaser from "phaser";
 import { useEffect, useRef } from "react";
 import { Header } from "@/components/Header/Header";
 import { BackButton } from "@/components/utils/BackButton";
+import Phaser from "phaser";
+import VowelsStartScene from "@/games/vowels/scenes/VowelsStartScene";
+import VowelsGameScene from "@/games/vowels/scenes/VowelsGameScene";
+import VowelsCreditsScene from "@/games/vowels/scenes/VowelsCreditsScene";
 
 export interface IRefVowelsGame {
   game: Phaser.Game | null;
@@ -21,7 +21,7 @@ const VowelsGame: React.FC = () => {
       type: Phaser.AUTO,
       width: 800,
       height: 600,
-      scene: [StartScene, GameScene, Credits],
+      scene: [VowelsStartScene, VowelsGameScene, VowelsCreditsScene],
       parent: "game-container",
       backgroundColor: "#ffffff",
     };

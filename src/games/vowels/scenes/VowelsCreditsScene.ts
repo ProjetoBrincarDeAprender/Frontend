@@ -3,7 +3,7 @@ import ButtonManager from "@/games/common/managers/ButtonManager";
 import AssetLoader from "@/games/common/loaders/AssetLoader";
 import EffectManager from "@/games/common/managers/EffectManager";
 
-export default class Credits extends Phaser.Scene {
+export default class VowelsCreditsScene extends Phaser.Scene {
   private buttonManager: ButtonManager;
   private assetLoader: AssetLoader;
   private effectManager: EffectManager;

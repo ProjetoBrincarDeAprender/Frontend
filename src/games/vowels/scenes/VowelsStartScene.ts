@@ -4,7 +4,7 @@ import Phaser from "phaser";
 import AssetLoader from "@/games/common/loaders/AssetLoader";
 import CloudManager from "@/games/common/managers/CloudManager";
 
-export default class Vowels extends Phaser.Scene {
+export default class VowelsStartScene extends Phaser.Scene {
   private assetLoader: AssetLoader;
   private buttonManager: ButtonManager;
   private cloudManager: CloudManager;
