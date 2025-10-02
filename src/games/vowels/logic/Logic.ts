@@ -6,6 +6,8 @@ import LevelManager from "../../common/managers/LevelManager";
 import VowelsLevel from "./VowelsLevel";
 import CloudManager from "@/games/common/managers/CloudManager";
 import api from "@/utils/api";
+import Phaser from "phaser";
+import ButtonContentGenerator from "@/games/common/content/ButtonContentGenerator";
 
 export default class Logic {
   private scene: Phaser.Scene;
@@ -123,7 +125,7 @@ export default class Logic {
   setButtonTexts(): void {
     const answer: string = this.levelManager.getCurrentLevel().getAnswer();
     const buttonsNumber: number = this.buttonManager.getButtons().length;
-    const buttonTexts = this.buttonManager.generateButtonsLetters(
+    const buttonTexts = ButtonContentGenerator.generateButtonsLetters(
       buttonsNumber,
       answer,
     );
