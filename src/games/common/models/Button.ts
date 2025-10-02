@@ -5,7 +5,7 @@ export default class Button extends Phaser.GameObjects.Container {
   private hoverImage: Phaser.GameObjects.Image;
   private clickImage: Phaser.GameObjects.Image;
   private buttonText: Phaser.GameObjects.Text;
-  private state: "rest" | "hover" | "active" = "rest";
+  private buttonState: "rest" | "hover" | "active" = "rest";
 
   constructor(
     scene: Phaser.Scene,
@@ -59,14 +59,14 @@ export default class Button extends Phaser.GameObjects.Container {
   }
 
   setButtonState(newState: "rest" | "hover" | "active"): void {
-    this.state = newState;
+    this.buttonState = newState;
     this.updateButtonVisual();
   }
 
   private updateButtonVisual(): void {
-    this.defaultImage.setVisible(this.state === "rest");
-    this.hoverImage.setVisible(this.state === "hover");
-    this.clickImage.setVisible(this.state === "active");
+    this.defaultImage.setVisible(this.buttonState === "rest");
+    this.hoverImage.setVisible(this.buttonState === "hover");
+    this.clickImage.setVisible(this.buttonState === "active");
   }
 
   getButtonStringText(): string {
