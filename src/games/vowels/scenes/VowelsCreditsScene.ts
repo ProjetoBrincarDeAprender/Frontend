@@ -76,11 +76,11 @@ export default class VowelsCreditsScene extends Phaser.Scene {
         x: this.cameras.main.width / 2 + 100,
         y: this.cameras.main.height / 2 + 220,
       },
-      textures: [
-        "defaultRectangleRed",
-        "hoverRectangleRed",
-        "clickedRectangleRed",
-      ],
+      textures: {
+        default: "defaultRectangleRed",
+        hover: "hoverRectangleRed",
+        clicked: "clickedRectangleRed",
+      },
       text: "Sair",
       fontSize: 40,
       scale: 0.7,
@@ -91,11 +91,11 @@ export default class VowelsCreditsScene extends Phaser.Scene {
         x: this.cameras.main.width / 2 + 100,
         y: this.cameras.main.height / 2 + 160,
       },
-      textures: [
-        "defaultButtonRectangle",
-        "hoverButtonRectangle",
-        "clickedButtonRectangle",
-      ],
+      textures: {
+        default: "defaultButtonRectangle",
+        hover: "hoverButtonRectangle",
+        clicked: "clickedButtonRectangle",
+      },
       text: "Jogar Novamente",
       fontSize: 20,
       scale: 1,

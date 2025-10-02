@@ -164,17 +164,21 @@ export default class Logic {
       { x: 400, y: 500 },
       { x: 600, y: 500 },
     ];
-    const buttonTextures: string[] = [
-      "defaultButton",
-      "hoverButton",
-      "clickedButton",
-    ];
-    this.buttonManager.createButtons({
-      positions: buttonPositions,
+
+    const buttonTextures = {
+      default: "defaultButton",
+      hover: "hoverButton",
+      clicked: "clickedButton",
+    };
+
+    const buttonConfigs = buttonPositions.map((pos) => ({
+      positions: pos,
       textures: buttonTextures,
       scale: 1.5,
-      fontSize: [50, 50, 50],
-    });
+      fontSize: 50,
+    }));
+
+    this.buttonManager.createButtons(buttonConfigs);
   }
 
   getButtons(): Button[] {

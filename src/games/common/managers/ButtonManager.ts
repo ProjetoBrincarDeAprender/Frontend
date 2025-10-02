@@ -23,33 +23,22 @@ export default class ButtonManager {
     this.buttons = [];
   }
 
-  createButtons({
-    positions,
-    textures,
-    text,
-    fontSize,
-    scale = 1,
-  }: {
-    positions: { x: number; y: number }[];
-    textures: string[];
-    text?: string[];
-    fontSize?: number[];
-    scale?: number;
-  }): void {
-    this.buttons = positions.map((pos, index) => {
-      const button = new Button(
-        this.scene,
-        pos.x,
-        pos.y,
-        textures[0], // Imagem padrão (defaultImage)
-        textures[1], // Imagem hover (hoverImage)
-        textures[2], // Imagem do clique (clickImage)
-        text ? text[index] : "", // Texto do botão (buttonText)
-        fontSize ? fontSize[index] : undefined, // Tamanho da fonte padrão (defaultFontSize)
-      );
-      this.scene.add.existing(button).setScale(scale);
-      return button;
-    });
+  createButtons(config: ButtonConfig[]): Button[] {
+    const newButtons: Button[] = [];
+
+    for (let i = 0; i < config.length; i++) {
+      const newButton: Button = this.createButton({
+        positions: config[i].positions,
+        textures: config[i].textures,
+        text: config[i].text,
+        fontSize: config[i].fontSize,
+        scale: config[i].scale,
+      });
+      newButtons.push(newButton);
+    }
+
+    this.buttons = newButtons;
+    return newButtons;
   }
 
   createButton({
