@@ -13,5 +13,10 @@
       "hover": "/assets/common/buttons/rectangleRedHover.svg",
       "clicked": "/assets/common/buttons/rectangleRedClicked.svg"
     }
-  }
+  },
+  "buttons": [
+    {
+      "text": "Iniciar ▶"
+    }
+  ]
 }
