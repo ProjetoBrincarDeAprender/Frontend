@@ -109,6 +109,10 @@ export default class Logic {
   buttonFailEffect(button: Button, failColor: number = 0xff0000): void {
     this.effectManager.growup(button, "Bounce", 1.2, 200);
     this.effectManager.changeColor(button.getButtonText(), failColor);
+    // Pinta o botão de vermelho no erro (mesma aparência do jogo de sequência numérica)
+    button.setTint(failColor);
+    // Remove o tint após um curto intervalo para não persistir entre níveis
+    this.scene.time.delayedCall(500, () => button.clearTint());
   }
 
   failEffect(): void {}
