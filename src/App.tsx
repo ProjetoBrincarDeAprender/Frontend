@@ -7,6 +7,7 @@ import { AuthGuard } from "./guards/AuthGuard";
 import { Calm } from "./pages/Calm/Calm";
 import Dashboard from "./pages/Dashboard/Admin/Dashboard";
 import { ResponsibleDashboard } from "./pages/Dashboard/Responsible/ResponsibleDashboard/ReponsibleDashboard";
+import TeacherDashboard from "./pages/Dashboard/Teachers/TeacherDashboard/TeacherDashboard";
 import { Responsibles } from "./pages/Dashboard/Responsible/Responsibles";
 import { Schools } from "./pages/Dashboard/Schools/Schools";
 import { SchoolUsers } from "./pages/Dashboard/SchoolUsers/SchoolUsers";
@@ -33,6 +34,7 @@ function App() {
 
       {/* URL apenas de testes */}
       <Route path="/responsibledashboard" element={<ResponsibleDashboard />} />
+      <Route path="/teacherdashboard" element={<TeacherDashboard />} />
 
       <Route
         path="/dashboard"
