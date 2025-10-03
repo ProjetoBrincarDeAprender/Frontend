@@ -30,6 +30,9 @@ export class MemoryGameScene extends Phaser.Scene {
     this.load.image("card-3", "/assets/memoryGame/papagaio.png");
     this.load.image("card-4", "/assets/memoryGame/cavalo.png");
     this.load.image("background", "/assets/memoryGame/fundo.png");
+    // Áudios de feedback
+    this.load.audio("correct", "/assets/common/sounds/correct.mp3");
+    this.load.audio("incorrect", "/assets/common/sounds/incorrect.mp3");
   }
 
   create() {
