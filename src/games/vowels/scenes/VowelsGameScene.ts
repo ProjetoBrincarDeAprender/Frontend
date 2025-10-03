@@ -86,6 +86,9 @@ export default class VowelsGameScene extends Phaser.Scene {
     this.load.image("defaultButton", "/assets/common/defaultButton.svg");
     this.load.image("hoverButton", "/assets/common/hoverButton.svg");
     this.load.image("clickedButton", "/assets/common/clickedButton.svg");
+    // Áudios de feedback
+    this.load.audio("correct", "/assets/common/sounds/correct.mp3");
+    this.load.audio("incorrect", "/assets/common/sounds/incorrect.mp3");
   }
 
   /**
@@ -119,6 +122,8 @@ export default class VowelsGameScene extends Phaser.Scene {
         const result = this.logic.handleClick(button, this.time.now);
 
         if (result.correct) {
+          // Som de acerto
+          this.sound.play("correct", { volume: 0.7 });
           this.logic.buttonSuccessEffect(button, "star");
           this.time.delayedCall(1000, () => {
             if (result.finished) {
@@ -128,6 +133,8 @@ export default class VowelsGameScene extends Phaser.Scene {
             }
           });
         } else {
+          // Som de erro
+          this.sound.play("incorrect", { volume: 0.7 });
           this.logic.buttonFailEffect(button);
         }
       });

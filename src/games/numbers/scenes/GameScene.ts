@@ -29,6 +29,9 @@ export default class GameScene extends Phaser.Scene {
     this.load.image("hoverButton", "/assets/common/hoverButton.svg");
     this.load.image("clickedButton", "/assets/common/clickedButton.svg");
     this.load.image("numbersBackground", "/assets/numbersGame/background.png");
+    // Áudios de feedback
+    this.load.audio("correct", "/assets/common/sounds/correct.mp3");
+    this.load.audio("incorrect", "/assets/common/sounds/incorrect.mp3");
   }
 
   /**
@@ -66,6 +69,8 @@ export default class GameScene extends Phaser.Scene {
         const result = this.logic.handleClick(button, this.time.now);
 
         if (result.correct) {
+          // Som de acerto
+          this.sound.play("correct", { volume: 0.7 });
           // Revela o número correto no lugar do ponto de interrogação
           this.logic.revealAnswer();
           this.logic.buttonSuccessEffect(button, "star");
@@ -79,6 +84,8 @@ export default class GameScene extends Phaser.Scene {
             }
           });
         } else {
+          // Som de erro
+          this.sound.play("incorrect", { volume: 0.7 });
           this.logic.buttonFailEffect(button);
         }
       });
