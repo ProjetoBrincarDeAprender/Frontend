@@ -5,7 +5,7 @@ import StudentCard from "@/pages/Dashboard/Responsible/ResponsibleDashboard/comp
 import api from "@/utils/api";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
-import { Plus, BookOpen, Target } from "lucide-react";
+import { Plus, BookOpen, Target, Activity, BarChart3 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import saturn from "../../../../assets/saturn.svg";
 
@@ -44,7 +44,7 @@ export function TeacherDashboard() {
             </div>
           </div>
           
-          <div className="flex gap-3">
+          <div className="flex gap-3 flex-wrap">
             <Button
               onClick={() => navigate("/dashboard/teacher/curriculum/knowledge-areas/create")}
               className="bg-blue-600 hover:bg-blue-700 text-white"
@@ -59,6 +59,22 @@ export function TeacherDashboard() {
             >
               <Target className="mr-2 h-4 w-4" />
               Criar Competência
+            </Button>
+
+            <Button
+              onClick={() => navigate("/dashboard/teacher/curriculum/activities/create")}
+              className="bg-purple-600 hover:bg-purple-700 text-white"
+            >
+              <Activity className="mr-2 h-4 w-4" />
+              Criar Atividade
+            </Button>
+
+            <Button
+              onClick={() => navigate("/dashboard/teacher/curriculum/difficulty-levels/create")}
+              className="bg-orange-600 hover:bg-orange-700 text-white"
+            >
+              <BarChart3 className="mr-2 h-4 w-4" />
+              Criar Nível de Dificuldade
             </Button>
           </div>
         </div>

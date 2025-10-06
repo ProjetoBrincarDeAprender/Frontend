@@ -237,7 +237,7 @@ export function CreateCompetenceForm({ onSuccess }: CreateCompetenceFormProps) {
         />
 
         <Form.Submit disabled={isSubmitting} className="bg-primary hover:bg-primary/90">
-          {isSubmitting ? "Criando..." : "Criar Competência"}
+          {isSubmitting ? "Criando..." : "Criar"}
         </Form.Submit>
       </Form.Main>
     </Form.Wrapper>

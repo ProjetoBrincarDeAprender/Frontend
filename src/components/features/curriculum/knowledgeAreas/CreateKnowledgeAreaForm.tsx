@@ -124,7 +124,7 @@ export function CreateKnowledgeAreaForm({ onSuccess }: CreateKnowledgeAreaFormPr
         />
 
         <Form.Submit disabled={isSubmitting} className="bg-primary hover:bg-primary/90">
-          {isSubmitting ? "Criando..." : "Cadastrar"}
+          {isSubmitting ? "Criando..." : "Criar"}
         </Form.Submit>
       </Form.Main>
     </Form.Wrapper>
