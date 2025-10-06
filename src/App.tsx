@@ -24,6 +24,8 @@ import { RecoverPassword } from "./pages/RecoverPassword/RecoverPassword";
 import { SendPasswordToken } from "./pages/SendPasswordToken/SendPasswordToken";
 import CreateKnowledgeArea from "./pages/Dashboard/Teacher/Curriculum/CreateKnowledgeArea";
 import CreateCompetence from "./pages/Dashboard/Teacher/Curriculum/CreateCompetence";
+import CreateActivity from "./pages/Dashboard/Teacher/Curriculum/CreateActivity";
+import CreateDifficultyLevel from "./pages/Dashboard/Teacher/Curriculum/CreateDifficultyLevel";
 
 function App() {
   return (
@@ -61,6 +63,8 @@ function App() {
         <Route index element={<TeacherDashboard />} />
         <Route path="curriculum/knowledge-areas/create" element={<CreateKnowledgeArea />} />
         <Route path="curriculum/competences/create" element={<CreateCompetence />} />
+        <Route path="curriculum/activities/create" element={<CreateActivity />} />
+        <Route path="curriculum/difficulty-levels/create" element={<CreateDifficultyLevel />} />
       </Route>
 
       <Route path="/games">
