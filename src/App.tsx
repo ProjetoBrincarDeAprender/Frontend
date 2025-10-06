@@ -22,6 +22,7 @@ import Logout from "./pages/Logout/Logout";
 import { Profile } from "./pages/Profile/Profile";
 import { RecoverPassword } from "./pages/RecoverPassword/RecoverPassword";
 import { SendPasswordToken } from "./pages/SendPasswordToken/SendPasswordToken";
+import CreateKnowledgeArea from "./pages/Dashboard/Teacher/Curriculum/CreateKnowledgeArea";
 
 function App() {
   return (
@@ -49,6 +50,15 @@ function App() {
         <Route path="teachers" element={<Teachers />} />
         <Route path="link-students" element={<LinkStudents />} />
         <Route path="responsables" element={<Responsibles />} />
+      </Route>
+
+      {/* Rotas específicas do Professor */}
+      <Route
+        path="/dashboard/teacher"
+        element={<AuthGuard requireAuth role={["Professor"]} />}
+      >
+        <Route index element={<TeacherDashboard />} />
+        <Route path="curriculum/knowledge-areas/create" element={<CreateKnowledgeArea />} />
       </Route>
 
       <Route path="/games">

@@ -4,10 +4,14 @@ import { useUser } from "@/hooks/User/useUser";
 import StudentCard from "@/pages/Dashboard/Responsible/ResponsibleDashboard/components/studentCard/StudentCard";
 import api from "@/utils/api";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router";
+import { Plus } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import saturn from "../../../../assets/saturn.svg";
 
 export function TeacherDashboard() {
   const { user } = useUser();
+  const navigate = useNavigate();
   const [response, setResponse] = useState<any>([]);
   const username = user?.nome_completo || "Usuário";
 
@@ -32,11 +36,24 @@ export function TeacherDashboard() {
     <div className="flex h-fit flex-col bg-neutral-200 pt-28 text-gray-800">
       <Header />
       <section className="mb-10 h-full px-78 pt-8">
-        <div className="flex items-center gap-4">
-          <img className="max-w-24" src={saturn} alt="Saturn" />
-          <div className="flex flex-col gap-2">
-            <h1 className="text-4xl font-bold">Bem vindo, {username}</h1>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <img className="max-w-24" src={saturn} alt="Saturn" />
+            <div className="flex flex-col gap-2">
+              <h1 className="text-4xl font-bold">Bem vindo, {username}</h1>
+            </div>
           </div>
+          <Button
+            onClick={() =>
+              navigate(
+                "/dashboard/teacher/curriculum/knowledge-areas/create",
+              )
+            }
+            className="bg-blue-600 hover:bg-blue-700 text-white"
+          >
+            <Plus className="mr-2 h-4 w-4" />
+            Criar Área de Conhecimento
+          </Button>
         </div>
       </section>
 
