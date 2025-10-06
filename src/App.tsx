@@ -23,6 +23,7 @@ import { Profile } from "./pages/Profile/Profile";
 import { RecoverPassword } from "./pages/RecoverPassword/RecoverPassword";
 import { SendPasswordToken } from "./pages/SendPasswordToken/SendPasswordToken";
 import CreateKnowledgeArea from "./pages/Dashboard/Teacher/Curriculum/CreateKnowledgeArea";
+import CreateCompetence from "./pages/Dashboard/Teacher/Curriculum/CreateCompetence";
 
 function App() {
   return (
@@ -59,6 +60,7 @@ function App() {
       >
         <Route index element={<TeacherDashboard />} />
         <Route path="curriculum/knowledge-areas/create" element={<CreateKnowledgeArea />} />
+        <Route path="curriculum/competences/create" element={<CreateCompetence />} />
       </Route>
 
       <Route path="/games">
