@@ -2,6 +2,7 @@ import { toast } from "sonner";
 import { CreateActivityForm } from "@/components/features/curriculum/activities/CreateActivityForm";
 import { Header } from "@/components/Header/Header";
 import { Footer } from "@/components/Footer/Footer";
+import { CreateActivityModal } from "@/components/features/curriculum/activities/CreateActivityModal";
 
 export default function CreateActivity() {
   const handleSuccess = () => {
@@ -12,6 +13,8 @@ export default function CreateActivity() {
   return (
     <div className="flex h-fit flex-col bg-neutral-200 pt-28 text-gray-800">
       <Header />
+
+      <CreateActivityModal />
       
       <main className="min-h-96 flex-1 px-78 py-8">
         <div className="flex items-center justify-center">

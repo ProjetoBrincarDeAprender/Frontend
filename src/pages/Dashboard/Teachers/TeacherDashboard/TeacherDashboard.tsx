@@ -54,7 +54,7 @@ export function TeacherDashboard() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
             <Button
               onClick={() => navigate("/dashboard/teacher/curriculum/knowledge-areas/create")}
-              className="bg-blue-600 hover:bg-blue-700 text-white h-auto py-3 sm:py-4 flex flex-col items-center gap-2 text-sm sm:text-base"
+              className="bg-blue-600 hover:bg-blue-700 cursor-pointer text-white h-auto py-3 sm:py-4 flex flex-col items-center gap-2 text-sm sm:text-base"
             >
               <BookOpen className="h-5 w-5 sm:h-6 sm:w-6" />
               <span className="font-medium text-center">Áreas de Conhecimento</span>
@@ -62,7 +62,7 @@ export function TeacherDashboard() {
             
             <Button
               onClick={() => navigate("/dashboard/teacher/curriculum/competences/create")}
-              className="bg-green-600 hover:bg-green-700 text-white h-auto py-3 sm:py-4 flex flex-col items-center gap-2 text-sm sm:text-base"
+              className="bg-green-600 hover:bg-green-700 cursor-pointer text-white h-auto py-3 sm:py-4 flex flex-col items-center gap-2 text-sm sm:text-base"
             >
               <Target className="h-5 w-5 sm:h-6 sm:w-6" />
               <span className="font-medium text-center">Competências</span>
@@ -70,7 +70,7 @@ export function TeacherDashboard() {
 
             <Button
               onClick={() => navigate("/dashboard/teacher/curriculum/activities/create")}
-              className="bg-purple-600 hover:bg-purple-700 text-white h-auto py-3 sm:py-4 flex flex-col items-center gap-2 text-sm sm:text-base"
+              className="bg-purple-600 hover:bg-purple-700 cursor-pointer text-white h-auto py-3 sm:py-4 flex flex-col items-center gap-2 text-sm sm:text-base"
             >
               <Activity className="h-5 w-5 sm:h-6 sm:w-6" />
               <span className="font-medium text-center">Atividades</span>
@@ -78,7 +78,7 @@ export function TeacherDashboard() {
 
             <Button
               onClick={() => navigate("/dashboard/teacher/curriculum/questions/create")}
-              className="bg-orange-600 hover:bg-orange-700 text-white h-auto py-3 sm:py-4 flex flex-col items-center gap-2 text-sm sm:text-base"
+              className="bg-orange-600 hover:bg-orange-700 cursor-pointer text-white h-auto py-3 sm:py-4 flex flex-col items-center gap-2 text-sm sm:text-base"
             >
               <HelpCircle className="h-5 w-5 sm:h-6 sm:w-6" />
               <span className="font-medium text-center">Questões</span>
