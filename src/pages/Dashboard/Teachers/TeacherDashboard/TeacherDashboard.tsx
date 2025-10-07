@@ -5,7 +5,7 @@ import StudentCard from "@/pages/Dashboard/Responsible/ResponsibleDashboard/comp
 import api from "@/utils/api";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
-import { Plus, BookOpen, Target, Activity, BarChart3 } from "lucide-react";
+import { BookOpen, Target, Activity, HelpCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import saturn from "../../../../assets/saturn.svg";
 
@@ -33,54 +33,72 @@ export function TeacherDashboard() {
   }, [user]);
 
   return (
-    <div className="flex h-fit flex-col bg-neutral-200 pt-28 text-gray-800">
+    <div className="flex min-h-screen flex-col bg-neutral-200 pt-28 text-gray-800">
       <Header />
-      <section className="mb-10 h-full px-78 pt-8">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <img className="max-w-24" src={saturn} alt="Saturn" />
-            <div className="flex flex-col gap-2">
-              <h1 className="text-4xl font-bold">Bem vindo, {username}</h1>
-            </div>
+      
+      {/* Seção de Boas-vindas */}
+      <div className="w-full px-4 sm:px-6 lg:px-78 pt-8 mb-6">
+        <div className="flex items-center gap-4">
+          <img className="max-w-16 sm:max-w-24" src={saturn} alt="Saturn" />
+          <div className="flex flex-col gap-2">
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold">Bem vindo, {username}</h1>
           </div>
+        </div>
+      </div>
+
+      {/* Seção de Ações do Professor */}
+      <div className="w-full px-4 sm:px-6 lg:px-72 mb-8">
+        <div className="p-4 sm:p-6">
+          <h2 className="text-xl sm:text-2xl font-semibold text-gray-800 mb-4 sm:mb-6">Ações do Professor</h2>
           
-          <div className="flex gap-3 flex-wrap">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
             <Button
               onClick={() => navigate("/dashboard/teacher/curriculum/knowledge-areas/create")}
-              className="bg-blue-600 hover:bg-blue-700 text-white"
+              className="bg-blue-600 hover:bg-blue-700 text-white h-auto py-3 sm:py-4 flex flex-col items-center gap-2 text-sm sm:text-base"
             >
-              <BookOpen className="mr-2 h-4 w-4" />
-              Criar Área de Conhecimento
+              <BookOpen className="h-5 w-5 sm:h-6 sm:w-6" />
+              <span className="font-medium text-center">Áreas de Conhecimento</span>
             </Button>
             
             <Button
               onClick={() => navigate("/dashboard/teacher/curriculum/competences/create")}
-              className="bg-green-600 hover:bg-green-700 text-white"
+              className="bg-green-600 hover:bg-green-700 text-white h-auto py-3 sm:py-4 flex flex-col items-center gap-2 text-sm sm:text-base"
             >
-              <Target className="mr-2 h-4 w-4" />
-              Criar Competência
+              <Target className="h-5 w-5 sm:h-6 sm:w-6" />
+              <span className="font-medium text-center">Competências</span>
             </Button>
 
             <Button
               onClick={() => navigate("/dashboard/teacher/curriculum/activities/create")}
-              className="bg-purple-600 hover:bg-purple-700 text-white"
+              className="bg-purple-600 hover:bg-purple-700 text-white h-auto py-3 sm:py-4 flex flex-col items-center gap-2 text-sm sm:text-base"
             >
-              <Activity className="mr-2 h-4 w-4" />
-              Criar Atividade
+              <Activity className="h-5 w-5 sm:h-6 sm:w-6" />
+              <span className="font-medium text-center">Atividades</span>
             </Button>
 
             <Button
-              onClick={() => navigate("/dashboard/teacher/curriculum/difficulty-levels/create")}
-              className="bg-orange-600 hover:bg-orange-700 text-white"
+              onClick={() => navigate("/dashboard/teacher/curriculum/questions/create")}
+              className="bg-orange-600 hover:bg-orange-700 text-white h-auto py-3 sm:py-4 flex flex-col items-center gap-2 text-sm sm:text-base"
             >
-              <BarChart3 className="mr-2 h-4 w-4" />
-              Criar Nível de Dificuldade
+              <HelpCircle className="h-5 w-5 sm:h-6 sm:w-6" />
+              <span className="font-medium text-center">Questões</span>
             </Button>
+            
+            {/* <Button
+              onClick={() => navigate("/dashboard/teacher/curriculum/difficulty-levels/create")}
+              className="bg-orange-600 hover:bg-orange-700 text-white h-auto py-3 sm:py-4 flex flex-col items-center gap-2 text-sm sm:text-base"
+            >
+              <BarChart3 className="h-5 w-5 sm:h-6 sm:w-6" />
+              <span className="font-medium text-center">Criar Nível de Dificuldade</span>
+            </Button> */}
           </div>
         </div>
-      </section>
+      </div>
 
+      {/* Alunos */}
       <main className="min-h-96 flex-1 px-78">
+        <h2 className="text-xl sm:text-2xl font-semibold text-gray-800 mb-4 sm:mb-6">Aluno(s)</h2>
+
         {response.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 text-center">
             <h2 className="mb-4 text-3xl font-bold text-gray-700">
@@ -108,6 +126,7 @@ export function TeacherDashboard() {
           )
         )}
       </main>
+      
       <Footer />
     </div>
   );

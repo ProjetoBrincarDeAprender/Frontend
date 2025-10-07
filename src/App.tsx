@@ -26,6 +26,8 @@ import CreateKnowledgeArea from "./pages/Dashboard/Teacher/Curriculum/CreateKnow
 import CreateCompetence from "./pages/Dashboard/Teacher/Curriculum/CreateCompetence";
 import CreateActivity from "./pages/Dashboard/Teacher/Curriculum/CreateActivity";
 import CreateDifficultyLevel from "./pages/Dashboard/Teacher/Curriculum/CreateDifficultyLevel";
+import CreateQuestion from "@/pages/Dashboard/Teachers/CreateQuestion/CreateQuestion";
+
 
 function App() {
   return (
@@ -65,6 +67,7 @@ function App() {
         <Route path="curriculum/competences/create" element={<CreateCompetence />} />
         <Route path="curriculum/activities/create" element={<CreateActivity />} />
         <Route path="curriculum/difficulty-levels/create" element={<CreateDifficultyLevel />} />
+        <Route path="curriculum/questions/create" element={<CreateQuestion />} />
       </Route>
 
       <Route path="/games">

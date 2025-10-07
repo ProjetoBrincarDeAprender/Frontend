@@ -100,81 +100,81 @@ export function CreateActivityForm({ onSuccess }: CreateActivityFormProps) {
     } : areaInfo
   });
 
-  const fetchCompetencesDirect = async (): Promise<Competence[]> => {
-    try {
-      const response = await api.get("/competence/list");
-      if (response.status === 200 && response.data) {
-        const competences = Array.isArray(response.data) ? response.data : [response.data];
-        return competences.map((comp: CompetenceApiResponse) => formatCompetence(comp));
-      }
-    } catch {
-      // Silently fail and try next method
-    }
-    return [];
-  };
-
-  const fetchCompetencesViaAreas = async (): Promise<Competence[]> => {
-    try {
-      const areasResponse = await api.get("/knowledge-area/list");
-      if (areasResponse.status !== 200 || !areasResponse.data) return [];
-
-      const areas: KnowledgeArea[] = Array.isArray(areasResponse.data) 
-        ? areasResponse.data 
-        : [areasResponse.data];
-
-      const allCompetences: Competence[] = [];
-
-      for (const area of areas) {
-        if (area.competences && Array.isArray(area.competences)) {
-          const areaCompetences = area.competences.map((comp: CompetenceApiResponse) =>
-            formatCompetence(comp, { id: area.id, nome: area.nome })
-          );
-          allCompetences.push(...areaCompetences);
-        } else {
-          try {
-            const compResponse = await api.get(`/knowledge-area/${area.id}/competences`);
-            if (compResponse.status === 200 && compResponse.data) {
-              const areaCompetences = Array.isArray(compResponse.data) 
-                ? compResponse.data 
-                : [compResponse.data];
-              
-              const formattedComps = areaCompetences.map((comp: CompetenceApiResponse) =>
-                formatCompetence(comp, { id: area.id, nome: area.nome })
-              );
-              
-              allCompetences.push(...formattedComps);
-            }
-          } catch {
-            // Continue to next area
-          }
-        }
-      }
-
-      return allCompetences;
-    } catch {
-      return [];
-    }
-  };
-
-  const fetchCompetencesAlternative = async (): Promise<Competence[]> => {
-    const endpoints = ["/competences", "/competence", "/competency/list", "/competencies"];
-    
-    for (const endpoint of endpoints) {
+  useEffect(() => {
+    const fetchCompetencesDirect = async (): Promise<Competence[]> => {
       try {
-        const response = await api.get(endpoint);
+        const response = await api.get("/competence/list");
         if (response.status === 200 && response.data) {
           const competences = Array.isArray(response.data) ? response.data : [response.data];
           return competences.map((comp: CompetenceApiResponse) => formatCompetence(comp));
         }
       } catch {
-        continue;
+        // Silently fail and try next method
       }
-    }
-    
-    return [];
-  };
+      return [];
+    };
 
-  useEffect(() => {
+    const fetchCompetencesViaAreas = async (): Promise<Competence[]> => {
+      try {
+        const areasResponse = await api.get("/knowledge-area/list");
+        if (areasResponse.status !== 200 || !areasResponse.data) return [];
+
+        const areas: KnowledgeArea[] = Array.isArray(areasResponse.data) 
+          ? areasResponse.data 
+          : [areasResponse.data];
+
+        const allCompetences: Competence[] = [];
+
+        for (const area of areas) {
+          if (area.competences && Array.isArray(area.competences)) {
+            const areaCompetences = area.competences.map((comp: CompetenceApiResponse) =>
+              formatCompetence(comp, { id: area.id, nome: area.nome })
+            );
+            allCompetences.push(...areaCompetences);
+          } else {
+            try {
+              const compResponse = await api.get(`/knowledge-area/${area.id}/competences`);
+              if (compResponse.status === 200 && compResponse.data) {
+                const areaCompetences = Array.isArray(compResponse.data) 
+                  ? compResponse.data 
+                  : [compResponse.data];
+                
+                const formattedComps = areaCompetences.map((comp: CompetenceApiResponse) =>
+                  formatCompetence(comp, { id: area.id, nome: area.nome })
+                );
+                
+                allCompetences.push(...formattedComps);
+              }
+            } catch {
+              // Continue to next area
+            }
+          }
+        }
+
+        return allCompetences;
+      } catch {
+        return [];
+      }
+    };
+
+    const fetchCompetencesAlternative = async (): Promise<Competence[]> => {
+      const endpoints = ["/competences", "/competence", "/competency/list", "/competencies"];
+      
+      for (const endpoint of endpoints) {
+        try {
+          const response = await api.get(endpoint);
+          if (response.status === 200 && response.data) {
+            const competences = Array.isArray(response.data) ? response.data : [response.data];
+            return competences.map((comp: CompetenceApiResponse) => formatCompetence(comp));
+          }
+        } catch {
+          continue;
+        }
+      }
+      
+      return [];
+    };
+
     const fetchAllCompetences = async () => {
       try {
         let competences = await fetchCompetencesDirect();
@@ -336,9 +336,9 @@ export function CreateActivityForm({ onSuccess }: CreateActivityFormProps) {
           <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
             Competência 
             {allCompetences.length > 0 ? (
-              <span className="font-1 text-green-600"> ( {allCompetences.length} disponíveis)</span>
+              <span className="font-1 text-green-600"> ({allCompetences.length} disponíveis)</span>
             ) : (
-              <span className="font-1 text-red-500">(Carregando...)</span>
+              <span className="text-xs text-red-500">(Carregando...)</span>
             )}
           </label>
           <div className="relative">
@@ -433,7 +433,7 @@ export function CreateActivityForm({ onSuccess }: CreateActivityFormProps) {
         )}
 
         <Form.Submit disabled={isSubmitting} className="bg-primary hover:bg-primary/90">
-          {isSubmitting ? "Criando..." : "Criar"}
+          {isSubmitting ? "Criando..." : "Criar Atividade"}
         </Form.Submit>
       </Form.Main>
     </Form.Wrapper>
