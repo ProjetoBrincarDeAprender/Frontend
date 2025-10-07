@@ -53,7 +53,7 @@ export function TeacherDashboard() {
           
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
             <Button
-              onClick={() => navigate("/dashboard/teacher/curriculum/knowledge-areas/create")}
+              onClick={() => navigate("/dashboard/teacher/curriculum/knowledge-areas")}
               className="bg-blue-600 hover:bg-blue-700 cursor-pointer text-white h-auto py-3 sm:py-4 flex flex-col items-center gap-2 text-sm sm:text-base"
             >
               <BookOpen className="h-5 w-5 sm:h-6 sm:w-6" />
@@ -61,7 +61,7 @@ export function TeacherDashboard() {
             </Button>
             
             <Button
-              onClick={() => navigate("/dashboard/teacher/curriculum/competences/create")}
+              onClick={() => navigate("/dashboard/teacher/curriculum/competences")}
               className="bg-green-600 hover:bg-green-700 cursor-pointer text-white h-auto py-3 sm:py-4 flex flex-col items-center gap-2 text-sm sm:text-base"
             >
               <Target className="h-5 w-5 sm:h-6 sm:w-6" />
@@ -69,7 +69,7 @@ export function TeacherDashboard() {
             </Button>
 
             <Button
-              onClick={() => navigate("/dashboard/teacher/curriculum/activities/create")}
+              onClick={() => navigate("/dashboard/teacher/curriculum/activities")}
               className="bg-purple-600 hover:bg-purple-700 cursor-pointer text-white h-auto py-3 sm:py-4 flex flex-col items-center gap-2 text-sm sm:text-base"
             >
               <Activity className="h-5 w-5 sm:h-6 sm:w-6" />
@@ -77,7 +77,7 @@ export function TeacherDashboard() {
             </Button>
 
             <Button
-              onClick={() => navigate("/dashboard/teacher/curriculum/questions/create")}
+              onClick={() => navigate("/dashboard/teacher/curriculum/questions")}
               className="bg-orange-600 hover:bg-orange-700 cursor-pointer text-white h-auto py-3 sm:py-4 flex flex-col items-center gap-2 text-sm sm:text-base"
             >
               <HelpCircle className="h-5 w-5 sm:h-6 sm:w-6" />
