@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { CreateActivityForm } from "./CreateActivityForm";
-import { Activity, Plus } from "lucide-react";
+import {  Plus } from "lucide-react";
 
 interface CreateActivityModalProps {
   trigger?: React.ReactNode;
@@ -31,14 +31,7 @@ export function CreateActivityModal({ trigger, onSuccess }: CreateActivityModalP
       </div>
       
       <DialogContent className="sm:max-w-[700px] max-h-[90vh] overflow-y-auto">
-        <DialogHeader className="pb-4 border-b">
-          <DialogTitle className="flex items-center gap-3 text-xl font-semibold text-gray-800">
-            <div className="p-2 bg-purple-100 rounded-lg">
-              <Activity className="h-5 w-5 text-purple-600" />
-            </div>
-            Cadastrar Nova Atividade
-          </DialogTitle>
-        </DialogHeader>
+ 
         
         <div className="mt-4">
           <CreateActivityForm onSuccess={handleSuccess} />

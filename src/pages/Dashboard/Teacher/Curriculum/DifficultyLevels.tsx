@@ -36,7 +36,7 @@ export function DifficultyLevels() {
                 }
               />
               <Link
-                to="/dashboard/teacher/curriculum/competencies"
+                to="/dashboard/teacher/curriculum/competences"
                 className="blue bg-yellow hover:bg-purplish-blue hover:text-yellow flex min-h-[60px] items-center justify-center gap-8 rounded-2xl px-8 py-4 text-center text-sm font-bold uppercase shadow-xl transition duration-200"
               >
                 Gerenciar Competências

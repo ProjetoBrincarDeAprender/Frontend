@@ -8,6 +8,7 @@ import { useNavigate } from "react-router";
 import { BookOpen, Target, Activity, HelpCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import saturn from "../../../../assets/saturn.svg";
+import { LateralMenu } from "../../../../components/sideBar/sideBar";
 
 export function TeacherDashboard() {
   const { user } = useUser();
@@ -35,6 +36,8 @@ export function TeacherDashboard() {
   return (
     <div className="flex min-h-screen flex-col bg-neutral-200 pt-28 text-gray-800">
       <Header />
+      <LateralMenu username={username} />
+      
       
       {/* Seção de Boas-vindas */}
       <div className="w-full px-4 sm:px-6 lg:px-78 pt-8 mb-6">
