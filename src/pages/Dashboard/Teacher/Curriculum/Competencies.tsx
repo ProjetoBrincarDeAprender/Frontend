@@ -3,8 +3,9 @@ import { Footer } from "@/components/Footer/Footer";
 import { Header } from "@/components/Header/Header";
 import { useUser } from "@/hooks/User/useUser";
 import { LateralMenu } from "../../../../components/sideBar/sideBar";
-// import CompetenceTable from "@/components/features/curriculum/competencies/CompetenceTable";
+import CompetenceTable from "@/components/features/curriculum/competencies/files/CompetenceTable";
 import { TableProvider } from "@/contexts/Table/provider";
+import { Link } from "react-router";
 import saturn from "../../../../assets/saturn.svg";
 
 export function Competencies() {
@@ -34,9 +35,15 @@ export function Competencies() {
                   </button>
                 }
               />
+              <Link
+                to="/dashboard/teacher/curriculum/knowledge-areas"
+                className="blue bg-yellow hover:bg-purplish-blue hover:text-yellow flex min-h-[60px] items-center justify-center gap-8 rounded-2xl px-8 py-4 text-center text-sm font-bold uppercase shadow-xl transition duration-200"
+              >
+                Gerenciar Áreas de Conhecimento
+              </Link>
             </div>
           </div>
-          {/* <CompetenceTable /> */}
+          <CompetenceTable />
         </TableProvider>
       </main>
       <Footer />

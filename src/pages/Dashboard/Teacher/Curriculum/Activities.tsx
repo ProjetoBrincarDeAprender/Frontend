@@ -3,7 +3,7 @@ import { Footer } from "@/components/Footer/Footer";
 import { Header } from "@/components/Header/Header";
 import { useUser } from "@/hooks/User/useUser";
 import { LateralMenu } from "../../../../components/sideBar/sideBar";
-// import ActivityTable from "@/components/features/curriculum/activities/ActivityTable";
+import ActivityTable from "@/components/features/curriculum/activities/files/ActivityTable";
 import { TableProvider } from "@/contexts/Table/provider";
 import { Link } from "react-router";
 import saturn from "../../../../assets/saturn.svg";
@@ -43,7 +43,7 @@ export function Activities() {
               </Link>
             </div>
           </div>
-          {/* <ActivityTable /> */}
+          <ActivityTable />
         </TableProvider>
       </main>
       <Footer />

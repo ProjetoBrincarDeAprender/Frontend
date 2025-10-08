@@ -3,7 +3,7 @@ import { Footer } from "@/components/Footer/Footer";
 import { Header } from "@/components/Header/Header";
 import { useUser } from "@/hooks/User/useUser";
 import { LateralMenu } from "../../../../components/sideBar/sideBar";
-// import QuestionTable from "@/components/features/curriculum/questions/QuestionTable";
+import QuestionTable from "@/components/features/curriculum/questions/files/QuestionTable";
 import { TableProvider } from "@/contexts/Table/provider";
 import { Link } from "react-router";
 import saturn from "../../../../assets/saturn.svg";
@@ -43,7 +43,7 @@ export function Questions() {
               </Link>
             </div>
           </div>
-          {/* <QuestionTable /> */}
+          <QuestionTable />
         </TableProvider>
       </main>
       <Footer />

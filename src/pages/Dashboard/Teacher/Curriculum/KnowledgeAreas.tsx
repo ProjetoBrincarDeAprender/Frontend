@@ -3,7 +3,7 @@ import { Header } from "@/components/Header/Header";
 import { useUser } from "@/hooks/User/useUser";
 import { LateralMenu } from "../../../../components/sideBar/sideBar";
 import { CreateKnowledgeAreaModal } from "@/components/features/curriculum/knowledgeAreas/CreateKnowledgeAreaModal";
-// import DifficultyLevelTable from "@/components/features/curriculum/difficultyLevels/DifficultyLevelTable";
+import KnowledgeAreaTable from "@/components/features/curriculum/knowledgeAreas/files/KnowledgeAreaTable";
 import { TableProvider } from "@/contexts/Table/provider";
 import saturn from "../../../../assets/saturn.svg";
 
@@ -38,7 +38,7 @@ export default function KnowledgeAreas() {
         
             </div>
           </div>
-          {/* <DifficultyLevelTable /> */}
+          <KnowledgeAreaTable />
         </TableProvider>
       </main>
       <Footer />

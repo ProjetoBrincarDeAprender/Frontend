@@ -68,8 +68,8 @@ interface DifficultyLevelApiResponse {
 }
 
 const activityTypes = [
-  { value: "exercicio", label: "Atividade" },
-  { value: "jogo", label: "Jogo" },
+  { value: "Atividade", label: "Atividade" },
+  { value: "Jogo", label: "Jogo" },
 ];
 
 export function CreateActivityForm({ onSuccess }: CreateActivityFormProps) {
@@ -433,7 +433,7 @@ export function CreateActivityForm({ onSuccess }: CreateActivityFormProps) {
         )}
 
         <Form.Submit disabled={isSubmitting} className="bg-primary hover:bg-primary/90">
-          {isSubmitting ? "Criando..." : "Criar Atividade"}
+          {isSubmitting ? "Criando..." : "Criar"}
         </Form.Submit>
       </Form.Main>
     </Form.Wrapper>
