@@ -29,6 +29,8 @@ export function Header() {
       navigate("/dashboard");
     } else if (user?.perfil == "Responsavel") {
       navigate("/responsibledashboard");
+    } else if (user?.perfil == "Professor") {
+      navigate("/teacherdashboard");
     } else {
       navigate("/");
     }
