@@ -38,12 +38,14 @@ interface KnowledgeArea {
 interface Competence {
   id: number;
   nome: string;
+  descricao: string;
 }
 
 export function CreateCompetenceForm({ onSuccess }: CreateCompetenceFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [knowledgeAreas, setKnowledgeAreas] = useState<KnowledgeArea[] | null>(null);
   const [availableCompetences, setAvailableCompetences] = useState<Competence[]>([]);
+  const [isLoadingCompetences, setIsLoadingCompetences] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -81,21 +83,28 @@ export function CreateCompetenceForm({ onSuccess }: CreateCompetenceFormProps) {
     const loadCompetences = async () => {
       if (selectedAreaId && selectedAreaId !== "") {
         try {
-          const response = await api.get(`/knowledge-area/${selectedAreaId}/competences`);
+          setIsLoadingCompetences(true);
+          const response = await api.get(`/knowledge-area/list/${selectedAreaId}/competences`);
+          
           if (response.status === 200) {
             setAvailableCompetences(response.data);
           }
         } catch (error) {
           console.error("Erro ao carregar competências:", error);
           setAvailableCompetences([]);
+        } finally {
+          setIsLoadingCompetences(false);
         }
       } else {
         setAvailableCompetences([]);
+        setIsLoadingCompetences(false);
       }
+      
+      form.setValue("prerequisiteId", 0);
     };
 
     loadCompetences();
-  }, [selectedAreaId]);
+  }, [selectedAreaId, form]);
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     const payload = {
@@ -111,6 +120,7 @@ export function CreateCompetenceForm({ onSuccess }: CreateCompetenceFormProps) {
       if (response.status === 201) {
         toast.success("Competência criada com sucesso!");
         form.reset();
+        setAvailableCompetences([]);
         return onSuccess();
       }
     } catch (error) {
@@ -142,6 +152,43 @@ export function CreateCompetenceForm({ onSuccess }: CreateCompetenceFormProps) {
     }
   };
 
+  const renderPrerequisiteOptions = () => {
+    if (!selectedAreaId || selectedAreaId === "") {
+      return (
+        <option value={0} disabled>
+          Selecione uma área de conhecimento primeiro
+        </option>
+      );
+    }
+
+    if (isLoadingCompetences) {
+      return (
+        <option value={0} disabled>
+          Carregando competências...
+        </option>
+      );
+    }
+
+    if (availableCompetences.length === 0) {
+      return (
+        <option value={0} disabled>
+          Nenhuma competência existente nesta área
+        </option>
+      );
+    }
+
+    return (
+      <>
+        <option value={0}>Nenhum pré-requisito selecionado</option>
+        {availableCompetences.map((competence) => (
+          <option key={competence.id} value={competence.id}>
+            {competence.nome}
+          </option>
+        ))}
+      </>
+    );
+  };
+
   return (
     <Form.Wrapper>
       <Form.Title text="Cadastrar Nova Competência" />
@@ -157,7 +204,7 @@ export function CreateCompetenceForm({ onSuccess }: CreateCompetenceFormProps) {
             render={({ field }) => (
               <Form.Select
                 {...field}
-                label="Área de Conhecimento"
+                label="Área de Conhecimento *"
                 placeholder="Selecione a Área de Conhecimento"
                 options={knowledgeAreas.map((area) => ({
                   value: String(area.id),
@@ -175,7 +222,7 @@ export function CreateCompetenceForm({ onSuccess }: CreateCompetenceFormProps) {
           render={({ field }) => (
             <Form.Input
               {...field}
-              label="Nome da Competência"
+              label="Nome da Competência *"
               placeholder="Ex: Operações básicas de matemática"
               disabled={isSubmitting}
             />
@@ -192,7 +239,7 @@ export function CreateCompetenceForm({ onSuccess }: CreateCompetenceFormProps) {
               </label>
               <textarea
                 {...field}
-                className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 resize-none"
+                className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm  placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 resize-none"
                 placeholder="Descreva os objetivos e habilidades desta competência... (opcional)"
                 rows={4}
                 disabled={isSubmitting}
@@ -216,19 +263,32 @@ export function CreateCompetenceForm({ onSuccess }: CreateCompetenceFormProps) {
               </label>
               <select
                 {...field}
-                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                disabled={isSubmitting}
+                className="border-purplish-blue flex h-10 w-full rounded-md border  px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                disabled={isSubmitting || !selectedAreaId}
                 onChange={(e) => field.onChange(Number(e.target.value))}
               >
-                <option value={0}>Nenhum pré-requisito</option>
-                {availableCompetences.map((competence) => (
-                  <option key={competence.id} value={competence.id}>
-                    {competence.nome}
-                  </option>
-                ))}
+                {renderPrerequisiteOptions()}
               </select>
+              {!selectedAreaId && (
+                <p className="font-1 text-amber-600">
+                  Selecione uma área de conhecimento para ver as competências disponíveis
+                </p>
+              )}
+              
+              {selectedAreaId && !isLoadingCompetences && availableCompetences.length === 0 && (
+                <p className="font-1 text-blue-600">
+                   Esta será a primeira competência desta área de conhecimento
+                </p>
+              )}
+              
+              {selectedAreaId && !isLoadingCompetences && availableCompetences.length > 0 && (
+                <p className="font-1 text-green-600">
+                   {availableCompetences.length} competência(s) disponível(is) como pré-requisito
+                </p>
+              )}
+              
               {fieldState.error && (
-                <p className="text-sm text-red-600">
+                <p className="font-1 text-red-600">
                   {fieldState.error.message}
                 </p>
               )}
@@ -237,7 +297,7 @@ export function CreateCompetenceForm({ onSuccess }: CreateCompetenceFormProps) {
         />
 
         <Form.Submit disabled={isSubmitting} className="bg-primary hover:bg-primary/90">
-          {isSubmitting ? "Criando..." : "Criar"}
+          {isSubmitting ? "Criando..." : "Criar Competência"}
         </Form.Submit>
       </Form.Main>
     </Form.Wrapper>
