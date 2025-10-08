@@ -7,15 +7,28 @@ import { EditActivityModal } from "../edit/ActivityEditModal";
 export type Activity = {
   id: number;
   titulo: string;
-  descricao: string;
   tipo: string;
-  competenceId: number;
-  competence: {
+  competenciaId: {
     id: number;
-    nome?: string;
   };
-  createdAt: string;
-  updatedAt: string;
+  nivel_dificuldadeId: {
+    id: number;
+  };
+  created_At: string;
+  updated_At: string;
+  competencia_id: number;
+  nivel_dificuldade_inicial: number;
+  deleted: boolean;
+  deletedBy?: number;
+  deleted_At?: string;
+  competencia: {
+    id: number;
+    name: string;
+  };
+  nivelDificuldade?: {
+    id: number;
+    name: string;
+  };
 };
 
 export const ActivityColumns: ColumnDef<Activity>[] = [
@@ -44,28 +57,6 @@ export const ActivityColumns: ColumnDef<Activity>[] = [
     ),
   },
   {
-    accessorKey: "descricao",
-    header: ({ column }) => (
-      <Button
-        variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-      >
-        Descrição
-        <ArrowUpDown className="ml-2 h-4 w-4" />
-      </Button>
-    ),
-    cell: ({ row }) => {
-      const description = row.original.descricao;
-      return (
-        <div className="max-w-xs">
-          <span className="truncate" title={description}>
-            {description || "Sem descrição"}
-          </span>
-        </div>
-      );
-    },
-  },
-  {
     accessorKey: "tipo",
     header: ({ column }) => (
       <Button
@@ -78,7 +69,7 @@ export const ActivityColumns: ColumnDef<Activity>[] = [
     ),
   },
   {
-    accessorKey: "competencie.nome",
+    accessorKey: "competencia.nome",
     header: ({ column }) => (
       <Button
         variant="ghost"
@@ -89,32 +80,42 @@ export const ActivityColumns: ColumnDef<Activity>[] = [
       </Button>
     ),
     cell: ({ row }) => {
-      const competenceName = row.original.competence?.nome;
+      const competenceName = row.original.competencia?.name;
+      const competenciaId = row.original.competenciaId?.id || row.original.competencia_id;
+      
       return (
-        <span>
-          {competenceName || ` Sem registro `}
-         {/* {competenceName || ` Sem registro {${row.original.competenceId}}`} */}
-
-        </span>
+        <div className="max-w-xs">
+          <span className="truncate" title={competenceName || `Competência ${competenciaId}`}>
+            {competenceName || `Competência ${competenciaId}`}
+          </span>
+        </div>
       );
     },
   },
-//   {
-//     accessorKey: "createdAt",
-//     header: ({ column }) => (
-//       <Button
-//         variant="ghost"
-//         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-//       >
-//         Criado em
-//         <ArrowUpDown className="ml-2 h-4 w-4" />
-//       </Button>
-//     ),
-//     cell: ({ row }) => {
-//       const date = new Date(row.original.createdAt);
-//       return <span>{date.toLocaleDateString("pt-BR")}</span>;
-//     },
-//   },
+  {
+    accessorKey: "nivelDificuldade.name",
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+      >
+        Nível de Dificuldade
+        <ArrowUpDown className="ml-2 h-4 w-4" />
+      </Button>
+    ),
+    cell: ({ row }) => {
+      const nivelName = row.original.nivelDificuldade?.name;
+      const nivelId = row.original.nivel_dificuldadeId?.id || row.original.nivel_dificuldade_inicial;
+      
+      return (
+        <div className="max-w-xs">
+          <span className="truncate" title={nivelName || `Nível ${nivelId}`}>
+            {nivelName || `Nível ${nivelId}`}
+          </span>
+        </div>
+      );
+    },
+  },
   {
     id: "actions",
     header: "Ações",

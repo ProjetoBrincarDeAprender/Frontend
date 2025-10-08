@@ -25,7 +25,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { DataTablePagination } from "./DataTablePagination";
 
 interface DataTableProps<TData, TValue> {
@@ -42,8 +42,25 @@ export function DataTable<TData, TValue>({
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-  const [selectedColumn, setSelectedColumn] =
-    useState<string>("codigo_usuario");
+  
+  // Detectar colunas disponíveis automaticamente
+  const availableColumns = useMemo(() => {
+    const cols = columns
+      .map((col) => {
+        const colDef = col as ColumnDef<TData, TValue> & {
+          accessorKey?: string;
+          id?: string;
+        };
+        return colDef.accessorKey || colDef.id;
+      })
+      .filter((id): id is string => Boolean(id) && id !== "actions" && id !== "select");
+    
+    return cols;
+  }, [columns]);
+  
+  const [selectedColumn, setSelectedColumn] = useState<string>(
+    availableColumns[0] || "id"
+  );
 
   const table = useReactTable({
     data,
@@ -58,22 +75,46 @@ export function DataTable<TData, TValue>({
       columnFilters,
     },
   });
+  const columnExists = table.getColumn(selectedColumn);
+  const effectiveSelectedColumn = columnExists ? selectedColumn : availableColumns[0];
+  const getColumnDisplayName = (columnId: string) => {
+    const columnMap: Record<string, string> = {
+      id: "ID",
+      titulo: "Título",
+      nome: "Nome",
+      email: "Email",
+      tipo: "Tipo",
+      descricao: "Descrição",
+      content: "Conteúdo",
+      ordem: "Ordem",
+      "activity.titulo": "Atividade",
+      "competencia.nome": "Competência",
+      "nivelDificuldade.nome": "Nível",
+      "areaId.nome": "Área",
+      created_At: "Criado em",
+      createdAt: "Criado em",
+    };
+    
+    return columnMap[columnId] || columnId.charAt(0).toUpperCase() + columnId.slice(1).replace(/[._]/g, " ");
+  };
 
   return (
     <div>
       <div className="flex items-center gap-2 py-4">
         <Input
-          placeholder={`Digite o ${selectedColumn.charAt(0).toUpperCase() + selectedColumn.slice(1).replace("_", " ")}`}
+          placeholder={`Filtrar por ${getColumnDisplayName(effectiveSelectedColumn)}`}
           value={
-            (table.getColumn(selectedColumn)?.getFilterValue() as string) ?? ""
+            (table.getColumn(effectiveSelectedColumn)?.getFilterValue() as string) ?? ""
           }
           onChange={(event) => {
-            table.setColumnFilters((_old: ColumnFiltersState) => [
-              {
-                id: selectedColumn,
-                value: event.target.value,
-              },
-            ]);
+            if (effectiveSelectedColumn) {
+              table.setColumnFilters([
+                {
+                  id: effectiveSelectedColumn,
+                  value: event.target.value,
+                },
+              ]);
+            }
           }}
           className="max-h-10 max-w-64"
         />
@@ -82,21 +123,17 @@ export function DataTable<TData, TValue>({
             setSelectedColumn(value);
             table.resetColumnFilters();
           }}
-          defaultValue={selectedColumn}
+          value={effectiveSelectedColumn}
         >
-          <SelectTrigger>
+          <SelectTrigger className="w-48">
             <SelectValue placeholder="Selecione uma coluna" />
           </SelectTrigger>
           <SelectContent>
-            {table.getAllColumns().map(({ id }) => {
-              if (id != "actions") {
-                return (
-                  <SelectItem key={id} value={id}>
-                    {id.charAt(0).toUpperCase() + id.slice(1).replace("_", " ")}
-                  </SelectItem>
-                );
-              }
-            })}
+            {availableColumns.map((columnId) => (
+              <SelectItem key={columnId} value={columnId}>
+                {getColumnDisplayName(columnId)}
+              </SelectItem>
+            ))}
           </SelectContent>
         </Select>
         {renderExtra && renderExtra()}
