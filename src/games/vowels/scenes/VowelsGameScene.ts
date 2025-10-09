@@ -20,7 +20,7 @@ export default class VowelsGameScene extends Phaser.Scene {
     this.loadAnimalImages();
     this.loadBackgroundImage();
     this.loadButtonImages();
-    this.loadSpecialImages();
+    this.loadEffectsImages();
 
     this.load.once("complete", () => {
       this.logic.createBackground("backgroundMain");
@@ -63,8 +63,11 @@ export default class VowelsGameScene extends Phaser.Scene {
     );
   }
 
-  private loadSpecialImages() {
-    this.load.image("star", "/assets/common/star.svg");
+  private loadEffectsImages() {
+    const effects = this.gameData.effects;
+    effects.forEach((effect: any) => {
+      this.load.image(effect.key, effect.textureUrl);
+    });
   }
 
   private setupLevel() {

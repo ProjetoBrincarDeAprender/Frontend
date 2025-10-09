@@ -15,6 +15,13 @@
       "clicked": "/assets/common/buttons/squareRedClicked.svg"
     }
   },
+  "effects": [
+    {
+      "key": "star",
+      "textureUrl": "/assets/common/star.svg"
+    }
+  ],
+
   "buttons": [
     {
       "text": "▶ Iniciar",
