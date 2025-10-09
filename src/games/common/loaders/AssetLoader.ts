@@ -7,46 +7,20 @@ export default class AssetLoader {
     this.scene = scene;
   }
 
-  preloadVowelsStart() {
-    this.scene.load.image(
-      "backgroundStart",
-      "/assets/vowelsGame/images/backgroundMain.png",
-    );
-    this.scene.load.image("title", "/assets/vowelsGame/images/title.png");
-
-    this.proLoadRectangleBlue();
-    this.preLoadRectangleRed();
-  }
-
-  proLoadRectangleBlue() {
-    this.scene.load.image(
-      "hoverButtonRectangle",
-      "/assets/common/hoverButtonRectangle.svg",
-    );
-    this.scene.load.image(
-      "defaultButtonRectangle",
-      "/assets/common/defaultButtonRectangle.svg",
-    );
-    this.scene.load.image(
-      "clickedButtonRectangle",
-      "/assets/common/clickedButtonRectangle.svg",
-    );
-  }
-
-  preLoadRectangleRed() {
-    this.scene.load.image(
-      "defaultRectangleRed",
-      "/assets/common/defaultRectangleRed.svg",
-    );
-    this.scene.load.image(
-      "hoverRectangleRed",
-      "/assets/common/hoverRectangleRed.svg",
-    );
-    this.scene.load.image(
-      "clickedRectangleRed",
-      "/assets/common/clickedRectangleRed.svg",
-    );
-  }
+  // preLoadRectangleRed() {
+  //   this.scene.load.image(
+  //     "defaultRectangleRed",
+  //     "/assets/common/defaultRectangleRed.svg",
+  //   );
+  //   this.scene.load.image(
+  //     "hoverRectangleRed",
+  //     "/assets/common/hoverRectangleRed.svg",
+  //   );
+  //   this.scene.load.image(
+  //     "clickedRectangleRed",
+  //     "/assets/common/clickedRectangleRed.svg",
+  //   );
+  // }
 
   preloadClouds() {
     this.scene.load.image("cloud", "/assets/vowelsGame/images/cloud.png");

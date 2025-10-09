@@ -18,7 +18,7 @@ export default function Login() {
       return <Navigate to="/games" replace />;
 
     case "Professor":
-      return <Navigate to="/profile" replace />;
+      return <Navigate to="/teacherdashboard" replace />;
 
     case "Responsavel":
       return <Navigate to="/responsibledashboard" replace />;

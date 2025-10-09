@@ -1,11 +1,7 @@
 import Logic from "../logic/Logic";
 import Phaser from "phaser";
 
-/**
- * Cena principal do jogo das vogais.
- * Gerencia ciclo de vida, integração com lógica e recursos visuais.
- */
-export default class GameScene extends Phaser.Scene {
+export default class VowelsGameScene extends Phaser.Scene {
   /** Instância da lógica do jogo (orquestra regras e progresso) */
   private logic: Logic;
 
@@ -90,6 +86,9 @@ export default class GameScene extends Phaser.Scene {
     this.load.image("defaultButton", "/assets/common/defaultButton.svg");
     this.load.image("hoverButton", "/assets/common/hoverButton.svg");
     this.load.image("clickedButton", "/assets/common/clickedButton.svg");
+    // Áudios de feedback
+    this.load.audio("correct", "/assets/common/sounds/correct.mp3");
+    this.load.audio("incorrect", "/assets/common/sounds/incorrect.mp3");
   }
 
   /**
@@ -123,8 +122,10 @@ export default class GameScene extends Phaser.Scene {
         const result = this.logic.handleClick(button, this.time.now);
 
         if (result.correct) {
+          // Som de acerto
+          this.sound.play("correct", { volume: 0.7 });
           this.logic.buttonSuccessEffect(button, "star");
-          this.time.delayedCall(1000, () => {
+          this.time.delayedCall(3000, () => {
             if (result.finished) {
               this.scene.start("vowelsCredits");
             } else {
@@ -132,6 +133,8 @@ export default class GameScene extends Phaser.Scene {
             }
           });
         } else {
+          // Som de erro
+          this.sound.play("incorrect", { volume: 0.7 });
           this.logic.buttonFailEffect(button);
         }
       });

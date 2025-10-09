@@ -5,6 +5,7 @@ export default class Button extends Phaser.GameObjects.Container {
   private hoverImage: Phaser.GameObjects.Image;
   private clickImage: Phaser.GameObjects.Image;
   private buttonText: Phaser.GameObjects.Text;
+  private buttonState: "rest" | "hover" | "active" = "rest";
 
   constructor(
     scene: Phaser.Scene,
@@ -39,28 +40,33 @@ export default class Button extends Phaser.GameObjects.Container {
     this.clickImage.setVisible(false);
 
     this.setInteractive()
-      .on("pointerover", this.enterButtonHoverState)
-      .on("pointerout", this.enterButtonRestState)
-      .on("pointerdown", this.enterButtonActiveState)
-      .on("pointerup", this.enterButtonHoverState);
+      .on("pointerover", () => {
+        this.setButtonState("hover");
+        this.emit("hover");
+      })
+      .on("pointerout", () => {
+        this.setButtonState("rest");
+        this.emit("rest");
+      })
+      .on("pointerdown", () => {
+        this.setButtonState("active");
+        this.emit("pressed");
+      })
+      .on("pointerup", () => {
+        this.setButtonState("hover");
+        this.emit("released");
+      });
   }
 
-  enterButtonHoverState() {
-    this.defaultImage.setVisible(false);
-    this.hoverImage.setVisible(true);
-    this.clickImage.setVisible(false);
+  setButtonState(newState: "rest" | "hover" | "active"): void {
+    this.buttonState = newState;
+    this.updateButtonVisual();
   }
 
-  enterButtonRestState() {
-    this.defaultImage.setVisible(true);
-    this.hoverImage.setVisible(false);
-    this.clickImage.setVisible(false);
-  }
-
-  enterButtonActiveState() {
-    this.defaultImage.setVisible(false);
-    this.hoverImage.setVisible(false);
-    this.clickImage.setVisible(true);
+  private updateButtonVisual(): void {
+    this.defaultImage.setVisible(this.buttonState === "rest");
+    this.hoverImage.setVisible(this.buttonState === "hover");
+    this.clickImage.setVisible(this.buttonState === "active");
   }
 
   getButtonStringText(): string {
@@ -76,19 +82,12 @@ export default class Button extends Phaser.GameObjects.Container {
     this.buttonText.text = buttonText;
   }
 
-  /**
-   * Aplica uma cor (tint) às imagens do botão (default/hover/click).
-   * Útil para destacar estados como erro (vermelho) ou acerto.
-   */
   setTint(color: number): void {
     this.defaultImage.setTint(color);
     this.hoverImage.setTint(color);
     this.clickImage.setTint(color);
   }
 
-  /**
-   * Remove qualquer tint aplicado às imagens do botão.
-   */
   clearTint(): void {
     this.defaultImage.clearTint();
     this.hoverImage.clearTint();

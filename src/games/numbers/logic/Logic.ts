@@ -4,6 +4,8 @@ import EffectManager from "../../common/managers/EffectManager";
 import GameStats from "../../common/managers/GameStats";
 import LevelManager from "../../common/managers/LevelManager";
 import Level from "../../common/models/Level";
+import Phaser from "phaser";
+import ButtonContentGenerator from "@/games/common/content/ButtonContentGenerator";
 import api from "@/utils/api";
 
 export default class Logic {
@@ -136,7 +138,7 @@ export default class Logic {
   setButtonTexts(): void {
     const answer: string = this.levelManager.getCurrentLevel().getAnswer();
     const buttonsNumber: number = this.buttonManager.getButtons().length;
-    const buttonTexts = this.buttonManager.generateButtonsNumbers(
+    const buttonTexts = ButtonContentGenerator.generateButtonsNumbers(
       buttonsNumber,
       answer,
     );
@@ -290,16 +292,18 @@ export default class Logic {
       { x: 400, y: 390 },
       { x: 550, y: 390 },
     ];
-    const buttonTextures: string[] = [
-      "defaultButton",
-      "hoverButton",
-      "clickedButton",
-    ];
+    const buttonTextures = {
+      default: "defaultButton",
+      hover: "hoverButton",
+      clicked: "clickedButton",
+    };
 
-    this.buttonManager.createButtons({
-      positions: buttonPositions,
+    const buttonConfigs = buttonPositions.map((pos) => ({
+      positions: pos,
       textures: buttonTextures,
-    });
+    }));
+
+    this.buttonManager.createButtons(buttonConfigs);
   }
 
   getButtons(): Button[] {

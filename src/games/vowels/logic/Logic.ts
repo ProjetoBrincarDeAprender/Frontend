@@ -6,6 +6,8 @@ import LevelManager from "../../common/managers/LevelManager";
 import VowelsLevel from "./VowelsLevel";
 import CloudManager from "@/games/common/managers/CloudManager";
 import api from "@/utils/api";
+import Phaser from "phaser";
+import ButtonContentGenerator from "@/games/common/content/ButtonContentGenerator";
 
 export default class Logic {
   private scene: Phaser.Scene;
@@ -107,6 +109,10 @@ export default class Logic {
   buttonFailEffect(button: Button, failColor: number = 0xff0000): void {
     this.effectManager.growup(button, "Bounce", 1.2, 200);
     this.effectManager.changeColor(button.getButtonText(), failColor);
+    // Pinta o botão de vermelho no erro (mesma aparência do jogo de sequência numérica)
+    button.setTint(failColor);
+    // Remove o tint após um curto intervalo para não persistir entre níveis
+    this.scene.time.delayedCall(500, () => button.clearTint());
   }
 
   failEffect(): void {}
@@ -123,7 +129,7 @@ export default class Logic {
   setButtonTexts(): void {
     const answer: string = this.levelManager.getCurrentLevel().getAnswer();
     const buttonsNumber: number = this.buttonManager.getButtons().length;
-    const buttonTexts = this.buttonManager.generateButtonsLetters(
+    const buttonTexts = ButtonContentGenerator.generateButtonsLetters(
       buttonsNumber,
       answer,
     );
@@ -164,17 +170,21 @@ export default class Logic {
       { x: 400, y: 500 },
       { x: 600, y: 500 },
     ];
-    const buttonTextures: string[] = [
-      "defaultButton",
-      "hoverButton",
-      "clickedButton",
-    ];
-    this.buttonManager.createButtons({
-      positions: buttonPositions,
+
+    const buttonTextures = {
+      default: "defaultButton",
+      hover: "hoverButton",
+      clicked: "clickedButton",
+    };
+
+    const buttonConfigs = buttonPositions.map((pos) => ({
+      positions: pos,
       textures: buttonTextures,
       scale: 1.5,
-      fontSize: [50, 50, 50],
-    });
+      fontSize: 50,
+    }));
+
+    this.buttonManager.createButtons(buttonConfigs);
   }
 
   getButtons(): Button[] {
