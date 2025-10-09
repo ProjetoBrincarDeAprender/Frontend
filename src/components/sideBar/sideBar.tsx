@@ -1,4 +1,5 @@
 import { useUser } from "@/hooks/User/useUser";
+import { ChangePasswordModal } from "@/components/features/users/password/ChangePasswordModal";
 import { useEffect, useRef, useState } from "react";
 import { FiMenu } from "react-icons/fi";
 import { useNavigate } from "react-router";
@@ -6,9 +7,13 @@ import profile from "../../assets/astronauta-profile.svg";
 
 interface LateralMenuProps {
   username: string;
+  mode?: "dashboard" | "profile"; // profile: exibe apenas ações do perfil (Alterar Senha)
 }
 
-export function LateralMenu({ username }: LateralMenuProps) {
+export function LateralMenu({
+  username,
+  mode = "dashboard",
+}: LateralMenuProps) {
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
@@ -42,53 +47,62 @@ export function LateralMenu({ username }: LateralMenuProps) {
       <li>
         <button
           onClick={() => handleNavigation("/dashboard/teacher")}
-          className="block w-full cursor-pointer rounded-lg px-4 py-3 text-center text-lg font-bold text-white transition-colors hover:bg-[var(--color-am2)] hover:text-az3"
+          className="hover:text-az3 block w-full cursor-pointer rounded-lg px-4 py-3 text-center text-lg font-bold text-white transition-colors hover:bg-[var(--color-am2)]"
         >
           Logística
         </button>
       </li>
-       <li>
+      <li>
         <button
-          onClick={() => handleNavigation("/dashboard/teacher/curriculum/activities")}
-          className="block w-full cursor-pointer rounded-lg px-4 py-3 text-center text-lg font-bold text-white transition-colors hover:bg-[var(--color-am2)] hover:text-az3"
+          onClick={() =>
+            handleNavigation("/dashboard/teacher/curriculum/activities")
+          }
+          className="hover:text-az3 block w-full cursor-pointer rounded-lg px-4 py-3 text-center text-lg font-bold text-white transition-colors hover:bg-[var(--color-am2)]"
         >
           Atividades
         </button>
       </li>
-     
+
       <li>
         <button
-          onClick={() => handleNavigation("/dashboard/teacher/curriculum/questions")}
-          className="block w-full cursor-pointer rounded-lg px-4 py-3 text-center text-lg font-bold text-white transition-colors hover:bg-[var(--color-am2)] hover:text-az3"
+          onClick={() =>
+            handleNavigation("/dashboard/teacher/curriculum/questions")
+          }
+          className="hover:text-az3 block w-full cursor-pointer rounded-lg px-4 py-3 text-center text-lg font-bold text-white transition-colors hover:bg-[var(--color-am2)]"
         >
           Questões
         </button>
       </li>
       <li>
         <button
-          onClick={() => handleNavigation("/dashboard/teacher/curriculum/competences")}
-          className="block w-full cursor-pointer rounded-lg px-4 py-3 text-center text-lg font-bold text-white transition-colors hover:bg-[var(--color-am2)] hover:text-az3"
+          onClick={() =>
+            handleNavigation("/dashboard/teacher/curriculum/competences")
+          }
+          className="hover:text-az3 block w-full cursor-pointer rounded-lg px-4 py-3 text-center text-lg font-bold text-white transition-colors hover:bg-[var(--color-am2)]"
         >
           Competências
         </button>
       </li>
       <li>
         <button
-          onClick={() => handleNavigation("/dashboard/teacher/curriculum/knowledge-areas")}
-          className="block w-full cursor-pointer rounded-lg px-4 py-3 text-center text-lg font-bold text-white transition-colors hover:bg-[var(--color-am2)] hover:text-az3"
+          onClick={() =>
+            handleNavigation("/dashboard/teacher/curriculum/knowledge-areas")
+          }
+          className="hover:text-az3 block w-full cursor-pointer rounded-lg px-4 py-3 text-center text-lg font-bold text-white transition-colors hover:bg-[var(--color-am2)]"
         >
           Áreas de Conhecimento
         </button>
       </li>
-       <li>
+      <li>
         <button
-          onClick={() => handleNavigation("/dashboard/teacher/curriculum/difficulty-levels")}
-          className="block w-full cursor-pointer rounded-lg px-4 py-3 text-center text-lg font-bold text-white transition-colors hover:bg-[var(--color-am2)] hover:text-az3"
+          onClick={() =>
+            handleNavigation("/dashboard/teacher/curriculum/difficulty-levels")
+          }
+          className="hover:text-az3 block w-full cursor-pointer rounded-lg px-4 py-3 text-center text-lg font-bold text-white transition-colors hover:bg-[var(--color-am2)]"
         >
           Níveis de Dificuldade
         </button>
       </li>
-     
     </ul>
   );
 
@@ -98,7 +112,7 @@ export function LateralMenu({ username }: LateralMenuProps) {
       <li>
         <button
           onClick={() => handleNavigation("/dashboard/")}
-          className="block w-full cursor-pointer rounded-lg px-4 py-3 text-center text-lg font-bold text-white transition-colors hover:bg-[var(--color-am2)] hover:text-az3"
+          className="hover:text-az3 block w-full cursor-pointer rounded-lg px-4 py-3 text-center text-lg font-bold text-white transition-colors hover:bg-[var(--color-am2)]"
         >
           Logística
         </button>
@@ -106,7 +120,7 @@ export function LateralMenu({ username }: LateralMenuProps) {
       <li>
         <button
           onClick={() => handleNavigation("/dashboard/students")}
-          className="block w-full cursor-pointer rounded-lg px-4 py-3 text-center text-lg font-bold text-white transition-colors hover:bg-[var(--color-am2)] hover:text-az3"
+          className="hover:text-az3 block w-full cursor-pointer rounded-lg px-4 py-3 text-center text-lg font-bold text-white transition-colors hover:bg-[var(--color-am2)]"
         >
           Alunos
         </button>
@@ -116,7 +130,7 @@ export function LateralMenu({ username }: LateralMenuProps) {
           <li>
             <button
               onClick={() => handleNavigation("/dashboard/schools")}
-              className="block w-full cursor-pointer rounded-lg px-4 py-3 text-center text-lg font-bold text-white transition-colors hover:bg-[var(--color-am2)] hover:text-az3"
+              className="hover:text-az3 block w-full cursor-pointer rounded-lg px-4 py-3 text-center text-lg font-bold text-white transition-colors hover:bg-[var(--color-am2)]"
             >
               Escolas
             </button>
@@ -124,7 +138,7 @@ export function LateralMenu({ username }: LateralMenuProps) {
           <li>
             <button
               onClick={() => handleNavigation("/dashboard/schoolusers")}
-              className="block w-full cursor-pointer rounded-lg px-4 py-3 text-center text-lg font-bold text-white transition-colors hover:bg-[var(--color-am2)] hover:text-az3"
+              className="hover:text-az3 block w-full cursor-pointer rounded-lg px-4 py-3 text-center text-lg font-bold text-white transition-colors hover:bg-[var(--color-am2)]"
             >
               Usuários Escola
             </button>
@@ -134,7 +148,7 @@ export function LateralMenu({ username }: LateralMenuProps) {
       <li>
         <button
           onClick={() => handleNavigation("/dashboard/teachers")}
-          className="block w-full cursor-pointer rounded-lg px-4 py-3 text-center text-lg font-bold text-white transition-colors hover:bg-[var(--color-am2)] hover:text-az3"
+          className="hover:text-az3 block w-full cursor-pointer rounded-lg px-4 py-3 text-center text-lg font-bold text-white transition-colors hover:bg-[var(--color-am2)]"
         >
           Professores
         </button>
@@ -142,7 +156,7 @@ export function LateralMenu({ username }: LateralMenuProps) {
       <li>
         <button
           onClick={() => handleNavigation("/dashboard/responsables")}
-          className="block w-full cursor-pointer rounded-lg px-4 py-3 text-center text-lg font-bold text-white transition-colors hover:bg-[var(--color-am2)] hover:text-az3"
+          className="hover:text-az3 block w-full cursor-pointer rounded-lg px-4 py-3 text-center text-lg font-bold text-white transition-colors hover:bg-[var(--color-am2)]"
         >
           Responsáveis
         </button>
@@ -182,9 +196,20 @@ export function LateralMenu({ username }: LateralMenuProps) {
           />
           <span className="mb-8 text-xl font-bold text-white">{username}</span>
         </div>
-        
-        {/* Renderiza menu baseado no perfil do usuário */}
-        {user?.perfil === "Professor" ? renderTeacherMenu() : renderAdminMenu()}
+
+        {/* Renderiza conteúdo baseado no modo */}
+        {mode === "profile" ? (
+          <div className="px-4">
+            <ChangePasswordModal onTriggerClick={() => setMenuOpen(false)} />
+          </div>
+        ) : (
+          // Menu padrão do dashboard
+          <>
+            {user?.perfil === "Professor"
+              ? renderTeacherMenu()
+              : renderAdminMenu()}
+          </>
+        )}
       </aside>
     </>
   );
