@@ -2,26 +2,32 @@ import Logic from "../logic/Logic";
 import Phaser from "phaser";
 
 export default class VowelsGameScene extends Phaser.Scene {
-  /** Instância da lógica do jogo (orquestra regras e progresso) */
   private logic: Logic;
 
-  /**
-   * Construtor da cena do jogo das vogais.
-   * Inicializa lógica do jogo.
-   */
   constructor() {
     super("vowelsGameScene");
     this.logic = new Logic(this);
   }
 
-  /**
-   * Pré-carrega os recursos visuais necessários para o jogo.
-   */
   preload() {
-    this.load.image(
-      "backgroundMain",
-      "/assets/vowelsGame/images/backgroundMain.png",
-    );
+    this.loadAnimalImages();
+    this.loadBackgroundImage();
+    this.loadButtonImages();
+    this.loadSpecialImages();
+  }
+
+  create() {
+    this.logic.createBackground("backgroundMain");
+    this.logic.createImage(this.logic.accessCurrentLevel().getName());
+    this.logic.createButtons();
+    this.setupLevel();
+
+    console.log("Jogo das vogais carregado!");
+  }
+
+  update() {}
+
+  private loadAnimalImages() {
     this.load.image("abelha", "/assets/vowelsGame/animals/abelha.svg");
     this.load.image(
       "abelhaCompleta",
@@ -81,8 +87,16 @@ export default class VowelsGameScene extends Phaser.Scene {
       "urubuCompleta",
       "/assets/vowelsGame/animals/urubuCompleta.svg",
     );
+  }
 
-    this.load.image("star", "/assets/common/star.svg");
+  private loadBackgroundImage(): void {
+    this.load.image(
+      "backgroundMain",
+      "/assets/vowelsGame/images/backgroundMain.png",
+    );
+  }
+
+  private loadButtonImages() {
     this.load.image(
       "defaultButton",
       "/assets/common/buttons/squareBlueDefault.svg",
@@ -97,27 +111,10 @@ export default class VowelsGameScene extends Phaser.Scene {
     );
   }
 
-  /**
-   * Cria elementos visuais e inicia o primeiro nível do jogo.
-   */
-  create() {
-    this.logic.createBackground("backgroundMain");
-    this.logic.createImage(this.logic.accessCurrentLevel().getName());
-    this.logic.createButtons();
-    this.setupLevel();
-
-    console.log("Jogo das vogais carregado!");
+  private loadSpecialImages() {
+    this.load.image("star", "/assets/common/star.svg");
   }
 
-  /**
-   * Atualização do ciclo de jogo (não utilizada).
-   */
-  update() {}
-
-  /**
-   * Configura o nível atual: atualiza imagem, textos dos botões e listeners.
-   * Reinicia listeners dos botões para evitar duplicidade.
-   */
   setupLevel() {
     this.logic.setImageTexture(this.logic.accessCurrentLevel().getName());
     this.logic.setButtonTexts();
