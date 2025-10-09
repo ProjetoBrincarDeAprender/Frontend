@@ -125,7 +125,7 @@ export default class VowelsGameScene extends Phaser.Scene {
           // Som de acerto
           this.sound.play("correct", { volume: 0.7 });
           this.logic.buttonSuccessEffect(button, "star");
-          this.time.delayedCall(2000, () => {
+          this.time.delayedCall(3000, () => {
             if (result.finished) {
               this.scene.start("vowelsCredits");
             } else {
