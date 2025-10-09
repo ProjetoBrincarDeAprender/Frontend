@@ -87,27 +87,27 @@ export const CompetenceColumns: ColumnDef<Competence>[] = [
       );
     },
   },
-  {
-    accessorKey: "preRequisitos",
-    header: "Pré-requisitos",
-    cell: ({ row }) => {
-      const prerequisites = row.original.preRequisitos;
-      if (!prerequisites || prerequisites.length === 0) {
-        return <span className="text-gray-500">Nenhum</span>;
-      }
-      return (
-        <div className="max-w-xs">
-          <span className="truncate" title={prerequisites.map(p => p.nome).join(", ")}>
-            {prerequisites.length === 1 
-              ? prerequisites[0].nome 
-              : `${prerequisites[0].nome} (+${prerequisites.length - 1})`
-            }
-          </span>
-        </div>
-      );
-    },
-    enableSorting: false,
-  },
+  // {
+  //   accessorKey: "preRequisitos",
+  //   header: "Pré-requisitos",
+  //   cell: ({ row }) => {
+  //     const prerequisites = row.original.preRequisitos;
+  //     if (!prerequisites || prerequisites.length === 0) {
+  //       return <span className="text-gray-500">Nenhum</span>;
+  //     }
+  //     return (
+  //       <div className="max-w-xs">
+  //         <span className="truncate" title={prerequisites.map(p => p.nome).join(", ")}>
+  //           {prerequisites.length === 1 
+  //             ? prerequisites[0].nome 
+  //             : `${prerequisites[0].nome} (+${prerequisites.length - 1})`
+  //           }
+  //         </span>
+  //       </div>
+  //     );
+  //   },
+  //   enableSorting: false,
+  // },
 //   {
 //     accessorKey: "createdAt",
 //     header: ({ column }) => (
