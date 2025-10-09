@@ -8,54 +8,47 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 const formSchema = z.object({
-  name: z
-    .string({ error: "Nome é obrigatório" })
-    .min(2, { message: "Nome deve ter pelo menos 2 caracteres" })
-    .max(100, { message: "O limite suportado é de 100 caracteres" }),
-  description: z
-    .string({ error: "Descrição é obrigatória" })
-    .max(500, { message: "O limite suportado é de 500 caracteres" })   
-    .optional(),
-  areaId: z
-    .number({ error: "Área de conhecimento é obrigatória" })
-    .min(1, { message: "Selecione uma área de conhecimento" }),
-  prerequisiteId: z
-    .number()
-    .optional()
-    .nullable(),
+  title: z
+    .string({ error: "Título é obrigatório" })
+    .min(2, { error: "Título deve ter pelo menos 2 caracteres" })
+    .max(100, { error: "O limite suportado é de 100 caracteres" }),
+  type: z.string({ error: "Tipo é obrigatório" }),
+  competenceId: z.string({ error: "Competência é obrigatória" }),
+  initialDifficulty: z.string({ error: "Nível de dificuldade é obrigatório" }),
 });
-
-type EditCompetenceFormProps = {
-  id: number;
-  onSuccess: () => void;
-};
-
-interface KnowledgeArea {
-  id: number;
-  nome: string;
-}
 
 interface Competence {
   id: number;
   nome: string;
 }
 
-export function EditCompetenceForm({ id, onSuccess }: EditCompetenceFormProps) {
+interface DifficultyLevel {
+  id: number;
+  nome: string;
+  name: string;
+}
+
+type EditActivityFormProps = {
+  id: number;
+  onSuccess: () => void;
+};
+
+export function EditActivityForm({ id, onSuccess }: EditActivityFormProps) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: "",
-      description: "",
-      areaId: 0,
-      prerequisiteId: null,
+      title: "",
+      type: "",
+      competenceId: "",
+      initialDifficulty: "",
     },
   });
 
   const { setUpdating } = useTable();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [knowledgeAreas, setKnowledgeAreas] = useState<KnowledgeArea[]>([]);
   const [competences, setCompetences] = useState<Competence[]>([]);
+  const [difficultyLevels, setDifficultyLevels] = useState<DifficultyLevel[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -63,33 +56,40 @@ export function EditCompetenceForm({ id, onSuccess }: EditCompetenceFormProps) {
         setLoading(true);
         setError(null);
 
-        const [competenceResponse, areasResponse, competencesResponse] = await Promise.all([
-          api.get(`/competence/list/${id}`),
-          api.get('/knowledge-area/list'),
+        const [activityResponse, competencesResponse, difficultyLevelsResponse] = await Promise.all([
+          api.get(`/activity/list/${id}`),
           api.get('/competence/list'),
+          api.get('/difficulty-level/list'),
         ]);
 
-        // Carrega dados da competência
-        if (competenceResponse.status === 200 && competenceResponse.data) {
-          const data = competenceResponse.data;
-          const competenceData = {
-            name: data.nome || data.name || "",
-            description: data.descricao || data.description || "",
-            areaId: Number(data.area_conhecimento_id || data.areaId || data.area_id || 0),
-            prerequisiteId: data.prerequisito_id || data.prerequisiteId || data.prerequisite_id ? 
-              Number(data.prerequisito_id || data.prerequisiteId || data.prerequisite_id) : null,
+        // Carrega dados da atividade
+        if (activityResponse.status === 200) {
+          const data = activityResponse.data;
+          const activityData = {
+            title: data.titulo || "",
+            type: data.tipo || "",
+            competenceId: String(
+              data.competenciaId?.id || 
+              data.competencia_id || 
+              ""
+            ),
+            initialDifficulty: String(
+              data.nivel_dificuldadeId?.id || 
+              data.nivel_dificuldade_inicial || 
+              ""
+            ),
           };
-          form.reset(competenceData);
+          form.reset(activityData);
         }
 
-        if (areasResponse.status === 200 && Array.isArray(areasResponse.data)) {
-          setKnowledgeAreas(areasResponse.data);
-        }
+        // Carrega competências
         if (competencesResponse.status === 200 && Array.isArray(competencesResponse.data)) {
-          const filteredCompetences = competencesResponse.data.filter(
-            (comp: Competence) => comp.id !== id
-          );
-          setCompetences(filteredCompetences);
+          setCompetences(competencesResponse.data);
+        }
+
+        // Carrega níveis de dificuldade
+        if (difficultyLevelsResponse.status === 200 && Array.isArray(difficultyLevelsResponse.data)) {
+          setDifficultyLevels(difficultyLevelsResponse.data);
         }
       } catch (error) {
         if (error instanceof AxiosError) {
@@ -109,14 +109,14 @@ export function EditCompetenceForm({ id, onSuccess }: EditCompetenceFormProps) {
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     try {
-      const cleanData = {
-        name: String(data.name).trim(),
-        description: String(data.description || "").trim(),
-        areaId: Number(data.areaId),
-        prerequisiteId: data.prerequisiteId ? Number(data.prerequisiteId) : null,
+      const activityData = {
+        title: data.title,
+        type: data.type,
+        competenceId: Number(data.competenceId),
+        initialDifficulty: Number(data.initialDifficulty),
       };
 
-      const response = await api.put(`/competence/update/${id}`, cleanData);
+      const response = await api.put(`/activity/update/${id}`, activityData);
 
       if (response.status === 200) {
         setUpdating(true);
@@ -125,15 +125,15 @@ export function EditCompetenceForm({ id, onSuccess }: EditCompetenceFormProps) {
     } catch (error) {
       if (error instanceof AxiosError) {
         const response = error.response;
-        
+
         if (Array.isArray(response?.data?.message)) {
           response?.data?.message.forEach(
             (fieldError: { field: string; message: string[] }) => {
               const fieldMap: Record<string, keyof z.infer<typeof formSchema>> = {
-                'name': 'name',
-                'description': 'description',
-                'areaId': 'areaId',
-                'prerequisiteId': 'prerequisiteId',
+                'title': 'title',
+                'type': 'type',
+                'competenceId': 'competenceId',
+                'initialDifficulty': 'initialDifficulty',
               };
               
               const formFieldName = fieldMap[fieldError.field];
@@ -185,9 +185,14 @@ export function EditCompetenceForm({ id, onSuccess }: EditCompetenceFormProps) {
     );
   }
 
+  const typeOptions = [
+    { value: "Atividade", label: "Atividade" },
+    { value: "Jogo", label: "Jogo" },
+  ];
+
   return (
     <Form.Wrapper>
-      <Form.Title text="Atualizar Dados da Competência" />
+      <Form.Title text="Atualizar Dados da Atividade" />
       <Form.Main
         form={{ ...form }}
         onSubmit={onSubmit}
@@ -195,64 +200,60 @@ export function EditCompetenceForm({ id, onSuccess }: EditCompetenceFormProps) {
       >
         <Form.Field
           form={form}
-          name="name"
+          name="title"
           render={({ field }) => (
             <Form.Input
               {...field}
-              label="Nome da Competência"
-              placeholder="Digite o nome da competência"
+              label="Título da Atividade"
+              placeholder="Digite o título da atividade"
             />
           )}
         />
 
         <Form.Field
           form={form}
-          name="description"
-          render={({ field }) => (
-            <Form.Input
-              {...field}
-              label="Descrição (Opcional)"
-              placeholder="Digite a descrição da competência"
-            />
-          )}
-        />
-
-        <Form.Field
-          form={form}
-          name="areaId"
+          name="type"
           render={({ field }) => (
             <Form.Select
-              label="Área de Conhecimento"
-              placeholder="Selecione uma área de conhecimento"
-              options={knowledgeAreas.map((area) => ({
-                value: area.id.toString(),
-                label: area.nome,
+              label="Tipo da Atividade"
+              placeholder="Selecione o tipo"
+              options={typeOptions}
+              onChange={field.onChange}
+              value={field.value || ""}
+            />
+          )}
+        />
+
+        <Form.Field
+          form={form}
+          name="competenceId"
+          render={({ field }) => (
+            <Form.Select
+              label="Competência"
+              placeholder="Selecione uma competência"
+              options={competences.map((competence) => ({
+                value: competence.id.toString(),
+                label: competence.nome,
               }))}
-              onChange={(value) => field.onChange(Number(value))}
-              value={field.value ? field.value.toString() : ""}
+              onChange={field.onChange}
+              value={field.value || ""}
             />
           )}
         />
 
         <Form.Field
           form={form}
-          name="prerequisiteId"
+          name="initialDifficulty"
           render={({ field }) => (
             <Form.Select
-              label="Competência Pre-requisito (Opcional)"
-              placeholder="Selecione uma competência pre-requisito"
-              options={[
-                { value: "0", label: "Nenhuma" },
-                ...competences.map((comp) => ({
-                  value: comp.id.toString(),
-                  label: comp.nome,
-                })),
-              ]}
-              onChange={(value) => {
-                const numValue = Number(value);
-                field.onChange(numValue === 0 ? null : numValue);
-              }}
-              value={field.value ? field.value.toString() : "0"}
+              label="Nível de Dificuldade Inicial"
+              placeholder="Selecione o nível"
+              options={difficultyLevels.map((level) => ({
+                value: level.id.toString(),
+                label: level.nome || level.name,
+              }))}
+              onChange={field.onChange}
+              value={field.value || ""}
             />
           )}
         />

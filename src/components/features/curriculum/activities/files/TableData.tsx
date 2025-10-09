@@ -8,27 +8,32 @@ export type Activity = {
   id: number;
   titulo: string;
   tipo: string;
-  competenciaId: {
-    id: number;
-  };
+  // competenceId: {
+  //   id: number;
+  // };
   nivel_dificuldadeId: {
     id: number;
+    nome: string;
   };
   created_At: string;
   updated_At: string;
-  competencia_id: number;
-  nivel_dificuldade_inicial: number;
+  competenciaId: {
+    id: number;
+    nome: string;
+  };
+  // competencia_id?: number;
+  // nivel_dificuldade_inicial: number;
   deleted: boolean;
   deletedBy?: number;
   deleted_At?: string;
-  competencia: {
-    id: number;
-    name: string;
-  };
-  nivelDificuldade?: {
-    id: number;
-    name: string;
-  };
+  // competencia?: {
+  //   id: number;
+  //   nome: string;
+  // };
+  // nivelDificuldade?: {
+  //   id: number;
+  //   nome: string;
+  // };
 };
 
 export const ActivityColumns: ColumnDef<Activity>[] = [
@@ -68,54 +73,42 @@ export const ActivityColumns: ColumnDef<Activity>[] = [
       </Button>
     ),
   },
-  {
-    accessorKey: "competencia.nome",
-    header: ({ column }) => (
-      <Button
-        variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-      >
-        Competência
-        <ArrowUpDown className="ml-2 h-4 w-4" />
-      </Button>
-    ),
-    cell: ({ row }) => {
-      const competenceName = row.original.competencia?.name;
-      const competenciaId = row.original.competenciaId?.id || row.original.competencia_id;
-      
-      return (
-        <div className="max-w-xs">
-          <span className="truncate" title={competenceName || `Competência ${competenciaId}`}>
-            {competenceName || `Competência ${competenciaId}`}
-          </span>
-        </div>
-      );
-    },
-  },
-  {
-    accessorKey: "nivelDificuldade.name",
-    header: ({ column }) => (
-      <Button
-        variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-      >
-        Nível de Dificuldade
-        <ArrowUpDown className="ml-2 h-4 w-4" />
-      </Button>
-    ),
-    cell: ({ row }) => {
-      const nivelName = row.original.nivelDificuldade?.name;
-      const nivelId = row.original.nivel_dificuldadeId?.id || row.original.nivel_dificuldade_inicial;
-      
-      return (
-        <div className="max-w-xs">
-          <span className="truncate" title={nivelName || `Nível ${nivelId}`}>
-            {nivelName || `Nível ${nivelId}`}
-          </span>
-        </div>
-      );
-    },
-  },
+  // {
+  //   accessorKey: "competenceId.nome",
+  //   header: ({ column }) => (
+  //     <Button
+  //       variant="ghost"
+  //       onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+  //     >
+  //       Competência
+  //       <ArrowUpDown className="ml-2 h-4 w-4" />
+  //     </Button>
+  //   ),
+  //   cell: ({ row }) => {
+  //     const competencia = row.original.competenciaId;
+  //     const competenceName = competencia?.nome || competencia?.nome || "Sem competência";
+
+  // return <span>{competenceName}</span>;
+  //   },
+  // },
+  // {
+  //   accessorKey: "initialDifficulty.nome",
+  //   header: ({ column }) => (
+  //     <Button
+  //       variant="ghost"
+  //       onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+  //     >
+  //       Nível de Dificuldade
+  //       <ArrowUpDown className="ml-2 h-4 w-4" />
+  //     </Button>
+  //   ),
+  //   cell: ({ row }) => {
+  //     const nivel = row.original.nivel_dificuldadeId;
+  //     const nivelName = nivel?.nome || nivel?.nome || "Sem nível definido";
+
+  //     return <span>{nivelName}</span>;
+  //   },
+  // },
   {
     id: "actions",
     header: "Ações",
