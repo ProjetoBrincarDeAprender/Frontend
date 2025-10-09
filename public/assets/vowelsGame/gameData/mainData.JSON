@@ -3,18 +3,22 @@
     "backgroundUrl": "/assets/vowelsGame/images/backgroundMain.png",
     "overlayOpacity": 0.3
   },
-  "buttonTexturesUrl": {
-    "blue": {
-      "default": "/assets/common/buttons/squareBlueDefault.svg",
-      "hover": "/assets/common/buttons/squareBlueHover.svg",
-      "clicked": "/assets/common/buttons/squareBlueClicked.svg"
-    },
-    "red": {
-      "default": "/assets/common/buttons/squareRedDefault.svg",
-      "hover": "/assets/common/buttons/squareRedHover.svg",
-      "clicked": "/assets/common/buttons/squareRedClicked.svg"
+
+  "buttonConfig": {
+    "texturesUrl": {
+      "blue": {
+        "default": "/assets/common/buttons/squareBlueDefault.svg",
+        "hover": "/assets/common/buttons/squareBlueHover.svg",
+        "clicked": "/assets/common/buttons/squareBlueClicked.svg"
+      },
+      "red": {
+        "default": "/assets/common/buttons/squareRedDefault.svg",
+        "hover": "/assets/common/buttons/squareRedHover.svg",
+        "clicked": "/assets/common/buttons/squareRedClicked.svg"
+      }
     }
   },
+
   "effects": [
     {
       "key": "star",
@@ -36,6 +40,7 @@
       "scale": 0.7
     }
   ],
+
   "animalConfig": [
     {
       "key": "abelha",

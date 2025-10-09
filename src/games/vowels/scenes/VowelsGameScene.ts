@@ -52,15 +52,11 @@ export default class VowelsGameScene extends Phaser.Scene {
   }
 
   private loadButtonImages() {
-    this.load.image(
-      "defaultButton",
-      this.gameData.buttonTexturesUrl.blue.default,
-    );
-    this.load.image("hoverButton", this.gameData.buttonTexturesUrl.blue.hover);
-    this.load.image(
-      "clickedButton",
-      this.gameData.buttonTexturesUrl.blue.clicked,
-    );
+    const buttonTexturesUrl = this.gameData.buttonConfig.texturesUrl;
+
+    this.load.image("defaultButton", buttonTexturesUrl.blue.default);
+    this.load.image("hoverButton", buttonTexturesUrl.blue.hover);
+    this.load.image("clickedButton", buttonTexturesUrl.blue.clicked);
   }
 
   private loadEffectsImages() {
