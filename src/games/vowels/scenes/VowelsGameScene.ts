@@ -1,13 +1,13 @@
-import Logic from "../logic/Logic";
+import VowelsLogic from "../logic/VowelsLogic";
 import Phaser from "phaser";
 
 export default class VowelsGameScene extends Phaser.Scene {
   private gameData: any;
-  private logic: Logic;
+  private logic: VowelsLogic;
 
   constructor() {
     super("vowelsGameScene");
-    this.logic = new Logic(this);
+    this.logic = new VowelsLogic(this);
   }
 
   preload() {

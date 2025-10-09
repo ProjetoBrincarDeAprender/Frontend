@@ -9,7 +9,7 @@ import api from "@/utils/api";
 import Phaser from "phaser";
 import ButtonContentGenerator from "@/games/common/content/ButtonContentGenerator";
 
-export default class Logic {
+export default class VowelsLogic {
   private scene: Phaser.Scene;
   private gameStats: GameStats;
   private buttonManager: ButtonManager;
