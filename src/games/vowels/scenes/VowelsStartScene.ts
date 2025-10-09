@@ -23,7 +23,7 @@ export default class VowelsStartScene extends Phaser.Scene {
   }
 
   preload() {
-    this.load.json("gameData", "/assets/vowelsGame/gameData/gameData.JSON");
+    this.load.json("gameData", "/assets/vowelsGame/gameData/startData.JSON");
     this.assetLoader.preloadClouds();
   }
 
