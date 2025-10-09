@@ -39,28 +39,6 @@ export const DifficultyLevelColumns: ColumnDef<DifficultyLevel>[] = [
     ),
   },
   {
-    accessorKey: "descricao",
-    header: ({ column }) => (
-      <Button
-        variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-      >
-        Descrição
-        <ArrowUpDown className="ml-2 h-4 w-4" />
-      </Button>
-    ),
-    cell: ({ row }) => {
-      const description = row.original.descricao;
-      return (
-        <div className="max-w-xs">
-          <span className="truncate" title={description}>
-            {description || "Sem descrição"}
-          </span>
-        </div>
-      );
-    },
-  },
-  {
     id: "actions",
     header: "Ações",
     cell: ({ row }) => (
