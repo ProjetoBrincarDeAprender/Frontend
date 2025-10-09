@@ -10,7 +10,7 @@ import { AxiosError } from "axios";
 
 import { SkeletonTable } from "@/components/ui/skeleton-table";
 import DeleteModal from "@/components/utils/DataTable/DeleteModal";
-import { EditQuestionModal } from "../edit/QuestionEditModal";
+// import { EditQuestionModal } from "../edit/QuestionEditModal";
 
 interface CellContext {
   row: {
@@ -23,6 +23,17 @@ interface Activity {
   titulo: string;
   descricao?: string;
   tipo?: string;
+}
+
+interface QuestionApiResponse {
+  id: number;
+  conteudo: {
+    texto: string;
+  } | string;
+  atividade_id: number;
+  ordem: number;
+  created_At?: string;
+  updated_At?: string;
 }
 
 export default function QuestionTable() {
@@ -57,59 +68,71 @@ export default function QuestionTable() {
     const fetchData = async () => {
       setLoading(true);      
       try {
-        const questionsResponse = await api.get("/question/list");
+        const [questionsResponse, activitiesResponse] = await Promise.all([
+          api.get("/question/list"),
+          api.get("/activity/list"),
+        ]);
    
         if (questionsResponse.status === 200) {
-          let questionsData = questionsResponse.data || [];
-                  
-          if (Array.isArray(questionsData) && questionsData.length > 0) {
-            try {
-             
-              const activitiesResponse = await api.get("/activity/list");
-              
-           
-              if (activitiesResponse.status === 200 && activitiesResponse.data) {
-                const activitiesMap = new Map<number, Activity>();
-                activitiesResponse.data.forEach((activity: Activity) => {
-                  activitiesMap.set(activity.id, activity);
-                });
-                
-              
-                questionsData = questionsData.map((question: Question) => {
-                  const activity = activitiesMap.get(question.activityId);
-                  const enrichedQuestion = {
-                    ...question,
-                    activity: activity ? {
-                      id: question.activityId,
-                      titulo: activity.titulo
-                    } : undefined
-                  };
-                  
-                 
-                  return enrichedQuestion;
-                });
-              }
-            } catch (activityError) {
-              console.warn("Erro ao buscar atividades para enriquecer dados:", activityError);
-            }
-          } else {
-            // console.log("ℹ Nenhuma questão encontrada para enriquecer");
+          const questionsData: QuestionApiResponse[] = questionsResponse.data || [];
+          
+          // Criar mapa de atividades
+          const activitiesMap = new Map<number, Activity>();
+          if (activitiesResponse.status === 200 && activitiesResponse.data) {
+            activitiesResponse.data.forEach((activity: Activity) => {
+              activitiesMap.set(activity.id, activity);
+            });
           }
           
-          setData(questionsData);
+          // Mapear e enriquecer os dados das questões
+          const enrichedQuestions: Question[] = questionsData.map((question) => {
+            // Extrair conteúdo
+            let content = "";
+            if (question.conteudo) {
+              if (typeof question.conteudo === 'object' && question.conteudo.texto) {
+                content = question.conteudo.texto;
+              } else if (typeof question.conteudo === 'string') {
+                // Se for uma string JSON, tentar fazer parse
+                try {
+                  const parsed = JSON.parse(question.conteudo);
+                  content = parsed.texto || question.conteudo;
+                } catch {
+                  content = question.conteudo;
+                }
+              }
+            }
+            
+            // Buscar dados da atividade
+            const activity = activitiesMap.get(question.atividade_id);
+            
+            return {
+              id: question.id,
+              content: content,
+              ordem: question.ordem,
+              activityId: question.atividade_id,
+              activity: activity ? {
+                id: activity.id,
+                titulo: activity.titulo
+              } : undefined,
+              createdAt: question.created_At || "",
+              updatedAt: question.updated_At || "",
+            };
+          });
+          
+          setData(enrichedQuestions);
         } else {
-       
           setData([]);
         }
       } catch (error) {        
         if (error instanceof AxiosError) {
-          
           if (error.response?.status === 404) {
             setData([]);
           } else {
+            console.error("Erro ao buscar questões:", error);
             setData([]);
           }
         } else {
+          console.error("Erro desconhecido:", error);
           setData([]);
         }
       } finally {
@@ -157,7 +180,7 @@ export default function QuestionTable() {
                   selectedIds.length > 0 ? "cursor-not-allowed opacity-50" : ""
                 }
               >
-                <EditQuestionModal id={row.original.id} />
+                {/* <EditQuestionModal id={row.original.id} /> */}
               </button>
               <button
                 disabled={selectedIds.length > 0}
@@ -178,75 +201,43 @@ export default function QuestionTable() {
     }),
   ];
 
-
   return (
     <>
       {loading ? (
         <SkeletonTable rows={6} cols={columnsWithCheckbox.length} />
       ) : (
-        <>
-          {data && data.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-16 text-center">
-              <div className="mb-4">
+        <DataTable
+          columns={columnsWithCheckbox}
+          data={data ?? []}
+          page={
+            searchParams.get("page") ? parseInt(searchParams.get("page")!) : 0
+          }
+          renderExtra={() =>
+            selectedIds.length > 0 && !loading ? (
+              <button
+                onClick={handleDeleteSelected}
+                className="ml-2 flex items-center gap-2 rounded bg-red-500 px-4 py-2 font-bold text-white transition-all hover:bg-red-700"
+                title="Excluir questões selecionadas"
+              >
                 <svg
-                  className="mx-auto h-16 w-16 text-gray-400"
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5"
                   fill="none"
-                  stroke="currentColor"
                   viewBox="0 0 24 24"
+                  stroke="currentColor"
                 >
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
-                    strokeWidth={1}
-                    d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
                   />
                 </svg>
-              </div>
-              <h3 className="mb-4 text-2xl font-bold text-gray-700">
-                Nenhuma questão encontrada
-              </h3>
-              <p className="text-gray-500 mb-2">
-                Ainda não há questões cadastradas no sistema.
-              </p>
-              <p className="text-sm text-gray-400">
-                Crie algumas atividades e adicione questões para vê-las aqui.
-              </p>
-            </div>
-          ) : (
-            <DataTable
-              columns={columnsWithCheckbox}
-              data={data ?? []}
-              page={
-                searchParams.get("page") ? parseInt(searchParams.get("page")!) : 0
-              }
-              renderExtra={() =>
-                selectedIds.length > 0 && !loading ? (
-                  <button
-                    onClick={handleDeleteSelected}
-                    className="ml-2 flex items-center gap-2 rounded bg-red-500 px-4 py-2 font-bold text-white transition-all hover:bg-red-700"
-                    title="Excluir questões selecionadas"
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-5 w-5"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M6 18L18 6M6 6l12 12"
-                      />
-                    </svg>
-                    Excluir Selecionadas ({selectedIds.length})
-                  </button>
-                ) : null
-              }
-            />
-          )}
-        </>
+                Excluir Selecionadas ({selectedIds.length})
+              </button>
+            ) : null
+          }
+        />
       )}
     </>
   );

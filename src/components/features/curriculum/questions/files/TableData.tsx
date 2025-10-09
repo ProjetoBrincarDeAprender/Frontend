@@ -42,9 +42,8 @@ export const QuestionColumns: ColumnDef<Question>[] = [
       </Button>
     ),
     cell: ({ row }) => {
-      let content = row.original.content;
+      const content = row.original.content;
       
-      // Verificar se content existe e é string
       if (!content) {
         return (
           <div className="max-w-xs">
@@ -52,23 +51,11 @@ export const QuestionColumns: ColumnDef<Question>[] = [
           </div>
         );
       }
-
-      // Tentar fazer parse do JSON se for string
-      try {
-        if (typeof content === 'string') {
-          const parsed = JSON.parse(content);
-          if (parsed && typeof parsed === 'object') {
-            content = parsed.texto || parsed.pergunta || parsed.question || parsed.content || content;
-          }
-        }
-      } catch {
-        // Se não for JSON válido, usa o conteúdo original
-      }
       
       return (
         <div className="max-w-xs">
-          <span className="truncate" title={String(content)}>
-            {String(content)}
+          <span className="truncate block" title={content}>
+            {content}
           </span>
         </div>
       );
@@ -89,7 +76,7 @@ export const QuestionColumns: ColumnDef<Question>[] = [
       const ordem = row.original.ordem;
       return (
         <div className="text-center">
-          <span>
+          <span className="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800">
             {ordem}
           </span>
         </div>
@@ -111,7 +98,7 @@ export const QuestionColumns: ColumnDef<Question>[] = [
       const activityTitle = row.original.activity?.titulo;
       return (
         <div className="max-w-xs">
-          <span className="truncate" title={activityTitle || `Atividade ${row.original.activityId}`}>
+          <span className="truncate block" title={activityTitle || `Atividade ${row.original.activityId}`}>
             {activityTitle || `Atividade ${row.original.activityId}`}
           </span>
         </div>
