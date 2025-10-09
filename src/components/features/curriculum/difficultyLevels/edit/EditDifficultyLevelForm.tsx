@@ -11,7 +11,7 @@ const formSchema = z.object({
   name: z
     .string({ error: "Nome é obrigatório" })
     .max(100, { error: "O limite suportado é de 100 caracteres" })
-    .min(2, { error: "Nome deve ter pelo menos 2 caracteres" }),
+    .min(3, { error: "Nome deve ter pelo menos 3 caracteres" }),
 });
 
 type EditDifficultyLevelFormProps = {
@@ -37,7 +37,7 @@ export function EditDifficultyLevelForm({ id, onSuccess }: EditDifficultyLevelFo
 
         if (response.status === 200) {
           const levelData = {
-            name: response.data.name || "",
+            name: response.data.nome || "",
           };
           form.reset(levelData);
         }
