@@ -2,6 +2,7 @@ import Logic from "../logic/Logic";
 import Phaser from "phaser";
 
 export default class VowelsGameScene extends Phaser.Scene {
+  private gameData: any;
   private logic: Logic;
 
   constructor() {
@@ -10,104 +11,55 @@ export default class VowelsGameScene extends Phaser.Scene {
   }
 
   preload() {
+    this.load.json("mainData", "/assets/vowelsGame/gameData/mainData.JSON");
+  }
+
+  create() {
+    this.gameData = this.cache.json.get("mainData");
+
     this.loadAnimalImages();
     this.loadBackgroundImage();
     this.loadButtonImages();
     this.loadSpecialImages();
-  }
 
-  create() {
-    this.logic.createBackground("backgroundMain");
-    this.logic.createImage(this.logic.accessCurrentLevel().getName());
-    this.logic.createButtons();
-    this.setupLevel();
+    this.load.once("complete", () => {
+      this.logic.createBackground("backgroundMain");
+      this.logic.createImage(this.logic.accessCurrentLevel().getName());
+      this.logic.createButtons();
+      this.setupLevel();
+      console.log("Jogo das vogais carregado!");
+    });
 
-    console.log("Jogo das vogais carregado!");
+    this.load.start();
   }
 
   update() {}
 
   private loadAnimalImages() {
-    this.load.image("abelha", "/assets/vowelsGame/animals/abelha.svg");
-    this.load.image(
-      "abelhaCompleta",
-      "/assets/vowelsGame/animals/abelhaCompleta.svg",
-    );
+    const animals = this.gameData.animalConfig;
 
-    this.load.image("elefante", "/assets/vowelsGame/animals/elefante.svg");
-    this.load.image(
-      "elefanteCompleta",
-      "/assets/vowelsGame/animals/elefanteCompleta.svg",
-    );
-
-    this.load.image("hiena", "/assets/vowelsGame/animals/hiena.svg");
-    this.load.image(
-      "hienaCompleta",
-      "/assets/vowelsGame/animals/hienaCompleta.svg",
-    );
-
-    this.load.image("ovelha", "/assets/vowelsGame/animals/ovelha.svg");
-    this.load.image(
-      "ovelhaCompleta",
-      "/assets/vowelsGame/animals/ovelhaCompleta.svg",
-    );
-
-    this.load.image("urso", "/assets/vowelsGame/animals/urso.svg");
-    this.load.image(
-      "ursoCompleta",
-      "/assets/vowelsGame/animals/ursoCompleta.svg",
-    );
-
-    this.load.image("gato", "/assets/vowelsGame/animals/gato.svg");
-    this.load.image(
-      "gatoCompleta",
-      "/assets/vowelsGame/animals/gatoCompleta.svg",
-    );
-
-    this.load.image("esquilo", "/assets/vowelsGame/animals/esquilo.svg");
-    this.load.image(
-      "esquiloCompleta",
-      "/assets/vowelsGame/animals/esquiloCompleta.svg",
-    );
-
-    this.load.image("iguana", "/assets/vowelsGame/animals/iguana.svg");
-    this.load.image(
-      "iguanaCompleta",
-      "/assets/vowelsGame/animals/iguanaCompleta.svg",
-    );
-
-    this.load.image("onca", "/assets/vowelsGame/animals/onca.svg");
-    this.load.image(
-      "oncaCompleta",
-      "/assets/vowelsGame/animals/oncaCompleta.svg",
-    );
-
-    this.load.image("urubu", "/assets/vowelsGame/animals/urubu.svg");
-    this.load.image(
-      "urubuCompleta",
-      "/assets/vowelsGame/animals/urubuCompleta.svg",
-    );
+    animals.forEach((animal: any) => {
+      this.load.image(animal.key, animal.questionTextureUrl);
+      this.load.image(animal.completeKey, animal.completeQuestionTextureUrl);
+    });
   }
 
   private loadBackgroundImage(): void {
     this.load.image(
       "backgroundMain",
-      "/assets/vowelsGame/images/backgroundMain.png",
+      this.gameData.backgroundConfig.backgroundUrl,
     );
   }
 
   private loadButtonImages() {
     this.load.image(
       "defaultButton",
-      "/assets/common/buttons/squareBlueDefault.svg",
+      this.gameData.buttonTexturesUrl.blue.default,
     );
-    this.load.image(
-      "hoverButton",
-      "/assets/common/buttons/squareBlueHover.svg",
-    );
+    this.load.image("hoverButton", this.gameData.buttonTexturesUrl.blue.hover);
     this.load.image(
       "clickedButton",
-      "/assets/common/buttons/squareBlueClicked.svg",
+      this.gameData.buttonTexturesUrl.blue.clicked,
     );
   }
 
@@ -115,7 +67,7 @@ export default class VowelsGameScene extends Phaser.Scene {
     this.load.image("star", "/assets/common/star.svg");
   }
 
-  setupLevel() {
+  private setupLevel() {
     this.logic.setImageTexture(this.logic.accessCurrentLevel().getName());
     this.logic.setButtonTexts();
 
