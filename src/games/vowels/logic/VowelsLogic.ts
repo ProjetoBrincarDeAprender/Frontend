@@ -6,10 +6,9 @@ import LevelManager from "../../common/managers/LevelManager";
 import VowelsLevel from "./VowelsLevel";
 import CloudManager from "@/games/common/managers/CloudManager";
 import Phaser from "phaser";
-import ButtonContentGenerator from "@/games/common/content/ButtonContentGenerator";
 import ButtonFactory from "@/games/common/factories/ButtonFactory";
-import LettersStrategy from "@/games/common/content/LetterStrategy";
-import VowelsApiService from "../service/vowelsApiService";
+import VowelsApiService from "../service/VowelsApiService";
+import VowelsButtonService from "../service/VowelsButtonService";
 
 export default class VowelsLogic {
   private scene: Phaser.Scene;
@@ -23,11 +22,16 @@ export default class VowelsLogic {
   private imageMaxSize: number;
   private gameData: any;
   private apiService!: VowelsApiService;
+  private buttonService: VowelsButtonService;
 
   constructor(scene: Phaser.Scene) {
     this.scene = scene;
     this.buttonManager = new ButtonManager(this.scene);
     this.buttonFactory = new ButtonFactory(this.buttonManager);
+    this.buttonService = new VowelsButtonService(
+      this.buttonManager,
+      this.buttonFactory,
+    );
     this.gameStats = new GameStats();
     this.effectManager = new EffectManager(this.scene);
     this.cloudManager = new CloudManager(this.scene);
@@ -100,8 +104,6 @@ export default class VowelsLogic {
     this.effectManager.changeColor(button.getButtonText(), failColor);
   }
 
-  failEffect(): void {}
-
   accessCurrentLevel(): VowelsLevel {
     return this.levelManager.getCurrentLevel();
   }
@@ -112,13 +114,7 @@ export default class VowelsLogic {
   }
 
   setButtonTexts(): void {
-    const buttonContentGenerator = new ButtonContentGenerator(
-      new LettersStrategy(),
-    );
-    const answer: string = this.levelManager.getCurrentLevel().getAnswer();
-    const buttonsNumber: number = this.buttonManager.getButtons().length;
-    const buttonTexts = buttonContentGenerator.generate(buttonsNumber, answer);
-    this.buttonManager.setButtonTexts(buttonTexts);
+    this.buttonService.setButtonTexts(this.levelManager.getCurrentLevel());
   }
 
   createImage(texture: string): void {
@@ -175,11 +171,11 @@ export default class VowelsLogic {
       });
     }
 
-    this.buttonFactory.createButtons(buttonConfigs, 800);
+    this.buttonService.createButtons(buttonConfigs, 800);
   }
 
   getButtons(): Button[] {
-    return this.buttonManager.getButtons();
+    return this.buttonService.getButtons();
   }
 
   setupAnotherLevel() {
