@@ -9,6 +9,7 @@ import api from "@/utils/api";
 import Phaser from "phaser";
 import ButtonContentGenerator from "@/games/common/content/ButtonContentGenerator";
 import ButtonFactory from "@/games/common/factories/ButtonFactory";
+import LettersStrategy from "@/games/common/content/LetterStrategy";
 
 export default class VowelsLogic {
   private scene: Phaser.Scene;
@@ -131,12 +132,12 @@ export default class VowelsLogic {
   }
 
   setButtonTexts(): void {
+    const buttonContentGenerator = new ButtonContentGenerator(
+      new LettersStrategy(),
+    );
     const answer: string = this.levelManager.getCurrentLevel().getAnswer();
     const buttonsNumber: number = this.buttonManager.getButtons().length;
-    const buttonTexts = ButtonContentGenerator.generateButtonsLetters(
-      buttonsNumber,
-      answer,
-    );
+    const buttonTexts = buttonContentGenerator.generate(buttonsNumber, answer);
     this.buttonManager.setButtonTexts(buttonTexts);
   }
 
