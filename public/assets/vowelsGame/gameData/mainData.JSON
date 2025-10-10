@@ -102,8 +102,8 @@
     {
       "entityKey": "elefante",
       "completeEntityKey": "elefanteCompleta",
-      "options": ["A", "E", "I", "A"],
-      "answer": "A"
+      "options": ["A", "E", "I"],
+      "answer": "E"
     }
   ]
 }

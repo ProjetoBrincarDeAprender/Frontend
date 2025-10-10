@@ -17,26 +17,13 @@ export default class VowelsLogic {
   private buttonManager: ButtonManager;
   private cloudManager: CloudManager;
   private effectManager: EffectManager;
-  private levelManager: LevelManager<VowelsLevel>;
+  private levelManager!: LevelManager<VowelsLevel>;
   private image?: Phaser.GameObjects.Image;
   private imageMaxSize: number;
   private gameData: any;
 
   constructor(scene: Phaser.Scene) {
-    const levels: VowelsLevel[] = [];
-    levels.push(new VowelsLevel("abelha", "abelhaCompleta", "A"));
-    levels.push(new VowelsLevel("elefante", "elefanteCompleta", "E"));
-    levels.push(new VowelsLevel("hiena", "hienaCompleta", "I"));
-    levels.push(new VowelsLevel("ovelha", "ovelhaCompleta", "O"));
-    levels.push(new VowelsLevel("urso", "ursoCompleta", "U"));
-    levels.push(new VowelsLevel("gato", "gatoCompleta", "A"));
-    levels.push(new VowelsLevel("esquilo", "esquiloCompleta", "E"));
-    levels.push(new VowelsLevel("iguana", "iguanaCompleta", "I"));
-    levels.push(new VowelsLevel("onca", "oncaCompleta", "O"));
-    levels.push(new VowelsLevel("urubu", "urubuCompleta", "U"));
-
     this.scene = scene;
-    this.levelManager = new LevelManager(levels);
     this.buttonManager = new ButtonManager(this.scene);
     this.buttonFactory = new ButtonFactory(this.buttonManager);
     this.gameStats = new GameStats();
@@ -195,17 +182,16 @@ export default class VowelsLogic {
     const buttonConfigs = [];
     const buttonConfig = this.gameData.buttonConfig;
     const levels = this.gameData.levels;
+    const index = this.levelManager.getCurrentIndex();
 
-    for (let i = 0; i < levels.length; i++) {
-      for (let j = 0; j < levels[i].options.length; j++) {
-        buttonConfigs.push({
-          positions: { x: 200, y: 500 },
-          textures: buttonTextures,
-          onClick: this.setupAnotherLevel,
-          scale: buttonConfig.scale,
-          fontSize: buttonConfig.fontSize,
-        });
-      }
+    for (let i = 0; i < levels[index].options.length; i++) {
+      buttonConfigs.push({
+        positions: { x: 200, y: 500 },
+        textures: buttonTextures,
+        onClick: this.setupAnotherLevel,
+        scale: buttonConfig.scale,
+        fontSize: buttonConfig.fontSize,
+      });
     }
 
     this.buttonFactory.createButtons(buttonConfigs, 800);
