@@ -45,32 +45,31 @@ export default class VowelsStartScene extends Phaser.Scene {
   }
 
   private loadBackgroundImage(): void {
-    this.load.image(
-      "backgroundStart",
-      this.gameData.backgroundConfig.backgroundUrl,
-    );
+    const backgroundConfig = this.gameData.config.background;
+    this.load.image("backgroundStart", backgroundConfig.image);
   }
 
   private loadTitleImage(): void {
-    this.load.image("title", this.gameData.titleImageUrl);
+    const titleConfig = this.gameData.config.title;
+    this.load.image("title", titleConfig.image);
   }
 
   private loadRectangleBlue(): void {
-    const buttonTexturesUrl = this.gameData.buttonTexturesUrl;
-    this.load.image("hoverButtonRectangle", buttonTexturesUrl.blue.hover);
-    this.load.image("defaultButtonRectangle", buttonTexturesUrl.blue.default);
-    this.load.image("clickedButtonRectangle", buttonTexturesUrl.blue.clicked);
+    const textures = this.gameData.textures.buttons;
+    this.load.image("hoverButtonRectangle", textures.blue.hover);
+    this.load.image("defaultButtonRectangle", textures.blue.default);
+    this.load.image("clickedButtonRectangle", textures.blue.clicked);
   }
 
   private loadRectangleRed(): void {
-    const buttonTexturesUrl = this.gameData.buttonTexturesUrl;
-    this.load.image("hoverRectangleRed", buttonTexturesUrl.red.hover);
-    this.load.image("defaultRectangleRed", buttonTexturesUrl.red.default);
-    this.load.image("clickedRectangleRed", buttonTexturesUrl.red.clicked);
+    const textures = this.gameData.textures.buttons;
+    this.load.image("hoverRectangleRed", textures.red.hover);
+    this.load.image("defaultRectangleRed", textures.red.default);
+    this.load.image("clickedRectangleRed", textures.red.clicked);
   }
 
   private createBackground(): void {
-    const backgroundConfig = this.gameData.backgroundConfig;
+    const backgroundConfig = this.gameData.config.background;
 
     const background = this.add.image(400, 300, "backgroundStart");
     const scaleX = this.cameras.main.width / background.width;
@@ -84,11 +83,15 @@ export default class VowelsStartScene extends Phaser.Scene {
   }
 
   private createTitleImage(): void {
-    const titlePosition = this.gameData.titlePosition;
+    const titleConfig = this.gameData.config.title;
     let title;
 
-    if (titlePosition) {
-      title = this.add.image(titlePosition.x, titlePosition.y, "title");
+    if (titleConfig.position) {
+      title = this.add.image(
+        titleConfig.position.x,
+        titleConfig.position.y,
+        "title",
+      );
     } else {
       title = this.add.image(
         this.cameras.main.width / 2,
