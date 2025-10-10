@@ -7,17 +7,17 @@ import ButtonFactory from "@/games/common/factories/ButtonFactory";
 
 export default class VowelsStartScene extends Phaser.Scene {
   private assetLoader: AssetLoader;
+  private buttonFactory: ButtonFactory;
   private buttonManager: ButtonManager;
   private cloudManager: CloudManager;
   private effectManager: EffectManager;
-  private buttonFactory: ButtonFactory;
   private gameData: any;
 
   constructor() {
     super("vowelsStart");
     this.buttonManager = new ButtonManager(this);
-    this.effectManager = new EffectManager(this);
     this.buttonFactory = new ButtonFactory(this.buttonManager);
+    this.effectManager = new EffectManager(this);
     this.assetLoader = new AssetLoader(this);
     this.cloudManager = new CloudManager(this);
   }

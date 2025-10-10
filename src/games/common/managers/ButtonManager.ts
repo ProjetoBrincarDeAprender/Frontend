@@ -67,7 +67,9 @@ export default class ButtonManager {
       text ? text : "", // Texto do botão (buttonText)
       fontSize ? fontSize : undefined, // Tamanho da fonte padrão (defaultFontSize)
     );
+
     this.scene.add.existing(button).setScale(scale);
+    this.buttons.push(button);
     return button;
   }
 

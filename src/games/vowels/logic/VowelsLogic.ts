@@ -8,10 +8,12 @@ import CloudManager from "@/games/common/managers/CloudManager";
 import api from "@/utils/api";
 import Phaser from "phaser";
 import ButtonContentGenerator from "@/games/common/content/ButtonContentGenerator";
+import ButtonFactory from "@/games/common/factories/ButtonFactory";
 
 export default class VowelsLogic {
   private scene: Phaser.Scene;
   private gameStats: GameStats;
+  private buttonFactory: ButtonFactory;
   private buttonManager: ButtonManager;
   private cloudManager: CloudManager;
   private effectManager: EffectManager;
@@ -32,11 +34,12 @@ export default class VowelsLogic {
     levels.push(new VowelsLevel("onca", "oncaCompleta", "O"));
     levels.push(new VowelsLevel("urubu", "urubuCompleta", "U"));
 
-    this.levelManager = new LevelManager(levels);
     this.scene = scene;
+    this.levelManager = new LevelManager(levels);
+    this.buttonManager = new ButtonManager(this.scene);
+    this.buttonFactory = new ButtonFactory(this.buttonManager);
     this.gameStats = new GameStats();
     this.effectManager = new EffectManager(this.scene);
-    this.buttonManager = new ButtonManager(this.scene);
     this.cloudManager = new CloudManager(this.scene);
     this.imageMaxSize = 800;
   }
@@ -161,11 +164,11 @@ export default class VowelsLogic {
   }
 
   createButtons(): void {
-    const buttonPositions: { x: number; y: number }[] = [
-      { x: 200, y: 500 },
-      { x: 400, y: 500 },
-      { x: 600, y: 500 },
-    ];
+    // const buttonPositions: { x: number; y: number }[] = [
+    //   { x: 200, y: 500 },
+    //   { x: 400, y: 500 },
+    //   { x: 600, y: 500 },
+    // ];
 
     const buttonTextures = {
       default: "defaultButton",
@@ -173,17 +176,59 @@ export default class VowelsLogic {
       clicked: "clickedButton",
     };
 
-    const buttonConfigs = buttonPositions.map((pos) => ({
-      positions: pos,
-      textures: buttonTextures,
-      scale: 1.5,
-      fontSize: 50,
-    }));
+    const buttonConfigs = [
+      {
+        positions: { x: 200, y: 500 },
+        textures: buttonTextures,
+        onClick: this.setupAnotherLevel,
+        scale: 1.5,
+        fontSize: 50,
+      },
+      {
+        positions: { x: 200, y: 500 },
+        textures: buttonTextures,
+        onClick: this.setupAnotherLevel,
+        scale: 1.5,
+        fontSize: 50,
+      },
+      {
+        positions: { x: 200, y: 500 },
+        textures: buttonTextures,
+        onClick: this.setupAnotherLevel,
+        scale: 1.5,
+        fontSize: 50,
+      },
+    ];
 
-    this.buttonManager.createButtons(buttonConfigs);
+    this.buttonFactory.createButtons(buttonConfigs, 800);
   }
 
   getButtons(): Button[] {
     return this.buttonManager.getButtons();
+  }
+
+  setupAnotherLevel() {
+    this.setImageTexture(this.accessCurrentLevel().getName());
+    this.setButtonTexts();
+
+    this.getButtons().forEach((button) => {
+      button.off("pointerdown");
+      button.on("pointerdown", () => {
+        const result = this.handleClick(button, this.scene.time.now);
+
+        if (result.correct) {
+          this.buttonSuccessEffect(button, "star");
+          this.scene.time.delayedCall(1000, () => {
+            if (result.finished) {
+              this.scene.scene.start("vowelsCredits");
+            } else {
+              this.setupAnotherLevel();
+            }
+          });
+        } else {
+          this.buttonFailEffect(button);
+        }
+      });
+    });
   }
 }

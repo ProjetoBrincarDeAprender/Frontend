@@ -69,25 +69,6 @@ export default class VowelsGameScene extends Phaser.Scene {
   private setupLevel() {
     this.logic.setImageTexture(this.logic.accessCurrentLevel().getName());
     this.logic.setButtonTexts();
-
-    this.logic.getButtons().forEach((button) => {
-      button.off("pointerdown");
-      button.on("pointerdown", () => {
-        const result = this.logic.handleClick(button, this.time.now);
-
-        if (result.correct) {
-          this.logic.buttonSuccessEffect(button, "star");
-          this.time.delayedCall(1000, () => {
-            if (result.finished) {
-              this.scene.start("vowelsCredits");
-            } else {
-              this.setupLevel();
-            }
-          });
-        } else {
-          this.logic.buttonFailEffect(button);
-        }
-      });
-    });
+    this.logic.setupAnotherLevel();
   }
 }

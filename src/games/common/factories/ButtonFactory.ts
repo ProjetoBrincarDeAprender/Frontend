@@ -23,13 +23,10 @@ export default class ButtonFactory {
 
   /**
    * Cria múltiplos botões distribuídos horizontalmente na tela, ajustando automaticamente a posição X de cada botão.
-   *
    * @param configs Array de configurações para cada botão a ser criado.
    * @param screenWidth Largura total da área onde os botões serão distribuídos.
    * @returns Um array de instâncias de Button criadas e posicionadas.
-   *'
-   * O espaçamento horizontal é calculado para distribuir os botões uniformemente,
-   * deixando margens laterais proporcionais.
+   * O espaçamento horizontal é calculado para distribuir os botões uniformemente
    */
   createButtons(configs: ButtonConfig[], screenWidth: number) {
     const createdButtons: Button[] = [];
