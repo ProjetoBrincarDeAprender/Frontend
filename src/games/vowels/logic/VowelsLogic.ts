@@ -10,6 +10,7 @@ import ButtonFactory from "@/games/common/factories/ButtonFactory";
 import VowelsApiService from "../service/VowelsApiService";
 import VowelsButtonService from "../service/VowelsButtonService";
 import VowelsEffectService from "../service/VowelsEffectService";
+import VowelsUIService from "../service/VowelsUIService";
 
 export default class VowelsLogic {
   private scene: Phaser.Scene;
@@ -25,6 +26,7 @@ export default class VowelsLogic {
   private apiService!: VowelsApiService;
   private buttonService: VowelsButtonService;
   private effectService: VowelsEffectService;
+  private uiService: VowelsUIService;
 
   constructor(scene: Phaser.Scene) {
     this.scene = scene;
@@ -39,6 +41,16 @@ export default class VowelsLogic {
     this.cloudManager = new CloudManager(this.scene);
     this.imageMaxSize = 800;
     this.effectService = new VowelsEffectService(this.effectManager);
+    this.uiService = new VowelsUIService(
+      this.scene,
+      this.effectManager,
+      this.cloudManager,
+      this.imageMaxSize,
+    );
+  }
+
+  getButtons(): Button[] {
+    return this.buttonService.getButtons();
   }
 
   setApiService() {
@@ -63,6 +75,26 @@ export default class VowelsLogic {
     });
 
     this.levelManager = new LevelManager(newLevels);
+  }
+
+  setButtonTexts(): void {
+    this.buttonService.setButtonTexts(this.levelManager.getCurrentLevel());
+  }
+
+  buttonSuccessEffect(
+    button: Button,
+    particleTexture?: string,
+    successColor?: number,
+  ): void {
+    this.effectService.buttonSuccessEffect(
+      button,
+      particleTexture,
+      successColor,
+    );
+  }
+
+  buttonFailEffect(button: Button, failColor?: number): void {
+    this.effectService.buttonFailEffect(button, failColor);
   }
 
   handleClick(
@@ -92,22 +124,6 @@ export default class VowelsLogic {
     }
   }
 
-  buttonSuccessEffect(
-    button: Button,
-    particleTexture?: string,
-    successColor?: number,
-  ): void {
-    this.effectService.buttonSuccessEffect(
-      button,
-      particleTexture,
-      successColor,
-    );
-  }
-
-  buttonFailEffect(button: Button, failColor?: number): void {
-    this.effectService.buttonFailEffect(button, failColor);
-  }
-
   accessCurrentLevel(): VowelsLevel {
     return this.levelManager.getCurrentLevel();
   }
@@ -117,39 +133,19 @@ export default class VowelsLogic {
     return false;
   }
 
-  setButtonTexts(): void {
-    this.buttonService.setButtonTexts(this.levelManager.getCurrentLevel());
-  }
-
   createImage(texture: string): void {
-    this.image = this.scene.add.image(400, 220, texture);
-
-    const imgWidth = this.image.width;
-    const imgHeight = this.image.height;
-
-    const maxSize = this.imageMaxSize;
-    const scaleX = maxSize / imgWidth;
-    const scaleY = maxSize / imgHeight;
-    const scale = Math.min(scaleX, scaleY);
-
-    this.image.setScale(scale);
+    this.uiService.createImage(texture);
   }
 
   createBackground(texture: string): void {
-    const background = this.scene.add.image(400, 300, texture);
-    const scaleX = this.scene.cameras.main.width / background.width;
-    const scaleY = this.scene.cameras.main.height / background.height;
-    const scale = Math.max(scaleX, scaleY);
-    background.setScale(scale);
-    this.cloudManager.generateClouds();
-    this.effectManager.overlay(0.3);
+    this.uiService.createBackground(texture);
   }
 
   setImageTexture(texture: string): void {
-    if (this.image) this.image.setTexture(texture);
+    this.uiService.setImageTexture(texture);
   }
 
-  defineData() {
+  setData() {
     this.gameData = this.scene.cache.json.get("mainData");
   }
 
@@ -176,10 +172,6 @@ export default class VowelsLogic {
     }
 
     this.buttonService.createButtons(buttonConfigs, 800);
-  }
-
-  getButtons(): Button[] {
-    return this.buttonService.getButtons();
   }
 
   setupAnotherLevel() {

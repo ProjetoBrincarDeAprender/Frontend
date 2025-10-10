@@ -21,7 +21,7 @@ export default class VowelsGameScene extends Phaser.Scene {
     this.loadBackgroundImage();
     this.loadButtonImages();
     this.loadEffectsImages();
-    this.logic.defineData();
+    this.logic.setData();
 
     this.load.once("complete", () => {
       this.logic.setLevelManager();
