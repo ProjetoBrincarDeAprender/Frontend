@@ -30,10 +30,9 @@ export default class ButtonFactory {
    */
   createButtons(configs: ButtonConfig[], screenWidth: number) {
     const createdButtons: Button[] = [];
-    // Espaço entre botões, considerando margem nas laterais
     const spaceBetweenButtons = screenWidth / (configs.length + 1);
+
     for (let i = 0; i < configs.length; i++) {
-      // Distribui os botões uniformemente, começando após a primeira margem
       const newPositionX = spaceBetweenButtons * (i + 1);
       configs[i].positions.x = newPositionX;
       const button = this.createButton(configs[i]);
@@ -53,7 +52,7 @@ export default class ButtonFactory {
     positions,
     textures,
     onClick,
-    text = "Sair",
+    text = "No Text",
     fontSize,
     scale,
   }: ButtonConfig): Button {

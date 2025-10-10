@@ -29,7 +29,8 @@ export default class VowelsGameScene extends Phaser.Scene {
       this.logic.createBackground("backgroundMain");
       this.logic.createImage(this.logic.getCurrentLevel().getName());
       this.logic.createButtons();
-      this.setupLevel();
+      this.logic.setupAnotherLevel();
+
       console.log("Jogo das vogais carregado!");
     });
 
@@ -62,11 +63,5 @@ export default class VowelsGameScene extends Phaser.Scene {
     effects.forEach((effect: any) => {
       this.load.image(effect.key, effect.texture);
     });
-  }
-
-  private setupLevel() {
-    this.logic.setImageTexture(this.logic.getCurrentLevel().getName());
-    this.logic.setButtonTexts();
-    this.logic.setupAnotherLevel();
   }
 }

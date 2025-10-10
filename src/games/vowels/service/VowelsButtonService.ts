@@ -21,13 +21,20 @@ export default class VowelsButtonService {
     return this.buttonManager.getButtons();
   }
 
-  setButtonTexts(level: VowelsLevel) {
-    const buttonContentGenerator = new ButtonContentGenerator(
-      new LettersStrategy(),
-    );
-    const answer = level.getAnswer();
-    const buttonsNumber = this.buttonManager.getButtons().length;
-    const buttonTexts = buttonContentGenerator.generate(buttonsNumber, answer);
-    this.buttonManager.setButtonTexts(buttonTexts);
+  setButtonTexts(level: VowelsLevel, options?: string[]): void {
+    if (options) {
+      this.buttonManager.setButtonTexts(options);
+    } else {
+      const buttonContentGenerator = new ButtonContentGenerator(
+        new LettersStrategy(),
+      );
+      const answer = level.getAnswer();
+      const buttonsNumber = this.buttonManager.getButtons().length;
+      const buttonTexts = buttonContentGenerator.generate(
+        buttonsNumber,
+        answer,
+      );
+      this.buttonManager.setButtonTexts(buttonTexts);
+    }
   }
 }

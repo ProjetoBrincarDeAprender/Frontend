@@ -61,10 +61,17 @@ export default class VowelsLogic {
     );
   }
 
-  setButtonTexts(): void {
-    this.buttonService.setButtonTexts(this.levelManager.getCurrentLevel());
+  setButtonTexts(options?: string[]): void {
+    if (options) {
+      this.buttonService.setButtonTexts(
+        this.levelManager.getCurrentLevel(),
+        options,
+      );
+      return;
+    } else {
+      this.buttonService.setButtonTexts(this.levelManager.getCurrentLevel());
+    }
   }
-
   setGameData() {
     this.gameData = this.scene.cache.json.get("mainData");
   }
@@ -171,8 +178,12 @@ export default class VowelsLogic {
   }
 
   setupAnotherLevel() {
-    this.setImageTexture(this.getCurrentLevel().getName());
-    this.setButtonTexts();
+    const actualLevel = this.levelManager.getCurrentLevel();
+    const actualLevelIndex = this.levelManager.getCurrentIndex();
+    const levels = this.gameData.levels;
+
+    this.setImageTexture(actualLevel.getName());
+    this.setButtonTexts(levels[actualLevelIndex].options);
 
     this.getButtons().forEach((button) => {
       button.off("pointerdown");
