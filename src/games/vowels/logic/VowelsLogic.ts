@@ -14,15 +14,13 @@ import VowelsUIService from "../service/VowelsUIService";
 
 export default class VowelsLogic {
   private scene: Phaser.Scene;
+  private gameData: any;
   private gameStats: GameStats;
-  private buttonFactory: ButtonFactory;
   private buttonManager: ButtonManager;
   private cloudManager: CloudManager;
   private effectManager: EffectManager;
   private levelManager!: LevelManager<VowelsLevel>;
-  private image?: Phaser.GameObjects.Image;
-  private imageMaxSize: number;
-  private gameData: any;
+  private buttonFactory: ButtonFactory;
   private apiService!: VowelsApiService;
   private buttonService: VowelsButtonService;
   private effectService: VowelsEffectService;
@@ -30,27 +28,29 @@ export default class VowelsLogic {
 
   constructor(scene: Phaser.Scene) {
     this.scene = scene;
+    this.gameStats = new GameStats();
     this.buttonManager = new ButtonManager(this.scene);
+    this.cloudManager = new CloudManager(this.scene);
+    this.effectManager = new EffectManager(this.scene);
     this.buttonFactory = new ButtonFactory(this.buttonManager);
+    this.effectService = new VowelsEffectService(this.effectManager);
     this.buttonService = new VowelsButtonService(
       this.buttonManager,
       this.buttonFactory,
     );
-    this.gameStats = new GameStats();
-    this.effectManager = new EffectManager(this.scene);
-    this.cloudManager = new CloudManager(this.scene);
-    this.imageMaxSize = 800;
-    this.effectService = new VowelsEffectService(this.effectManager);
     this.uiService = new VowelsUIService(
       this.scene,
       this.effectManager,
       this.cloudManager,
-      this.imageMaxSize,
     );
   }
 
   getButtons(): Button[] {
     return this.buttonService.getButtons();
+  }
+
+  getCurrentLevel(): VowelsLevel {
+    return this.levelManager.getCurrentLevel();
   }
 
   setApiService() {
@@ -59,6 +59,18 @@ export default class VowelsLogic {
       this.levelManager,
       this.gameStats,
     );
+  }
+
+  setButtonTexts(): void {
+    this.buttonService.setButtonTexts(this.levelManager.getCurrentLevel());
+  }
+
+  setGameData() {
+    this.gameData = this.scene.cache.json.get("mainData");
+  }
+
+  setImageTexture(texture: string): void {
+    this.uiService.setImageTexture(texture);
   }
 
   setLevelManager() {
@@ -75,10 +87,6 @@ export default class VowelsLogic {
     });
 
     this.levelManager = new LevelManager(newLevels);
-  }
-
-  setButtonTexts(): void {
-    this.buttonService.setButtonTexts(this.levelManager.getCurrentLevel());
   }
 
   buttonSuccessEffect(
@@ -101,10 +109,11 @@ export default class VowelsLogic {
     button: Button,
     timeNow: number,
   ): { correct: boolean; finished: boolean } {
-    const currentLevel: VowelsLevel = this.levelManager.getCurrentLevel();
+    const currentLevel: VowelsLevel = this.getCurrentLevel();
     const isCorrect: boolean = currentLevel.isCorrectLetter(
       button.getButtonStringText(),
     );
+
     if (isCorrect) {
       this.apiService.sendLevelData();
 
@@ -113,8 +122,7 @@ export default class VowelsLogic {
       this.gameStats.addMissCount();
       this.gameStats.resetActualLevelMisses();
 
-      console.log(this.accessCurrentLevel().getCompleteAnimalKey());
-      this.setImageTexture(this.accessCurrentLevel().getCompleteAnimalKey());
+      this.setImageTexture(this.getCurrentLevel().getCompleteEntityKey());
 
       const finished = !this.levelManager.nextLevel();
       return { correct: true, finished };
@@ -122,10 +130,6 @@ export default class VowelsLogic {
       this.gameStats.addMiss();
       return { correct: false, finished: false };
     }
-  }
-
-  accessCurrentLevel(): VowelsLevel {
-    return this.levelManager.getCurrentLevel();
   }
 
   isGameFinished(): boolean {
@@ -139,14 +143,6 @@ export default class VowelsLogic {
 
   createBackground(texture: string): void {
     this.uiService.createBackground(texture);
-  }
-
-  setImageTexture(texture: string): void {
-    this.uiService.setImageTexture(texture);
-  }
-
-  setData() {
-    this.gameData = this.scene.cache.json.get("mainData");
   }
 
   createButtons(): void {
@@ -175,7 +171,7 @@ export default class VowelsLogic {
   }
 
   setupAnotherLevel() {
-    this.setImageTexture(this.accessCurrentLevel().getName());
+    this.setImageTexture(this.getCurrentLevel().getName());
     this.setButtonTexts();
 
     this.getButtons().forEach((button) => {

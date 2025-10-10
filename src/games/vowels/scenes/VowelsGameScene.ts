@@ -1,5 +1,5 @@
-import VowelsLogic from "../logic/VowelsLogic";
 import Phaser from "phaser";
+import VowelsLogic from "../logic/VowelsLogic";
 
 export default class VowelsGameScene extends Phaser.Scene {
   private gameData: any;
@@ -17,17 +17,17 @@ export default class VowelsGameScene extends Phaser.Scene {
   create() {
     this.gameData = this.cache.json.get("mainData");
 
-    this.loadAnimalImages();
+    this.loadEntitiesImages();
     this.loadBackgroundImage();
     this.loadButtonImages();
     this.loadEffectsImages();
-    this.logic.setData();
 
     this.load.once("complete", () => {
+      this.logic.setGameData();
       this.logic.setLevelManager();
       this.logic.setApiService();
       this.logic.createBackground("backgroundMain");
-      this.logic.createImage(this.logic.accessCurrentLevel().getName());
+      this.logic.createImage(this.logic.getCurrentLevel().getName());
       this.logic.createButtons();
       this.setupLevel();
       console.log("Jogo das vogais carregado!");
@@ -36,9 +36,7 @@ export default class VowelsGameScene extends Phaser.Scene {
     this.load.start();
   }
 
-  update() {}
-
-  private loadAnimalImages() {
+  private loadEntitiesImages() {
     const entities = this.gameData.textures.entities;
 
     entities.forEach((entity: any) => {
@@ -67,7 +65,7 @@ export default class VowelsGameScene extends Phaser.Scene {
   }
 
   private setupLevel() {
-    this.logic.setImageTexture(this.logic.accessCurrentLevel().getName());
+    this.logic.setImageTexture(this.logic.getCurrentLevel().getName());
     this.logic.setButtonTexts();
     this.logic.setupAnotherLevel();
   }
