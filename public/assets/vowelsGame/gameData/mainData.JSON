@@ -1,11 +1,11 @@
 {
-  "backgroundConfig": {
-    "backgroundUrl": "/assets/vowelsGame/images/backgroundMain.png",
+  "background": {
+    "url": "/assets/vowelsGame/images/backgroundMain.png",
     "overlayOpacity": 0.3
   },
 
-  "buttonConfig": {
-    "texturesUrl": {
+  "textures": {
+    "buttons": {
       "blue": {
         "default": "/assets/common/buttons/squareBlueDefault.svg",
         "hover": "/assets/common/buttons/squareBlueHover.svg",
@@ -16,91 +16,74 @@
         "hover": "/assets/common/buttons/squareRedHover.svg",
         "clicked": "/assets/common/buttons/squareRedClicked.svg"
       }
-    }
-  },
-
-  "effects": [
-    {
-      "key": "star",
-      "textureUrl": "/assets/common/star.svg"
-    }
-  ],
-
-  "buttons": [
-    {
-      "text": "▶ Iniciar",
-      "positions": { "x": 400, "y": 360 },
-      "fontSize": 40,
-      "scale": 1
     },
-    {
-      "text": "Sair",
-      "positions": { "x": 400, "y": 440 },
-      "fontSize": 40,
-      "scale": 0.7
-    }
-  ],
-
-  "animalConfig": [
-    {
-      "key": "abelha",
-      "completeKey": "abelhaCompleta",
-      "questionTextureUrl": "/assets/vowelsGame/animals/abelha.svg",
-      "completeQuestionTextureUrl": "/assets/vowelsGame/animals/abelhaCompleta.svg"
-    },
-    {
-      "key": "elefante",
-      "completeKey": "elefanteCompleta",
-      "questionTextureUrl": "/assets/vowelsGame/animals/elefante.svg",
-      "completeQuestionTextureUrl": "/assets/vowelsGame/animals/elefanteCompleta.svg"
-    },
-    {
-      "key": "hiena",
-      "completeKey": "hienaCompleta",
-      "questionTextureUrl": "/assets/vowelsGame/animals/hiena.svg",
-      "completeQuestionTextureUrl": "/assets/vowelsGame/animals/hienaCompleta.svg"
-    },
-    {
-      "key": "onca",
-      "completeKey": "oncaCompleta",
-      "questionTextureUrl": "/assets/vowelsGame/animals/onca.svg",
-      "completeQuestionTextureUrl": "/assets/vowelsGame/animals/oncaCompleta.svg"
-    },
-    {
-      "key": "urso",
-      "completeKey": "ursoCompleta",
-      "questionTextureUrl": "/assets/vowelsGame/animals/urso.svg",
-      "completeQuestionTextureUrl": "/assets/vowelsGame/animals/ursoCompleta.svg"
-    },
-    {
-      "key": "gato",
-      "completeKey": "gatoCompleta",
-      "questionTextureUrl": "/assets/vowelsGame/animals/gato.svg",
-      "completeQuestionTextureUrl": "/assets/vowelsGame/animals/gatoCompleta.svg"
-    },
-    {
-      "key": "esquilo",
-      "completeKey": "esquiloCompleta",
-      "questionTextureUrl": "/assets/vowelsGame/animals/esquilo.svg",
-      "completeQuestionTextureUrl": "/assets/vowelsGame/animals/esquiloCompleta.svg"
-    },
-    {
-      "key": "iguana",
-      "completeKey": "iguanaCompleta",
-      "questionTextureUrl": "/assets/vowelsGame/animals/iguana.svg",
-      "completeQuestionTextureUrl": "/assets/vowelsGame/animals/iguanaCompleta.svg"
-    },
-    {
-      "key": "ovelha",
-      "completeKey": "ovelhaCompleta",
-      "questionTextureUrl": "/assets/vowelsGame/animals/ovelha.svg",
-      "completeQuestionTextureUrl": "/assets/vowelsGame/animals/ovelhaCompleta.svg"
-    },
-    {
-      "key": "urubu",
-      "completeKey": "urubuCompleta",
-      "questionTextureUrl": "/assets/vowelsGame/animals/urubu.svg",
-      "completeQuestionTextureUrl": "/assets/vowelsGame/animals/urubuCompleta.svg"
-    }
-  ]
+    "effects": [
+      {
+        "key": "star",
+        "texture": "/assets/common/star.svg"
+      }
+    ],
+    "entities": [
+      {
+        "key": "abelha",
+        "completeKey": "abelhaCompleta",
+        "default": "/assets/vowelsGame/animals/abelha.svg",
+        "complete": "/assets/vowelsGame/animals/abelhaCompleta.svg"
+      },
+      {
+        "key": "elefante",
+        "completeKey": "elefanteCompleta",
+        "default": "/assets/vowelsGame/animals/elefante.svg",
+        "complete": "/assets/vowelsGame/animals/elefanteCompleta.svg"
+      },
+      {
+        "key": "hiena",
+        "completeKey": "hienaCompleta",
+        "default": "/assets/vowelsGame/animals/hiena.svg",
+        "complete": "/assets/vowelsGame/animals/hienaCompleta.svg"
+      },
+      {
+        "key": "onca",
+        "completeKey": "oncaCompleta",
+        "default": "/assets/vowelsGame/animals/onca.svg",
+        "complete": "/assets/vowelsGame/animals/oncaCompleta.svg"
+      },
+      {
+        "key": "urso",
+        "completeKey": "ursoCompleta",
+        "default": "/assets/vowelsGame/animals/urso.svg",
+        "complete": "/assets/vowelsGame/animals/ursoCompleta.svg"
+      },
+      {
+        "key": "gato",
+        "completeKey": "gatoCompleta",
+        "default": "/assets/vowelsGame/animals/gato.svg",
+        "complete": "/assets/vowelsGame/animals/gatoCompleta.svg"
+      },
+      {
+        "key": "esquilo",
+        "completeKey": "esquiloCompleta",
+        "default": "/assets/vowelsGame/animals/esquilo.svg",
+        "complete": "/assets/vowelsGame/animals/esquiloCompleta.svg"
+      },
+      {
+        "key": "iguana",
+        "completeKey": "iguanaCompleta",
+        "default": "/assets/vowelsGame/animals/iguana.svg",
+        "complete": "/assets/vowelsGame/animals/iguanaCompleta.svg"
+      },
+      {
+        "key": "ovelha",
+        "completeKey": "ovelhaCompleta",
+        "default": "/assets/vowelsGame/animals/ovelha.svg",
+        "complete": "/assets/vowelsGame/animals/ovelhaCompleta.svg"
+      },
+      {
+        "key": "urubu",
+        "completeKey": "urubuCompleta",
+        "default": "/assets/vowelsGame/animals/urubu.svg",
+        "complete": "/assets/vowelsGame/animals/urubuCompleta.svg"
+      }
+    ]
+  }
 }

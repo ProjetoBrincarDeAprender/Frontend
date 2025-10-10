@@ -36,23 +36,20 @@ export default class VowelsGameScene extends Phaser.Scene {
   update() {}
 
   private loadAnimalImages() {
-    const animals = this.gameData.animalConfig;
+    const entities = this.gameData.textures.entities;
 
-    animals.forEach((animal: any) => {
-      this.load.image(animal.key, animal.questionTextureUrl);
-      this.load.image(animal.completeKey, animal.completeQuestionTextureUrl);
+    entities.forEach((entity: any) => {
+      this.load.image(entity.key, entity.default);
+      this.load.image(entity.completeKey, entity.complete);
     });
   }
 
   private loadBackgroundImage(): void {
-    this.load.image(
-      "backgroundMain",
-      this.gameData.backgroundConfig.backgroundUrl,
-    );
+    this.load.image("backgroundMain", this.gameData.background.url);
   }
 
   private loadButtonImages() {
-    const buttonTexturesUrl = this.gameData.buttonConfig.texturesUrl;
+    const buttonTexturesUrl = this.gameData.textures.buttons;
 
     this.load.image("defaultButton", buttonTexturesUrl.blue.default);
     this.load.image("hoverButton", buttonTexturesUrl.blue.hover);
@@ -60,9 +57,9 @@ export default class VowelsGameScene extends Phaser.Scene {
   }
 
   private loadEffectsImages() {
-    const effects = this.gameData.effects;
+    const effects = this.gameData.textures.effects;
     effects.forEach((effect: any) => {
-      this.load.image(effect.key, effect.textureUrl);
+      this.load.image(effect.key, effect.texture);
     });
   }
 
