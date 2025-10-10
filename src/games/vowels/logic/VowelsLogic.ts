@@ -9,6 +9,7 @@ import Phaser from "phaser";
 import ButtonFactory from "@/games/common/factories/ButtonFactory";
 import VowelsApiService from "../service/VowelsApiService";
 import VowelsButtonService from "../service/VowelsButtonService";
+import VowelsEffectService from "../service/VowelsEffectService";
 
 export default class VowelsLogic {
   private scene: Phaser.Scene;
@@ -23,6 +24,7 @@ export default class VowelsLogic {
   private gameData: any;
   private apiService!: VowelsApiService;
   private buttonService: VowelsButtonService;
+  private effectService: VowelsEffectService;
 
   constructor(scene: Phaser.Scene) {
     this.scene = scene;
@@ -36,6 +38,7 @@ export default class VowelsLogic {
     this.effectManager = new EffectManager(this.scene);
     this.cloudManager = new CloudManager(this.scene);
     this.imageMaxSize = 800;
+    this.effectService = new VowelsEffectService(this.effectManager);
   }
 
   setApiService() {
@@ -92,16 +95,17 @@ export default class VowelsLogic {
   buttonSuccessEffect(
     button: Button,
     particleTexture?: string,
-    successColor: number = 0x00ff00,
+    successColor?: number,
   ): void {
-    this.effectManager.growup(button);
-    this.effectManager.changeColor(button.getButtonText(), successColor);
-    if (particleTexture) this.effectManager.particles(particleTexture);
+    this.effectService.buttonSuccessEffect(
+      button,
+      particleTexture,
+      successColor,
+    );
   }
 
-  buttonFailEffect(button: Button, failColor: number = 0xff0000): void {
-    this.effectManager.growup(button, "Bounce", 1.2, 200);
-    this.effectManager.changeColor(button.getButtonText(), failColor);
+  buttonFailEffect(button: Button, failColor?: number): void {
+    this.effectService.buttonFailEffect(button, failColor);
   }
 
   accessCurrentLevel(): VowelsLevel {
