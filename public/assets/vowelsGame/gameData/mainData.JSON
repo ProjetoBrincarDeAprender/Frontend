@@ -95,8 +95,15 @@
   "levels": [
     {
       "entityKey": "abelha",
+      "completeEntityKey": "abelhaCompleta",
       "options": ["A", "E", "I"],
-      "correctAnswer": "A"
+      "answer": "A"
+    },
+    {
+      "entityKey": "elefante",
+      "completeEntityKey": "elefanteCompleta",
+      "options": ["A", "E", "I", "A"],
+      "answer": "A"
     }
   ]
 }

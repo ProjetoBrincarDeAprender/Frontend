@@ -45,6 +45,22 @@ export default class VowelsLogic {
     this.imageMaxSize = 800;
   }
 
+  setLevelManager() {
+    const levels = this.gameData.levels;
+    const newLevels: VowelsLevel[] = [];
+
+    levels.forEach((level: any) => {
+      const newLevel = new VowelsLevel(
+        level.entityKey,
+        level.completeEntityKey,
+        level.answer,
+      );
+      newLevels.push(newLevel);
+    });
+
+    this.levelManager = new LevelManager(newLevels);
+  }
+
   handleClick(
     button: Button,
     timeNow: number,
@@ -61,6 +77,7 @@ export default class VowelsLogic {
       this.gameStats.addMissCount();
       this.gameStats.resetActualLevelMisses();
 
+      console.log(this.accessCurrentLevel().getCompleteAnimalKey());
       this.setImageTexture(this.accessCurrentLevel().getCompleteAnimalKey());
 
       const finished = !this.levelManager.nextLevel();
