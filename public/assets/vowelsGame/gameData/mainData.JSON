@@ -85,5 +85,18 @@
         "complete": "/assets/vowelsGame/animals/urubuCompleta.svg"
       }
     ]
-  }
+  },
+
+  "buttonConfig": {
+    "fontSize": 50,
+    "scale": 1.5
+  },
+
+  "levels": [
+    {
+      "entityKey": "abelha",
+      "options": ["A", "E", "I"],
+      "correctAnswer": "A"
+    }
+  ]
 }

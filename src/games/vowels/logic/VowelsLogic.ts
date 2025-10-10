@@ -20,6 +20,7 @@ export default class VowelsLogic {
   private levelManager: LevelManager<VowelsLevel>;
   private image?: Phaser.GameObjects.Image;
   private imageMaxSize: number;
+  private gameData: any;
 
   constructor(scene: Phaser.Scene) {
     const levels: VowelsLevel[] = [];
@@ -163,42 +164,32 @@ export default class VowelsLogic {
     if (this.image) this.image.setTexture(texture);
   }
 
-  createButtons(): void {
-    // const buttonPositions: { x: number; y: number }[] = [
-    //   { x: 200, y: 500 },
-    //   { x: 400, y: 500 },
-    //   { x: 600, y: 500 },
-    // ];
+  defineData() {
+    this.gameData = this.scene.cache.json.get("mainData");
+  }
 
+  createButtons(): void {
     const buttonTextures = {
       default: "defaultButton",
       hover: "hoverButton",
       clicked: "clickedButton",
     };
 
-    const buttonConfigs = [
-      {
-        positions: { x: 200, y: 500 },
-        textures: buttonTextures,
-        onClick: this.setupAnotherLevel,
-        scale: 1.5,
-        fontSize: 50,
-      },
-      {
-        positions: { x: 200, y: 500 },
-        textures: buttonTextures,
-        onClick: this.setupAnotherLevel,
-        scale: 1.5,
-        fontSize: 50,
-      },
-      {
-        positions: { x: 200, y: 500 },
-        textures: buttonTextures,
-        onClick: this.setupAnotherLevel,
-        scale: 1.5,
-        fontSize: 50,
-      },
-    ];
+    const buttonConfigs = [];
+    const buttonConfig = this.gameData.buttonConfig;
+    const levels = this.gameData.levels;
+
+    for (let i = 0; i < levels.length; i++) {
+      for (let j = 0; j < levels[i].options.length; j++) {
+        buttonConfigs.push({
+          positions: { x: 200, y: 500 },
+          textures: buttonTextures,
+          onClick: this.setupAnotherLevel,
+          scale: buttonConfig.scale,
+          fontSize: buttonConfig.fontSize,
+        });
+      }
+    }
 
     this.buttonFactory.createButtons(buttonConfigs, 800);
   }
