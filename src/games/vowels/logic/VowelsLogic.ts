@@ -5,11 +5,11 @@ import GameStats from "../../common/managers/GameStats";
 import LevelManager from "../../common/managers/LevelManager";
 import VowelsLevel from "./VowelsLevel";
 import CloudManager from "@/games/common/managers/CloudManager";
-import api from "@/utils/api";
 import Phaser from "phaser";
 import ButtonContentGenerator from "@/games/common/content/ButtonContentGenerator";
 import ButtonFactory from "@/games/common/factories/ButtonFactory";
 import LettersStrategy from "@/games/common/content/LetterStrategy";
+import VowelsApiService from "../service/vowelsApiService";
 
 export default class VowelsLogic {
   private scene: Phaser.Scene;
@@ -22,6 +22,7 @@ export default class VowelsLogic {
   private image?: Phaser.GameObjects.Image;
   private imageMaxSize: number;
   private gameData: any;
+  private apiService!: VowelsApiService;
 
   constructor(scene: Phaser.Scene) {
     this.scene = scene;
@@ -31,6 +32,14 @@ export default class VowelsLogic {
     this.effectManager = new EffectManager(this.scene);
     this.cloudManager = new CloudManager(this.scene);
     this.imageMaxSize = 800;
+  }
+
+  setApiService() {
+    this.apiService = new VowelsApiService(
+      this.scene,
+      this.levelManager,
+      this.gameStats,
+    );
   }
 
   setLevelManager() {
@@ -58,7 +67,7 @@ export default class VowelsLogic {
       button.getButtonStringText(),
     );
     if (isCorrect) {
-      this.sendData();
+      this.apiService.sendLevelData();
 
       this.gameStats.addHitTime(timeNow);
       this.gameStats.resetInitialLevelTime(timeNow);
@@ -75,35 +84,6 @@ export default class VowelsLogic {
       return { correct: false, finished: false };
     }
   }
-
-  private sendData = async () => {
-    try {
-      const levelData = {
-        activityId: 3,
-        questionId: this.levelManager.getCurrentIndex(),
-        isCorrect: true,
-        answer: this.accessCurrentLevel().getAnswer(),
-        timeSpent: this.gameStats.getCurrentLevelTimeSpent(this.scene.time.now),
-        attempts: this.gameStats.getCurrentLevelMisses(),
-        responseDate: this.scene.time.now,
-      };
-
-      console.log("Sending data:", levelData);
-
-      const response = await api.post(
-        "/adaptiveSystem/interaction/register",
-        levelData,
-        {},
-      );
-
-      if (response.status === 201) {
-        console.log("Data sent successfully");
-        console.log(response);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
 
   buttonSuccessEffect(
     button: Button,
