@@ -148,6 +148,8 @@ export class MemoryGameLogic {
             const firstCardValue = firstCard.getData("value");
 
             if (firstCardValue === cardValue) {
+              // Som de acerto ao encontrar par
+              this.scene.sound.play("correct", { volume: 0.7 });
               this.EffectManager.particles("star");
               this.showSuccessMessage();
               firstCard.setData("matched", true);
@@ -157,6 +159,8 @@ export class MemoryGameLogic {
                 this.cards.forEach((c) => c.setInteractive());
               });
             } else {
+              // Som de erro ao não corresponder
+              this.scene.sound.play("incorrect", { volume: 0.7 });
               this.gameStats.addMiss();
               this.showErrorMessage();
               this.cards.forEach((c) => c.disableInteractive());

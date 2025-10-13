@@ -26,7 +26,11 @@ const formSchema = z.object({
 
 type FormData = z.infer<typeof formSchema>;
 
-export function ChangePasswordModal() {
+export function ChangePasswordModal({
+  onTriggerClick,
+}: {
+  onTriggerClick?: () => void;
+}) {
   const [open, setOpen] = useState(false);
 
   const form = useForm<FormData>({
@@ -60,7 +64,10 @@ export function ChangePasswordModal() {
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
-        <Button className="bg-az1 hover:bg-az2 mt-4 w-full rounded-lg px-6 py-2 text-center font-semibold text-white shadow-md transition">
+        <Button
+          className="bg-az1 hover:bg-az2 mt-4 w-full rounded-lg px-6 py-2 text-center font-semibold text-white shadow-md transition"
+          onClick={() => onTriggerClick?.()}
+        >
           Alterar Senha
         </Button>
       </DialogTrigger>

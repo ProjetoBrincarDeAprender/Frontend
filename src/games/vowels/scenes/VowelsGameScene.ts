@@ -21,6 +21,7 @@ export default class VowelsGameScene extends Phaser.Scene {
     this.loadBackgroundImage();
     this.loadButtonImages();
     this.loadEffectsImages();
+    this.loadAudios();
 
     this.load.once("complete", () => {
       this.logic.setGameData();
@@ -43,6 +44,13 @@ export default class VowelsGameScene extends Phaser.Scene {
     entities.forEach((entity: any) => {
       this.load.image(entity.key, entity.default);
       this.load.image(entity.completeKey, entity.complete);
+    });
+  }
+
+  private loadAudios() {
+    const audios = this.gameData.audios;
+    audios.forEach((audio: any) => {
+      this.load.audio(audio.key, audio.path);
     });
   }
 

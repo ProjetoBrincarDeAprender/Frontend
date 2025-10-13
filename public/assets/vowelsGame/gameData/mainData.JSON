@@ -87,6 +87,17 @@
     ]
   },
 
+  "audios": [
+    {
+      "key": "correct",
+      "path": "/assets/common/sounds/correct.mp3"
+    },
+    {
+      "key": "incorrect",
+      "path": "/assets/common/sounds/incorrect.mp3"
+    }
+  ],
+
   "buttonConfig": {
     "fontSize": 50,
     "scale": 1.5

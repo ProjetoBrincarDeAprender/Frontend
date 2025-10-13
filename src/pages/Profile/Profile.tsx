@@ -3,15 +3,9 @@ import type { UserProfile } from "@/types/user";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 
-import { EditResponsableModal } from "@/components/features/users/responsible/edit/ResponsibleEditModal";
-import { EditStudentModal } from "@/components/features/users/students/edit/StudentEditModal";
-import { EditTeacherModal } from "@/components/features/users/teacher/edit/TeacherEditModal";
 import { Header } from "@/components/Header/Header";
-import { TableProvider } from "@/contexts/Table/provider";
 import { BackButton } from "@/components/utils/BackButton";
-// import { ChangePasswordModal } from "@/components/features/users/password/ChangePasswordModal";
-
-import { ChangePasswordModal } from "@/components/features/users/password/ChangePasswordModal";
+import { LateralMenu } from "@/components/sideBar/sideBar";
 import NuvemSVG from "../../assets/nuvem.svg";
 import StarSVG from "../../assets/star.svg";
 
@@ -52,6 +46,8 @@ export function Profile() {
 
   return (
     <div className="bg-purplish-blue-dark relative min-h-screen overflow-hidden">
+      {/* Sidebar do perfil: apenas Alterar Senha */}
+      <LateralMenu username={user.nome_completo} mode="profile" />
       <div className="absolute inset-0 z-0">
         <img
           src={StarSVG}
@@ -76,7 +72,9 @@ export function Profile() {
       </div>
 
       <Header />
-      <BackButton />
+      <div className="ml-0 md:ml-0">
+        <BackButton />
+      </div>
 
       <main className="relative z-10 mt-28 px-6">
         <div className="from-am0 to-az3 relative h-28 w-full rounded-b-md bg-gradient-to-r shadow-lg">
@@ -93,8 +91,8 @@ export function Profile() {
           </div>
         </div>
 
-        <div className="mt-32 grid grid-cols-1 gap-6 md:grid-cols-3">
-          <div className="bg-purplish-blue/40 col-span-2 rounded-xl p-6 text-white shadow-lg backdrop-blur-sm">
+        <div className="mt-32 grid grid-cols-1 gap-6">
+          <div className="bg-purplish-blue/40 rounded-xl p-6 text-white shadow-lg backdrop-blur-sm">
             <h3 className="mb-4 border-b border-gray-500 pb-2 text-xl font-semibold">
               Informações Gerais
             </h3>
@@ -119,34 +117,7 @@ export function Profile() {
             </p>
           </div>
 
-          <div className="bg-purplish-blue/50 rounded-xl p-6 text-white shadow-lg backdrop-blur-sm">
-            <h3 className="mb-4 border-b border-gray-500 pb-2 text-xl font-semibold">
-              Ações
-            </h3>
-
-            <div className="font-1 mt-10 flex w-full flex-col gap-3">
-              <TableProvider>
-                {user.perfil?.toLowerCase() === "aluno" && (
-                  <EditStudentModal id={Number(user.codigo_usuario)} />
-                )}
-                {user.perfil?.toLowerCase() === "responsavel" && (
-                  <EditResponsableModal id={Number(user.codigo_usuario)} />
-                )}
-                {user.perfil?.toLowerCase() === "professor" && (
-                  <EditTeacherModal id={Number(user.codigo_usuario)} />
-                )}
-              </TableProvider>
-            </div>
-
-            <ChangePasswordModal />
-
-            <button
-              onClick={() => navigate(-1)}
-              className="mt-4 w-full rounded-lg bg-yellow-400 px-6 py-2 font-semibold text-black shadow-md transition hover:bg-yellow-300"
-            >
-              Voltar
-            </button>
-          </div>
+          {/* Ações movidas para a Sidebar (somente Alterar Senha conforme solicitado) */}
         </div>
       </main>
     </div>

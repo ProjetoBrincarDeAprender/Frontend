@@ -332,7 +332,7 @@ export default class MathGame extends Phaser.Scene {
   }
 
   private proceedToNextLevel(finished: boolean) {
-    this.time.delayedCall(2500, () => {
+    this.time.delayedCall(3000, () => {
       if (!finished) {
         this.audioManager.playComplete();
         this.resetInput();

@@ -7,6 +7,7 @@ import { AuthGuard } from "./guards/AuthGuard";
 import { Calm } from "./pages/Calm/Calm";
 import Dashboard from "./pages/Dashboard/Admin/Dashboard";
 import { ResponsibleDashboard } from "./pages/Dashboard/Responsible/ResponsibleDashboard/ReponsibleDashboard";
+import TeacherDashboard from "./pages/Dashboard/Teachers/TeacherDashboard/TeacherDashboard";
 import { Responsibles } from "./pages/Dashboard/Responsible/Responsibles";
 import { Schools } from "./pages/Dashboard/Schools/Schools";
 import { SchoolUsers } from "./pages/Dashboard/SchoolUsers/SchoolUsers";
@@ -21,6 +22,12 @@ import Logout from "./pages/Logout/Logout";
 import { Profile } from "./pages/Profile/Profile";
 import { RecoverPassword } from "./pages/RecoverPassword/RecoverPassword";
 import { SendPasswordToken } from "./pages/SendPasswordToken/SendPasswordToken";
+import KnowledgeAreas from "./pages/Dashboard/Teacher/Curriculum/KnowledgeAreas";
+import {Competencies} from "./pages/Dashboard/Teacher/Curriculum/Competencies";
+import {Activities} from "./pages/Dashboard/Teacher/Curriculum/Activities";
+import {DifficultyLevels} from "./pages/Dashboard/Teacher/Curriculum/DifficultyLevels";
+import { Questions } from "./pages/Dashboard/Teacher/Curriculum/Questions";
+
 
 function App() {
   return (
@@ -33,6 +40,7 @@ function App() {
 
       {/* URL apenas de testes */}
       <Route path="/responsibledashboard" element={<ResponsibleDashboard />} />
+      <Route path="/teacherdashboard" element={<TeacherDashboard />} />
 
       <Route
         path="/dashboard"
@@ -47,6 +55,19 @@ function App() {
         <Route path="teachers" element={<Teachers />} />
         <Route path="link-students" element={<LinkStudents />} />
         <Route path="responsables" element={<Responsibles />} />
+      </Route>
+
+      {/* Rotas específicas do Professor */}
+      <Route
+        path="/dashboard/teacher"
+        element={<AuthGuard requireAuth role={["Professor"]} />}
+      >
+        <Route index element={<TeacherDashboard />} />
+        <Route path="curriculum/knowledge-areas" element={<KnowledgeAreas />} />
+        <Route path="curriculum/competences" element={<Competencies />} />
+        <Route path="curriculum/activities" element={<Activities />} />
+        <Route path="curriculum/difficulty-levels" element={<DifficultyLevels />} />
+        <Route path="curriculum/questions" element={<Questions />} />
       </Route>
 
       <Route path="/games">

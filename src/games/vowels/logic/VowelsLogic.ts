@@ -191,8 +191,9 @@ export default class VowelsLogic {
         const result = this.handleClick(button, this.scene.time.now);
 
         if (result.correct) {
+          this.scene.sound.play("correct", { volume: 0.7 });
           this.buttonSuccessEffect(button, "star");
-          this.scene.time.delayedCall(1000, () => {
+          this.scene.time.delayedCall(3000, () => {
             if (result.finished) {
               this.scene.scene.start("vowelsCredits");
             } else {
@@ -200,6 +201,7 @@ export default class VowelsLogic {
             }
           });
         } else {
+          this.scene.sound.play("incorrect", { volume: 0.7 });
           this.buttonFailEffect(button);
         }
       });
