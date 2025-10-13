@@ -1,14 +1,14 @@
 import Level from "@/games/common/models/Level";
 
 export default class VowelsLevel extends Level {
-  private completeAnimalKey: string;
+  private completeEntityKey: string;
 
-  constructor(animalKey: string, completeAnimalKey: string, answer: string) {
+  constructor(animalKey: string, completeEntityKey: string, answer: string) {
     super(animalKey, answer);
-    this.completeAnimalKey = completeAnimalKey;
+    this.completeEntityKey = completeEntityKey;
   }
 
-  getCompleteAnimalKey() {
-    return this.completeAnimalKey;
+  getCompleteEntityKey() {
+    return this.completeEntityKey;
   }
 }

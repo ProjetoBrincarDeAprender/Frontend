@@ -7,6 +7,7 @@ import Level from "../../common/models/Level";
 import Phaser from "phaser";
 import ButtonContentGenerator from "@/games/common/content/ButtonContentGenerator";
 import api from "@/utils/api";
+import NumbersStrategy from "@/games/common/content/NumbersStrategy";
 
 export default class Logic {
   private scene: Phaser.Scene;
@@ -136,12 +137,12 @@ export default class Logic {
   }
 
   setButtonTexts(): void {
+    const buttonContentGenerator = new ButtonContentGenerator(
+      new NumbersStrategy(),
+    );
     const answer: string = this.levelManager.getCurrentLevel().getAnswer();
     const buttonsNumber: number = this.buttonManager.getButtons().length;
-    const buttonTexts = ButtonContentGenerator.generateButtonsNumbers(
-      buttonsNumber,
-      answer,
-    );
+    const buttonTexts = buttonContentGenerator.generate(buttonsNumber, answer);
     this.buttonManager.setButtonTexts(buttonTexts);
   }
 
