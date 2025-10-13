@@ -107,13 +107,53 @@
     {
       "entityKey": "abelha",
       "completeEntityKey": "abelhaCompleta",
-      "options": ["A", "E", "I"],
+      "options": ["A", "E", "I", "O"],
       "answer": "A"
     },
     {
       "entityKey": "elefante",
       "completeEntityKey": "elefanteCompleta",
       "answer": "E"
+    },
+    {
+      "entityKey": "hiena",
+      "completeEntityKey": "hienaCompleta",
+      "answer": "I"
+    },
+    {
+      "entityKey": "onca",
+      "completeEntityKey": "oncaCompleta",
+      "answer": "O"
+    },
+    {
+      "entityKey": "urso",
+      "completeEntityKey": "ursoCompleta",
+      "answer": "U"
+    },
+    {
+      "entityKey": "gato",
+      "completeEntityKey": "gatoCompleta",
+      "answer": "A"
+    },
+    {
+      "entityKey": "esquilo",
+      "completeEntityKey": "esquiloCompleta",
+      "answer": "E"
+    },
+    {
+      "entityKey": "iguana",
+      "completeEntityKey": "iguanaCompleta",
+      "answer": "I"
+    },
+    {
+      "entityKey": "ovelha",
+      "completeEntityKey": "ovelhaCompleta",
+      "answer": "O"
+    },
+    {
+      "entityKey": "urubu",
+      "completeEntityKey": "urubuCompleta",
+      "answer": "U"
     }
   ]
 }
