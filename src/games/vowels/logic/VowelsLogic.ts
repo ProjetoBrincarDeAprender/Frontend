@@ -7,7 +7,7 @@ import VowelsLevel from "./VowelsLevel";
 import CloudManager from "@/games/common/managers/CloudManager";
 import Phaser from "phaser";
 import ButtonFactory from "@/games/common/factories/ButtonFactory";
-import VowelsApiService from "../service/VowelsApiService";
+import VowelsApiService from "../service/vowelsApiService";
 import VowelsButtonService from "../service/VowelsButtonService";
 import VowelsEffectService from "../service/VowelsEffectService";
 import VowelsUIService from "../service/VowelsUIService";
