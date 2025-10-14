@@ -25,9 +25,18 @@ export default class GameScene extends Phaser.Scene {
    */
   preload() {
     this.load.image("star", "/assets/common/star.svg");
-    this.load.image("defaultButton", "/assets/common/defaultButton.svg");
-    this.load.image("hoverButton", "/assets/common/hoverButton.svg");
-    this.load.image("clickedButton", "/assets/common/clickedButton.svg");
+    this.load.image(
+      "defaultButton",
+      "/assets/common/buttons/squareBlueDefault.svg",
+    );
+    this.load.image(
+      "hoverButton",
+      "/assets/common/buttons/squareBlueHover.svg",
+    );
+    this.load.image(
+      "clickedButton",
+      "/assets/common/buttons/squareBlueClicked.svg",
+    );
     this.load.image("numbersBackground", "/assets/numbersGame/background.png");
     // Áudios de feedback
     this.load.audio("correct", "/assets/common/sounds/correct.mp3");

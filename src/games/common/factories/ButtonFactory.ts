@@ -22,6 +22,26 @@ export default class ButtonFactory {
   }
 
   /**
+   * Cria múltiplos botões distribuídos horizontalmente na tela, ajustando automaticamente a posição X de cada botão.
+   * @param configs Array de configurações para cada botão a ser criado.
+   * @param screenWidth Largura total da área onde os botões serão distribuídos.
+   * @returns Um array de instâncias de Button criadas e posicionadas.
+   * O espaçamento horizontal é calculado para distribuir os botões uniformemente
+   */
+  createButtons(configs: ButtonConfig[], screenWidth: number) {
+    const createdButtons: Button[] = [];
+    const spaceBetweenButtons = screenWidth / (configs.length + 1);
+
+    for (let i = 0; i < configs.length; i++) {
+      const newPositionX = spaceBetweenButtons * (i + 1);
+      configs[i].positions.x = newPositionX;
+      const button = this.createButton(configs[i]);
+      createdButtons.push(button);
+    }
+    return createdButtons;
+  }
+
+  /**
    * Cria um botão com as configurações fornecidas e associa um callback ao evento de clique.
    * Valida os parâmetros obrigatórios antes de criar o botão.
    * @param config Objeto de configuração do botão, incluindo posição, texturas, texto, tamanho da fonte, escala e callback de clique.
@@ -32,7 +52,7 @@ export default class ButtonFactory {
     positions,
     textures,
     onClick,
-    text = "Sair",
+    text = "No Text",
     fontSize,
     scale,
   }: ButtonConfig): Button {

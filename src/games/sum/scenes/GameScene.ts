@@ -51,9 +51,18 @@ export default class MathGame extends Phaser.Scene {
     this.load.image("quatro", "/assets/sumGame/quatro.png");
     this.load.image("cinco", "/assets/sumGame/cinco.png");
     this.load.image("star", "/assets/common/star.svg");
-    this.load.image("defaultButton", "/assets/common/defaultButton.svg");
-    this.load.image("hoverButton", "/assets/common/hoverButton.svg");
-    this.load.image("clickedButton", "/assets/common/clickedButton.svg");
+    this.load.image(
+      "defaultButton",
+      "/assets/common/buttons/squareBlueDefault.svg",
+    );
+    this.load.image(
+      "hoverButton",
+      "/assets/common/buttons/squareBlueHover.svg",
+    );
+    this.load.image(
+      "clickedButton",
+      "/assets/common/buttons/squareBlueClicked.svg",
+    );
   }
 
   create() {
