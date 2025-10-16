@@ -5,14 +5,14 @@ import CloudManager from "@/games/common/managers/CloudManager";
 export default class VowelsUIService {
   private scene: Phaser.Scene;
   private effectManager: EffectManager;
-  private cloudManager: CloudManager;
+  private cloudManager: CloudManager | undefined;
   private image?: Phaser.GameObjects.Image;
   private imageMaxSize: number;
 
   constructor(
     scene: Phaser.Scene,
     effectManager: EffectManager,
-    cloudManager: CloudManager,
+    cloudManager?: CloudManager,
     imageMaxSize: number = 800,
   ) {
     this.scene = scene;
@@ -41,7 +41,7 @@ export default class VowelsUIService {
     const scaleY = this.scene.cameras.main.height / background.height;
     const scale = Math.max(scaleX, scaleY);
     background.setScale(scale);
-    this.cloudManager.generateClouds();
+    this.cloudManager?.generateClouds();
     this.effectManager.overlay(0.3);
   }
 

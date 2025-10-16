@@ -5,6 +5,7 @@ import { Header } from "@/components/Header/Header";
 import { BackButton } from "@/components/utils/BackButton";
 import Phaser from "phaser";
 import VowelsSequenceStartScene from "@/games/vowels_sequence/scenes/VowelsSequenceStartScene";
+import VowelsSequenceGameScene from "@/games/vowels_sequence/scenes/VowelsSequenceGameScene";
 
 export interface IRefVowelsSequenceGame {
   game: Phaser.Game | null;
@@ -19,7 +20,7 @@ const VowelsSequenceGame: React.FC = () => {
       type: Phaser.AUTO,
       width: 800,
       height: 600,
-      scene: [VowelsSequenceStartScene],
+      scene: [VowelsSequenceStartScene, VowelsSequenceGameScene],
       parent: "game-container",
       backgroundColor: "#ffffff",
     };

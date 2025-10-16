@@ -113,7 +113,7 @@ export default class VowelsSequenceStartScene extends Phaser.Scene {
       text: buttonContent.text,
       fontSize: buttonContent.fontSize,
       onClick: () => {
-        this.scene.start("vowelsGameScene");
+        this.scene.start("vowelsSequenceGameScene");
       },
     });
   }
