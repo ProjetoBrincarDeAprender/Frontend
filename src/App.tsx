@@ -3,6 +3,7 @@ import { MemoryGame } from "./components/features/games/MemoryGame";
 import NumbersGame from "./components/features/games/NumbersGame";
 import SumGame from "./components/features/games/SumGame";
 import VowelsGame from "./components/features/games/VowelsGame";
+import VowelsSequenceGame from "./components/features/games/VowelsSequenceGame";
 import { AuthGuard } from "./guards/AuthGuard";
 import { Calm } from "./pages/Calm/Calm";
 import Dashboard from "./pages/Dashboard/Admin/Dashboard";
@@ -23,11 +24,10 @@ import { Profile } from "./pages/Profile/Profile";
 import { RecoverPassword } from "./pages/RecoverPassword/RecoverPassword";
 import { SendPasswordToken } from "./pages/SendPasswordToken/SendPasswordToken";
 import KnowledgeAreas from "./pages/Dashboard/Teacher/Curriculum/KnowledgeAreas";
-import {Competencies} from "./pages/Dashboard/Teacher/Curriculum/Competencies";
-import {Activities} from "./pages/Dashboard/Teacher/Curriculum/Activities";
-import {DifficultyLevels} from "./pages/Dashboard/Teacher/Curriculum/DifficultyLevels";
+import { Competencies } from "./pages/Dashboard/Teacher/Curriculum/Competencies";
+import { Activities } from "./pages/Dashboard/Teacher/Curriculum/Activities";
+import { DifficultyLevels } from "./pages/Dashboard/Teacher/Curriculum/DifficultyLevels";
 import { Questions } from "./pages/Dashboard/Teacher/Curriculum/Questions";
-
 
 function App() {
   return (
@@ -66,13 +66,17 @@ function App() {
         <Route path="curriculum/knowledge-areas" element={<KnowledgeAreas />} />
         <Route path="curriculum/competences" element={<Competencies />} />
         <Route path="curriculum/activities" element={<Activities />} />
-        <Route path="curriculum/difficulty-levels" element={<DifficultyLevels />} />
+        <Route
+          path="curriculum/difficulty-levels"
+          element={<DifficultyLevels />}
+        />
         <Route path="curriculum/questions" element={<Questions />} />
       </Route>
 
       <Route path="/games">
         <Route index element={<Games />} />
         <Route path="vowels" element={<VowelsGame />} />
+        <Route path="vowelssequence" element={<VowelsSequenceGame />} />
         <Route path="memory" element={<MemoryGame />} />
         <Route path="sum" element={<SumGame />} />
         <Route path="numbers" element={<NumbersGame />} />
