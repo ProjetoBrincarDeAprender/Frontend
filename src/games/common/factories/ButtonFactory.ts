@@ -28,13 +28,18 @@ export default class ButtonFactory {
    * @returns Um array de instâncias de Button criadas e posicionadas.
    * O espaçamento horizontal é calculado para distribuir os botões uniformemente
    */
-  createButtons(configs: ButtonConfig[], screenWidth: number) {
+  createButtons(
+    configs: ButtonConfig[],
+    screenWidth: number,
+    y: number,
+  ): Button[] {
     const createdButtons: Button[] = [];
     const spaceBetweenButtons = screenWidth / (configs.length + 1);
 
     for (let i = 0; i < configs.length; i++) {
       const newPositionX = spaceBetweenButtons * (i + 1);
       configs[i].positions.x = newPositionX;
+      configs[i].positions.y = y;
       const button = this.createButton(configs[i]);
       createdButtons.push(button);
     }
