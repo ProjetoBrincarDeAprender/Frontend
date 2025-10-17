@@ -32,6 +32,7 @@ export default class VowelsSequenceGameScene extends Phaser.Scene {
       this.logic.createBackground("backgroundMain");
       // this.logic.createImage(this.logic.getCurrentLevel().getName());
       this.logic.createButtons();
+      this.logic.createQuestion();
       this.logic.setupAnotherLevel();
 
       console.log("Jogo das vogais carregado!");

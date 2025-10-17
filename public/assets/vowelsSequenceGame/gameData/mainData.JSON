@@ -53,6 +53,12 @@
       "question": ["A", "_", "I", "O", "U"],
       "options": ["E", "A"],
       "answer": "E"
+    },
+    {
+      "levelName": "3",
+      "question": ["A", "E", "_", "O", "U"],
+      "options": ["I", "A"],
+      "answer": "I"
     }
   ]
 }

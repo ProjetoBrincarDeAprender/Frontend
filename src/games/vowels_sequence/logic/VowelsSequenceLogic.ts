@@ -159,7 +159,6 @@ export default class VowelsSequenceLogic {
       buttonConfigs.push({
         positions: { x: 200, y: 500 },
         textures: buttonTextures,
-        onClick: this.setupAnotherLevel.bind(this),
         scale: buttonConfig.scale,
         fontSize: buttonConfig.fontSize,
       });
@@ -168,7 +167,7 @@ export default class VowelsSequenceLogic {
     this.buttonService.createButtons(buttonConfigs, 800);
   }
 
-  createQuestion(): void {
+  createQuestion(question?: string[]): void {
     const buttonTextures = {
       default: "defaultButton",
       hover: "hoverButton",
@@ -179,14 +178,21 @@ export default class VowelsSequenceLogic {
     const buttonConfig = this.gameData.buttonConfig;
     const levels = this.gameData.levels;
     const index = this.levelManager.getCurrentIndex();
+    let text: string;
 
     for (let i = 0; i < levels[index].question.length; i++) {
+      if (question) {
+        text = question[i];
+      } else {
+        text = levels[index].question[i];
+      }
+
       buttonConfigs.push({
         positions: { x: 200, y: 500 },
         textures: buttonTextures,
         scale: buttonConfig.scale,
         fontSize: buttonConfig.fontSize,
-        text: levels[index].question[i],
+        text: text,
       });
     }
 
@@ -201,13 +207,19 @@ export default class VowelsSequenceLogic {
     this.setButtonTexts(levels[actualLevelIndex].options);
 
     this.getButtons().forEach((button) => {
-      button.off("pointerdown");
-      button.on("pointerdown", () => {
+      try {
+        button.off("pointerdown");
+        button.off("pointerup");
+      } catch (e) {
+        // Se o objeto não suportar off por algum motivo, ignore silenciosamente.
+      }
+      button.on("pointerup", () => {
         const result = this.handleClick(button, this.scene.time.now);
 
         if (result.correct) {
           this.scene.sound.play("correct", { volume: 0.7 });
           this.buttonSuccessEffect(button, "star");
+          this.createQuestion(["A", "E", "I", "O", "U"]);
           this.scene.time.delayedCall(3000, () => {
             if (result.finished) {
               this.scene.scene.start("vowelsCredits");

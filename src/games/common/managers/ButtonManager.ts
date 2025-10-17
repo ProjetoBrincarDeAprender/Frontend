@@ -77,6 +77,13 @@ export default class ButtonManager {
     return button;
   }
 
+  resetButtons(): void {
+    this.buttons.forEach((button) => {
+      button.destroy();
+    });
+    this.buttons = [];
+  }
+
   /**
    * Retorna o array atual de botões gerenciados por este manager.
    * @returns Array de instâncias de Button.
