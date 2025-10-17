@@ -1,10 +1,10 @@
 import ButtonManager from "@/games/common/managers/ButtonManager";
 import ButtonFactory from "@/games/common/factories/ButtonFactory";
-import type VowelsLevel from "../logic/VowelsLevel";
 import ButtonContentGenerator from "@/games/common/content/ButtonContentGenerator";
 import LettersStrategy from "@/games/common/content/LetterStrategy";
+import type Level from "@/games/common/models/Level";
 
-export default class VowelsButtonService {
+export default class VowelsButtonService<T extends Level> {
   private buttonManager: ButtonManager;
   private buttonFactory: ButtonFactory;
 
@@ -21,7 +21,7 @@ export default class VowelsButtonService {
     return this.buttonManager.getButtons();
   }
 
-  setButtonTexts(level: VowelsLevel, options?: string[]): void {
+  setButtonTexts(level: T, options?: string[]): void {
     if (options) {
       this.buttonManager.setButtonTexts(options);
     } else {

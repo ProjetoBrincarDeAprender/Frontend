@@ -20,7 +20,6 @@ export default class VowelsSequenceGameScene extends Phaser.Scene {
   create() {
     this.gameData = this.cache.json.get("mainData");
 
-    this.loadEntitiesImages();
     this.loadBackgroundImage();
     this.loadButtonImages();
     this.loadEffectsImages();
@@ -31,7 +30,7 @@ export default class VowelsSequenceGameScene extends Phaser.Scene {
       this.logic.setLevelManager();
       this.logic.setApiService();
       this.logic.createBackground("backgroundMain");
-      this.logic.createImage(this.logic.getCurrentLevel().getName());
+      // this.logic.createImage(this.logic.getCurrentLevel().getName());
       this.logic.createButtons();
       this.logic.setupAnotherLevel();
 
@@ -39,15 +38,6 @@ export default class VowelsSequenceGameScene extends Phaser.Scene {
     });
 
     this.load.start();
-  }
-
-  private loadEntitiesImages() {
-    const entities = this.gameData.textures.entities;
-
-    entities.forEach((entity: any) => {
-      this.load.image(entity.key, entity.default);
-      this.load.image(entity.completeKey, entity.complete);
-    });
   }
 
   private loadAudios() {

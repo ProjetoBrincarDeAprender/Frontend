@@ -1,17 +1,17 @@
 import type LevelManager from "@/games/common/managers/LevelManager";
 import api from "@/utils/api";
 import Phaser from "phaser";
-import type VowelsLevel from "../logic/VowelsLevel";
+import Level from "@/games/common/models/Level";
 import type GameStats from "@/games/common/managers/GameStats";
 
-export default class VowelsApiService {
+export default class VowelsApiService<T extends Level> {
   private scene: Phaser.Scene;
-  private levelManager: LevelManager<VowelsLevel>;
+  private levelManager: LevelManager<T>;
   private gameStats: GameStats;
 
   constructor(
     scene: Phaser.Scene,
-    levelManager: LevelManager<VowelsLevel>,
+    levelManager: LevelManager<T>,
     gameStats: GameStats,
   ) {
     this.scene = scene;

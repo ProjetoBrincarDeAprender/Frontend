@@ -3,7 +3,7 @@ import Button from "@/games/common/models/Button";
 import EffectManager from "../../common/managers/EffectManager";
 import GameStats from "../../common/managers/GameStats";
 import LevelManager from "../../common/managers/LevelManager";
-import VowelsLevel from "@/games/vowels/logic/VowelsLevel";
+import VowelsSequenceLevel from "./VowelsSequenceLevel";
 import Phaser from "phaser";
 import ButtonFactory from "@/games/common/factories/ButtonFactory";
 import VowelsApiService from "@/games/vowels/service/vowelsApiService";
@@ -17,10 +17,10 @@ export default class VowelsSequenceLogic {
   private gameStats: GameStats;
   private buttonManager: ButtonManager;
   private effectManager: EffectManager;
-  private levelManager!: LevelManager<VowelsLevel>;
+  private levelManager!: LevelManager<VowelsSequenceLevel>;
   private buttonFactory: ButtonFactory;
-  private apiService!: VowelsApiService;
-  private buttonService: VowelsButtonService;
+  private apiService!: VowelsApiService<VowelsSequenceLevel>;
+  private buttonService: VowelsButtonService<VowelsSequenceLevel>;
   private effectService: VowelsEffectService;
   private uiService: VowelsUIService;
 
@@ -42,7 +42,7 @@ export default class VowelsSequenceLogic {
     return this.buttonService.getButtons();
   }
 
-  getCurrentLevel(): VowelsLevel {
+  getCurrentLevel(): VowelsSequenceLevel {
     return this.levelManager.getCurrentLevel();
   }
 
@@ -75,12 +75,12 @@ export default class VowelsSequenceLogic {
 
   setLevelManager() {
     const levels = this.gameData.levels;
-    const newLevels: VowelsLevel[] = [];
+    const newLevels: VowelsSequenceLevel[] = [];
 
     levels.forEach((level: any) => {
-      const newLevel = new VowelsLevel(
-        level.entityKey,
-        level.completeEntityKey,
+      const newLevel = new VowelsSequenceLevel(
+        level.levelName,
+        level.question,
         level.answer,
       );
       newLevels.push(newLevel);
@@ -109,7 +109,7 @@ export default class VowelsSequenceLogic {
     button: Button,
     timeNow: number,
   ): { correct: boolean; finished: boolean } {
-    const currentLevel: VowelsLevel = this.getCurrentLevel();
+    const currentLevel: VowelsSequenceLevel = this.getCurrentLevel();
     const isCorrect: boolean = currentLevel.isCorrectLetter(
       button.getButtonStringText(),
     );
@@ -121,8 +121,6 @@ export default class VowelsSequenceLogic {
       this.gameStats.resetInitialLevelTime(timeNow);
       this.gameStats.addMissCount();
       this.gameStats.resetActualLevelMisses();
-
-      this.setImageTexture(this.getCurrentLevel().getCompleteEntityKey());
 
       const finished = !this.levelManager.nextLevel();
       return { correct: true, finished };
@@ -161,7 +159,7 @@ export default class VowelsSequenceLogic {
       buttonConfigs.push({
         positions: { x: 200, y: 500 },
         textures: buttonTextures,
-        onClick: this.setupAnotherLevel,
+        onClick: this.setupAnotherLevel.bind(this),
         scale: buttonConfig.scale,
         fontSize: buttonConfig.fontSize,
       });
@@ -171,11 +169,9 @@ export default class VowelsSequenceLogic {
   }
 
   setupAnotherLevel() {
-    const actualLevel = this.levelManager.getCurrentLevel();
     const actualLevelIndex = this.levelManager.getCurrentIndex();
     const levels = this.gameData.levels;
 
-    this.setImageTexture(actualLevel.getName());
     this.setButtonTexts(levels[actualLevelIndex].options);
 
     this.getButtons().forEach((button) => {
