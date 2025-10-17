@@ -168,10 +168,36 @@ export default class VowelsSequenceLogic {
     this.buttonService.createButtons(buttonConfigs, 800);
   }
 
+  createQuestion(): void {
+    const buttonTextures = {
+      default: "defaultButton",
+      hover: "hoverButton",
+      clicked: "clickedButton",
+    };
+
+    const buttonConfigs = [];
+    const buttonConfig = this.gameData.buttonConfig;
+    const levels = this.gameData.levels;
+    const index = this.levelManager.getCurrentIndex();
+
+    for (let i = 0; i < levels[index].question.length; i++) {
+      buttonConfigs.push({
+        positions: { x: 200, y: 500 },
+        textures: buttonTextures,
+        scale: buttonConfig.scale,
+        fontSize: buttonConfig.fontSize,
+        text: levels[index].question[i],
+      });
+    }
+
+    this.buttonService.createButtons(buttonConfigs, 800, 300, true);
+  }
+
   setupAnotherLevel() {
     const actualLevelIndex = this.levelManager.getCurrentIndex();
     const levels = this.gameData.levels;
 
+    this.createQuestion();
     this.setButtonTexts(levels[actualLevelIndex].options);
 
     this.getButtons().forEach((button) => {

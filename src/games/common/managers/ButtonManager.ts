@@ -27,21 +27,26 @@ export default class ButtonManager {
    * @param config Array de objetos de configuração de botões.
    * @returns Array de instâncias de Button criadas.
    */
-  createButtons(config: ButtonConfig[]): Button[] {
+  createButtons(config: ButtonConfig[], nonInteractive: boolean): Button[] {
     const newButtons: Button[] = [];
 
     for (let i = 0; i < config.length; i++) {
-      const newButton: Button = this.createButton({
-        positions: config[i].positions,
-        textures: config[i].textures,
-        text: config[i].text,
-        fontSize: config[i].fontSize,
-        scale: config[i].scale,
-      });
+      const newButton: Button = this.createButton(
+        {
+          positions: config[i].positions,
+          textures: config[i].textures,
+          text: config[i].text,
+          fontSize: config[i].fontSize,
+          scale: config[i].scale,
+        },
+        nonInteractive,
+      );
       newButtons.push(newButton);
     }
 
-    this.buttons = newButtons;
+    if (!nonInteractive) {
+      this.buttons = newButtons;
+    }
     return newButtons;
   }
 
@@ -50,13 +55,10 @@ export default class ButtonManager {
    * @param config Objeto de configuração do botão.
    * @returns Instância de Button criada.
    */
-  createButton({
-    positions,
-    textures,
-    text,
-    fontSize,
-    scale = 1,
-  }: ButtonConfig): Button {
+  createButton(
+    { positions, textures, text, fontSize, scale = 1 }: ButtonConfig,
+    nonInteractive: boolean,
+  ): Button {
     const button = new Button(
       this.scene,
       positions.x,
@@ -69,7 +71,9 @@ export default class ButtonManager {
     );
 
     this.scene.add.existing(button).setScale(scale);
-    this.buttons.push(button);
+    if (!nonInteractive) {
+      this.buttons.push(button);
+    }
     return button;
   }
 

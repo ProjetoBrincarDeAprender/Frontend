@@ -13,8 +13,18 @@ export default class VowelsButtonService<T extends Level> {
     this.buttonFactory = buttonFactory;
   }
 
-  createButtons(configs: any[], screenWidth: number, y: number = 500) {
-    return this.buttonFactory.createButtons(configs, screenWidth, y);
+  createButtons(
+    configs: any[],
+    screenWidth: number,
+    y: number = 500,
+    nonInteractive: boolean = false,
+  ) {
+    return this.buttonFactory.createButtons(
+      configs,
+      screenWidth,
+      y,
+      nonInteractive,
+    );
   }
 
   getButtons() {

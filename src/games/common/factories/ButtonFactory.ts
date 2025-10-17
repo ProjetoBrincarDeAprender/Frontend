@@ -8,7 +8,7 @@ interface ButtonConfig {
     hover?: string;
     clicked?: string;
   };
-  onClick: () => void;
+  onClick?: () => void;
   text?: string;
   fontSize?: number;
   scale?: number;
@@ -32,6 +32,7 @@ export default class ButtonFactory {
     configs: ButtonConfig[],
     screenWidth: number,
     y: number,
+    nonInteractive: boolean,
   ): Button[] {
     const createdButtons: Button[] = [];
     const spaceBetweenButtons = screenWidth / (configs.length + 1);
@@ -40,7 +41,7 @@ export default class ButtonFactory {
       const newPositionX = spaceBetweenButtons * (i + 1);
       configs[i].positions.x = newPositionX;
       configs[i].positions.y = y;
-      const button = this.createButton(configs[i]);
+      const button = this.createButton(configs[i], nonInteractive);
       createdButtons.push(button);
     }
     return createdButtons;
@@ -53,14 +54,17 @@ export default class ButtonFactory {
    * @returns Instância de Button criada.
    * @throws Error se parâmetros obrigatórios estiverem ausentes ou inválidos.
    */
-  createButton({
-    positions,
-    textures,
-    onClick,
-    text = "No Text",
-    fontSize,
-    scale,
-  }: ButtonConfig): Button {
+  createButton(
+    {
+      positions,
+      textures,
+      onClick,
+      text = "No Text",
+      fontSize,
+      scale,
+    }: ButtonConfig,
+    nonInteractive: boolean,
+  ): Button {
     if (
       !positions ||
       typeof positions.x !== "number" ||
@@ -74,15 +78,20 @@ export default class ButtonFactory {
       throw new Error("Parâmetro 'textures.default' é obrigatório.");
     }
 
-    const button = this.buttonManager.createButton({
-      positions: positions,
-      textures: textures,
-      text: text,
-      fontSize: fontSize,
-      scale: scale,
-    });
+    const button = this.buttonManager.createButton(
+      {
+        positions: positions,
+        textures: textures,
+        text: text,
+        fontSize: fontSize,
+        scale: scale,
+      },
+      nonInteractive,
+    );
 
-    button.setInteractive().on("pointerup", onClick);
+    if (onClick) {
+      button.setInteractive().on("pointerup", onClick);
+    }
     return button;
   }
 }
