@@ -96,18 +96,22 @@ export default class CoordinationGameScene extends Phaser.Scene {
     const hitSize = r * 2.4; // cobre o maior lado (retângulo)
     const spacingY = 2 * r + gap; // garante que não se encostem
 
-    shapes.forEach((spec, i) => {
+    // embaralhar apenas as FORMAS (lado esquerdo) mantendo as posições/slots
+    const pieceOrder = this.shuffleIndices(shapes.length);
+
+    shapes.forEach((shadowSpec, i) => {
       const y = startY + i * spacingY;
-      const shadow = this.createShapeGraphic(rightX, y, spec, true, r);
-      shadow.setName(`${spec.type}-target-${i}`);
+      const shadow = this.createShapeGraphic(rightX, y, shadowSpec, true, r);
+      shadow.setName(`${shadowSpec.type}-target-${i}`);
       // Área alvo para hit test
       const targetZone = this.add
         .zone(rightX, y, hitSize, hitSize)
         .setRectangleDropZone(hitSize, hitSize);
-      targetZone.setName(`${spec.type}-zone-${i}`);
+      targetZone.setName(`${shadowSpec.type}-zone-${i}`);
 
-      const piece = this.createShapeGraphic(leftX, y, spec, false, r);
-      piece.setName(`${spec.type}-piece-${i}`);
+      const pieceSpec = shapes[pieceOrder[i]];
+      const piece = this.createShapeGraphic(leftX, y, pieceSpec, false, r);
+      piece.setName(`${pieceSpec.type}-piece-${i}`);
       // Definir hit area explícita para permitir eventos em Graphics
       const hitArea = new Phaser.Geom.Rectangle(
         -hitSize / 2,
@@ -204,6 +208,21 @@ export default class CoordinationGameScene extends Phaser.Scene {
       repeat: 2,
       ease: "Sine.easeInOut",
     });
+  }
+
+  // Embaralha índices 0..n-1. Garante que o resultado não seja a ordem identidade
+  // quando existir mais de um item, evitando emparelhamento trivial.
+  private shuffleIndices(n: number): number[] {
+    const arr = Array.from({ length: n }, (_, i) => i);
+    for (let i = n - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    // Evita identidade quando n>1
+    if (n > 1 && arr.every((v, i) => v === i)) {
+      [arr[0], arr[1]] = [arr[1], arr[0]];
+    }
+    return arr;
   }
 
   private createShapeGraphic(
