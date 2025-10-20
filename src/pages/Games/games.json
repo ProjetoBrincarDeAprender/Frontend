@@ -18,5 +18,10 @@
     "title": "Sequência de Números",
     "gameIdUrl": "numbers",
     "image": "/assets/numbersGame/startScreen.png"
+  },
+  {
+    "title": "Coordenação Motora",
+    "gameIdUrl": "forms",
+    "image": "/assets/forms/bg.png"
   }
 ]

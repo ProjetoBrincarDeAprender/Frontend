@@ -79,7 +79,7 @@ function App() {
         <Route path="memory" element={<MemoryGame />} />
         <Route path="sum" element={<SumGame />} />
         <Route path="numbers" element={<NumbersGame />} />
-        <Route path="motor-coordination" element={<CoordinationGame />} />
+        <Route path="forms" element={<CoordinationGame />} />
       </Route>
 
       <Route element={<AuthGuard requireAuth />}>
