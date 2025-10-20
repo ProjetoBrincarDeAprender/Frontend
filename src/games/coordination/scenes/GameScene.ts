@@ -48,10 +48,11 @@ export default class CoordinationGameScene extends Phaser.Scene {
       { type: "circle", color: toyColors[0] },
       { type: "star", color: toyColors[2] },
     ];
+    // radius e gap podem ser diminuídos para aumentar a dificuldade
     this.levels = [
-      new CoordinationLevel("Nível 1", shapesA),
-      new CoordinationLevel("Nível 2", shapesB),
-      new CoordinationLevel("Nível 3", shapesC),
+      new CoordinationLevel("Nível 1", shapesA, { radius: 50, gap: 40 }),
+      new CoordinationLevel("Nível 2", shapesB, { radius: 44, gap: 32 }),
+      new CoordinationLevel("Nível 3", shapesC, { radius: 38, gap: 24 }),
     ];
   }
 
@@ -73,8 +74,10 @@ export default class CoordinationGameScene extends Phaser.Scene {
     this.input.removeAllListeners("drop");
 
     const level = this.levels[this.currentLevelIndex];
+    const title =
+      `${level.getName()}: Arraste as formas até as sombras`.toUpperCase();
     this.add
-      .text(400, 50, `${level.getName()}: Arraste as formas até as sombras`, {
+      .text(400, 50, title, {
         fontSize: "24px",
         color: "#1e3a8a",
         fontFamily: "Arial Black",
@@ -87,23 +90,31 @@ export default class CoordinationGameScene extends Phaser.Scene {
     // Layout: sombras na metade direita, formas na metade esquerda
     const leftX = 200;
     const rightX = 600;
-    const startY = 180;
-    const spacingY = 90;
+    const r = level.getRadius(50);
+    const gap = level.getGap(40);
+    const startY = 170;
+    const hitSize = r * 2.4; // cobre o maior lado (retângulo)
+    const spacingY = 2 * r + gap; // garante que não se encostem
 
     shapes.forEach((spec, i) => {
       const y = startY + i * spacingY;
-      const shadow = this.createShapeGraphic(rightX, y, spec, true);
+      const shadow = this.createShapeGraphic(rightX, y, spec, true, r);
       shadow.setName(`${spec.type}-target-${i}`);
       // Área alvo para hit test
       const targetZone = this.add
-        .zone(rightX, y, 120, 120)
-        .setRectangleDropZone(120, 120);
+        .zone(rightX, y, hitSize, hitSize)
+        .setRectangleDropZone(hitSize, hitSize);
       targetZone.setName(`${spec.type}-zone-${i}`);
 
-      const piece = this.createShapeGraphic(leftX, y, spec, false);
+      const piece = this.createShapeGraphic(leftX, y, spec, false, r);
       piece.setName(`${spec.type}-piece-${i}`);
       // Definir hit area explícita para permitir eventos em Graphics
-      const hitArea = new Phaser.Geom.Rectangle(-60, -60, 120, 120);
+      const hitArea = new Phaser.Geom.Rectangle(
+        -hitSize / 2,
+        -hitSize / 2,
+        hitSize,
+        hitSize,
+      );
       piece.setInteractive(hitArea, Phaser.Geom.Rectangle.Contains);
       this.input.setDraggable(piece);
       // Cursor amigável
@@ -200,6 +211,7 @@ export default class CoordinationGameScene extends Phaser.Scene {
     y: number,
     spec: ShapeSpec,
     isShadow: boolean,
+    radius = 50,
   ): Phaser.GameObjects.Graphics {
     const g = this.add.graphics({ x, y });
     const color = isShadow ? 0x1f2937 : spec.color; // sombra escura
@@ -211,13 +223,13 @@ export default class CoordinationGameScene extends Phaser.Scene {
     g.lineStyle(3, stroke, 1);
 
     // desenha forma
-    this.drawShape(g, spec.type, 0, 0, 50);
+    this.drawShape(g, spec.type, 0, 0, radius);
     g.strokePath();
 
     // efeito cartunesco de luz/sombra
     g.lineStyle(0, 0, 0);
     g.fillStyle(shade, isShadow ? 0.1 : 0.15);
-    this.drawHighlight(g, spec.type, 0, -10, 45);
+    this.drawHighlight(g, spec.type, 0, -radius * 0.2, radius * 0.9);
 
     g.setData("shapeType", spec.type);
     g.setScale(1);

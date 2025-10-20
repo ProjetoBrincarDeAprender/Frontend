@@ -8,10 +8,18 @@ export interface ShapeSpec {
 export default class CoordinationLevel {
   private shapes: ShapeSpec[];
   private name: string;
+  private radius?: number;
+  private gap?: number;
 
-  constructor(name: string, shapes: ShapeSpec[]) {
+  constructor(
+    name: string,
+    shapes: ShapeSpec[],
+    opts?: { radius?: number; gap?: number },
+  ) {
     this.name = name;
     this.shapes = shapes;
+    this.radius = opts?.radius;
+    this.gap = opts?.gap;
   }
 
   getName() {
@@ -20,5 +28,13 @@ export default class CoordinationLevel {
 
   getShapes(): ShapeSpec[] {
     return this.shapes;
+  }
+
+  getRadius(defaultValue = 50) {
+    return this.radius ?? defaultValue;
+  }
+
+  getGap(defaultValue = 40) {
+    return this.gap ?? defaultValue;
   }
 }

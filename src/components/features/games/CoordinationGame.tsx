@@ -17,6 +17,12 @@ export const CoordinationGame = () => {
       scene: [CoordinationGameScene, CoordinationEndScene],
       parent: "coordination-game-container",
       backgroundColor: "#96D6F3",
+      audio: {
+        // Evita criação de AudioContext (WebAudio) e usa HTML5 Audio,
+        // eliminando os avisos/erros de autoplay no console.
+        disableWebAudio: true,
+        noAudio: false,
+      },
     };
 
     gameRef.current = new Phaser.Game(config);

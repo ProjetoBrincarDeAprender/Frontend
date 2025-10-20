@@ -7,7 +7,7 @@ export default class CoordinationEndScene extends Phaser.Scene {
 
   create() {
     this.add
-      .text(400, 250, "Parabéns! Você completou todas as fases!", {
+      .text(400, 250, "PARABÉNS! VOCÊ COMPLETOU TODAS AS FASES!", {
         fontSize: "28px",
         color: "#0f172a",
         fontFamily: "Arial Black",
@@ -15,7 +15,7 @@ export default class CoordinationEndScene extends Phaser.Scene {
       .setOrigin(0.5);
 
     const btn = this.add
-      .text(400, 340, "Mais jogos", {
+      .text(400, 340, "MAIS JOGOS", {
         fontSize: "24px",
         color: "#1d4ed8",
         backgroundColor: "#fde68a",
