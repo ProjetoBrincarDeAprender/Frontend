@@ -51,8 +51,8 @@ export default class CoordinationGameScene extends Phaser.Scene {
     // radius e gap podem ser diminuídos para aumentar a dificuldade
     this.levels = [
       new CoordinationLevel("Nível 1", shapesA, { radius: 50, gap: 40 }),
-      new CoordinationLevel("Nível 2", shapesB, { radius: 44, gap: 32 }),
-      new CoordinationLevel("Nível 3", shapesC, { radius: 38, gap: 24 }),
+      new CoordinationLevel("Nível 2", shapesB, { radius: 38, gap: 28 }),
+      new CoordinationLevel("Nível 3", shapesC, { radius: 28, gap: 18 }),
     ];
   }
 
