@@ -24,6 +24,7 @@ export default class ClickedButtonGameScene extends Phaser.Scene {
   create() {
     this.mainData = this.cache.json.get("mainData");
 
+    this.loadAudios();
     this.loadBackground();
     this.loadButtonImages();
     this.loadEntitiesImages();
@@ -38,6 +39,13 @@ export default class ClickedButtonGameScene extends Phaser.Scene {
     });
 
     this.load.start();
+  }
+
+  private loadAudios() {
+    const audios = this.mainData.audios;
+    audios.forEach((audio: any) => {
+      this.load.audio(audio.key, audio.path);
+    });
   }
 
   private loadBackground(): void {
@@ -95,13 +103,6 @@ export default class ClickedButtonGameScene extends Phaser.Scene {
   private setupOptions(): void {
     this.clickedButtonLogic.showOptions();
   }
-
-  //   private loadAudios() {
-  //     const audios = this.gameData.audios;
-  //     audios.forEach((audio: any) => {
-  //       this.load.audio(audio.key, audio.path);
-  //     });
-  //   }
 
   //   private loadButtonImages() {
   //     const buttonTexturesUrl = this.gameData.textures.buttons;

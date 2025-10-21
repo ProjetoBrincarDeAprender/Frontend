@@ -1,6 +1,7 @@
 import LevelManager from "./LevelManager";
 import ButtonManager from "./ButtonManager";
 import EffectManager from "./EffectManager";
+import SoundManager from "./SoundManager";
 import type Button from "./Button";
 
 export default class ClickedButtonLogic {
@@ -8,6 +9,7 @@ export default class ClickedButtonLogic {
   private levelManager: LevelManager;
   private buttonManager: ButtonManager;
   private effectManager: EffectManager;
+  private soundManager: SoundManager;
 
   constructor(
     scene: Phaser.Scene,
@@ -18,6 +20,7 @@ export default class ClickedButtonLogic {
     this.levelManager = levelManager;
     this.buttonManager = buttonManager;
     this.effectManager = new EffectManager(scene);
+    this.soundManager = new SoundManager(scene);
   }
 
   public showQuestion(): void {
@@ -70,6 +73,7 @@ export default class ClickedButtonLogic {
         color: 0x00ff00,
         duration: 800,
       });
+      this.soundManager.play("correct");
     } else {
       this.effectManager.growup(selectedOption, "bounce.out", 1.2, 200);
       this.effectManager.changeColor({
@@ -77,6 +81,7 @@ export default class ClickedButtonLogic {
         color: 0xff0000,
         duration: 400,
       });
+      this.soundManager.play("incorrect");
     }
   }
 }
