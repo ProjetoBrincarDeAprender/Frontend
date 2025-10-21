@@ -24,7 +24,7 @@ export default class ClickedButtonLogic {
     const text = this.levelManager.getActualLevel().getQuestion();
     this.scene.add
       .text(400, 80, text, {
-        font: "40px Arial",
+        font: "bold 40px Arial",
         color: "#250e00ff",
       })
       .setOrigin(0.5, 0.5);
@@ -64,7 +64,12 @@ export default class ClickedButtonLogic {
   private handleOptionClick(selectedOption: Button): void {
     const answer = this.levelManager.getActualLevel().getAnswer();
     if (selectedOption.getButtonStringText() === answer) {
-      console.log("Correct answer!");
+      this.effectManager.growup(selectedOption, "expo.out", 1.6, 400);
+      this.effectManager.changeColor({
+        gameObject: selectedOption,
+        color: 0x00ff00,
+        duration: 800,
+      });
     } else {
       this.effectManager.growup(selectedOption, "bounce.out", 1.2, 200);
       this.effectManager.changeColor({
