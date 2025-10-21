@@ -10,6 +10,9 @@ export default class ClickedButtonLogic {
   private buttonManager: ButtonManager;
   private effectManager: EffectManager;
   private soundManager: SoundManager;
+  private question?: Phaser.GameObjects.Text;
+  private entity?: Phaser.GameObjects.Image;
+  private options: Button[] = [];
 
   constructor(
     scene: Phaser.Scene,
@@ -25,7 +28,7 @@ export default class ClickedButtonLogic {
 
   public showQuestion(): void {
     const text = this.levelManager.getActualLevel().getQuestion();
-    this.scene.add
+    this.question = this.scene.add
       .text(400, 80, text, {
         font: "bold 40px Arial",
         color: "#250e00ff",
@@ -35,17 +38,21 @@ export default class ClickedButtonLogic {
 
   public showEntity(): void {
     const entityKey = this.levelManager.getActualLevel().getEntityKey();
-    this.scene.add.image(400, 240, entityKey).setOrigin(0.5, 0.5).setScale(0.4);
+    this.entity = this.scene.add
+      .image(400, 240, entityKey)
+      .setOrigin(0.5, 0.5)
+      .setScale(0.4);
   }
 
   public showOptions(): void {
     const options = this.levelManager.getActualLevel().getOptions();
-    const spaceBetweenButtons =
+    const newOptions: Button[] = [];
+    const spaceBetweenOptions =
       this.scene.cameras.main.width / (options.length + 1);
 
     for (let i = 0; i < options.length; i++) {
-      const newPositionX = spaceBetweenButtons * (i + 1);
-      const button = this.buttonManager.createButton({
+      const newPositionX = spaceBetweenOptions * (i + 1);
+      const option = this.buttonManager.createButton({
         positions: { x: newPositionX, y: 500 },
         textures: {
           default: "defaultButton",
@@ -56,12 +63,14 @@ export default class ClickedButtonLogic {
         fontSize: 40,
         scale: 1.4,
       });
+      newOptions.push(option);
 
-      button.off("released");
-      button.on("released", () => {
-        this.handleOptionClick(button);
+      option.off("released");
+      option.on("released", () => {
+        this.handleOptionClick(option);
       });
     }
+    this.options = newOptions;
   }
 
   private handleOptionClick(selectedOption: Button): void {
@@ -74,6 +83,9 @@ export default class ClickedButtonLogic {
         duration: 800,
       });
       this.soundManager.play("correct");
+      this.scene.time.delayedCall(3000, () => {
+        this.nextLevel();
+      });
     } else {
       this.effectManager.growup(selectedOption, "bounce.out", 1.2, 200);
       this.effectManager.changeColor({
@@ -83,5 +95,20 @@ export default class ClickedButtonLogic {
       });
       this.soundManager.play("incorrect");
     }
+  }
+
+  private clearLevelElements(): void {
+    this.question?.destroy();
+    this.entity?.destroy();
+    this.options.forEach((option) => option.destroy());
+    this.options = [];
+  }
+
+  private nextLevel(): void {
+    this.levelManager.nextLevel();
+    this.clearLevelElements();
+    this.showQuestion();
+    this.showEntity();
+    this.showOptions();
   }
 }
