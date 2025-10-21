@@ -1,0 +1,170 @@
+{
+  "config": {
+    "background": {
+      "image": "/assets/vowelsGame/images/backgroundMain.png",
+      "overlayOpacity": 0.3
+    }
+  },
+
+  "textures": {
+    "buttons": {
+      "blue": {
+        "default": "/assets/common/buttons/squareBlueDefault.svg",
+        "hover": "/assets/common/buttons/squareBlueHover.svg",
+        "clicked": "/assets/common/buttons/squareBlueClicked.svg"
+      },
+      "red": {
+        "default": "/assets/common/buttons/squareRedDefault.svg",
+        "hover": "/assets/common/buttons/squareRedHover.svg",
+        "clicked": "/assets/common/buttons/squareRedClicked.svg"
+      }
+    },
+    "effects": [
+      {
+        "key": "star",
+        "texture": "/assets/common/star.svg"
+      }
+    ],
+    "entities": [
+      {
+        "key": "abelha",
+        "completeKey": "abelhaCompleta",
+        "default": "/assets/vowelsGame/animals/abelha.svg",
+        "complete": "/assets/vowelsGame/animals/abelhaCompleta.svg"
+      },
+      {
+        "key": "elefante",
+        "completeKey": "elefanteCompleta",
+        "default": "/assets/vowelsGame/animals/elefante.svg",
+        "complete": "/assets/vowelsGame/animals/elefanteCompleta.svg"
+      },
+      {
+        "key": "hiena",
+        "completeKey": "hienaCompleta",
+        "default": "/assets/vowelsGame/animals/hiena.svg",
+        "complete": "/assets/vowelsGame/animals/hienaCompleta.svg"
+      },
+      {
+        "key": "onca",
+        "completeKey": "oncaCompleta",
+        "default": "/assets/vowelsGame/animals/onca.svg",
+        "complete": "/assets/vowelsGame/animals/oncaCompleta.svg"
+      },
+      {
+        "key": "urso",
+        "completeKey": "ursoCompleta",
+        "default": "/assets/vowelsGame/animals/urso.svg",
+        "complete": "/assets/vowelsGame/animals/ursoCompleta.svg"
+      },
+      {
+        "key": "gato",
+        "completeKey": "gatoCompleta",
+        "default": "/assets/vowelsGame/animals/gato.svg",
+        "complete": "/assets/vowelsGame/animals/gatoCompleta.svg"
+      },
+      {
+        "key": "esquilo",
+        "completeKey": "esquiloCompleta",
+        "default": "/assets/vowelsGame/animals/esquilo.svg",
+        "complete": "/assets/vowelsGame/animals/esquiloCompleta.svg"
+      },
+      {
+        "key": "iguana",
+        "completeKey": "iguanaCompleta",
+        "default": "/assets/vowelsGame/animals/iguana.svg",
+        "complete": "/assets/vowelsGame/animals/iguanaCompleta.svg"
+      },
+      {
+        "key": "ovelha",
+        "completeKey": "ovelhaCompleta",
+        "default": "/assets/vowelsGame/animals/ovelha.svg",
+        "complete": "/assets/vowelsGame/animals/ovelhaCompleta.svg"
+      },
+      {
+        "key": "urubu",
+        "completeKey": "urubuCompleta",
+        "default": "/assets/vowelsGame/animals/urubu.svg",
+        "complete": "/assets/vowelsGame/animals/urubuCompleta.svg"
+      }
+    ]
+  },
+
+  "audios": [
+    {
+      "key": "correct",
+      "path": "/assets/common/sounds/correct.mp3"
+    },
+    {
+      "key": "incorrect",
+      "path": "/assets/common/sounds/incorrect.mp3"
+    }
+  ],
+
+  "buttonConfig": {
+    "fontSize": 50,
+    "scale": 1.5
+  },
+
+  "levels": [
+    {
+      "answer": "A",
+      "question": "COMPLETE A PALAVRA",
+      "entityKey": "abelha",
+      "completeEntityKey": "abelhaCompleta",
+      "options": ["A", "E", "I", "O", "U"]
+    },
+    {
+      "answer": "E",
+      "question": "COMPLETE A PALAVRA",
+      "entityKey": "elefante",
+      "completeEntityKey": "elefanteCompleta",
+      "options": ["A", "E", "I", "O", "U"]
+    },
+    {
+      "answer": "A",
+      "question": "Complete a palavra",
+      "entityKey": "hiena",
+      "completeEntityKey": "hienaCompleta",
+      "options": ["A", "E", "I", "O", "U"]
+    },
+    {
+      "answer": "A",
+      "question": "Complete a palavra",
+      "entityKey": "onca",
+      "completeEntityKey": "oncaCompleta",
+      "options": ["A", "E", "I", "O", "U"]
+    },
+    {
+      "answer": "A",
+      "question": "Complete a palavra",
+      "entityKey": "urso",
+      "completeEntityKey": "ursoCompleta",
+      "options": ["A", "E", "I", "O", "U"]
+    },
+    {
+      "entityKey": "gato",
+      "completeEntityKey": "gatoCompleta",
+      "answer": "A"
+    },
+    {
+      "entityKey": "esquilo",
+      "completeEntityKey": "esquiloCompleta",
+      "answer": "E"
+    },
+    {
+      "entityKey": "iguana",
+      "completeEntityKey": "iguanaCompleta",
+      "answer": "I"
+    },
+    {
+      "entityKey": "ovelha",
+      "completeEntityKey": "ovelhaCompleta",
+      "answer": "O"
+    },
+    {
+      "entityKey": "urubu",
+      "completeEntityKey": "urubuCompleta",
+      "answer": "U"
+    }
+  ]
+}

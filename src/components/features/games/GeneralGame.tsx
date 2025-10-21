@@ -5,7 +5,7 @@ import { Header } from "@/components/Header/Header";
 import { BackButton } from "@/components/utils/BackButton";
 import Phaser from "phaser";
 import ClickedButtonStartScene from "@/games/clickedButton/scenes/ClickedButtonStart";
-import ClickedButtonGameScene from "@/games/clickedButton/scenes/clickedButtonGame";
+import ClickedButtonGameScene from "@/games/clickedButton/scenes/ClickedButtonGame";
 
 export interface IRefGeneralGame {
   game: Phaser.Game | null;
@@ -22,12 +22,15 @@ const GeneralGame: React.FC = () => {
     const clickedButtonStartScene = new ClickedButtonStartScene(
       "/assets/clickButtonGame/gameData/startData.JSON",
     );
+    const clickedButtonGameScene = new ClickedButtonGameScene(
+      "/assets/clickButtonGame/gameData/mainData.JSON",
+    );
 
     const config: Phaser.Types.Core.GameConfig = {
       type: Phaser.AUTO,
       width: 800,
       height: 600,
-      scene: [clickedButtonStartScene, ClickedButtonGameScene],
+      scene: [clickedButtonGameScene],
       parent: containerRef.current,
       backgroundColor: "#ffffff",
     };

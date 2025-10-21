@@ -88,6 +88,7 @@ export default class ClickedButtonStartScene extends Phaser.Scene {
       text: buttonContent.text,
       fontSize: buttonContent.fontSize,
       onClick: () => {
+        this.resetAssets();
         this.scene.start("clickedButtonGameScene");
       },
     });
@@ -107,8 +108,21 @@ export default class ClickedButtonStartScene extends Phaser.Scene {
       fontSize: buttonContent.fontSize,
       scale: 0.7,
       onClick: () => {
+        this.resetAssets();
         window.history.back();
       },
     });
+  }
+
+  private resetAssets(): void {
+    this.textures.remove("background");
+    this.textures.remove("title");
+    this.textures.remove("hoverRectangleBlue");
+    this.textures.remove("defaultRectangleBlue");
+    this.textures.remove("clickedRectangleBlue");
+    this.textures.remove("hoverRectangleRed");
+    this.textures.remove("defaultRectangleRed");
+    this.textures.remove("clickedRectangleRed");
+    this.cache.json.remove("startData");
   }
 }
