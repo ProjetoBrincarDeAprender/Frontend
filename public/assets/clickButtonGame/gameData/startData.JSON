@@ -11,8 +11,6 @@
   },
 
   "textures": {
-    "background": "/assets/vowelsGame/images/backgroundMain.png",
-    "title": "/assets/vowelsGame/images/title.png",
     "buttons": {
       "blue": {
         "default": "/assets/common/buttons/rectangleBlueDefault.svg",
@@ -27,18 +25,18 @@
     }
   },
 
-  "buttons": [
-    {
+  "buttons": {
+    "start": {
       "text": "▶ Iniciar",
       "positions": { "x": 400, "y": 360 },
       "fontSize": 40,
       "scale": 1
     },
-    {
+    "exit": {
       "text": "Sair",
       "positions": { "x": 400, "y": 440 },
       "fontSize": 40,
       "scale": 0.7
     }
-  ]
+  }
 }

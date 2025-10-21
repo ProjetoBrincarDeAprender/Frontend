@@ -4,6 +4,8 @@ import { useEffect, useRef } from "react";
 import { Header } from "@/components/Header/Header";
 import { BackButton } from "@/components/utils/BackButton";
 import Phaser from "phaser";
+import ClickedButtonStartScene from "@/games/clickedButton/scenes/ClickedButtonStart";
+import ClickedButtonGameScene from "@/games/clickedButton/scenes/clickedButtonGame";
 
 export interface IRefGeneralGame {
   game: Phaser.Game | null;
@@ -12,14 +14,21 @@ export interface IRefGeneralGame {
 
 const GeneralGame: React.FC = () => {
   const gameRef = useRef<Phaser.Game | null>(null);
+  const containerRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
+    if (!containerRef.current) return;
+
+    const clickedButtonStartScene = new ClickedButtonStartScene(
+      "/assets/clickButtonGame/gameData/startData.JSON",
+    );
+
     const config: Phaser.Types.Core.GameConfig = {
       type: Phaser.AUTO,
       width: 800,
       height: 600,
-      scene: [],
-      parent: "game-container",
+      scene: [clickedButtonStartScene, ClickedButtonGameScene],
+      parent: containerRef.current,
       backgroundColor: "#ffffff",
     };
 
@@ -42,7 +51,7 @@ const GeneralGame: React.FC = () => {
         <Header />
         <BackButton />
         <div
-          id="game-container"
+          ref={containerRef}
           className="relative"
           style={{ width: 800, height: 600 }}
         ></div>
