@@ -1,11 +1,13 @@
 import LevelManager from "./LevelManager";
 import ButtonManager from "./ButtonManager";
+import EffectManager from "./EffectManager";
 import type Button from "./Button";
 
 export default class ClickedButtonLogic {
   private scene: Phaser.Scene;
   private levelManager: LevelManager;
   private buttonManager: ButtonManager;
+  private effectManager: EffectManager;
 
   constructor(
     scene: Phaser.Scene,
@@ -15,6 +17,7 @@ export default class ClickedButtonLogic {
     this.scene = scene;
     this.levelManager = levelManager;
     this.buttonManager = buttonManager;
+    this.effectManager = new EffectManager(scene);
   }
 
   public showQuestion(): void {
@@ -53,17 +56,17 @@ export default class ClickedButtonLogic {
 
       button.off("released");
       button.on("released", () => {
-        this.handleOptionClick(options[i]);
+        this.handleOptionClick(button);
       });
     }
   }
 
-  private handleOptionClick(selectedOption: string): void {
+  private handleOptionClick(selectedOption: Button): void {
     const answer = this.levelManager.getActualLevel().getAnswer();
-    if (selectedOption === answer) {
+    if (selectedOption.getButtonStringText() === answer) {
       console.log("Correct answer!");
     } else {
-      console.log("Wrong answer!");
+      this.effectManager.growup(selectedOption, "bounce.out", 1.2, 200);
     }
   }
 }
