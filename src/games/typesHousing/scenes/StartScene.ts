@@ -32,7 +32,6 @@ export class StartScene extends Phaser.Scene {
     }
 
     private createStartScene() {
-        // Fundo
         this.add.image(400,300, "backgroundStart").setScale(1.2);
          this.add.rectangle(
         this.scale.width / 2,
@@ -43,7 +42,6 @@ export class StartScene extends Phaser.Scene {
         0.4
         );
         
-        // Duda de boas-vindas
         this.add.image(200, 430, "dudaWelcome").setScale(0.6);
 
         this.createTitle();
@@ -61,7 +59,6 @@ export class StartScene extends Phaser.Scene {
             20
         );
 
-        // Título principal
         this.add
             .text(this.scale.width / 2, 110, "DESCUBRA AS MORADIAS!", {
                 fontSize: "36px",
@@ -75,14 +72,11 @@ export class StartScene extends Phaser.Scene {
    
 
     private createStartButton() {
-        // Container do botão
         const buttonContainer = this.add.container(this.scale.width / 2, 380);
         
-        // Fundo do botão
         const buttonBg = this.add.rectangle(0, 0, 200, 60, 0x22c55e);
         buttonBg.setStrokeStyle(4, 0xFFFFFF);
         
-        // Texto do botão
         const buttonText = this.add.text(0, 0, "COMEÇAR", {
             fontSize: "24px",
             fontFamily: "Arial",
@@ -90,16 +84,13 @@ export class StartScene extends Phaser.Scene {
             fontStyle: "bold"
         }).setOrigin(0.5);
 
-        // Adicionar elementos ao container
         buttonContainer.add([buttonBg, buttonText]);
         
-        // Configurar interatividade
         buttonContainer.setInteractive(
             new Phaser.Geom.Rectangle(-100, -30, 200, 60),
             Phaser.Geom.Rectangle.Contains
         );
 
-        // Efeitos hover
         buttonContainer.on('pointerover', () => {
             buttonBg.setFillStyle(0x16a34a);
             this.tweens.add({
@@ -122,7 +113,7 @@ export class StartScene extends Phaser.Scene {
             });
         });
 
-        // Ação do clique
+        
         buttonContainer.on('pointerdown', () => {
             this.tweens.add({
                 targets: buttonContainer,
@@ -140,7 +131,6 @@ export class StartScene extends Phaser.Scene {
             });
         });
 
-        // Animação pulsante para chamar atenção
         this.tweens.add({
             targets: buttonContainer,
             scaleX: 1.02,

@@ -57,8 +57,7 @@ export class GameScene extends Phaser.Scene {
     }
 
     preload() {
-        // Assets já foram carregados na StartScene
-        // Apenas garantir que os assets existem se necessário
+        // Assets carregados na StartScene
     }
 
     create() {
@@ -90,7 +89,6 @@ export class GameScene extends Phaser.Scene {
     private setupUI() {
         const { width } = this.cameras.main;
         
-        // Texto da pergunta
         this.questionText = this.add.text(width / 2, 100, '', {
             fontSize: '32px',
             color: '#2D5AA0',
@@ -99,7 +97,6 @@ export class GameScene extends Phaser.Scene {
             backgroundColor: '#FFFFFF'
         }).setOrigin(0.5);
         
-        // Nome da moradia
         this.housingNameText = this.add.text(width / 2, 150, '', {
             fontSize: '48px',
             color: '#FF6B35',
@@ -125,16 +122,17 @@ export class GameScene extends Phaser.Scene {
             const container = this.add.container(x, y);
             
             const rect = this.add.rectangle(0, 0, containerWidth, containerHeight, containerColors[i]);
-            rect.setStrokeStyle(4, 0xFFFFFF); // Borda branca
-            
+            rect.setStrokeStyle(4, 0xFFFFFF); 
             container.add(rect);
             container.setSize(containerWidth, containerHeight);
             
+            const hitArea = new Phaser.Geom.Rectangle(-containerWidth / 12, -containerHeight / 10, containerWidth, containerHeight);
             container.setInteractive({
-                hitArea: new Phaser.Geom.Rectangle(-containerWidth/2, -containerHeight/2, containerWidth, containerHeight),
+                hitArea,
                 hitAreaCallback: Phaser.Geom.Rectangle.Contains,
                 useHandCursor: true
             });
+            container.setData('hitArea', hitArea);
             
             this.optionContainers.push(container);
         }
@@ -147,14 +145,11 @@ export class GameScene extends Phaser.Scene {
         
         const question = this.housingQuestions[this.currentLevel];
         
-        // Atualizar textos
         this.questionText.setText(`Qual moradia é?`);
         this.housingNameText.setText(question.housingName);
         
-        // Embaralhar opções
         const shuffledOptions = [...question.options].sort(() => Math.random() - 0.5);
         
-        // Limpar containers existentes e recriar se necessário
         this.optionContainers.forEach(container => {
             if (container && container.scene) {
                 container.removeAllListeners();
@@ -163,24 +158,19 @@ export class GameScene extends Phaser.Scene {
         });
         this.optionContainers = [];
         
-        // Recriar containers
         this.createOptionContainers();
         
-        // Configurar containers com imagens
         shuffledOptions.forEach((housing, index) => {
             const container = this.optionContainers[index];
             
-            // Adicionar imagem da moradia
             const housingImage = this.add.image(0, 0, housing);
             housingImage.setDisplaySize(280, 210);
             container.add(housingImage);
             
-            // Remover listeners antigos e configurar novo listener
             container.removeAllListeners('pointerdown');
             container.removeAllListeners('pointerover');
             container.removeAllListeners('pointerout');
             
-            // Configurar interação com feedback visual
             container.on('pointerover', () => {
                 this.tweens.add({
                     targets: container,
@@ -206,7 +196,6 @@ export class GameScene extends Phaser.Scene {
             });
         });
         
-        // Animar entrada dos containers
         this.animateContainersEntry();
     }
 
@@ -230,7 +219,6 @@ export class GameScene extends Phaser.Scene {
     private selectOption(selectedHousing: string, correctHousing: string, selectedContainer: Phaser.GameObjects.Container) {
         const isCorrect = selectedHousing === correctHousing;
         
-        // Desabilitar interações
         this.optionContainers.forEach(container => {
             container.disableInteractive();
         });
@@ -245,13 +233,10 @@ export class GameScene extends Phaser.Scene {
     private handleCorrectAnswer(container: Phaser.GameObjects.Container) {
         this.score += 100;
         
-        // Efeitos visuais usando EffectManager
         this.effectManager.growup(container, "Cubic.out", 1.2, 500);
         
-        // Áudio
         this.sound.play('correct-sound');
         
-        // Ir para próximo nível ou completar jogo após delay
         this.time.delayedCall(2000, () => {
             const isLastLevel = this.currentLevel + 1 >= this.housingQuestions.length;
             
@@ -265,22 +250,28 @@ export class GameScene extends Phaser.Scene {
     }
 
     private handleWrongAnswer(container: Phaser.GameObjects.Container) {
-        // Efeitos visuais usando EffectManager - efeito de tremor através do AnimationManager
         this.animationsManager.incorrectAnswerEffect(container);
         
         // Áudio
         this.sound.play('wrong-sound');
         
-        // Reativar interações após delay
         this.time.delayedCall(1000, () => {
             this.optionContainers.forEach(c => {
-                // Garantir que o container existe e reativar
                 if (c && c.scene) {
-                    c.setInteractive({
-                        hitArea: new Phaser.Geom.Rectangle(-100, -100, 200, 200),
-                        hitAreaCallback: Phaser.Geom.Rectangle.Contains,
-                        useHandCursor: true
-                    });
+                    const hitArea: Phaser.Geom.Rectangle | undefined = c.getData('hitArea');
+                    if (hitArea) {
+                        c.setInteractive({
+                            hitArea,
+                            hitAreaCallback: Phaser.Geom.Rectangle.Contains,
+                            useHandCursor: true
+                        });
+                    } else {
+                        c.setInteractive({
+                            hitArea: new Phaser.Geom.Rectangle(-200, -120, 300, 240),
+                            hitAreaCallback: Phaser.Geom.Rectangle.Contains,
+                            useHandCursor: true
+                        });
+                    }
                 }
             });
         });

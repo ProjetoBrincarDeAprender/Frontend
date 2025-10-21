@@ -16,7 +16,6 @@ export class LevelCompletedScene extends Phaser.Scene {
   }
 
   preload() {
-    // Carregar apenas assets específicos da tela de completamento se não existirem
     if (!this.textures.exists("trophy")) {
       this.load.image("trophy", "/assets/common/trophy.png");
     }
@@ -26,15 +25,15 @@ export class LevelCompletedScene extends Phaser.Scene {
     if (!this.textures.exists("dudaClap")) {
       this.load.image("dudaClap", "/assets/common/duda/dudaClap.png");
     }
-    // Usar o mesmo background já carregado
+    this.load.audio('celebration', '/assets/common/sounds/complete.mp3');
+
   }
 
   create() {
-    if (this.sound.get('complete')) {
-      this.sound.play('complete', { volume: 0.7 });
-    }
+   
+    this.sound.play('celebration', { volume: 10 });
+    
 
-    // Fundo do jogo (usar o mesmo background já carregado)
     this.add.image(this.scale.width / 2, this.scale.height / 2, "backgroundStart").setScale(1.2);    
     // Overlay escuro
     this.add.rectangle(
@@ -46,10 +45,8 @@ export class LevelCompletedScene extends Phaser.Scene {
       0.6
     );
 
-    // Troféu
     this.add.image(this.scale.width / 2, 120, "trophy").setScale(0.3);
 
-    // Texto de parabéns
     const congratsText = this.isLastLevel
       ? "PARABÉNS!\nVocê completou o jogo!"
       : "MUITO BEM!\nNível completado!";
@@ -66,7 +63,6 @@ export class LevelCompletedScene extends Phaser.Scene {
       })
       .setOrigin(0.5);
 
-    // Duda aplaudindo
     const dudaClap = this.add.image(this.scale.width / 2, 350, "dudaClap").setScale(0.2);
     
     this.tweens.add({
@@ -89,7 +85,6 @@ export class LevelCompletedScene extends Phaser.Scene {
   }
 
   private createCelebrationEffect() {
-    // Estrelas animadas
     for (let i = 0; i < 10; i++) {
       const star = this.add
         .image(
@@ -111,7 +106,6 @@ export class LevelCompletedScene extends Phaser.Scene {
       });
     }
 
-    // Símbolos de casa flutuantes
     const housingSymbols = ["🏠", "🏰", "🏡", "⭐", "🎉"];
     for (let i = 0; i < 8; i++) {
       const symbol = this.add
