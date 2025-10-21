@@ -6,6 +6,7 @@ import { Footer } from "@/components/Footer/Footer";
 import { BackButton } from "@/components/utils/BackButton";
 import { Header } from "@/components/Header/Header";
 import { GameScene } from "@/games/typesHousing/scenes/GameScene";
+import { LevelCompletedScene } from "@/games/typesHousing/scenes/LevelCompletedScene";
 
 interface HousingGameProps {
   activityId?: number;
@@ -24,7 +25,7 @@ const HousingGame: React.FC<HousingGameProps> = ({ activityId = 1 }) => {
       height: 600,
       parent: "game-container",
       backgroundColor: "#AED3E3",
-      scene: [GameScene],
+      scene: [GameScene, LevelCompletedScene],
       scale: {
         mode: Phaser.Scale.FIT,
         autoCenter: Phaser.Scale.CENTER_BOTH, 
