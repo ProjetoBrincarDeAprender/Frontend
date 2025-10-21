@@ -57,25 +57,8 @@ export class GameScene extends Phaser.Scene {
     }
 
     preload() {
-        // Carregar assets do jogo
-        this.load.image('background', '/assets/housingGame/bg.png');
-        this.load.image('duda-thinking', '/assets/housingGame/duda-pensando.png');
-        
-        // Carregar imagens das moradias
-        this.load.image('casa', '/assets/housingGame/casa.png');
-        this.load.image('castelo', '/assets/housingGame/castelo.png');
-        this.load.image('oca', '/assets/housingGame/oca.png');
-        this.load.image('iglu', '/assets/housingGame/iglu.png');
-        this.load.image('predio', '/assets/housingGame/predio.png');
-
-        // // Carregar botões
-        // this.load.image('next-button', 'assets/ui/next-button.png');
-        // this.load.image('star', 'assets/ui/star.png');
-        
-        // // Carregar áudios
-        this.load.audio('correct-sound', '/assets/common/sounds/correct.mp3');
-        this.load.audio('wrong-sound', '/assets/common/sounds/incorrect.mp3');
-        this.load.audio('celebration', '/assets/common/sounds/complete.mp3');
+        // Assets já foram carregados na StartScene
+        // Apenas garantir que os assets existem se necessário
     }
 
     create() {
@@ -88,12 +71,18 @@ export class GameScene extends Phaser.Scene {
     }
 
     private setupBackground() {
-        // const { width, height } = this.cameras.main;
+
+        this.background = this.add.image(this.scale.width / 2, this.scale.height / 2, 'background');
+        this.background.setScale(1.6);
+         this.add.rectangle(
+            this.scale.width / 2,
+            this.scale.height / 2,
+            this.scale.width,
+            this.scale.height,
+            0x000000,
+            0.5
+            );
         
-        this.background = this.add.image(200, 200, 'background');
-        this.background.setScale(0.8);
-        
-        // Adicionar Duda pensando
         this.dudaThinking = this.add.image(190, 200, 'duda-thinking');
         this.dudaThinking.setScale(0.4);
     }
@@ -119,17 +108,15 @@ export class GameScene extends Phaser.Scene {
             backgroundColor: '#FFFFFF'
         }).setOrigin(0.5);
         
-        // Containers das opções
-        this.createOptionContainers();
     }
 
     private createOptionContainers() {
         const { width, height } = this.cameras.main;
-        const containerColors = [0x8B00FF, 0x0066FF, 0x00CC66]; // Roxo, Azul, Verde
-        const startX = width / 2 - 300;
+        const containerColors = [0x8B00FF, 0x0066FF, 0x00CC66]; 
+        const startX = width / 2 - 250;
         const containerWidth = 200;
         const containerHeight = 200;
-        const spacing = 300;
+        const spacing = 250;
         
         for (let i = 0; i < 3; i++) {
             const x = startX + (i * spacing);
@@ -137,13 +124,17 @@ export class GameScene extends Phaser.Scene {
             
             const container = this.add.container(x, y);
             
-            // Criar retângulo colorido manualmente
             const rect = this.add.rectangle(0, 0, containerWidth, containerHeight, containerColors[i]);
             rect.setStrokeStyle(4, 0xFFFFFF); // Borda branca
             
             container.add(rect);
             container.setSize(containerWidth, containerHeight);
-            container.setInteractive(new Phaser.Geom.Rectangle(-containerWidth/2, -containerHeight/2, containerWidth, containerHeight), Phaser.Geom.Rectangle.Contains);
+            
+            container.setInteractive({
+                hitArea: new Phaser.Geom.Rectangle(-containerWidth/2, -containerHeight/2, containerWidth, containerHeight),
+                hitAreaCallback: Phaser.Geom.Rectangle.Contains,
+                useHandCursor: true
+            });
             
             this.optionContainers.push(container);
         }
@@ -151,7 +142,6 @@ export class GameScene extends Phaser.Scene {
 
     private startLevel() {
         if (this.currentLevel >= this.housingQuestions.length) {
-            // Jogo completo - isso não deveria acontecer mais pois sempre vamos para LevelCompletedScene
             return;
         }
         
@@ -164,23 +154,56 @@ export class GameScene extends Phaser.Scene {
         // Embaralhar opções
         const shuffledOptions = [...question.options].sort(() => Math.random() - 0.5);
         
+        // Limpar containers existentes e recriar se necessário
+        this.optionContainers.forEach(container => {
+            if (container && container.scene) {
+                container.removeAllListeners();
+                container.destroy();
+            }
+        });
+        this.optionContainers = [];
+        
+        // Recriar containers
+        this.createOptionContainers();
+        
         // Configurar containers com imagens
         shuffledOptions.forEach((housing, index) => {
             const container = this.optionContainers[index];
             
-            // Limpar container anterior
-            if (container.length > 1) {
-                container.removeAt(1);
-            }
-            
             // Adicionar imagem da moradia
             const housingImage = this.add.image(0, 0, housing);
-            housingImage.setDisplaySize(150, 170);
+            housingImage.setDisplaySize(280, 210);
             container.add(housingImage);
             
-            // Configurar interação
-            container.removeAllListeners();
-            container.on('pointerdown', () => this.selectOption(housing, question.correctHousing, container));
+            // Remover listeners antigos e configurar novo listener
+            container.removeAllListeners('pointerdown');
+            container.removeAllListeners('pointerover');
+            container.removeAllListeners('pointerout');
+            
+            // Configurar interação com feedback visual
+            container.on('pointerover', () => {
+                this.tweens.add({
+                    targets: container,
+                    scaleX: 1.05,
+                    scaleY: 1.05,
+                    duration: 150,
+                    ease: 'Power2.easeOut'
+                });
+            });
+            
+            container.on('pointerout', () => {
+                this.tweens.add({
+                    targets: container,
+                    scaleX: 1,
+                    scaleY: 1,
+                    duration: 150,
+                    ease: 'Power2.easeOut'
+                });
+            });
+            
+            container.on('pointerdown', () => {
+                this.selectOption(housing, question.correctHousing, container);
+            });
         });
         
         // Animar entrada dos containers
@@ -251,7 +274,14 @@ export class GameScene extends Phaser.Scene {
         // Reativar interações após delay
         this.time.delayedCall(1000, () => {
             this.optionContainers.forEach(c => {
-                c.setInteractive();
+                // Garantir que o container existe e reativar
+                if (c && c.scene) {
+                    c.setInteractive({
+                        hitArea: new Phaser.Geom.Rectangle(-100, -100, 200, 200),
+                        hitAreaCallback: Phaser.Geom.Rectangle.Contains,
+                        useHandCursor: true
+                    });
+                }
             });
         });
     }

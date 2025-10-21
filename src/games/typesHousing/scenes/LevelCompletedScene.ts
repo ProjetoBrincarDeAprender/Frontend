@@ -16,10 +16,17 @@ export class LevelCompletedScene extends Phaser.Scene {
   }
 
   preload() {
-    this.load.image("trophy", "/assets/common/trophy.png");
-    this.load.image("star", "/assets/common/star.svg");
-    this.load.image("dudaClap", "/assets/common/duda/dudaClap.png");
-    this.load.image("backgroundHousing", "/assets/housingGame/bg.png");
+    // Carregar apenas assets específicos da tela de completamento se não existirem
+    if (!this.textures.exists("trophy")) {
+      this.load.image("trophy", "/assets/common/trophy.png");
+    }
+    if (!this.textures.exists("star")) {
+      this.load.image("star", "/assets/common/star.svg");
+    }
+    if (!this.textures.exists("dudaClap")) {
+      this.load.image("dudaClap", "/assets/common/duda/dudaClap.png");
+    }
+    // Usar o mesmo background já carregado
   }
 
   create() {
@@ -27,10 +34,8 @@ export class LevelCompletedScene extends Phaser.Scene {
       this.sound.play('complete', { volume: 0.7 });
     }
 
-    // Fundo do jogo
-    this.add.image(this.scale.width / 2, this.scale.height / 2, "backgroundHousing")
-      .setDisplaySize(this.scale.width, this.scale.height);
-    
+    // Fundo do jogo (usar o mesmo background já carregado)
+    this.add.image(this.scale.width / 2, this.scale.height / 2, "backgroundStart").setScale(1.2);    
     // Overlay escuro
     this.add.rectangle(
       this.scale.width / 2,
