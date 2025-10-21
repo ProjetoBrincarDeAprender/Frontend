@@ -67,6 +67,11 @@ export default class ClickedButtonLogic {
       console.log("Correct answer!");
     } else {
       this.effectManager.growup(selectedOption, "bounce.out", 1.2, 200);
+      this.effectManager.changeColor({
+        gameObject: selectedOption,
+        color: 0xff0000,
+        duration: 400,
+      });
     }
   }
 }

@@ -6,6 +6,7 @@ import FloatingEffect from "@/games/common/effects/FloatingEffect";
 import OverlayEffect from "@/games/common/effects/OverlayEffect";
 import MoveEffect from "@/games/common/effects/MoveEffect";
 import confettiEffect from "@/games/common/effects/confettiEffect";
+import type Button from "./Button";
 
 export default class EffectManager {
   private scene: Phaser.Scene;
@@ -14,8 +15,16 @@ export default class EffectManager {
     this.scene = scene;
   }
 
-  changeColor(text: Phaser.GameObjects.Text, color: number): void {
-    ChangeColor(this.scene, text, color);
+  changeColor({
+    gameObject,
+    color,
+    duration = 1000,
+  }: {
+    gameObject: Phaser.GameObjects.Text | Button;
+    color: number;
+    duration?: number;
+  }): void {
+    ChangeColor(this.scene, gameObject, color, duration);
   }
 
   confetti(): void {
