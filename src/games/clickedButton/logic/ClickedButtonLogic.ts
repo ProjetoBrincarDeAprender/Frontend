@@ -34,14 +34,12 @@ export default class ClickedButtonLogic {
 
   public showOptions(): void {
     const options = this.levelManager.getActualLevel().getOptions();
-    // const createdButtons: Button[] = [];
     const spaceBetweenButtons =
       this.scene.cameras.main.width / (options.length + 1);
 
     for (let i = 0; i < options.length; i++) {
       const newPositionX = spaceBetweenButtons * (i + 1);
-      //   const button =
-      this.buttonManager.createButton({
+      const button = this.buttonManager.createButton({
         positions: { x: newPositionX, y: 500 },
         textures: {
           default: "defaultButton",
@@ -52,7 +50,20 @@ export default class ClickedButtonLogic {
         fontSize: 40,
         scale: 1.4,
       });
-      //   createdButtons.push(button);
+
+      button.off("released");
+      button.on("released", () => {
+        this.handleOptionClick(options[i]);
+      });
+    }
+  }
+
+  private handleOptionClick(selectedOption: string): void {
+    const answer = this.levelManager.getActualLevel().getAnswer();
+    if (selectedOption === answer) {
+      console.log("Correct answer!");
+    } else {
+      console.log("Wrong answer!");
     }
   }
 }
