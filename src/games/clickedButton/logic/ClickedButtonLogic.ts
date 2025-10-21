@@ -146,7 +146,6 @@ export default class ClickedButtonLogic {
 
   private updateContentToComplete(): void {
     if (!this.content) return;
-    this.entity?.destroy();
     this.content.forEach((text) => text.destroy());
     this.content = [];
 

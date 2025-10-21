@@ -115,10 +115,17 @@
     },
     {
       "answer": "E",
-      "question": "COMPLETE AS VOGAIS",
-      "content": ["A", "_", "I", "O", "U"],
-      "completeContent": ["A", "E", "I", "O", "U"],
-      "options": ["E", "I"]
+      "question": "COMPLETE A PALAVRA",
+      "entityKey": "elefante",
+      "completeEntityKey": "elefanteCompleta",
+      "options": ["A", "E", "I", "O", "U"]
+    },
+    {
+      "answer": "O",
+      "question": "COMPLETE A PALAVRA",
+      "entityKey": "onca",
+      "completeEntityKey": "oncaCompleta",
+      "options": ["A", "E", "I", "O", "U"]
     }
   ]
 }
