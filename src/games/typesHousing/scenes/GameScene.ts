@@ -90,7 +90,7 @@ export class GameScene extends Phaser.Scene {
         const { width } = this.cameras.main;
         
         this.questionText = this.add.text(width / 2, 100, '', {
-            fontSize: '32px',
+            fontSize: '46px',
             color: '#2D5AA0',
             fontFamily: 'Arial',
             align: 'center',
