@@ -304,7 +304,7 @@ export default class Logic {
       textures: buttonTextures,
     }));
 
-    this.buttonManager.createButtons(buttonConfigs);
+    this.buttonManager.createButtons(buttonConfigs, false);
   }
 
   getButtons(): Button[] {

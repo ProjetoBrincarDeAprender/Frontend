@@ -1,17 +1,14 @@
 import Phaser from "phaser";
 import ButtonManager from "@/games/common/managers/ButtonManager";
-// import AssetLoader from "@/games/common/loaders/AssetLoader";
 import EffectManager from "@/games/common/managers/EffectManager";
 
 export default class VowelsCreditsScene extends Phaser.Scene {
   private buttonManager: ButtonManager;
-  // private assetLoader: AssetLoader;
   private effectManager: EffectManager;
 
   constructor() {
-    super("vowelsCredits");
+    super("vowelsSequenceCredits");
     this.buttonManager = new ButtonManager(this);
-    // this.assetLoader = new AssetLoader(this);
     this.effectManager = new EffectManager(this);
   }
 
@@ -22,8 +19,6 @@ export default class VowelsCreditsScene extends Phaser.Scene {
     );
     this.load.image("dudaClap", "/assets/common/duda/dudaClap.png");
     this.load.image("trophy", "/assets/common/trophy.png");
-    // this.assetLoader.preLoadRectangleRed();
-    // this.assetLoader.proLoadRectangleBlue();
   }
 
   create() {

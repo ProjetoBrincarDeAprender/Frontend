@@ -222,7 +222,7 @@ export default class VowelsSequenceLogic {
           this.createQuestion(["A", "E", "I", "O", "U"]);
           this.scene.time.delayedCall(3000, () => {
             if (result.finished) {
-              this.scene.scene.start("vowelsCredits");
+              this.scene.scene.start("vowelsSequenceCredits");
             } else {
               this.setupAnotherLevel();
             }

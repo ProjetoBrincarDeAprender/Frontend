@@ -103,38 +103,44 @@ export default class VowelsSequenceStartScene extends Phaser.Scene {
   private createStartButton(): void {
     const buttonContent = this.gameData.buttons[0];
 
-    this.buttonFactory.createButton({
-      positions: buttonContent.positions,
-      textures: {
-        default: "defaultButtonRectangle",
-        hover: "hoverButtonRectangle",
-        clicked: "clickedButtonRectangle",
+    this.buttonFactory.createButton(
+      {
+        positions: buttonContent.positions,
+        textures: {
+          default: "defaultButtonRectangle",
+          hover: "hoverButtonRectangle",
+          clicked: "clickedButtonRectangle",
+        },
+        text: buttonContent.text,
+        fontSize: buttonContent.fontSize,
+        onClick: () => {
+          this.scene.start("vowelsSequenceGameScene");
+        },
       },
-      text: buttonContent.text,
-      fontSize: buttonContent.fontSize,
-      onClick: () => {
-        this.scene.start("vowelsSequenceGameScene");
-      },
-    });
+      false,
+    );
   }
 
   private createExitButton(): void {
     const buttonContent = this.gameData.buttons[1];
 
-    this.buttonFactory.createButton({
-      positions: buttonContent.positions,
-      textures: {
-        default: "defaultRectangleRed",
-        hover: "hoverRectangleRed",
-        clicked: "clickedRectangleRed",
+    this.buttonFactory.createButton(
+      {
+        positions: buttonContent.positions,
+        textures: {
+          default: "defaultRectangleRed",
+          hover: "hoverRectangleRed",
+          clicked: "clickedRectangleRed",
+        },
+        text: buttonContent.text,
+        fontSize: buttonContent.fontSize,
+        scale: 0.7,
+        onClick: () => {
+          window.history.back();
+        },
       },
-      text: buttonContent.text,
-      fontSize: buttonContent.fontSize,
-      scale: 0.7,
-      onClick: () => {
-        window.history.back();
-      },
-    });
+      false,
+    );
   }
 
   private createMenuButtons(): void {
