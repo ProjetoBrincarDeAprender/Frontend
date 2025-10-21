@@ -1,6 +1,7 @@
 import ClickedButtonLogic from "../logic/ClickedButtonLogic";
-import LevelManager from "../logic/LevelManager";
 import ClickedButtonLevel from "../logic/ClickedButtonLevel";
+import LevelManager from "../logic/LevelManager";
+import ButtonManager from "../logic/ButtonManager";
 import Phaser from "phaser";
 
 export default class ClickedButtonGameScene extends Phaser.Scene {
@@ -8,10 +9,12 @@ export default class ClickedButtonGameScene extends Phaser.Scene {
   private mainDataPath: string;
   private clickedButtonLogic!: ClickedButtonLogic;
   private levelManager!: LevelManager;
+  private buttonManager: ButtonManager;
 
   constructor(mainDataPath: string) {
     super("clickedButtonGameScene");
     this.mainDataPath = mainDataPath;
+    this.buttonManager = new ButtonManager(this);
   }
 
   preload() {
@@ -22,6 +25,7 @@ export default class ClickedButtonGameScene extends Phaser.Scene {
     this.mainData = this.cache.json.get("mainData");
 
     this.loadBackground();
+    this.loadButtonImages();
     this.loadEntitiesImages();
 
     this.load.once("complete", () => {
@@ -30,6 +34,7 @@ export default class ClickedButtonGameScene extends Phaser.Scene {
       this.createBackground();
       this.setupQuestion();
       this.setupEntity();
+      this.setupOptions();
     });
 
     this.load.start();
@@ -37,6 +42,14 @@ export default class ClickedButtonGameScene extends Phaser.Scene {
 
   private loadBackground(): void {
     this.load.image("background", this.mainData.config.background.image);
+  }
+
+  private loadButtonImages() {
+    const buttonTexturesUrl = this.mainData.textures.buttons;
+
+    this.load.image("defaultButton", buttonTexturesUrl.blue.default);
+    this.load.image("hoverButton", buttonTexturesUrl.blue.hover);
+    this.load.image("clickedButton", buttonTexturesUrl.blue.clicked);
   }
 
   private loadEntitiesImages() {
@@ -64,7 +77,11 @@ export default class ClickedButtonGameScene extends Phaser.Scene {
   }
 
   private setLogic(): void {
-    this.clickedButtonLogic = new ClickedButtonLogic(this, this.levelManager);
+    this.clickedButtonLogic = new ClickedButtonLogic(
+      this,
+      this.levelManager,
+      this.buttonManager,
+    );
   }
 
   private setupEntity(): void {
@@ -73,6 +90,10 @@ export default class ClickedButtonGameScene extends Phaser.Scene {
 
   private setupQuestion(): void {
     this.clickedButtonLogic.showQuestion();
+  }
+
+  private setupOptions(): void {
+    this.clickedButtonLogic.showOptions();
   }
 
   //   private loadAudios() {

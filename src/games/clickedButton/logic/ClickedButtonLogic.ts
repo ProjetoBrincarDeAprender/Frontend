@@ -1,12 +1,20 @@
 import LevelManager from "./LevelManager";
+import ButtonManager from "./ButtonManager";
+import type Button from "./Button";
 
 export default class ClickedButtonLogic {
   private scene: Phaser.Scene;
   private levelManager: LevelManager;
+  private buttonManager: ButtonManager;
 
-  constructor(scene: Phaser.Scene, levelManager: LevelManager) {
+  constructor(
+    scene: Phaser.Scene,
+    levelManager: LevelManager,
+    buttonManager: ButtonManager,
+  ) {
     this.scene = scene;
     this.levelManager = levelManager;
+    this.buttonManager = buttonManager;
   }
 
   public showQuestion(): void {
@@ -21,6 +29,30 @@ export default class ClickedButtonLogic {
 
   public showEntity(): void {
     const entityKey = this.levelManager.getActualLevel().getEntityKey();
-    this.scene.add.image(400, 220, entityKey).setOrigin(0.5, 0.5).setScale(0.4);
+    this.scene.add.image(400, 240, entityKey).setOrigin(0.5, 0.5).setScale(0.4);
+  }
+
+  public showOptions(): void {
+    const options = this.levelManager.getActualLevel().getOptions();
+    // const createdButtons: Button[] = [];
+    const spaceBetweenButtons =
+      this.scene.cameras.main.width / (options.length + 1);
+
+    for (let i = 0; i < options.length; i++) {
+      const newPositionX = spaceBetweenButtons * (i + 1);
+      //   const button =
+      this.buttonManager.createButton({
+        positions: { x: newPositionX, y: 500 },
+        textures: {
+          default: "defaultButton",
+          hover: "hoverButton",
+          clicked: "clickedButton",
+        },
+        text: options[i],
+        fontSize: 40,
+        scale: 1.4,
+      });
+      //   createdButtons.push(button);
+    }
   }
 }
