@@ -7,6 +7,7 @@ export default class ClickedButtonGameScene extends Phaser.Scene {
   private mainData: any;
   private mainDataPath: string;
   private clickedButtonLogic!: ClickedButtonLogic;
+  private levelManager!: LevelManager;
 
   constructor(mainDataPath: string) {
     super("clickedButtonGameScene");
@@ -21,10 +22,14 @@ export default class ClickedButtonGameScene extends Phaser.Scene {
     this.mainData = this.cache.json.get("mainData");
 
     this.loadBackground();
+    this.loadEntitiesImages();
 
     this.load.once("complete", () => {
+      this.setLevelManager();
+      this.setLogic();
       this.createBackground();
-      this.setupLevel();
+      this.setupQuestion();
+      this.setupEntity();
     });
 
     this.load.start();
@@ -32,6 +37,15 @@ export default class ClickedButtonGameScene extends Phaser.Scene {
 
   private loadBackground(): void {
     this.load.image("background", this.mainData.config.background.image);
+  }
+
+  private loadEntitiesImages() {
+    const entities = this.mainData.textures.entities;
+
+    entities.forEach((entity: any) => {
+      this.load.image(entity.key, entity.default);
+      this.load.image(entity.completeKey, entity.complete);
+    });
   }
 
   private createBackground(): void {
@@ -42,23 +56,24 @@ export default class ClickedButtonGameScene extends Phaser.Scene {
     background.setScale(scale);
   }
 
-  private setupLevel(): void {
+  private setLevelManager(): void {
     const levels = this.mainData.levels.map(
       (level: any) => new ClickedButtonLevel(level),
     );
-    const levelManager = new LevelManager(levels);
-    const logic = new ClickedButtonLogic(this, levelManager);
-    logic.showQuestion();
+    this.levelManager = new LevelManager(levels);
   }
 
-  //   private loadEntitiesImages() {
-  //     const entities = this.mainData.textures.entities;
+  private setLogic(): void {
+    this.clickedButtonLogic = new ClickedButtonLogic(this, this.levelManager);
+  }
 
-  //     entities.forEach((entity: any) => {
-  //       this.load.image(entity.key, entity.default);
-  //       this.load.image(entity.completeKey, entity.complete);
-  //     });
-  //   }
+  private setupEntity(): void {
+    this.clickedButtonLogic.showEntity();
+  }
+
+  private setupQuestion(): void {
+    this.clickedButtonLogic.showQuestion();
+  }
 
   //   private loadAudios() {
   //     const audios = this.gameData.audios;

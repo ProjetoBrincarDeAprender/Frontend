@@ -18,4 +18,9 @@ export default class ClickedButtonLogic {
       })
       .setOrigin(0.5, 0.5);
   }
+
+  public showEntity(): void {
+    const entityKey = this.levelManager.getActualLevel().getEntityKey();
+    this.scene.add.image(400, 220, entityKey).setOrigin(0.5, 0.5).setScale(0.4);
+  }
 }
