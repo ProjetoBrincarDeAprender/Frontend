@@ -121,50 +121,25 @@
       "options": ["A", "E", "I", "O", "U"]
     },
     {
-      "answer": "A",
+      "answer": "I",
       "question": "Complete a palavra",
       "entityKey": "hiena",
       "completeEntityKey": "hienaCompleta",
       "options": ["A", "E", "I", "O", "U"]
     },
     {
-      "answer": "A",
+      "answer": "O",
       "question": "Complete a palavra",
       "entityKey": "onca",
       "completeEntityKey": "oncaCompleta",
       "options": ["A", "E", "I", "O", "U"]
     },
     {
-      "answer": "A",
+      "answer": "U",
       "question": "Complete a palavra",
       "entityKey": "urso",
       "completeEntityKey": "ursoCompleta",
       "options": ["A", "E", "I", "O", "U"]
-    },
-    {
-      "entityKey": "gato",
-      "completeEntityKey": "gatoCompleta",
-      "answer": "A"
-    },
-    {
-      "entityKey": "esquilo",
-      "completeEntityKey": "esquiloCompleta",
-      "answer": "E"
-    },
-    {
-      "entityKey": "iguana",
-      "completeEntityKey": "iguanaCompleta",
-      "answer": "I"
-    },
-    {
-      "entityKey": "ovelha",
-      "completeEntityKey": "ovelhaCompleta",
-      "answer": "O"
-    },
-    {
-      "entityKey": "urubu",
-      "completeEntityKey": "urubuCompleta",
-      "answer": "U"
     }
   ]
 }

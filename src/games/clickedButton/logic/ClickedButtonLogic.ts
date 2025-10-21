@@ -83,6 +83,7 @@ export default class ClickedButtonLogic {
         duration: 800,
       });
       this.soundManager.play("correct");
+      this.updateEntityToComplete();
       this.scene.time.delayedCall(3000, () => {
         this.nextLevel();
       });
@@ -95,6 +96,17 @@ export default class ClickedButtonLogic {
       });
       this.soundManager.play("incorrect");
     }
+  }
+
+  private updateEntityToComplete(): void {
+    this.entity?.destroy();
+    const completeEntityKey = this.levelManager
+      .getActualLevel()
+      .getCompleteEntityKey();
+    this.entity = this.scene.add
+      .image(400, 240, completeEntityKey)
+      .setOrigin(0.5, 0.5)
+      .setScale(0.4);
   }
 
   private clearLevelElements(): void {
