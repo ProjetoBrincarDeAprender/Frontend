@@ -76,6 +76,8 @@ export default class ClickedButtonLogic {
   private handleOptionClick(selectedOption: Button): void {
     const answer = this.levelManager.getActualLevel().getAnswer();
     if (selectedOption.getButtonStringText() === answer) {
+      this.setOptionsEnabled(false);
+
       this.effectManager.growup(selectedOption, "expo.out", 1.6, 400);
       this.effectManager.changeColor({
         gameObject: selectedOption,
@@ -89,6 +91,8 @@ export default class ClickedButtonLogic {
         this.nextLevel();
       });
     } else {
+      selectedOption.disableInteractive();
+
       this.effectManager.growup(selectedOption, "bounce.out", 1.2, 200);
       this.effectManager.changeColor({
         gameObject: selectedOption,
@@ -96,6 +100,10 @@ export default class ClickedButtonLogic {
         duration: 400,
       });
       this.soundManager.play("incorrect");
+
+      this.scene.time.delayedCall(400, () => {
+        selectedOption.setInteractive();
+      });
     }
   }
 
@@ -123,5 +131,12 @@ export default class ClickedButtonLogic {
     this.showQuestion();
     this.showEntity();
     this.showOptions();
+  }
+
+  private setOptionsEnabled(enabled: boolean): void {
+    this.options.forEach((option) => option.disableInteractive());
+    if (enabled) {
+      this.options.forEach((option) => option.setInteractive());
+    }
   }
 }
