@@ -18,5 +18,10 @@
     "title": "Sequência de Números",
     "gameIdUrl": "numbers",
     "image": "/assets/numbersGame/startScreen.png"
+  },
+  {
+    "title": "Tipos de Moradia",
+    "gameIdUrl": "housing",
+    "image": "/assets/housingGame/bg.png"
   }
 ]
