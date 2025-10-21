@@ -28,6 +28,7 @@ import { Competencies } from "./pages/Dashboard/Teacher/Curriculum/Competencies"
 import { Activities } from "./pages/Dashboard/Teacher/Curriculum/Activities";
 import { DifficultyLevels } from "./pages/Dashboard/Teacher/Curriculum/DifficultyLevels";
 import { Questions } from "./pages/Dashboard/Teacher/Curriculum/Questions";
+import GeneralGame from "./components/features/games/GeneralGame";
 
 function App() {
   return (
@@ -80,6 +81,7 @@ function App() {
         <Route path="sum" element={<SumGame />} />
         <Route path="numbers" element={<NumbersGame />} />
         <Route path="forms" element={<CoordinationGame />} />
+        <Route path="general" element={<GeneralGame />} />
       </Route>
 
       <Route element={<AuthGuard requireAuth />}>
