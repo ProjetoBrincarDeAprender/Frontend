@@ -126,11 +126,14 @@ export default class ClickedButtonLogic {
   }
 
   private nextLevel(): void {
-    this.levelManager.nextLevel();
     this.clearLevelElements();
-    this.showQuestion();
-    this.showEntity();
-    this.showOptions();
+    if (!this.levelManager.nextLevel()) {
+      this.scene.scene.start("clickedButtonStartScene");
+    } else {
+      this.showQuestion();
+      this.showEntity();
+      this.showOptions();
+    }
   }
 
   private setOptionsEnabled(enabled: boolean): void {

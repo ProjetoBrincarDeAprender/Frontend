@@ -30,7 +30,7 @@ const GeneralGame: React.FC = () => {
       type: Phaser.AUTO,
       width: 800,
       height: 600,
-      scene: [clickedButtonGameScene],
+      scene: [clickedButtonStartScene, clickedButtonGameScene],
       parent: containerRef.current,
       backgroundColor: "#ffffff",
     };
