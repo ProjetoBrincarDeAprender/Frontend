@@ -1,16 +1,20 @@
 interface IClickedButtonLevel {
   answer: string;
   question: string;
-  entityKey: string;
-  completeEntityKey: string;
+  entityKey?: string;
+  completeEntityKey?: string;
   options: string[];
+  content?: string[];
+  completeContent?: string[];
 }
 
 export default class ClickedButtonLevel {
   private answer: string;
   private question: string;
-  private entityKey: string;
-  private completeEntityKey: string;
+  private entityKey?: string;
+  private completeEntityKey?: string;
+  private content?: string[];
+  private completeContent?: string[];
   private options: string[];
 
   constructor(data: IClickedButtonLevel) {
@@ -18,6 +22,8 @@ export default class ClickedButtonLevel {
     this.question = data.question;
     this.entityKey = data.entityKey;
     this.completeEntityKey = data.completeEntityKey;
+    this.content = data.content;
+    this.completeContent = data.completeContent;
     this.options = data.options;
   }
 
@@ -30,14 +36,34 @@ export default class ClickedButtonLevel {
   }
 
   public getEntityKey(): string {
-    return this.entityKey;
+    if (this.entityKey) {
+      return this.entityKey;
+    }
+    return "";
   }
 
   public getCompleteEntityKey(): string {
-    return this.completeEntityKey;
+    if (this.completeEntityKey) {
+      return this.completeEntityKey;
+    }
+    return "";
   }
 
   public getOptions(): string[] {
     return this.options;
+  }
+
+  public getContent(): string[] {
+    if (this.content) {
+      return this.content;
+    }
+    return [];
+  }
+
+  public getCompleteContent(): string[] {
+    if (this.completeContent) {
+      return this.completeContent;
+    }
+    return [];
   }
 }

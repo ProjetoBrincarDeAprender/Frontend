@@ -36,6 +36,7 @@ export default class ClickedButtonGameScene extends Phaser.Scene {
       this.createBackground();
       this.setupQuestion();
       this.setupEntity();
+      this.setupContent();
       this.setupOptions();
     });
 
@@ -102,6 +103,10 @@ export default class ClickedButtonGameScene extends Phaser.Scene {
 
   private setupEntity(): void {
     this.clickedButtonLogic.showEntity();
+  }
+
+  private setupContent(): void {
+    this.clickedButtonLogic.showContent();
   }
 
   private setupQuestion(): void {

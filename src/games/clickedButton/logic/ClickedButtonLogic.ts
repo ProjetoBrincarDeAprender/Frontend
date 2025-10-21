@@ -13,6 +13,7 @@ export default class ClickedButtonLogic {
   private question?: Phaser.GameObjects.Text;
   private entity?: Phaser.GameObjects.Image;
   private options: Button[] = [];
+  private content: Phaser.GameObjects.Text[] = [];
 
   constructor(
     scene: Phaser.Scene,
@@ -38,10 +39,33 @@ export default class ClickedButtonLogic {
 
   public showEntity(): void {
     const entityKey = this.levelManager.getActualLevel().getEntityKey();
+    if (!entityKey) return;
     this.entity = this.scene.add
       .image(400, 240, entityKey)
       .setOrigin(0.5, 0.5)
       .setScale(0.4);
+  }
+
+  public showContent(): void {
+    const content = this.levelManager.getActualLevel().getContent();
+    if (!content) return;
+
+    const newContent: Phaser.GameObjects.Text[] = [];
+
+    const spaceBetweenContent =
+      this.scene.cameras.main.width / (content.length + 1);
+
+    for (let i = 0; i < content.length; i++) {
+      const newPositionX = spaceBetweenContent * (i + 1);
+      const contentItem = this.scene.add
+        .text(newPositionX, 300, content[i], {
+          color: "#250e00ff",
+          font: "bold 80px Arial",
+        })
+        .setOrigin(0.5, 0.5);
+      newContent.push(contentItem);
+    }
+    this.content = newContent;
   }
 
   public showOptions(): void {
@@ -87,6 +111,7 @@ export default class ClickedButtonLogic {
       this.effectManager.starEffect(selectedOption.x, selectedOption.y);
       this.soundManager.play("correct");
       this.updateEntityToComplete();
+      this.updateContentToComplete();
       this.scene.time.delayedCall(3000, () => {
         this.nextLevel();
       });
@@ -108,6 +133,7 @@ export default class ClickedButtonLogic {
   }
 
   private updateEntityToComplete(): void {
+    if (!this.entity) return;
     this.entity?.destroy();
     const completeEntityKey = this.levelManager
       .getActualLevel()
@@ -118,9 +144,39 @@ export default class ClickedButtonLogic {
       .setScale(0.4);
   }
 
+  private updateContentToComplete(): void {
+    if (!this.content) return;
+    this.entity?.destroy();
+    this.content.forEach((text) => text.destroy());
+    this.content = [];
+
+    const completeContent = this.levelManager
+      .getActualLevel()
+      .getCompleteContent();
+
+    const newContent: Phaser.GameObjects.Text[] = [];
+
+    const spaceBetweenContent =
+      this.scene.cameras.main.width / (completeContent.length + 1);
+
+    for (let i = 0; i < completeContent.length; i++) {
+      const newPositionX = spaceBetweenContent * (i + 1);
+      const contentItem = this.scene.add
+        .text(newPositionX, 300, completeContent[i], {
+          color: "#250e00ff",
+          font: "bold 80px Arial",
+        })
+        .setOrigin(0.5, 0.5);
+      newContent.push(contentItem);
+    }
+    this.content = newContent;
+  }
+
   private clearLevelElements(): void {
     this.question?.destroy();
     this.entity?.destroy();
+    this.content.forEach((text) => text.destroy());
+    this.content = [];
     this.options.forEach((option) => option.destroy());
     this.options = [];
   }
@@ -132,6 +188,7 @@ export default class ClickedButtonLogic {
     } else {
       this.showQuestion();
       this.showEntity();
+      this.showContent();
       this.showOptions();
     }
   }

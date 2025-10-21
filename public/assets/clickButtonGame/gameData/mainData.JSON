@@ -108,38 +108,17 @@
   "levels": [
     {
       "answer": "A",
-      "question": "COMPLETE A PALAVRA",
-      "entityKey": "abelha",
-      "completeEntityKey": "abelhaCompleta",
-      "options": ["A", "E", "I", "O", "U"]
+      "question": "COMPLETE AS VOGAIS",
+      "content": ["_", "E", "I", "O", "U"],
+      "completeContent": ["A", "E", "I", "O", "U"],
+      "options": ["A", "U"]
     },
     {
       "answer": "E",
-      "question": "COMPLETE A PALAVRA",
-      "entityKey": "elefante",
-      "completeEntityKey": "elefanteCompleta",
-      "options": ["A", "E", "I", "O", "U"]
-    },
-    {
-      "answer": "I",
-      "question": "Complete a palavra",
-      "entityKey": "hiena",
-      "completeEntityKey": "hienaCompleta",
-      "options": ["A", "E", "I", "O", "U"]
-    },
-    {
-      "answer": "O",
-      "question": "Complete a palavra",
-      "entityKey": "onca",
-      "completeEntityKey": "oncaCompleta",
-      "options": ["A", "E", "I", "O", "U"]
-    },
-    {
-      "answer": "U",
-      "question": "Complete a palavra",
-      "entityKey": "urso",
-      "completeEntityKey": "ursoCompleta",
-      "options": ["A", "E", "I", "O", "U"]
+      "question": "COMPLETE AS VOGAIS",
+      "content": ["A", "_", "I", "O", "U"],
+      "completeContent": ["A", "E", "I", "O", "U"],
+      "options": ["E", "I"]
     }
   ]
 }
