@@ -27,6 +27,7 @@ export default class ClickedButtonGameScene extends Phaser.Scene {
     this.loadAudios();
     this.loadBackground();
     this.loadButtonImages();
+    this.loadEffectsImages();
     this.loadEntitiesImages();
 
     this.load.once("complete", () => {
@@ -58,6 +59,13 @@ export default class ClickedButtonGameScene extends Phaser.Scene {
     this.load.image("defaultButton", buttonTexturesUrl.blue.default);
     this.load.image("hoverButton", buttonTexturesUrl.blue.hover);
     this.load.image("clickedButton", buttonTexturesUrl.blue.clicked);
+  }
+
+  private loadEffectsImages() {
+    const effects = this.mainData.textures.effects;
+    effects.forEach((effect: any) => {
+      this.load.image(effect.key, effect.texture);
+    });
   }
 
   private loadEntitiesImages() {
@@ -110,13 +118,6 @@ export default class ClickedButtonGameScene extends Phaser.Scene {
   //     this.load.image("defaultButton", buttonTexturesUrl.blue.default);
   //     this.load.image("hoverButton", buttonTexturesUrl.blue.hover);
   //     this.load.image("clickedButton", buttonTexturesUrl.blue.clicked);
-  //   }
-
-  //   private loadEffectsImages() {
-  //     const effects = this.gameData.textures.effects;
-  //     effects.forEach((effect: any) => {
-  //       this.load.image(effect.key, effect.texture);
-  //     });
   //   }
 }
 

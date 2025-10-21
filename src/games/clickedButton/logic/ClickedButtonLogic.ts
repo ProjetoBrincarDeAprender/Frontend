@@ -82,6 +82,7 @@ export default class ClickedButtonLogic {
         color: 0x00ff00,
         duration: 800,
       });
+      this.effectManager.starEffect(selectedOption.x, selectedOption.y);
       this.soundManager.play("correct");
       this.updateEntityToComplete();
       this.scene.time.delayedCall(3000, () => {

@@ -6,6 +6,10 @@ import FloatingEffect from "@/games/common/effects/FloatingEffect";
 import OverlayEffect from "@/games/common/effects/OverlayEffect";
 import MoveEffect from "@/games/common/effects/MoveEffect";
 import confettiEffect from "@/games/common/effects/confettiEffect";
+import starEffect from "@/games/common/effects/StarEffect";
+import starExplosionEffect from "@/games/common/effects/StarExplosionEffect";
+import createStarParticles from "@/games/common/effects/CreateStarParticles";
+import starExplosionShower from "@/games/common/effects/StarExplosionShower";
 import type Button from "./Button";
 
 export default class EffectManager {
@@ -64,5 +68,21 @@ export default class EffectManager {
 
   particles(image: string): void {
     Particles(this.scene, image);
+  }
+
+  starEffect(x: number, y: number): void {
+    starEffect(this.scene, x, y);
+  }
+
+  starExplosion(x: number, y: number): void {
+    starExplosionEffect(this.scene, x, y);
+  }
+
+  starParticles(x: number, y: number): void {
+    createStarParticles(this.scene, x, y);
+  }
+
+  starExplosionShower() {
+    starExplosionShower(this.scene, 400, 240);
   }
 }
