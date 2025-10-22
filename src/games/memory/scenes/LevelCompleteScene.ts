@@ -35,8 +35,6 @@ export class MemoryLevelCompleteScene extends Phaser.Scene {
         fontSize: "36px",
         color: "#2D5EFF",
         fontStyle: "bold",
-        stroke: "#ffffff",
-        strokeThickness: 4,
         align: "center",
       })
       .setOrigin(0.5);
@@ -50,6 +48,7 @@ export class MemoryLevelCompleteScene extends Phaser.Scene {
           {
             fontFamily: "Arial, sans-serif",
             fontSize: "24px",
+            fontStyle: "bold",
             color: "#FFFFFF",
             padding: { left: 15, right: 15, top: 8, bottom: 8 },
           },

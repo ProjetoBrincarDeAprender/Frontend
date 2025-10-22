@@ -28,8 +28,6 @@ export class MemoryEndScene extends Phaser.Scene {
         color: "#2D5EFF",
         fontFamily: "Comic Sans MS, Arial, sans-serif",
         fontStyle: "bold",
-        stroke: "#ffffff",
-        strokeThickness: 4,
         align: "center",
       })
       .setOrigin(0.5, 0.5);
