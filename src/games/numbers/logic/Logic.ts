@@ -155,12 +155,10 @@ export default class Logic {
     const container = this.scene.add.graphics();
     container.fillStyle(0x1e1b4b, 0.8); // Roxo escuro com 80% de opacidade
     container.fillRoundedRect(50, 50, 700, 500, 25);
-    container.lineStyle(3, 0xfbbf24, 1); // Borda dourada que combina com as estrelas
-    container.strokeRoundedRect(50, 50, 700, 500, 25);
 
     // Título em CAPSLOCK para pessoas com síndrome de Down
     this.scene.add
-      .text(400, 130, "QUAL NÚMERO VEM DEPOIS?", {
+      .text(400, 130, "COMPLETE A SEQUÊNCIA", {
         fontSize: "38px",
         color: "#4338ca",
         fontFamily: "Arial Black",
