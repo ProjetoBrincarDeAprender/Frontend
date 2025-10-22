@@ -23,12 +23,12 @@ import Logout from "./pages/Logout/Logout";
 import { Profile } from "./pages/Profile/Profile";
 import { RecoverPassword } from "./pages/RecoverPassword/RecoverPassword";
 import { SendPasswordToken } from "./pages/SendPasswordToken/SendPasswordToken";
+import { CoordinationGame } from "./components/features/games/CoordinationGame";
 import KnowledgeAreas from "./pages/Dashboard/Teacher/Curriculum/KnowledgeAreas";
-import {Competencies} from "./pages/Dashboard/Teacher/Curriculum/Competencies";
-import {Activities} from "./pages/Dashboard/Teacher/Curriculum/Activities";
-import {DifficultyLevels} from "./pages/Dashboard/Teacher/Curriculum/DifficultyLevels";
+import { Competencies } from "./pages/Dashboard/Teacher/Curriculum/Competencies";
+import { Activities } from "./pages/Dashboard/Teacher/Curriculum/Activities";
+import { DifficultyLevels } from "./pages/Dashboard/Teacher/Curriculum/DifficultyLevels";
 import { Questions } from "./pages/Dashboard/Teacher/Curriculum/Questions";
-
 
 function App() {
   return (
@@ -67,7 +67,10 @@ function App() {
         <Route path="curriculum/knowledge-areas" element={<KnowledgeAreas />} />
         <Route path="curriculum/competences" element={<Competencies />} />
         <Route path="curriculum/activities" element={<Activities />} />
-        <Route path="curriculum/difficulty-levels" element={<DifficultyLevels />} />
+        <Route
+          path="curriculum/difficulty-levels"
+          element={<DifficultyLevels />}
+        />
         <Route path="curriculum/questions" element={<Questions />} />
       </Route>
 
@@ -78,6 +81,7 @@ function App() {
         <Route path="sum" element={<SumGame />} />
         <Route path="numbers" element={<NumbersGame />} />
         <Route path="housing" element={<HousingGame />} />
+        <Route path="forms" element={<CoordinationGame />} />
       </Route>
 
       <Route element={<AuthGuard requireAuth />}>
