@@ -1,19 +1,19 @@
-import ClickedButtonLevel from "./ClickedButtonLevel";
+import ClickButtonLevel from "./ClickButtonLevel";
 
 export default class LevelManager {
-  private levels: ClickedButtonLevel[];
+  private levels: ClickButtonLevel[];
   private actualIndex: number;
 
-  constructor(levels: ClickedButtonLevel[]) {
+  constructor(levels: ClickButtonLevel[]) {
     this.levels = levels;
     this.actualIndex = 0;
   }
 
-  public getLevels(): ClickedButtonLevel[] {
+  public getLevels(): ClickButtonLevel[] {
     return this.levels;
   }
 
-  public getActualLevel(): ClickedButtonLevel {
+  public getActualLevel(): ClickButtonLevel {
     return this.levels[this.actualIndex];
   }
 

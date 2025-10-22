@@ -4,7 +4,7 @@ import EffectManager from "./EffectManager";
 import SoundManager from "./SoundManager";
 import type Button from "./Button";
 
-export default class ClickedButtonLogic {
+export default class ClickButtonLogic {
   private scene: Phaser.Scene;
   private levelManager: LevelManager;
   private buttonManager: ButtonManager;
@@ -206,7 +206,7 @@ export default class ClickedButtonLogic {
   private nextLevel(): void {
     this.clearLevelElements();
     if (!this.levelManager.nextLevel()) {
-      this.scene.scene.start("clickedButtonStartScene");
+      this.scene.scene.start("clickButtonStartScene");
     } else {
       this.showQuestion();
       this.showEntity();

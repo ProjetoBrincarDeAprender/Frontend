@@ -4,25 +4,25 @@ import { useEffect, useRef } from "react";
 import { Header } from "@/components/Header/Header";
 import { BackButton } from "@/components/utils/BackButton";
 import Phaser from "phaser";
-import ClickedButtonStartScene from "@/games/clickedButton/scenes/ClickedButtonStart";
-import ClickedButtonGameScene from "@/games/clickedButton/scenes/ClickedButtonGame";
+import ClickButtonStartScene from "@/games/clickedButton/scenes/ClickButtonStart";
+import ClickButtonGameScene from "@/games/clickedButton/scenes/ClickButtonGame";
 
-export interface IRefGeneralGame {
+export interface IRefClickButtonGame {
   game: Phaser.Game | null;
   scene: Phaser.Scene | null;
 }
 
-const GeneralGame: React.FC = () => {
+const ClickButtonGame: React.FC = () => {
   const gameRef = useRef<Phaser.Game | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     if (!containerRef.current) return;
 
-    const clickedButtonStartScene = new ClickedButtonStartScene(
+    const clickButtonStartScene = new ClickButtonStartScene(
       "/assets/clickButtonGame/gameData/startData.JSON",
     );
-    const clickedButtonGameScene = new ClickedButtonGameScene(
+    const clickButtonGameScene = new ClickButtonGameScene(
       "/assets/clickButtonGame/gameData/mainData.JSON",
     );
 
@@ -30,7 +30,7 @@ const GeneralGame: React.FC = () => {
       type: Phaser.AUTO,
       width: 800,
       height: 600,
-      scene: [clickedButtonStartScene, clickedButtonGameScene],
+      scene: [clickButtonStartScene, clickButtonGameScene],
       parent: containerRef.current,
       backgroundColor: "#ffffff",
     };
@@ -64,4 +64,4 @@ const GeneralGame: React.FC = () => {
   );
 };
 
-export default GeneralGame;
+export default ClickButtonGame;

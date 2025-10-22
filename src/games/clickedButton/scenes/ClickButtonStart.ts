@@ -2,13 +2,13 @@ import Phaser from "phaser";
 import ButtonFactory from "@/games/common/factories/ButtonFactory";
 import ButtonManager from "@/games/common/managers/ButtonManager";
 
-export default class ClickedButtonStartScene extends Phaser.Scene {
+export default class ClickButtonStartScene extends Phaser.Scene {
   private startData: any;
   private startDataPath: string;
   private buttonFactory: ButtonFactory;
 
   constructor(startDataPath: string) {
-    super("clickedButtonStartScene");
+    super("clickButtonStartScene");
     this.startDataPath = startDataPath;
     this.buttonFactory = new ButtonFactory(new ButtonManager(this));
   }
@@ -89,7 +89,7 @@ export default class ClickedButtonStartScene extends Phaser.Scene {
       fontSize: buttonContent.fontSize,
       onClick: () => {
         this.resetAssets();
-        this.scene.start("clickedButtonGameScene");
+        this.scene.start("clickButtonGameScene");
       },
     });
   }

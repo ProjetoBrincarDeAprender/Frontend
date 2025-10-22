@@ -1,4 +1,4 @@
-interface IClickedButtonLevel {
+interface IClickButtonLevel {
   answer: string;
   question: string;
   entityKey?: string;
@@ -7,7 +7,7 @@ interface IClickedButtonLevel {
   completeContent?: string[];
 }
 
-export default class ClickedButtonLevel {
+export default class ClickButtonLevel {
   private answer: string;
   private question: string;
   private entityKey?: string;
@@ -15,7 +15,7 @@ export default class ClickedButtonLevel {
   private completeContent?: string[];
   private options: string[];
 
-  constructor(data: IClickedButtonLevel) {
+  constructor(data: IClickButtonLevel) {
     this.answer = data.answer;
     this.question = data.question;
     this.entityKey = data.entityKey;
