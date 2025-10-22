@@ -14,18 +14,14 @@ const formSchema = z.object({
     .max(100, { error: "O limite suportado é de 100 caracteres" }),
   type: z.string({ error: "Tipo é obrigatório" }),
   competenceId: z.string({ error: "Competência é obrigatória" }),
-  initialDifficulty: z.string({ error: "Nível de dificuldade é obrigatório" }),
+  content: z
+    .string({ error: "Conteúdo é obrigatório" })
+    .min(1, { error: "Conteúdo é obrigatório" })
 });
 
 interface Competence {
   id: number;
   nome: string;
-}
-
-interface DifficultyLevel {
-  id: number;
-  nome: string;
-  name: string;
 }
 
 type EditActivityFormProps = {
@@ -40,7 +36,7 @@ export function EditActivityForm({ id, onSuccess }: EditActivityFormProps) {
       title: "",
       type: "",
       competenceId: "",
-      initialDifficulty: "",
+      content: "",
     },
   });
 
@@ -48,7 +44,6 @@ export function EditActivityForm({ id, onSuccess }: EditActivityFormProps) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [competences, setCompetences] = useState<Competence[]>([]);
-  const [difficultyLevels, setDifficultyLevels] = useState<DifficultyLevel[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -56,40 +51,27 @@ export function EditActivityForm({ id, onSuccess }: EditActivityFormProps) {
         setLoading(true);
         setError(null);
 
-        const [activityResponse, competencesResponse, difficultyLevelsResponse] = await Promise.all([
+        const [activityResponse, competencesResponse] = await Promise.all([
           api.get(`/activity/list/${id}`),
           api.get('/competence/list'),
-          api.get('/difficulty-level/list'),
         ]);
 
-        // Carrega dados da atividade
         if (activityResponse.status === 200) {
           const data = activityResponse.data;
+          
           const activityData = {
             title: data.titulo || "",
             type: data.tipo || "",
-            competenceId: String(
-              data.competenciaId?.id || 
-              data.competencia_id || 
-              ""
-            ),
-            initialDifficulty: String(
-              data.nivel_dificuldadeId?.id || 
-              data.nivel_dificuldade_inicial || 
-              ""
-            ),
+            competenceId: String(data.competencia_id || data.competenciaId?.id || ""),
+            content: typeof data.conteudo === 'string' ? data.conteudo : JSON.stringify(data.conteudo || {}),
           };
+          
           form.reset(activityData);
         }
 
         // Carrega competências
         if (competencesResponse.status === 200 && Array.isArray(competencesResponse.data)) {
           setCompetences(competencesResponse.data);
-        }
-
-        // Carrega níveis de dificuldade
-        if (difficultyLevelsResponse.status === 200 && Array.isArray(difficultyLevelsResponse.data)) {
-          setDifficultyLevels(difficultyLevelsResponse.data);
         }
       } catch (error) {
         if (error instanceof AxiosError) {
@@ -113,7 +95,7 @@ export function EditActivityForm({ id, onSuccess }: EditActivityFormProps) {
         title: data.title,
         type: data.type,
         competenceId: Number(data.competenceId),
-        initialDifficulty: Number(data.initialDifficulty),
+        content: data.content,
       };
 
       const response = await api.put(`/activity/update/${id}`, activityData);
@@ -133,7 +115,7 @@ export function EditActivityForm({ id, onSuccess }: EditActivityFormProps) {
                 'title': 'title',
                 'type': 'type',
                 'competenceId': 'competenceId',
-                'initialDifficulty': 'initialDifficulty',
+                'content': 'content',
               };
               
               const formFieldName = fieldMap[fieldError.field];
@@ -243,18 +225,21 @@ export function EditActivityForm({ id, onSuccess }: EditActivityFormProps) {
 
         <Form.Field
           form={form}
-          name="initialDifficulty"
+          name="content"
           render={({ field }) => (
-            <Form.Select
-              label="Nível de Dificuldade Inicial"
-              placeholder="Selecione o nível"
-              options={difficultyLevels.map((level) => ({
-                value: level.id.toString(),
-                label: level.nome || level.name,
-              }))}
-              onChange={field.onChange}
-              value={field.value || ""}
-            />
+            <div className="space-y-2">
+              <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                Conteúdo
+              </label>
+              <textarea
+                {...field}
+                placeholder="Digite o conteúdo da atividade"
+                className="min-h-[100px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+              />
+              <p className="text-sm text-muted-foreground">
+                Digite o conteúdo da atividade.
+              </p>
+            </div>
           )}
         />
 

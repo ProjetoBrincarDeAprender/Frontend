@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { toast } from "sonner";
 import { Form } from "@/components/forms/Root";
+import { useTable } from "@/hooks/Table/useTable";
 import api from "@/utils/api";
 import { AxiosError } from "axios";
 
@@ -18,9 +19,9 @@ const formSchema = z.object({
   competenceId: z
     .string({ error: "Competência é obrigatória" })
     .min(1, { error: "Selecione uma competência" }),
-  initialDifficulty: z
-    .string({ error: "Dificuldade inicial é obrigatória" })
-    .min(1, { error: "Selecione uma dificuldade inicial" })
+  content: z
+    .string({ error: "Conteúdo é obrigatório" })
+    .min(1, { error: "Conteúdo é obrigatório" })
 });
 
 interface CreateActivityFormProps {
@@ -35,11 +36,6 @@ interface Competence {
     id: number;
     nome: string;
   };
-}
-
-interface DifficultyLevel {
-  id: number;
-  name: string;
 }
 
 interface KnowledgeArea {
@@ -61,12 +57,6 @@ interface CompetenceApiResponse {
   };
 }
 
-interface DifficultyLevelApiResponse {
-  id: number;
-  name?: string;
-  nome?: string;
-}
-
 const activityTypes = [
   { value: "Atividade", label: "Atividade" },
   { value: "Jogo", label: "Jogo" },
@@ -75,10 +65,10 @@ const activityTypes = [
 export function CreateActivityForm({ onSuccess }: CreateActivityFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [allCompetences, setAllCompetences] = useState<Competence[]>([]);
-  const [difficultyLevels, setDifficultyLevels] = useState<DifficultyLevel[]>([]);
   const [competenceSearch, setCompetenceSearch] = useState("");
   const [showCompetenceDropdown, setShowCompetenceDropdown] = useState(false);
   const [selectedCompetence, setSelectedCompetence] = useState<Competence | null>(null);
+  const { setUpdating } = useTable();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -86,7 +76,7 @@ export function CreateActivityForm({ onSuccess }: CreateActivityFormProps) {
       title: "",
       type: "",
       competenceId: "",
-      initialDifficulty: ""
+      content: ""
     }
   });
 
@@ -196,36 +186,12 @@ export function CreateActivityForm({ onSuccess }: CreateActivityFormProps) {
     fetchAllCompetences();
   }, []);
 
-  useEffect(() => {
-    const fetchDifficultyLevels = async () => {
-      try {
-        const response = await api.get("/difficulty-level/list");
-        
-        if (response.status === 200 && response.data) {
-          const levels = Array.isArray(response.data) ? response.data : [response.data];
-          const formattedLevels = levels.map((level: DifficultyLevelApiResponse) => ({
-            id: level.id,
-            name: level.name || level.nome || ""
-          }));
-          
-          setDifficultyLevels(formattedLevels);
-        } else {
-          setDifficultyLevels([]);
-        }
-      } catch {
-        setDifficultyLevels([]);
-      }
-    };
-
-    fetchDifficultyLevels();
-  }, []);
-
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     const payload = {
       title: data.title,
       type: data.type,
       competenceId: Number(data.competenceId),
-      initialDifficulty: Number(data.initialDifficulty)
+      content: JSON.stringify({ texto: data.content })
     };
 
     try {
@@ -237,6 +203,7 @@ export function CreateActivityForm({ onSuccess }: CreateActivityFormProps) {
         form.reset();
         setSelectedCompetence(null);
         setCompetenceSearch("");
+        setUpdating(true); // Trigger table refresh
         return onSuccess();
       }
     } catch (error) {
@@ -408,29 +375,24 @@ export function CreateActivityForm({ onSuccess }: CreateActivityFormProps) {
           )}
         </div>
 
-        {difficultyLevels.length > 0 ? (
-          <Form.Field
-            form={form}
-            name="initialDifficulty"
-            render={({ field }) => (
-              <Form.Select
+        <Form.Field
+          form={form}
+          name="content"
+          render={({ field }) => (
+            <div className="space-y-2">
+              <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                Conteúdo *
+              </label>
+              <textarea
                 {...field}
-                label="Dificuldade Inicial"
-                placeholder="Selecione a dificuldade inicial"
-                options={difficultyLevels.map(level => ({
-                  value: String(level.id),
-                  label: level.name
-                }))}
+                placeholder="Ex: Descrição da atividade ou instruções..."
                 disabled={isSubmitting}
+                className="flex min-h-32 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 resize-vertical"
               />
-            )}
-          />
-        ) : (
-          <div className="text-sm text-amber-600 bg-amber-50 p-3 rounded border border-amber-200">
-            ⚠️ <strong>Nenhum nível de dificuldade encontrado.</strong><br/>
-            Crie níveis de dificuldade primeiro para poder selecionar um.
-          </div>
-        )}
+              <p className="text-xs text-gray-500">Este texto será convertido para JSON automaticamente.</p>
+            </div>
+          )}
+        />
 
         <Form.Submit disabled={isSubmitting} className="bg-primary hover:bg-primary/90">
           {isSubmitting ? "Criando..." : "Criar"}

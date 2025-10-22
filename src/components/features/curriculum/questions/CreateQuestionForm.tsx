@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { toast } from "sonner";
 import { Form } from "@/components/forms/Root";
+import { useTable } from "@/hooks/Table/useTable";
 import api from "@/utils/api";
 import { AxiosError } from "axios";
 
@@ -18,7 +19,10 @@ const formSchema = z.object({
     .max(100, { error: "Ordem deve ser no máximo 100" }),
   activityId: z
     .string({ error: "Atividade é obrigatória" })
-    .min(1, { error: "Selecione uma atividade" })
+    .min(1, { error: "Selecione uma atividade" }),
+  difficultyId: z
+    .string({ error: "Nível de dificuldade é obrigatório" })
+    .min(1, { error: "Selecione um nível de dificuldade" })
 });
 
 interface CreateQuestionFormProps {
@@ -31,6 +35,11 @@ interface Activity {
   type: string;
 }
 
+interface DifficultyLevel {
+  id: number;
+  nome: string;
+}
+
 interface ActivityApiResponse {
   id: number;
   titulo: string;
@@ -40,16 +49,19 @@ interface ActivityApiResponse {
 export function CreateQuestionForm({ onSuccess }: CreateQuestionFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [activities, setActivities] = useState<Activity[]>([]);
+  const [difficultyLevels, setDifficultyLevels] = useState<DifficultyLevel[]>([]);
   const [activitySearch, setActivitySearch] = useState("");
   const [showActivityDropdown, setShowActivityDropdown] = useState(false);
   const [selectedActivity, setSelectedActivity] = useState<Activity | null>(null);
+  const { setUpdating } = useTable();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       content: "",
       ordem: 1,
-      activityId: ""
+      activityId: "",
+      difficultyId: ""
     }
   });
 
@@ -59,20 +71,33 @@ export function CreateQuestionForm({ onSuccess }: CreateQuestionFormProps) {
     type: activity.tipo
   });
 
-  const fetchActivities = async () => {
-    try {
-      const response = await api.get("/activity/list");
-      const activitiesData = Array.isArray(response.data) ? response.data : [response.data];
-      const formattedActivities = activitiesData.map(formatActivity);
-      setActivities(formattedActivities);
-    } catch (error) {
-      console.error("Erro ao buscar atividades:", error);
-      setActivities([]);
-    }
-  };
-
   useEffect(() => {
+    const fetchActivities = async () => {
+      try {
+        const response = await api.get("/activity/list");
+        const activitiesData = Array.isArray(response.data) ? response.data : [response.data];
+        const formattedActivities = activitiesData.map(formatActivity);
+        setActivities(formattedActivities);
+      } catch (error) {
+        console.error("Erro ao buscar atividades:", error);
+        setActivities([]);
+      }
+    };
+
+    const fetchDifficultyLevels = async () => {
+      try {
+        const response = await api.get("/difficulty-level/list");
+        if (response.status === 200 && Array.isArray(response.data)) {
+          setDifficultyLevels(response.data);
+        }
+      } catch (error) {
+        console.error("Erro ao buscar níveis de dificuldade:", error);
+        setDifficultyLevels([]);
+      }
+    };
+
     fetchActivities();
+    fetchDifficultyLevels();
   }, []);
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
@@ -81,7 +106,8 @@ export function CreateQuestionForm({ onSuccess }: CreateQuestionFormProps) {
       
       const payload = {
         content: JSON.stringify({ texto: data.content }),
-        ordem: data.ordem
+        ordem: data.ordem,
+        difficultyId: Number(data.difficultyId)
       };
 
       const response = await api.post(`/activity/${data.activityId}/question/register`, payload);
@@ -91,6 +117,7 @@ export function CreateQuestionForm({ onSuccess }: CreateQuestionFormProps) {
         form.reset();
         setSelectedActivity(null);
         setActivitySearch("");
+        setUpdating(true); 
         onSuccess();
       }
     } catch (error) {
@@ -106,6 +133,9 @@ export function CreateQuestionForm({ onSuccess }: CreateQuestionFormProps) {
               }
               if (field.field === 'ordem') {
                 form.setError('ordem', { message: field.message.join(", ") });
+              }
+              if (field.field === 'difficultyId') {
+                form.setError('difficultyId', { message: field.message.join(", ") });
               }
               return `${field.field}: ${field.message.join(", ")}`;
             });
@@ -263,6 +293,24 @@ export function CreateQuestionForm({ onSuccess }: CreateQuestionFormProps) {
               onChange={(e) => field.onChange(Number(e.target.value))}
               min="1"
               max="100"
+            />
+          )}
+        />
+
+        <Form.Field
+          form={form}
+          name="difficultyId"
+          render={({ field }) => (
+            <Form.Select
+              label="Nível de Dificuldade *"
+              placeholder="Selecione um nível de dificuldade"
+              options={difficultyLevels.map((level) => ({
+                value: level.id.toString(),
+                label: level.nome,
+              }))}
+              onChange={field.onChange}
+              value={field.value || ""}
+              disabled={isSubmitting}
             />
           )}
         />

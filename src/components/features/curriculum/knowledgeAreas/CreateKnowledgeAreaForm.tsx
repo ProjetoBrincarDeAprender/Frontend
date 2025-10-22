@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { toast } from "sonner";
 import { Form } from "@/components/forms/Root";
+import { useTable } from "@/hooks/Table/useTable";
 import api from "@/utils/api";
 import { AxiosError } from "axios";
 
@@ -25,6 +26,7 @@ interface CreateKnowledgeAreaFormProps {
 
 export function CreateKnowledgeAreaForm({ onSuccess }: CreateKnowledgeAreaFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { setUpdating } = useTable();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -47,6 +49,7 @@ export function CreateKnowledgeAreaForm({ onSuccess }: CreateKnowledgeAreaFormPr
       if (response.status === 201) {
         toast.success("Área de conhecimento criada com sucesso!");
         form.reset();
+        setUpdating(true);
         return onSuccess();
       }
     } catch (error) {
