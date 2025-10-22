@@ -1,3 +1,14 @@
+/**
+ * Classe responsável por gerenciar toda a lógica do jogo de clicar em botões.
+ * Controla a exibição de perguntas, entidades, conteúdo, opções, efeitos e sons.
+ * Interage com os gerenciadores de nível, botões, efeitos e sons.
+ *
+ * Principais responsabilidades:
+ * - Exibir os elementos do nível atual (questão, entidade, conteúdo, opções)
+ * - Gerenciar a interação do usuário com as opções
+ * - Aplicar efeitos visuais e sonoros conforme resposta
+ * - Controlar o fluxo entre níveis
+ */
 import LevelManager from "./LevelManager";
 import ButtonManager from "./ButtonManager";
 import EffectManager from "./EffectManager";
@@ -10,11 +21,21 @@ export default class ClickButtonLogic {
   private buttonManager: ButtonManager;
   private effectManager: EffectManager;
   private soundManager: SoundManager;
+  /** Objeto de texto da questão atual */
   private question?: Phaser.GameObjects.Text;
+  /** Imagem da entidade auxiliar do nível */
   private entity?: Phaser.GameObjects.Image;
+  /** Botões das opções de resposta */
   private options: Button[] = [];
+  /** Botões do conteúdo/estímulo do nível */
   private content: Button[] = [];
 
+  /**
+   * Inicializa a lógica do jogo, recebendo a cena e os gerenciadores necessários.
+   * @param scene Cena principal do Phaser
+   * @param levelManager Gerenciador de níveis
+   * @param buttonManager Gerenciador de botões
+   */
   constructor(
     scene: Phaser.Scene,
     levelManager: LevelManager,
@@ -27,6 +48,9 @@ export default class ClickButtonLogic {
     this.soundManager = new SoundManager(scene);
   }
 
+  /**
+   * Exibe a pergunta/comando do nível atual na tela.
+   */
   public showQuestion(): void {
     const text = this.levelManager.getActualLevel().getQuestion();
     this.question = this.scene.add
@@ -37,6 +61,9 @@ export default class ClickButtonLogic {
       .setOrigin(0.5, 0.5);
   }
 
+  /**
+   * Exibe a entidade visual (imagem auxiliar) do nível, se existir.
+   */
   public showEntity(): void {
     const entityKey = this.levelManager.getActualLevel().getEntityKey();
     if (!entityKey) return;
@@ -46,6 +73,9 @@ export default class ClickButtonLogic {
       .setScale(0.4);
   }
 
+  /**
+   * Exibe o conteúdo/estímulo do nível (ex: sequência, palavra, etc).
+   */
   public showContent(): void {
     const content = this.levelManager.getActualLevel().getContent();
     if (!content) return;
@@ -85,6 +115,9 @@ export default class ClickButtonLogic {
     this.content = newContent;
   }
 
+  /**
+   * Exibe as opções de resposta do nível e configura os eventos de clique.
+   */
   public showOptions(): void {
     const options = this.levelManager.getActualLevel().getOptions();
     const newOptions: Button[] = [];
@@ -114,6 +147,11 @@ export default class ClickButtonLogic {
     this.options = newOptions;
   }
 
+  /**
+   * Lógica de resposta ao clique em uma opção.
+   * Aplica efeitos, sons e controla o fluxo do jogo conforme resposta correta ou incorreta.
+   * @param selectedOption Botão clicado pelo usuário
+   */
   private handleOptionClick(selectedOption: Button): void {
     const answer = this.levelManager.getActualLevel().getAnswer();
     if (selectedOption.getButtonStringText() === answer) {
@@ -148,6 +186,9 @@ export default class ClickButtonLogic {
     }
   }
 
+  /**
+   * Atualiza o conteúdo do nível para o estado "completo" após resposta correta.
+   */
   private updateContentToComplete(): void {
     if (!this.content) return;
     this.content.forEach((text) => text.destroy());
@@ -194,6 +235,9 @@ export default class ClickButtonLogic {
     this.content = newContent;
   }
 
+  /**
+   * Limpa todos os elementos visuais do nível atual (questão, entidade, conteúdo, opções).
+   */
   private clearLevelElements(): void {
     this.question?.destroy();
     this.entity?.destroy();
@@ -203,6 +247,9 @@ export default class ClickButtonLogic {
     this.options = [];
   }
 
+  /**
+   * Avança para o próximo nível do jogo ou retorna à cena inicial se não houver mais níveis.
+   */
   private nextLevel(): void {
     this.clearLevelElements();
     if (!this.levelManager.nextLevel()) {
@@ -215,6 +262,10 @@ export default class ClickButtonLogic {
     }
   }
 
+  /**
+   * Habilita ou desabilita a interatividade dos botões de opção.
+   * @param enabled Se true, habilita; se false, desabilita.
+   */
   private setOptionsEnabled(enabled: boolean): void {
     this.options.forEach((option) => option.disableInteractive());
     if (enabled) {
