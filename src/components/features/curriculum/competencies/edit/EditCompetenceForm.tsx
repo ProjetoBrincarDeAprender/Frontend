@@ -73,11 +73,10 @@ export function EditCompetenceForm({ id, onSuccess }: EditCompetenceFormProps) {
         if (competenceResponse.status === 200 && competenceResponse.data) {
           const data = competenceResponse.data;
           const competenceData = {
-            name: data.nome || data.name || "",
-            description: data.descricao || data.description || "",
-            areaId: Number(data.area_conhecimento_id || data.areaId || data.area_id || 0),
-            prerequisiteId: data.prerequisito_id || data.prerequisiteId || data.prerequisite_id ? 
-              Number(data.prerequisito_id || data.prerequisiteId || data.prerequisite_id) : null,
+            name: data.nome || "",
+            description: data.descricao || "",
+            areaId: Number(data.area_id || 0),
+            prerequisiteId: data.pre_requisito_id ? Number(data.pre_requisito_id ) : null,
           };
           form.reset(competenceData);
         }
