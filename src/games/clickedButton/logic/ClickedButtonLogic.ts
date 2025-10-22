@@ -13,7 +13,7 @@ export default class ClickedButtonLogic {
   private question?: Phaser.GameObjects.Text;
   private entity?: Phaser.GameObjects.Image;
   private options: Button[] = [];
-  private content: Phaser.GameObjects.Text[] = [];
+  private content: Button[] = [];
 
   constructor(
     scene: Phaser.Scene,
@@ -50,19 +50,24 @@ export default class ClickedButtonLogic {
     const content = this.levelManager.getActualLevel().getContent();
     if (!content) return;
 
-    const newContent: Phaser.GameObjects.Text[] = [];
+    const newContent: Button[] = [];
 
     const spaceBetweenContent =
       this.scene.cameras.main.width / (content.length + 1);
 
     for (let i = 0; i < content.length; i++) {
       const newPositionX = spaceBetweenContent * (i + 1);
-      const contentItem = this.scene.add
-        .text(newPositionX, 300, content[i], {
-          color: "#250e00ff",
-          font: "bold 80px Arial",
-        })
-        .setOrigin(0.5, 0.5);
+      const contentItem = this.buttonManager.createButton({
+        positions: { x: newPositionX, y: 300 },
+        textures: {
+          default: "defaultButton",
+          hover: "hoverButton",
+          clicked: "clickedButton",
+        },
+        text: content[i],
+        fontSize: 40,
+        scale: 1.2,
+      });
       newContent.push(contentItem);
     }
     this.content = newContent;
@@ -153,19 +158,24 @@ export default class ClickedButtonLogic {
       .getActualLevel()
       .getCompleteContent();
 
-    const newContent: Phaser.GameObjects.Text[] = [];
+    const newContent: Button[] = [];
 
     const spaceBetweenContent =
       this.scene.cameras.main.width / (completeContent.length + 1);
 
     for (let i = 0; i < completeContent.length; i++) {
       const newPositionX = spaceBetweenContent * (i + 1);
-      const contentItem = this.scene.add
-        .text(newPositionX, 300, completeContent[i], {
-          color: "#250e00ff",
-          font: "bold 80px Arial",
-        })
-        .setOrigin(0.5, 0.5);
+      const contentItem = this.buttonManager.createButton({
+        positions: { x: newPositionX, y: 300 },
+        textures: {
+          default: "defaultButton",
+          hover: "hoverButton",
+          clicked: "clickedButton",
+        },
+        text: completeContent[i],
+        fontSize: 40,
+        scale: 1.2,
+      });
       newContent.push(contentItem);
     }
     this.content = newContent;
