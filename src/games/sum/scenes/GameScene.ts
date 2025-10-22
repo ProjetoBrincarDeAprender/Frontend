@@ -13,7 +13,7 @@ export default class MathGame extends Phaser.Scene {
   private audioManager!: AudioManager;
   private animationManager!: AnimationManager;
   private numberDisplay!: NumberDisplay;
-  private answerText!: Phaser.GameObjects.Text;
+  private answerText?: Phaser.GameObjects.Text;
   private equationText!: Phaser.GameObjects.Text;
   private correctAnswer: number = 0;
   private currentLevel: MathLevel | null = null;
@@ -22,6 +22,9 @@ export default class MathGame extends Phaser.Scene {
   private activityId?: number;
   private choiceButtons: Button[] = [];
   private submitButton?: SubmitButton;
+  private keyboardHandler?: (event: KeyboardEvent) => void;
+  private cursor?: Phaser.GameObjects.Rectangle;
+  private cursorTween?: Phaser.Tweens.Tween;
 
   constructor() {
     super("MathGame");
@@ -244,13 +247,28 @@ export default class MathGame extends Phaser.Scene {
   }
 
   private createInputInterface() {
+    if (this.answerText) {
+      this.answerText.destroy();
+    }
+    if (this.submitButton) {
+      this.submitButton.destroy();
+      this.submitButton = undefined;
+    }
+    if (this.cursorTween) {
+      this.cursorTween.stop();
+      this.cursorTween = undefined;
+    }
+    if (this.cursor) {
+      this.cursor.destroy();
+      this.cursor = undefined;
+    }
+
     this.add.text(90, 490, "DIGITE A RESPOSTA: ", {
       fontSize: "24px",
       color: "#000",
       fontStyle: "bold",
       backgroundColor: "#ffffff",
     });
-
     this.answerText = this.add
       .text(392, 500, " ", {
         fontSize: "48px",
@@ -260,25 +278,47 @@ export default class MathGame extends Phaser.Scene {
       })
       .setOrigin(0.5);
 
+    this.cursor = this.add.rectangle(0, 0, 2, 36, 0x000000).setOrigin(0, 0.5);
+    this.cursor.setDepth(12);
+    this.updateCursorPosition();
+    this.cursorTween = this.tweens.add({
+      targets: this.cursor,
+      alpha: 0.2,
+      duration: 600,
+      yoyo: true,
+      repeat: -1,
+      ease: "Sine.easeInOut",
+    });
+
     this.submitButton = new SubmitButton(this, 550, 500, () => {
       this.handleAnswer();
     });
+
+  
 
     this.setupKeyboardInput();
   }
 
   private setupKeyboardInput() {
-    this.input.keyboard!.on("keydown", (event: KeyboardEvent) => {
+    if (this.keyboardHandler) {
+      this.input.keyboard?.off("keydown", this.keyboardHandler);
+    }
+
+    this.keyboardHandler = (event: KeyboardEvent) => {
       if (event.key >= "0" && event.key <= "9") {
         this.inputText += event.key;
-        this.answerText.setText(this.inputText);
+        this.answerText!.setText(this.inputText);
+        this.updateCursorPosition();
       } else if (event.key === "Backspace") {
         this.inputText = this.inputText.slice(0, -1);
-        this.answerText.setText(this.inputText);
+        this.answerText!.setText(this.inputText);
+        this.updateCursorPosition();
       } else if (event.key === "Enter") {
         this.handleAnswer();
       }
-    });
+    };
+
+    this.input.keyboard!.on("keydown", this.keyboardHandler);
   }
 
   handleMultipleChoiceAnswer(selectedAnswer: number, clickedButton: Button) {
@@ -306,15 +346,15 @@ export default class MathGame extends Phaser.Scene {
 
     if (result.correct) {
       this.audioManager.playCorrect2();
-      this.animationManager.correctAnswerEffect(this.answerText);
-      this.createMultipleStars(this.answerText.x, this.answerText.y);
+      this.animationManager.correctAnswerEffect(this.answerText!);
+      this.createMultipleStars(this.answerText!.x, this.answerText!.y);
 
       this.updateEquationWithCorrectAnswer();
 
       this.proceedToNextLevel(result.finished);
     } else {
       this.audioManager.playIncorrect();
-      this.animationManager.incorrectAnswerEffect(this.answerText);
+      this.animationManager.incorrectAnswerEffect(this.answerText!);
 
       this.time.delayedCall(1000, () => {
         this.resetInput();
@@ -343,9 +383,17 @@ export default class MathGame extends Phaser.Scene {
   private proceedToNextLevel(finished: boolean) {
     this.time.delayedCall(3000, () => {
       if (!finished) {
-        this.audioManager.playComplete();
-        this.resetInput();
-        this.scene.start("SumLevelCompleteScene", { isLastLevel: false });
+
+        const currentLevelIndex = this.logic.getCurrentLevelIndex();
+        const isEndOfMultipleChoice = currentLevelIndex === 5;
+        
+        if (isEndOfMultipleChoice) {
+          this.audioManager.playComplete();
+          this.scene.start("SumLevelCompleteScene", { isLastLevel: false });
+        } else {
+          this.resetInput();
+          this.createLevelScene();
+        }
       } else {
         this.audioManager.playComplete();
         this.showEndScene();
@@ -358,6 +406,7 @@ export default class MathGame extends Phaser.Scene {
     if (this.answerText) {
       this.answerText.setText(" ");
     }
+    this.updateCursorPosition();
   }
 
   private clearScene() {
@@ -367,6 +416,23 @@ export default class MathGame extends Phaser.Scene {
 
     if (this.equationText) {
       this.equationText.destroy();
+    }
+
+    if (this.answerText) {
+      this.answerText.destroy();
+      this.answerText = undefined;
+    }
+    if (this.keyboardHandler) {
+      this.input.keyboard?.off("keydown", this.keyboardHandler);
+      this.keyboardHandler = undefined;
+    }
+    if (this.cursorTween) {
+      this.cursorTween.stop();
+      this.cursorTween = undefined;
+    }
+    if (this.cursor) {
+      this.cursor.destroy();
+      this.cursor = undefined;
     }
   }
 
@@ -444,5 +510,11 @@ export default class MathGame extends Phaser.Scene {
     });
 
     button.setText("MAIS JOGOS");
+  }
+
+  private updateCursorPosition() {
+    if (!this.answerText || !this.cursor) return;
+    const bounds = this.answerText.getBounds();
+    this.cursor.setPosition(bounds.left + 8, bounds.centerY);
   }
 }

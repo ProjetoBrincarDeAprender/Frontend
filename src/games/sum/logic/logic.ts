@@ -34,6 +34,10 @@ export default class MathLogic {
     return this.levels[this.currentLevelIndex] || null;
   }
 
+  getCurrentLevelIndex(): number {
+    return this.currentLevelIndex;
+  }
+
   checkAnswer(answer: number): { correct: boolean; finished: boolean } {
     const currentLevel = this.getCurrentLevel();
     if (!currentLevel) return { correct: false, finished: true };
