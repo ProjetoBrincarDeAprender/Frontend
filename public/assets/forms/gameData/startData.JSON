@@ -1,0 +1,38 @@
+{
+  "config": {
+    "background": {
+      "image": "/assets/forms/bg2.png",
+      "overlayOpacity": 0.3
+    }
+  },
+
+  "textures": {
+    "buttons": {
+      "blue": {
+        "default": "/assets/common/buttons/rectangleBlueDefault.svg",
+        "hover": "/assets/common/buttons/rectangleBlueHover.svg",
+        "clicked": "/assets/common/buttons/rectangleBlueClicked.svg"
+      },
+      "red": {
+        "default": "/assets/common/buttons/rectangleRedDefault.svg",
+        "hover": "/assets/common/buttons/rectangleRedHover.svg",
+        "clicked": "/assets/common/buttons/rectangleRedClicked.svg"
+      }
+    }
+  },
+
+  "buttons": {
+    "start": {
+      "text": "▶ Iniciar",
+      "positions": { "x": 400, "y": 360 },
+      "fontSize": 40,
+      "scale": 1
+    },
+    "exit": {
+      "text": "Sair",
+      "positions": { "x": 400, "y": 440 },
+      "fontSize": 40,
+      "scale": 0.7
+    }
+  }
+}

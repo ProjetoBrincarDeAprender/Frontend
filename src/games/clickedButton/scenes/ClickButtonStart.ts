@@ -20,15 +20,21 @@ export default class ClickButtonStartScene extends Phaser.Scene {
   private startDataPath: string;
   /** Fábrica de botões para criar botões customizados */
   private buttonFactory: ButtonFactory;
+  private nextSceneKey: string;
 
   /**
    * Inicializa a cena inicial do jogo, recebendo o caminho do JSON de dados.
    * @param startDataPath Caminho do arquivo JSON da tela inicial
    */
-  constructor(startDataPath: string) {
+  constructor(startDataPath: string, nextSceneKey?: string) {
     super("clickButtonStartScene");
     this.startDataPath = startDataPath;
     this.buttonFactory = new ButtonFactory(new ButtonManager(this));
+    if (nextSceneKey) {
+      this.nextSceneKey = nextSceneKey;
+    } else {
+      this.nextSceneKey = "clickButtonGameScene";
+    }
   }
 
   /**
@@ -72,6 +78,7 @@ export default class ClickButtonStartScene extends Phaser.Scene {
    */
   private loadTitle() {
     const titleConfig = this.startData.config.title;
+    if (!titleConfig) return;
     this.load.image("title", titleConfig.image);
   }
 
@@ -110,6 +117,8 @@ export default class ClickButtonStartScene extends Phaser.Scene {
    * Cria e exibe a imagem do título da tela inicial, ajustando o tamanho à tela.
    */
   private createTitle(): void {
+    const titleConfig = this.startData.config.title;
+    if (!titleConfig) return;
     const title = this.add.image(400, 150, "title");
     const scaleX = this.cameras.main.width / title.width;
     const scaleY = this.cameras.main.height / title.height;
@@ -134,7 +143,7 @@ export default class ClickButtonStartScene extends Phaser.Scene {
       fontSize: buttonContent.fontSize,
       onClick: () => {
         this.resetAssets();
-        this.scene.start("clickButtonGameScene");
+        this.scene.start(this.nextSceneKey);
       },
     });
   }
