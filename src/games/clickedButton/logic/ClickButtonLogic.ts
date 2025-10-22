@@ -56,7 +56,7 @@ export default class ClickButtonLogic {
     this.question = this.scene.add
       .text(400, 80, text, {
         font: "bold 40px Arial",
-        color: "#250e00ff",
+        color: "#fff4c3ff",
       })
       .setOrigin(0.5, 0.5);
   }

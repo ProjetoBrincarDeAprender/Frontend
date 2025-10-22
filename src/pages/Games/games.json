@@ -28,5 +28,10 @@
     "title": "Coordenação Motora",
     "gameIdUrl": "forms",
     "image": "/assets/forms/bg.png"
+  },
+  {
+    "title": "Sequência de Vogais",
+    "gameIdUrl": "vowelssequence",
+    "image": "/assets/vowelsSequenceGame/images/gamePrint.png"
   }
 ]
