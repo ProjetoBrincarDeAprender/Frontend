@@ -3,6 +3,7 @@ import { MemoryGame } from "./components/features/games/MemoryGame";
 import NumbersGame from "./components/features/games/NumbersGame";
 import SumGame from "./components/features/games/SumGame";
 import VowelsGame from "./components/features/games/VowelsGame";
+import HousingGame from "./components/features/games/HousingGame";
 import { AuthGuard } from "./guards/AuthGuard";
 import { Calm } from "./pages/Calm/Calm";
 import Dashboard from "./pages/Dashboard/Admin/Dashboard";
@@ -79,6 +80,7 @@ function App() {
         <Route path="memory" element={<MemoryGame />} />
         <Route path="sum" element={<SumGame />} />
         <Route path="numbers" element={<NumbersGame />} />
+        <Route path="housing" element={<HousingGame />} />
         <Route path="forms" element={<CoordinationGame />} />
       </Route>
 
