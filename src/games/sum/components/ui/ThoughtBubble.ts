@@ -1,11 +1,14 @@
 export class ThoughtBubble {
-  private graphics: Phaser.GameObjects.Graphics;
+  private scene: Phaser.Scene;
+  private graphics?: Phaser.GameObjects.Graphics;
 
   constructor(scene: Phaser.Scene) {
-    this.graphics = scene.add.graphics();
+    this.scene = scene;
   }
 
   create(centerX: number, centerY: number, spacing: number, numberCount: number): Phaser.GameObjects.Graphics {
+    this.graphics = this.scene.add.graphics();
+
     const bubbleWidth = (numberCount === 1) ? 120 : spacing + 200;
     const bubbleHeight = 130;
     const bubbleX = (numberCount === 1) ? centerX : centerX + (spacing / 2) - 10;
@@ -36,8 +39,8 @@ export class ThoughtBubble {
     ];
     
     thoughtCircles.forEach(circle => {
-      this.graphics.fillCircle(circle.x, circle.y, circle.radius);
-      this.graphics.strokeCircle(circle.x, circle.y, circle.radius);
+      this.graphics!.fillCircle(circle.x, circle.y, circle.radius);
+      this.graphics!.strokeCircle(circle.x, circle.y, circle.radius);
     });
     
     this.graphics.setDepth(10);
@@ -45,6 +48,7 @@ export class ThoughtBubble {
   }
 
   destroy() {
-    this.graphics.destroy();
+    this.graphics?.destroy();
+    this.graphics = undefined;
   }
 }
