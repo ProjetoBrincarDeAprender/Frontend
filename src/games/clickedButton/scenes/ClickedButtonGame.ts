@@ -73,8 +73,7 @@ export default class ClickedButtonGameScene extends Phaser.Scene {
     const entities = this.mainData.textures.entities;
 
     entities.forEach((entity: any) => {
-      this.load.image(entity.key, entity.default);
-      this.load.image(entity.completeKey, entity.complete);
+      this.load.image(entity.key, entity.path);
     });
   }
 

@@ -28,63 +28,43 @@
     "entities": [
       {
         "key": "abelha",
-        "completeKey": "abelhaCompleta",
-        "default": "/assets/vowelsGame/animals/abelha.svg",
-        "complete": "/assets/vowelsGame/animals/abelhaCompleta.svg"
+        "path": "/assets/vowelsGame/animals/abelha.svg"
       },
       {
         "key": "elefante",
-        "completeKey": "elefanteCompleta",
-        "default": "/assets/vowelsGame/animals/elefante.svg",
-        "complete": "/assets/vowelsGame/animals/elefanteCompleta.svg"
+        "path": "/assets/vowelsGame/animals/elefante.svg"
       },
       {
         "key": "hiena",
-        "completeKey": "hienaCompleta",
-        "default": "/assets/vowelsGame/animals/hiena.svg",
-        "complete": "/assets/vowelsGame/animals/hienaCompleta.svg"
+        "path": "/assets/vowelsGame/animals/hiena.svg"
       },
       {
         "key": "onca",
-        "completeKey": "oncaCompleta",
-        "default": "/assets/vowelsGame/animals/onca.svg",
-        "complete": "/assets/vowelsGame/animals/oncaCompleta.svg"
+        "path": "/assets/vowelsGame/animals/onca.svg"
       },
       {
         "key": "urso",
-        "completeKey": "ursoCompleta",
-        "default": "/assets/vowelsGame/animals/urso.svg",
-        "complete": "/assets/vowelsGame/animals/ursoCompleta.svg"
+        "path": "/assets/vowelsGame/animals/urso.svg"
       },
       {
         "key": "gato",
-        "completeKey": "gatoCompleta",
-        "default": "/assets/vowelsGame/animals/gato.svg",
-        "complete": "/assets/vowelsGame/animals/gatoCompleta.svg"
+        "path": "/assets/vowelsGame/animals/gato.svg"
       },
       {
         "key": "esquilo",
-        "completeKey": "esquiloCompleta",
-        "default": "/assets/vowelsGame/animals/esquilo.svg",
-        "complete": "/assets/vowelsGame/animals/esquiloCompleta.svg"
+        "path": "/assets/vowelsGame/animals/esquilo.svg"
       },
       {
         "key": "iguana",
-        "completeKey": "iguanaCompleta",
-        "default": "/assets/vowelsGame/animals/iguana.svg",
-        "complete": "/assets/vowelsGame/animals/iguanaCompleta.svg"
+        "path": "/assets/vowelsGame/animals/iguana.svg"
       },
       {
         "key": "ovelha",
-        "completeKey": "ovelhaCompleta",
-        "default": "/assets/vowelsGame/animals/ovelha.svg",
-        "complete": "/assets/vowelsGame/animals/ovelhaCompleta.svg"
+        "path": "/assets/vowelsGame/animals/ovelha.svg"
       },
       {
         "key": "urubu",
-        "completeKey": "urubuCompleta",
-        "default": "/assets/vowelsGame/animals/urubu.svg",
-        "complete": "/assets/vowelsGame/animals/urubuCompleta.svg"
+        "path": "/assets/vowelsGame/animals/urubu.svg"
       }
     ]
   },
@@ -117,15 +97,16 @@
       "answer": "E",
       "question": "COMPLETE A PALAVRA",
       "entityKey": "elefante",
-      "completeEntityKey": "elefanteCompleta",
+      "content": ["E", "L", " ", "F", "A", "N", "T", "E"],
+      "completeContent": ["E", "L", "E", "F", "A", "N", "T", "E"],
       "options": ["A", "E", "I", "O", "U"]
     },
     {
-      "answer": "O",
-      "question": "COMPLETE A PALAVRA",
-      "entityKey": "onca",
-      "completeEntityKey": "oncaCompleta",
-      "options": ["A", "E", "I", "O", "U"]
+      "answer": "I",
+      "question": "COMPLETE AS VOGAIS",
+      "content": ["A", "E", "_", "O", "U"],
+      "completeContent": ["A", "E", "I", "O", "U"],
+      "options": ["O", "I"]
     }
   ]
 }

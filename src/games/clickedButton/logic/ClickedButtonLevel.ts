@@ -2,7 +2,6 @@ interface IClickedButtonLevel {
   answer: string;
   question: string;
   entityKey?: string;
-  completeEntityKey?: string;
   options: string[];
   content?: string[];
   completeContent?: string[];
@@ -12,7 +11,6 @@ export default class ClickedButtonLevel {
   private answer: string;
   private question: string;
   private entityKey?: string;
-  private completeEntityKey?: string;
   private content?: string[];
   private completeContent?: string[];
   private options: string[];
@@ -21,7 +19,6 @@ export default class ClickedButtonLevel {
     this.answer = data.answer;
     this.question = data.question;
     this.entityKey = data.entityKey;
-    this.completeEntityKey = data.completeEntityKey;
     this.content = data.content;
     this.completeContent = data.completeContent;
     this.options = data.options;
@@ -38,13 +35,6 @@ export default class ClickedButtonLevel {
   public getEntityKey(): string {
     if (this.entityKey) {
       return this.entityKey;
-    }
-    return "";
-  }
-
-  public getCompleteEntityKey(): string {
-    if (this.completeEntityKey) {
-      return this.completeEntityKey;
     }
     return "";
   }

@@ -50,15 +50,27 @@ export default class ClickedButtonLogic {
     const content = this.levelManager.getActualLevel().getContent();
     if (!content) return;
 
-    const newContent: Button[] = [];
+    const imageKey = this.levelManager.getActualLevel().getEntityKey();
+    let newPositionY, scale;
+    if (imageKey) {
+      newPositionY = 380;
+      scale = 0.8;
+    } else {
+      newPositionY = 300;
+      scale = 1.2;
+    }
 
-    const spaceBetweenContent =
-      this.scene.cameras.main.width / (content.length + 1);
+    const newContent: Button[] = [];
+    const spaceBetweenContent = 60;
+    let buttonWidth = 20 * scale;
+    const totalWidthOccupied =
+      (content.length - 1) * spaceBetweenContent + buttonWidth * content.length;
+    const startX = (this.scene.cameras.main.width - totalWidthOccupied) / 2;
 
     for (let i = 0; i < content.length; i++) {
-      const newPositionX = spaceBetweenContent * (i + 1);
+      const newPositionX = startX + i * (buttonWidth + spaceBetweenContent);
       const contentItem = this.buttonManager.createButton({
-        positions: { x: newPositionX, y: 300 },
+        positions: { x: newPositionX, y: newPositionY },
         textures: {
           default: "defaultButton",
           hover: "hoverButton",
@@ -66,7 +78,7 @@ export default class ClickedButtonLogic {
         },
         text: content[i],
         fontSize: 40,
-        scale: 1.2,
+        scale: scale,
       });
       newContent.push(contentItem);
     }
@@ -115,7 +127,6 @@ export default class ClickedButtonLogic {
       });
       this.effectManager.starEffect(selectedOption.x, selectedOption.y);
       this.soundManager.play("correct");
-      this.updateEntityToComplete();
       this.updateContentToComplete();
       this.scene.time.delayedCall(3000, () => {
         this.nextLevel();
@@ -137,18 +148,6 @@ export default class ClickedButtonLogic {
     }
   }
 
-  private updateEntityToComplete(): void {
-    if (!this.entity) return;
-    this.entity?.destroy();
-    const completeEntityKey = this.levelManager
-      .getActualLevel()
-      .getCompleteEntityKey();
-    this.entity = this.scene.add
-      .image(400, 240, completeEntityKey)
-      .setOrigin(0.5, 0.5)
-      .setScale(0.4);
-  }
-
   private updateContentToComplete(): void {
     if (!this.content) return;
     this.content.forEach((text) => text.destroy());
@@ -157,16 +156,30 @@ export default class ClickedButtonLogic {
     const completeContent = this.levelManager
       .getActualLevel()
       .getCompleteContent();
+    if (!completeContent) return;
+
+    const imageKey = this.levelManager.getActualLevel().getEntityKey();
+    let newPositionY, scale;
+    if (imageKey) {
+      newPositionY = 380;
+      scale = 0.8;
+    } else {
+      newPositionY = 300;
+      scale = 1.2;
+    }
 
     const newContent: Button[] = [];
-
-    const spaceBetweenContent =
-      this.scene.cameras.main.width / (completeContent.length + 1);
+    const spaceBetweenContent = 60;
+    let buttonWidth = 20 * scale;
+    const totalWidthOccupied =
+      (completeContent.length - 1) * spaceBetweenContent +
+      buttonWidth * completeContent.length;
+    const startX = (this.scene.cameras.main.width - totalWidthOccupied) / 2;
 
     for (let i = 0; i < completeContent.length; i++) {
-      const newPositionX = spaceBetweenContent * (i + 1);
+      const newPositionX = startX + i * (buttonWidth + spaceBetweenContent);
       const contentItem = this.buttonManager.createButton({
-        positions: { x: newPositionX, y: 300 },
+        positions: { x: newPositionX, y: newPositionY },
         textures: {
           default: "defaultButton",
           hover: "hoverButton",
@@ -174,7 +187,7 @@ export default class ClickedButtonLogic {
         },
         text: completeContent[i],
         fontSize: 40,
-        scale: 1.2,
+        scale: scale,
       });
       newContent.push(contentItem);
     }
