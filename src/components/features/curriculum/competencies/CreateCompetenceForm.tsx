@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { toast } from "sonner";
 import { Form } from "@/components/forms/Root";
+import { useTable } from "@/hooks/Table/useTable";
 import api from "@/utils/api";
 import { AxiosError } from "axios";
 
@@ -46,6 +47,7 @@ export function CreateCompetenceForm({ onSuccess }: CreateCompetenceFormProps) {
   const [knowledgeAreas, setKnowledgeAreas] = useState<KnowledgeArea[] | null>(null);
   const [availableCompetences, setAvailableCompetences] = useState<Competence[]>([]);
   const [isLoadingCompetences, setIsLoadingCompetences] = useState(false);
+  const { setUpdating } = useTable();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -121,6 +123,7 @@ export function CreateCompetenceForm({ onSuccess }: CreateCompetenceFormProps) {
         toast.success("Competência criada com sucesso!");
         form.reset();
         setAvailableCompetences([]);
+        setUpdating(true); 
         return onSuccess();
       }
     } catch (error) {
