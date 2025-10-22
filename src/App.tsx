@@ -29,6 +29,7 @@ import { Competencies } from "./pages/Dashboard/Teacher/Curriculum/Competencies"
 import { Activities } from "./pages/Dashboard/Teacher/Curriculum/Activities";
 import { DifficultyLevels } from "./pages/Dashboard/Teacher/Curriculum/DifficultyLevels";
 import { Questions } from "./pages/Dashboard/Teacher/Curriculum/Questions";
+import ClickButtonGame from "./components/features/games/ClickButtonGame";
 
 function App() {
   return (
@@ -82,6 +83,7 @@ function App() {
         <Route path="numbers" element={<NumbersGame />} />
         <Route path="housing" element={<HousingGame />} />
         <Route path="forms" element={<CoordinationGame />} />
+        <Route path="general" element={<ClickButtonGame />} />
       </Route>
 
       <Route element={<AuthGuard requireAuth />}>

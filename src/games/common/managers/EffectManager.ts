@@ -14,8 +14,12 @@ export default class EffectManager {
     this.scene = scene;
   }
 
-  changeColor(text: Phaser.GameObjects.Text, color: number): void {
-    ChangeColor(this.scene, text, color);
+  changeColor(
+    text: Phaser.GameObjects.Text,
+    color: number,
+    duration = 1000,
+  ): void {
+    ChangeColor(this.scene, text, color, duration);
   }
 
   confetti(): void {
