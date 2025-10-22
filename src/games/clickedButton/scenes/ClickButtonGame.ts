@@ -113,6 +113,7 @@ export default class ClickButtonGameScene extends Phaser.Scene {
    */
   private loadEntitiesImages() {
     const entities = this.mainData.textures.entities;
+    if (!entities) return;
 
     entities.forEach((entity: any) => {
       this.load.image(entity.key, entity.path);

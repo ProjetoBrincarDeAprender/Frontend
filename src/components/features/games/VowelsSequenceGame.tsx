@@ -12,7 +12,7 @@ export interface IRefClickButtonGame {
   scene: Phaser.Scene | null;
 }
 
-const ClickButtonGame: React.FC = () => {
+const VowelsSequenceGame: React.FC = () => {
   const gameRef = useRef<Phaser.Game | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
 
@@ -20,10 +20,10 @@ const ClickButtonGame: React.FC = () => {
     if (!containerRef.current) return;
 
     const clickButtonStartScene = new ClickButtonStartScene(
-      "/assets/clickButtonGame/gameData/startData.JSON",
+      "/assets/vowelsSequenceGame/gameData/startData.JSON",
     );
     const clickButtonGameScene = new ClickButtonGameScene(
-      "/assets/clickButtonGame/gameData/mainData.JSON",
+      "/assets/vowelsSequenceGame/gameData/mainData.JSON",
     );
 
     const config: Phaser.Types.Core.GameConfig = {
@@ -64,4 +64,4 @@ const ClickButtonGame: React.FC = () => {
   );
 };
 
-export default ClickButtonGame;
+export default VowelsSequenceGame;
