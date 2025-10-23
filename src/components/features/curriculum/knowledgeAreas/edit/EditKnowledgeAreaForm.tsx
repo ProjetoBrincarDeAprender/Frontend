@@ -175,7 +175,7 @@ export function EditKnowledgeAreaForm({ id, onSuccess }: EditKnowledgeAreaFormPr
           )}
         />
 
-        <Form.Submit>Atualizar Área de Conhecimento</Form.Submit>
+        <Form.Submit>Atualizar</Form.Submit>
       </Form.Main>
     </Form.Wrapper>
   );

@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { toast } from "sonner";
 import { Form } from "@/components/forms/Root";
+import { useTable } from "@/hooks/Table/useTable";
 import api from "@/utils/api";
 import { AxiosError } from "axios";
 
@@ -23,6 +24,7 @@ interface CreateDifficultyLevelFormProps {
 
 export function CreateDifficultyLevelForm({ onSuccess }: CreateDifficultyLevelFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { setUpdating } = useTable();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -43,6 +45,7 @@ export function CreateDifficultyLevelForm({ onSuccess }: CreateDifficultyLevelFo
       if (response.status === 201) {
         toast.success("Nível de dificuldade criado com sucesso!");
         form.reset();
+        setUpdating(true); // Trigger table refresh
         return onSuccess();
       }
     } catch (error) {

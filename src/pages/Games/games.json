@@ -20,8 +20,18 @@
     "image": "/assets/numbersGame/startScreen.png"
   },
   {
+    "title": "Tipos de Moradia",
+    "gameIdUrl": "housing",
+    "image": "/assets/housingGame/initial.png"
+  },
+  {
     "title": "Coordenação Motora",
     "gameIdUrl": "forms",
     "image": "/assets/forms/bg.png"
+  },
+  {
+    "title": "Sequência de Vogais",
+    "gameIdUrl": "vowelssequence",
+    "image": "/assets/vowelsSequenceGame/images/gamePrint.png"
   }
 ]

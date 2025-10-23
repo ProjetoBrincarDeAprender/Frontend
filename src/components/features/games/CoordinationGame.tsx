@@ -3,19 +3,32 @@ import { Header } from "@/components/Header/Header";
 import { BackButton } from "@/components/utils/BackButton";
 import CoordinationGameScene from "@/games/coordination/scenes/GameScene";
 import CoordinationEndScene from "@/games/coordination/scenes/EndScene";
+import ClickButtonStartScene from "@/games/clickedButton/scenes/ClickButtonStart";
 import Phaser from "phaser";
 import { useEffect, useRef } from "react";
 
 export const CoordinationGame = () => {
   const gameRef = useRef<Phaser.Game | null>(null);
+  const containerRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
+    if (!containerRef.current) return;
+
+    const CoordinationStartScene = new ClickButtonStartScene(
+      "/assets/forms/gameData/startData.JSON",
+      "CoordinationGameScene",
+    );
+
     const config: Phaser.Types.Core.GameConfig = {
       type: Phaser.AUTO,
       width: 800,
       height: 600,
-      scene: [CoordinationGameScene, CoordinationEndScene],
-      parent: "coordination-game-container",
+      scene: [
+        CoordinationStartScene,
+        CoordinationGameScene,
+        CoordinationEndScene,
+      ],
+      parent: containerRef.current,
       backgroundColor: "#96D6F3",
       audio: {
         // Evita criação de AudioContext (WebAudio) e usa HTML5 Audio,
@@ -38,7 +51,7 @@ export const CoordinationGame = () => {
         <Header />
         <BackButton />
         <div
-          id="coordination-game-container"
+          ref={containerRef}
           className="relative h-fit min-h-[600px] w-fit min-w-[800px]"
         />
       </div>

@@ -16,6 +16,7 @@ const formSchema = z.object({
   ordem: z
     .number({ error: "Ordem é obrigatória" })
     .min(1, { message: "Ordem deve ser maior que 0" }),
+  difficultyId: z.string({ error: "Nível de dificuldade é obrigatório" }),
 });
 
 type EditQuestionFormProps = {
@@ -28,6 +29,11 @@ interface Activity {
   titulo: string;
 }
 
+interface DifficultyLevel {
+  id: number;
+  nome: string;
+}
+
 export function EditQuestionForm({ id, onSuccess }: EditQuestionFormProps) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -35,6 +41,7 @@ export function EditQuestionForm({ id, onSuccess }: EditQuestionFormProps) {
       activityId: "",
       content: "",
       ordem: 1,
+      difficultyId: "",
     },
   });
 
@@ -42,6 +49,7 @@ export function EditQuestionForm({ id, onSuccess }: EditQuestionFormProps) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activities, setActivities] = useState<Activity[]>([]);
+  const [difficultyLevels, setDifficultyLevels] = useState<DifficultyLevel[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -49,12 +57,12 @@ export function EditQuestionForm({ id, onSuccess }: EditQuestionFormProps) {
         setLoading(true);
         setError(null);
 
-        const [questionResponse, activitiesResponse] = await Promise.all([
+        const [questionResponse, activitiesResponse, difficultyResponse] = await Promise.all([
           api.get(`/question/list/${id}`),
           api.get('/activity/list'),
+          api.get('/difficulty-level/list'),
         ]);
 
-        // Carrega atividades primeiro
         if (activitiesResponse.status === 200 && Array.isArray(activitiesResponse.data)) {
           const validActivities = activitiesResponse.data.filter(
             activity => activity && activity.id && activity.titulo
@@ -62,11 +70,13 @@ export function EditQuestionForm({ id, onSuccess }: EditQuestionFormProps) {
           setActivities(validActivities);
         }
 
-        // Carrega dados da questão
+        if (difficultyResponse.status === 200 && Array.isArray(difficultyResponse.data)) {
+          setDifficultyLevels(difficultyResponse.data);
+        }
+
         if (questionResponse.status === 200 && questionResponse.data) {
           const data = questionResponse.data;
           
-          // Extrair o conteúdo do objeto
           let contentText = "";
           if (data.conteudo && typeof data.conteudo === 'object' && data.conteudo.texto) {
             contentText = data.conteudo.texto;
@@ -80,6 +90,7 @@ export function EditQuestionForm({ id, onSuccess }: EditQuestionFormProps) {
             activityId: data.atividade_id ? String(data.atividade_id) : "",
             content: contentText,
             ordem: Number(data.ordem) || 1,
+            difficultyId: data.difficulty?.id ? String(data.difficulty.id) : "",
           };
           
           form.reset(questionData);
@@ -102,14 +113,12 @@ export function EditQuestionForm({ id, onSuccess }: EditQuestionFormProps) {
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     try {
-      // A API espera content como uma string JSON válida
       const cleanData = {
         activityId: Number(data.activityId),
         content: JSON.stringify({ texto: data.content.trim() }),
         ordem: Number(data.ordem),
+        difficultyId: Number(data.difficultyId),
       };
-
-      console.log("Enviando dados:", cleanData);
 
       const response = await api.put(`/question/update/${id}`, cleanData);
 
@@ -118,11 +127,8 @@ export function EditQuestionForm({ id, onSuccess }: EditQuestionFormProps) {
         onSuccess();
       }
     } catch (error) {
-      console.error("Erro completo:", error);
-      
       if (error instanceof AxiosError) {
         const response = error.response;
-        console.log("Resposta do erro:", response?.data);
         
         if (Array.isArray(response?.data?.message)) {
           response?.data?.message.forEach(
@@ -131,6 +137,7 @@ export function EditQuestionForm({ id, onSuccess }: EditQuestionFormProps) {
                 'activityId': 'activityId',
                 'content': 'content',
                 'ordem': 'ordem',
+                'difficultyId': 'difficultyId',
               };
               
               const formFieldName = fieldMap[fieldError.field];
@@ -232,6 +239,23 @@ export function EditQuestionForm({ id, onSuccess }: EditQuestionFormProps) {
               placeholder="Digite a ordem da questão"
               onChange={(e) => field.onChange(Number(e.target.value))}
               value={field.value?.toString() || ""}
+            />
+          )}
+        />
+
+        <Form.Field
+          form={form}
+          name="difficultyId"
+          render={({ field }) => (
+            <Form.Select
+              label="Nível de Dificuldade"
+              placeholder="Selecione um nível de dificuldade"
+              options={difficultyLevels.map((level) => ({
+                value: level.id.toString(),
+                label: level.nome,
+              }))}
+              onChange={field.onChange}
+              value={field.value || ""}
             />
           )}
         />
