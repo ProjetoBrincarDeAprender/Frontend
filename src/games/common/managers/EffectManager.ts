@@ -35,7 +35,7 @@ export default class EffectManager {
     FloatingEffect(this.scene, target, ease, y);
   }
 
-  addParallax(target: Phaser.GameObjects.GameObject, y: number = 20): void {
+  addParallax(target: Phaser.GameObjects.Image, y: number = 20): void {
     ParallaxEffect(this.scene, target, y);
   }
 

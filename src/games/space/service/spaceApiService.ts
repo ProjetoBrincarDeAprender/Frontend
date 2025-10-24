@@ -4,7 +4,7 @@ import Phaser from "phaser";
 import type SpaceLevel from "../logic/SpaceLevel";
 
 export default class SpaceApiService {
-  private scene: Phaser.Scene;
+  private _scene: Phaser.Scene;
   private levelManager: LevelManager<SpaceLevel>;
   private gameStats: GameStats;
 
@@ -13,7 +13,7 @@ export default class SpaceApiService {
     levelManager: LevelManager<SpaceLevel>,
     gameStats: GameStats,
   ) {
-    this.scene = scene;
+    this._scene = scene;
     this.levelManager = levelManager;
     this.gameStats = gameStats;
   }
@@ -49,9 +49,9 @@ export default class SpaceApiService {
 
   async sendGameCompletionData() {
     try {
-      // const totalLevels = this.getTotalLevels();
-      // const totalTimeSpent = this.getTotalTimeSpent();
-      // const totalMisses = this.getTotalMisses();
+      const _totalLevels = this.getTotalLevels();
+      const _totalTimeSpent = this.getTotalTimeSpent();
+      const _totalMisses = this.getTotalMisses();
       // const completionData = {
       //   activityId: 4,
       //   totalQuestions: totalLevels,
