@@ -33,5 +33,10 @@
     "title": "Sequência de Vogais",
     "gameIdUrl": "vowelssequence",
     "image": "/assets/vowelsSequenceGame/images/gamePrint.png"
+  },
+  {
+    "title": "Jogo do Espaço",
+    "gameIdUrl": "space",
+    "image": "/assets/spaceGame/thumbnail.png"
   }
 ]
