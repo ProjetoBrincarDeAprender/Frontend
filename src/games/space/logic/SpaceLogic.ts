@@ -5,7 +5,6 @@ import Phaser from "phaser";
 import EffectManager from "../../common/managers/EffectManager";
 import GameStats from "../../common/managers/GameStats";
 import LevelManager from "../../common/managers/LevelManager";
-import SpaceApiService from "../service/spaceApiService";
 import SpaceLevel from "./SpaceLevel";
 
 export default class SpaceLogic {
@@ -22,7 +21,6 @@ export default class SpaceLogic {
     | Phaser.GameObjects.Text
   )[] = [];
   private buttonsEnabled: boolean = true;
-  private apiService!: SpaceApiService;
 
   constructor(scene: Phaser.Scene) {
     this.scene = scene;
@@ -41,13 +39,6 @@ export default class SpaceLogic {
 
   setLevelManager(levels: SpaceLevel[]) {
     this.levelManager = new LevelManager(levels);
-
-    // Inicializar o serviço de API
-    this.apiService = new SpaceApiService(
-      this.scene,
-      this.levelManager,
-      this.gameStats,
-    );
 
     // Restaurar progresso se existir
     const savedLevel = this.scene.registry.get("currentSpaceLevel");
@@ -236,9 +227,6 @@ export default class SpaceLogic {
     this.gameStats.resetInitialLevelTime(this.scene.time.now);
     this.gameStats.resetActualLevelMisses(); // Resetar para o próximo nível
 
-    // Enviar dados do nível para a API
-    this.apiService.sendLevelData();
-
     // Mostrar feedback positivo
     this.showFeedback("Correto! 🎉", "#00FF00");
 
@@ -255,9 +243,6 @@ export default class SpaceLogic {
       );
 
       if (isLastLevel) {
-        // Se é o último nível, enviar dados de conclusão do jogo
-        this.apiService.sendGameCompletionData();
-
         // Ir diretamente para a cena final
         this.scene.scene.start("SpaceEndScene");
       } else {
