@@ -3,6 +3,7 @@ import GameStats from "@/games/common/managers/GameStats";
 import LevelManager from "@/games/common/managers/LevelManager";
 import api from "@/utils/api";
 import { MemoryGameLevel } from "../utils/memoryGameLevel";
+import { GameLevels } from "./levels";
 
 export class MemoryGameLogic {
   private scene: Phaser.Scene;
@@ -16,17 +17,7 @@ export class MemoryGameLogic {
   private gameStarted: boolean = false;
 
   constructor(scene: Phaser.Scene) {
-    const levels: MemoryGameLevel[] = [
-      new MemoryGameLevel("Easy", 4, ["card-0", "card-1"]),
-      new MemoryGameLevel("Medium", 6, ["card-0", "card-1", "card-2"]),
-      new MemoryGameLevel("Hard", 10, [
-        "card-0",
-        "card-1",
-        "card-2",
-        "card-3",
-        "card-4",
-      ]),
-    ];
+    const levels: MemoryGameLevel[] = GameLevels;
     this.scene = scene;
 
     this.LevelManager = new LevelManager(levels);
@@ -323,10 +314,9 @@ export class MemoryGameLogic {
       .text(this.scene.scale.width / 2, 100, message, {
         fontSize: "28px",
         fontFamily: "Arial, sans-serif",
+        fontStyle: "bold",
         color: color,
         padding: { left: 20, right: 20, top: 10, bottom: 10 },
-        stroke: "#FFFFFF",
-        strokeThickness: 2,
         shadow: {
           offsetX: 2,
           offsetY: 2,

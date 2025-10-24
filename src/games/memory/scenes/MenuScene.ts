@@ -25,13 +25,11 @@ export class MemoryMenuScene extends Phaser.Scene {
         fontSize: "40px",
         color: "#2D5EFF",
         fontStyle: "bold",
-        stroke: "#FFFFFF",
-        strokeThickness: 4,
       })
       .setOrigin(0.5);
 
     this.add
-      .text(this.scale.width / 2, 210, "CLIQUE EM COMEÇAR PARA JOGAR!", {
+      .text(this.scale.width / 2, 210, "CLIQUE EM INICIAR PARA JOGAR!", {
         fontFamily: "Arial, sans-serif",
         fontSize: "24px",
         color: "#FFF",
@@ -43,7 +41,7 @@ export class MemoryMenuScene extends Phaser.Scene {
     const playButton = this.add.rectangle(0, 0, 200, 60, 0x2d5eff);
     const playIcon = this.add.image(-70, 0, "play-icon").setScale(0.08);
     const playText = this.add
-      .text(10, 0, "COMEÇAR", {
+      .text(10, 0, "INICIAR", {
         fontFamily: "Arial, sans-serif",
         fontSize: "18px",
         color: "#FFFFFF",
