@@ -94,28 +94,30 @@ export class MemoryGameScene extends Phaser.Scene {
 
   update() {
     if (this.logic.isLevelFinished()) {
-      const completedLevel = this.logic.getCurrentLevel();
+      this.time.delayedCall(4000, () => {
+        const completedLevel = this.logic.getCurrentLevel();
 
-      // Limpar timer quando o nível termina
-      if (this.gameDataTimer) {
-        this.gameDataTimer.destroy();
-        this.gameDataTimer = undefined;
-      }
+        // Limpar timer quando o nível termina
+        if (this.gameDataTimer) {
+          this.gameDataTimer.destroy();
+          this.gameDataTimer = undefined;
+        }
 
-      this.logic.finishLevel();
+        this.logic.finishLevel();
 
-      const isGameFinished = this.logic.isGameFinished();
+        const isGameFinished = this.logic.isGameFinished();
 
-      this.registry.set("currentLevel", this.logic.getCurrentLevel());
+        this.registry.set("currentLevel", this.logic.getCurrentLevel());
 
-      if (isGameFinished) {
-        this.scene.start("MemoryEndScene");
-      } else {
-        this.scene.start("MemoryLevelCompleteScene", {
-          level: completedLevel,
-          isLastLevel: false,
-        });
-      }
+        if (isGameFinished) {
+          this.scene.start("MemoryEndScene");
+        } else {
+          this.scene.start("MemoryLevelCompleteScene", {
+            level: completedLevel,
+            isLastLevel: false,
+          });
+        }
+      });
     }
   }
 
