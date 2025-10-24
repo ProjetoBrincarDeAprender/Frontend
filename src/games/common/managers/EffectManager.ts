@@ -1,11 +1,12 @@
 import Phaser from "phaser";
 import ChangeColor from "../effects/ChangeColor";
-import GrowupEffect from "../effects/GrowupEffect";
-import Particles from "../effects/ParticlesEffect";
-import FloatingEffect from "../effects/FloatingEffect";
-import OverlayEffect from "../effects/OverlayEffect";
-import MoveEffect from "../effects/MoveEffect";
 import confettiEffect from "../effects/confettiEffect";
+import FloatingEffect from "../effects/FloatingEffect";
+import GrowupEffect from "../effects/GrowupEffect";
+import MoveEffect from "../effects/MoveEffect";
+import OverlayEffect from "../effects/OverlayEffect";
+import { ParallaxEffect } from "../effects/ParallaxEffect";
+import Particles from "../effects/ParticlesEffect";
 
 export default class EffectManager {
   private scene: Phaser.Scene;
@@ -32,6 +33,10 @@ export default class EffectManager {
     y: number = 310,
   ): void {
     FloatingEffect(this.scene, target, ease, y);
+  }
+
+  addParallax(target: Phaser.GameObjects.GameObject, y: number = 20): void {
+    ParallaxEffect(this.scene, target, y);
   }
 
   growup(

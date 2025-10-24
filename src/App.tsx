@@ -1,19 +1,27 @@
 import { Route, Routes } from "react-router";
+import { CoordinationGame } from "./components/features/games/CoordinationGame";
+import HousingGame from "./components/features/games/HousingGame";
 import { MemoryGame } from "./components/features/games/MemoryGame";
 import NumbersGame from "./components/features/games/NumbersGame";
+import { SpaceGame } from "./components/features/games/SpaceGame";
 import SumGame from "./components/features/games/SumGame";
 import VowelsGame from "./components/features/games/VowelsGame";
-import HousingGame from "./components/features/games/HousingGame";
+import VowelsSequenceGame from "./components/features/games/VowelsSequenceGame";
 import { AuthGuard } from "./guards/AuthGuard";
 import { Calm } from "./pages/Calm/Calm";
 import Dashboard from "./pages/Dashboard/Admin/Dashboard";
 import { ResponsibleDashboard } from "./pages/Dashboard/Responsible/ResponsibleDashboard/ReponsibleDashboard";
-import TeacherDashboard from "./pages/Dashboard/Teachers/TeacherDashboard/TeacherDashboard";
 import { Responsibles } from "./pages/Dashboard/Responsible/Responsibles";
 import { Schools } from "./pages/Dashboard/Schools/Schools";
 import { SchoolUsers } from "./pages/Dashboard/SchoolUsers/SchoolUsers";
 import { Students } from "./pages/Dashboard/Students/Students";
+import { Activities } from "./pages/Dashboard/Teacher/Curriculum/Activities";
+import { Competencies } from "./pages/Dashboard/Teacher/Curriculum/Competencies";
+import { DifficultyLevels } from "./pages/Dashboard/Teacher/Curriculum/DifficultyLevels";
+import KnowledgeAreas from "./pages/Dashboard/Teacher/Curriculum/KnowledgeAreas";
+import { Questions } from "./pages/Dashboard/Teacher/Curriculum/Questions";
 import { LinkStudents } from "./pages/Dashboard/Teachers/LinkStudents/LinkStudents";
+import TeacherDashboard from "./pages/Dashboard/Teachers/TeacherDashboard/TeacherDashboard";
 import { Teachers } from "./pages/Dashboard/Teachers/Teachers";
 import { NotFound } from "./pages/Errors/NotFound/NotFound";
 import { Games } from "./pages/Games/Games";
@@ -23,13 +31,6 @@ import Logout from "./pages/Logout/Logout";
 import { Profile } from "./pages/Profile/Profile";
 import { RecoverPassword } from "./pages/RecoverPassword/RecoverPassword";
 import { SendPasswordToken } from "./pages/SendPasswordToken/SendPasswordToken";
-import { CoordinationGame } from "./components/features/games/CoordinationGame";
-import KnowledgeAreas from "./pages/Dashboard/Teacher/Curriculum/KnowledgeAreas";
-import { Competencies } from "./pages/Dashboard/Teacher/Curriculum/Competencies";
-import { Activities } from "./pages/Dashboard/Teacher/Curriculum/Activities";
-import { DifficultyLevels } from "./pages/Dashboard/Teacher/Curriculum/DifficultyLevels";
-import { Questions } from "./pages/Dashboard/Teacher/Curriculum/Questions";
-import VowelsSequenceGame from "./components/features/games/VowelsSequenceGame";
 
 function App() {
   return (
@@ -84,6 +85,7 @@ function App() {
         <Route path="housing" element={<HousingGame />} />
         <Route path="forms" element={<CoordinationGame />} />
         <Route path="vowelssequence" element={<VowelsSequenceGame />} />
+        <Route path="space" element={<SpaceGame />} />
       </Route>
 
       <Route element={<AuthGuard requireAuth />}>
