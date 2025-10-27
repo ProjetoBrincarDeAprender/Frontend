@@ -121,6 +121,13 @@ export default class CoordinationGameScene extends Phaser.Scene {
       );
       piece.setInteractive(hitArea, Phaser.Geom.Rectangle.Contains);
       this.input.setDraggable(piece);
+      // guardar posição inicial e flags
+      piece.setData("homeX", leftX);
+      piece.setData("homeY", y);
+      piece.setData("isPlaced", false);
+      piece.setData("returned", false);
+      piece.setData("isShaking", false);
+
       // Cursor amigável
       piece.on("pointerover", () => this.input.setDefaultCursor("grab"));
       piece.on("pointerout", () => this.input.setDefaultCursor("default"));
@@ -128,6 +135,9 @@ export default class CoordinationGameScene extends Phaser.Scene {
       piece.on("dragstart", () => {
         piece.setDepth(1000);
         piece.setAlpha(0.9);
+        // reset flags por início de novo arrasto
+        piece.setData("returned", false);
+        piece.setData("isShaking", false);
       });
 
       piece.on("drag", (_pointer: any, dragX: number, dragY: number) => {
@@ -137,6 +147,15 @@ export default class CoordinationGameScene extends Phaser.Scene {
       piece.on("dragend", () => {
         piece.setAlpha(1);
         piece.setDepth(1);
+        // Se não foi colocado corretamente e não está no shake de erro, e ainda não foi retornado
+        if (
+          !piece.getData("isPlaced") &&
+          !piece.getData("isShaking") &&
+          !piece.getData("returned")
+        ) {
+          this.returnToHome(piece);
+          piece.setData("returned", true);
+        }
       });
 
       this.input.on(
@@ -152,6 +171,7 @@ export default class CoordinationGameScene extends Phaser.Scene {
             this.sound.play("correct");
             this.snapTo(piece, dropZone.x, dropZone.y);
             piece.disableInteractive();
+            piece.setData("isPlaced", true);
             this.placedCount++;
             this.tweenPulse(piece);
             if (this.placedCount === shapes.length) {
@@ -166,7 +186,14 @@ export default class CoordinationGameScene extends Phaser.Scene {
             }
           } else {
             this.sound.play("incorrect");
-            this.tweenShake(piece);
+            // marca que está em animação de erro para não retornar no dragend
+            piece.setData("isShaking", true);
+            // chacoalha e, ao finalizar, retorna ao ponto de origem
+            this.tweenShake(piece, () => {
+              this.returnToHome(piece);
+              piece.setData("returned", true);
+              piece.setData("isShaking", false);
+            });
           }
         },
       );
@@ -199,7 +226,10 @@ export default class CoordinationGameScene extends Phaser.Scene {
     });
   }
 
-  private tweenShake(piece: Phaser.GameObjects.Graphics) {
+  private tweenShake(
+    piece: Phaser.GameObjects.Graphics,
+    onComplete?: () => void,
+  ) {
     this.tweens.add({
       targets: piece,
       x: "+=12",
@@ -207,7 +237,16 @@ export default class CoordinationGameScene extends Phaser.Scene {
       yoyo: true,
       repeat: 2,
       ease: "Sine.easeInOut",
+      onComplete,
     });
+  }
+
+  private returnToHome(piece: Phaser.GameObjects.Graphics) {
+    const hx = piece.getData("homeX") as number;
+    const hy = piece.getData("homeY") as number;
+    if (typeof hx === "number" && typeof hy === "number") {
+      this.snapTo(piece, hx, hy);
+    }
   }
 
   // Embaralha índices 0..n-1. Garante que o resultado não seja a ordem identidade
