@@ -1,6 +1,6 @@
 import { Footer } from "@/components/Footer/Footer";
 import { EventBus } from "@/games/common/utils/EventBus";
-import CreditsScene from "@/games/numbers/scenes/CreditsScene";
+import { EndScene } from "@/games/common/scenes/EndScene";
 import GameScene from "@/games/numbers/scenes/GameScene";
 import StartScene from "@/games/numbers/scenes/StartScene";
 import Phaser from "phaser";
@@ -21,7 +21,17 @@ const NumbersGame: React.FC = () => {
       type: Phaser.AUTO,
       width: 800,
       height: 600,
-      scene: [StartScene, GameScene, CreditsScene], // StartScene como primeira cena
+      scene: [
+        StartScene,
+        GameScene,
+        // Tela final comum com customização para o jogo de números
+        EndScene.create(
+          "numbersStart",
+          undefined,
+          undefined,
+          "VOCÊ COMPLETOU TODAS AS SEQUÊNCIAS!",
+        ),
+      ], // StartScene como primeira cena
       parent: "numbers-game-container",
       backgroundColor: "#ffffff",
     };
@@ -42,7 +52,7 @@ const NumbersGame: React.FC = () => {
   return (
     <>
       <div className="mt-28 mb-20 flex justify-center py-4">
-        <Header /> 
+        <Header />
         <BackButton />
         <div
           id="numbers-game-container"

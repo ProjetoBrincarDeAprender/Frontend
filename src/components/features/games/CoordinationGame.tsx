@@ -2,7 +2,7 @@ import { Footer } from "@/components/Footer/Footer";
 import { Header } from "@/components/Header/Header";
 import { BackButton } from "@/components/utils/BackButton";
 import CoordinationGameScene from "@/games/coordination/scenes/GameScene";
-import CoordinationEndScene from "@/games/coordination/scenes/EndScene";
+import { EndScene } from "@/games/common/scenes/EndScene";
 import ClickButtonStartScene from "@/games/clickedButton/scenes/ClickButtonStart";
 import Phaser from "phaser";
 import { useEffect, useRef } from "react";
@@ -26,7 +26,13 @@ export const CoordinationGame = () => {
       scene: [
         CoordinationStartScene,
         CoordinationGameScene,
-        CoordinationEndScene,
+        // Tela final comum com customização para o jogo de formas
+        EndScene.create(
+          "clickButtonStartScene",
+          undefined,
+          undefined,
+          "VOCÊ COMPLETOU AS FORMAS!",
+        ),
       ],
       parent: containerRef.current,
       backgroundColor: "#96D6F3",

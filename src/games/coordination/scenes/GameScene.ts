@@ -160,7 +160,7 @@ export default class CoordinationGameScene extends Phaser.Scene {
                   this.currentLevelIndex++;
                   this.startLevel();
                 } else {
-                  this.scene.start("CoordinationEndScene");
+                  this.scene.start("EndScene");
                 }
               });
             }
