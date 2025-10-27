@@ -11,7 +11,6 @@ export default class GameStats {
     const deltaTime = finalTime - this.initialLevelTime;
     this.timeSpentArray.push(deltaTime);
     this.initialLevelTime = finalTime;
-    console.log(deltaTime);
   }
 
   resetInitialLevelTime(newTime: number = 0): void {

@@ -1,15 +1,44 @@
 import api from "@/utils/api";
 
 export interface ClickButtonApiConfig {
-  activityId: number | string;
-  level: number;
-  content: string[];
+  studentId: any;
+  activityId: number;
+  //   questionId: number;
   answer: string;
-  userAnswer: string;
   timeSpent: number;
+  attempts: number;
+  neededHint: boolean;
+  //   responseDate: number;
+  isCorrect: boolean;
 }
 
 export default class ClickButtonApi {
+  getCurrentUser(): { id: number | string; name?: string } {
+    try {
+      const userData = localStorage.getItem("user");
+      if (userData) {
+        const user = JSON.parse(userData);
+        return {
+          id: user.codigo_usuario_id || user.id || "usuario_publico",
+          name: user.nome || user.name,
+        };
+      }
+
+      const authToken = document.cookie
+        .split("; ")
+        .find((row) => row.startsWith("authToken="));
+
+      if (authToken) {
+        return { id: "usuario_logado" };
+      }
+
+      return { id: "usuario_publico" };
+    } catch (error) {
+      console.warn("Erro ao obter usuário:", error);
+      return { id: "usuario_publico" };
+    }
+  }
+
   async sendGameData(interaction: ClickButtonApiConfig): Promise<void> {
     try {
       console.log(JSON.stringify(interaction, null, 2));

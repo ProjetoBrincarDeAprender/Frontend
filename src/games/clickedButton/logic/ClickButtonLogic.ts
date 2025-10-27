@@ -26,7 +26,7 @@ export default class ClickButtonLogic {
   private soundManager: SoundManager;
   private gameStats: GameStats;
   private api: ClickButtonApi;
-  private activityId: string;
+  private activityId: number;
   /** Objeto de texto da questão atual */
   private question?: Phaser.GameObjects.Text;
   /** Imagem da entidade auxiliar do nível */
@@ -54,7 +54,7 @@ export default class ClickButtonLogic {
     this.soundManager = new SoundManager(scene);
     this.gameStats = new GameStats();
     this.api = new ClickButtonApi();
-    this.activityId = "0909";
+    this.activityId = -1;
   }
 
   /**
@@ -167,12 +167,15 @@ export default class ClickButtonLogic {
 
     const answer = this.levelManager.getActualLevel().getAnswer();
     const interaction = {
-      activityId: this.activityId,
-      level: this.levelManager.getActualIndex() + 1,
-      content: this.levelManager.getActualLevel().getContent() || [],
-      userAnswer: selectedOption.getButtonStringText(),
-      timeSpent: timeSpent,
-      answer: answer,
+      studentId: 10130001,
+      activityId: 1,
+      questionId: 1,
+      answer: "string",
+      timeSpent: 0,
+      attempts: 0,
+      neededHint: true,
+      // responseDate: 0,
+      isCorrect: true,
     };
 
     if (selectedOption.getButtonStringText() === answer) {
