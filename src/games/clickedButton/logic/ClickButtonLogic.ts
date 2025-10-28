@@ -287,7 +287,7 @@ export default class ClickButtonLogic {
   private nextLevel(): void {
     this.clearLevelElements();
     if (!this.levelManager.nextLevel()) {
-      this.scene.scene.start("clickButtonStartScene");
+      this.scene.scene.start("EndScene");
     } else {
       this.showQuestion();
       this.showEntity();

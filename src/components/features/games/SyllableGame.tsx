@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import { Header } from "@/components/Header/Header";
 import { BackButton } from "@/components/utils/BackButton";
 import { StartScene } from "@/games/common/scenes/StartScene";
+import { EndScene } from "@/games/common/scenes/EndScene";
 import Phaser from "phaser";
 import ClickButtonGameScene from "@/games/clickedButton/scenes/ClickButtonGame";
 
@@ -27,11 +28,16 @@ const SyllableGame: React.FC = () => {
       "/assets/syllableGame/gameData/mainData.JSON",
     );
 
+    const endScene = new EndScene({
+      backgroundPath: "/assets/syllableGame/images/backgroundMain.png",
+      backgroundKey: "endBg",
+    });
+
     const config: Phaser.Types.Core.GameConfig = {
       type: Phaser.AUTO,
       width: 800,
       height: 600,
-      scene: [startScene, gameScene],
+      scene: [startScene, gameScene, endScene],
       parent: containerRef.current,
       backgroundColor: "#ffffff",
     };
