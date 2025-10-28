@@ -52,9 +52,14 @@ export default class ClickButtonLogic {
     this.buttonManager = buttonManager;
     this.effectManager = new EffectManager(scene);
     this.soundManager = new SoundManager(scene);
-    this.gameStats = new GameStats();
     this.api = new ClickButtonApi();
     this.activityId = -1;
+    this.gameStats = new GameStats();
+    this.gameStats.resetInitialLevelTime(Date.now());
+  }
+
+  setActivityId(activityId: number): void {
+    this.activityId = activityId;
   }
 
   /**
@@ -167,15 +172,16 @@ export default class ClickButtonLogic {
 
     const answer = this.levelManager.getActualLevel().getAnswer();
     const interaction = {
-      studentId: 10130001,
-      activityId: 1,
-      questionId: 1,
-      answer: "string",
-      timeSpent: 0,
-      attempts: 0,
-      neededHint: true,
+      studentId: 10130001, // Usuário de teste. Ainda não sabemos como vamos pegar o ID
+      activityId: this.activityId,
+      questionId: 1, // Questões questionáveis
+      // questionId: this.levelManager.getActualIndex() + 1,
+      answer: this.levelManager.getActualLevel().getAnswer(),
+      timeSpent: timeSpent,
+      attempts: 1,
+      neededHint: false,
       // responseDate: 0,
-      isCorrect: true,
+      isCorrect: selectedOption.getButtonStringText() === answer,
     };
 
     if (selectedOption.getButtonStringText() === answer) {

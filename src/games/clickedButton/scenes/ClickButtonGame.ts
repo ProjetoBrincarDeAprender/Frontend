@@ -65,6 +65,7 @@ export default class ClickButtonGameScene extends Phaser.Scene {
       this.setupEntity();
       this.setupContent();
       this.setupOptions();
+      this.clickButtonLogic.setActivityId(this.mainData.info.activityId);
     });
 
     this.load.start();

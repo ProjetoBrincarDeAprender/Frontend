@@ -3,7 +3,7 @@ import api from "@/utils/api";
 export interface ClickButtonApiConfig {
   studentId: any;
   activityId: number;
-  //   questionId: number;
+  questionId: number;
   answer: string;
   timeSpent: number;
   attempts: number;

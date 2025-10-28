@@ -43,6 +43,10 @@
     "scale": 1.5
   },
 
+  "info": {
+    "activityId": 2
+  },
+
   "levels": [
     {
       "answer": "A",
