@@ -7,6 +7,7 @@ import { SpaceGame } from "./components/features/games/SpaceGame";
 import SumGame from "./components/features/games/SumGame";
 import VowelsGame from "./components/features/games/VowelsGame";
 import VowelsSequenceGame from "./components/features/games/VowelsSequenceGame";
+import ProfessionsGame from "./components/features/games/ProfessionsGame";
 import { AuthGuard } from "./guards/AuthGuard";
 import { Calm } from "./pages/Calm/Calm";
 import Dashboard from "./pages/Dashboard/Admin/Dashboard";
@@ -86,6 +87,7 @@ function App() {
         <Route path="forms" element={<CoordinationGame />} />
         <Route path="vowelssequence" element={<VowelsSequenceGame />} />
         <Route path="space" element={<SpaceGame />} />
+        <Route path="professions" element={<ProfessionsGame />} />
       </Route>
 
       <Route element={<AuthGuard requireAuth />}>

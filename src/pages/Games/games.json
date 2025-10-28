@@ -1,13 +1,27 @@
-[
+[ {
+    "title": "Coordenação Motora",
+    "gameIdUrl": "forms",
+    "image": "/assets/forms/bg.png"
+  },
   {
-    "title": "Jogo da Soma",
-    "gameIdUrl": "sum",
-    "image": "/assets/sumGame/image.png"
+    "title": "Jogo do Espaço",
+    "gameIdUrl": "space",
+    "image": "/assets/spaceGame/thumbnail.png"
   },
   {
     "title": "Jogo da Memoria",
     "gameIdUrl": "memory",
     "image": "/assets/memoryGame/image.png"
+  }, 
+   {
+    "title": "Jogo das Profissões",
+    "gameIdUrl": "professions",
+    "image": "/assets/professions/bg.svg"
+  },
+  {
+    "title": "Jogo da Soma",
+    "gameIdUrl": "sum",
+    "image": "/assets/sumGame/image.png"
   },
   {
     "title": "Jogo das Vogais",
@@ -20,23 +34,14 @@
     "image": "/assets/numbersGame/startScreen.png"
   },
   {
-    "title": "Tipos de Moradia",
-    "gameIdUrl": "housing",
-    "image": "/assets/housingGame/initial.png"
-  },
-  {
-    "title": "Coordenação Motora",
-    "gameIdUrl": "forms",
-    "image": "/assets/forms/bg.png"
-  },
-  {
     "title": "Sequência de Vogais",
     "gameIdUrl": "vowelssequence",
     "image": "/assets/vowelsSequenceGame/images/gamePrint.png"
   },
   {
-    "title": "Jogo do Espaço",
-    "gameIdUrl": "space",
-    "image": "/assets/spaceGame/thumbnail.png"
+    "title": "Tipos de Moradia",
+    "gameIdUrl": "housing",
+    "image": "/assets/housingGame/bg.svg"
   }
+  
 ]
