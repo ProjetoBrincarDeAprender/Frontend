@@ -16,7 +16,7 @@ const SyllableGame: React.FC = () => {
 
     const startScene = new StartScene({
       nextSceneName: "clickButtonGameScene",
-      backgroundPath: "/assets/syllableGame/images/backgroundMain.png",
+      backgroundPath: "/assets/syllableGame/images/backgroundStart.png",
       backgroundKey: "startBg",
       gameTitle: "SÍLABAS",
       // trophyImagePath: "/assets/common/duda/dudaClap.png",

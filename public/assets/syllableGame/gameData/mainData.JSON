@@ -1,7 +1,7 @@
 {
   "config": {
     "background": {
-      "image": "/assets/vowelsSequenceGame/images/backgroundMain.png",
+      "image": "/assets/syllableGame/images/backgroundMain.png",
       "overlayOpacity": 0.3
     }
   },
@@ -19,6 +19,28 @@
         "clicked": "/assets/common/buttons/squareRedClicked.svg"
       }
     },
+    "entities": [
+      {
+        "key": "bola",
+        "path": "/assets/syllableGame/images/entities/bola.png"
+      },
+      {
+        "key": "casa",
+        "path": "/assets/syllableGame/images/entities/casa.png"
+      },
+      {
+        "key": "sofa",
+        "path": "/assets/syllableGame/images/entities/sofa.png"
+      },
+      {
+        "key": "pato",
+        "path": "/assets/syllableGame/images/entities/pato.png"
+      },
+      {
+        "key": "mala",
+        "path": "/assets/syllableGame/images/entities/mala.png"
+      }
+    ],
     "effects": [
       {
         "key": "star",
@@ -49,188 +71,44 @@
 
   "levels": [
     {
-      "answer": "A",
-      "question": "COMPLETE AS VOGAIS",
-      "content": [" ", "E", "I", "O", "U"],
-      "completeContent": ["A", "E", "I", "O", "U"],
-      "options": ["A", "U"]
+      "question": "COMPLETE AS SÍLABAS",
+      "entityKey": "bola",
+      "content": ["BO", " "],
+      "completeContent": ["BO", "LA"],
+      "answer": "LA",
+      "options": ["LA", "LU"]
     },
     {
-      "answer": "E",
-      "question": "COMPLETE AS VOGAIS",
-      "content": ["A", " ", "I", "O", "U"],
-      "completeContent": ["A", "E", "I", "O", "U"],
-      "options": ["A", "E"]
+      "question": "COMPLETE AS SÍLABAS",
+      "entityKey": "casa",
+      "content": ["CA", " "],
+      "completeContent": ["CA", "SA"],
+      "answer": "SA",
+      "options": ["SE", "SA"]
     },
     {
-      "answer": "I",
-      "question": "COMPLETE AS VOGAIS",
-      "content": ["A", "E", " ", "O", "U"],
-      "completeContent": ["A", "E", "I", "O", "U"],
-      "options": ["I", "O"]
+      "question": "COMPLETE AS SÍLABAS",
+      "entityKey": "sofa",
+      "content": ["SO", " "],
+      "completeContent": ["SO", "FÁ"],
+      "answer": "FÁ",
+      "options": ["FÁ", "FI"]
     },
     {
-      "answer": "O",
-      "question": "COMPLETE AS VOGAIS",
-      "content": ["A", "E", "I", " ", "U"],
-      "completeContent": ["A", "E", "I", "O", "U"],
-      "options": ["O", "U"]
+      "question": "COMPLETE AS SÍLABAS",
+      "entityKey": "pato",
+      "content": [" ", "TO"],
+      "completeContent": ["PA", "TO"],
+      "answer": "PA",
+      "options": ["PE", "PA"]
     },
     {
-      "answer": "U",
-      "question": "COMPLETE AS VOGAIS",
-      "content": ["A", "E", "I", "O", " "],
-      "completeContent": ["A", "E", "I", "O", "U"],
-      "options": ["U", "A"]
-    },
-    {
-      "answer": "I",
-      "question": "COMPLETE AS VOGAIS",
-      "content": ["A", "E", " ", "O", "U"],
-      "completeContent": ["A", "E", "I", "O", "U"],
-      "options": ["U", "I"]
-    },
-    {
-      "answer": "A",
-      "question": "COMPLETE AS VOGAIS",
-      "content": [" ", "E", "I", "O", "U"],
-      "completeContent": ["A", "E", "I", "O", "U"],
-      "options": ["E", "A"]
-    },
-    {
-      "answer": "U",
-      "question": "COMPLETE AS VOGAIS",
-      "content": ["A", "E", "I", "O", " "],
-      "completeContent": ["A", "E", "I", "O", "U"],
-      "options": ["A", "U"]
-    },
-    {
-      "answer": "E",
-      "question": "COMPLETE AS VOGAIS",
-      "content": ["A", " ", "I", "O", "U"],
-      "completeContent": ["A", "E", "I", "O", "U"],
-      "options": ["E", "I"]
-    },
-    {
-      "answer": "O",
-      "question": "COMPLETE AS VOGAIS",
-      "content": ["A", "E", "I", " ", "U"],
-      "completeContent": ["A", "E", "I", "O", "U"],
-      "options": ["A", "O"]
-    },
-    {
-      "answer": "E",
-      "question": "COMPLETE AS VOGAIS",
-      "content": ["A", " ", "I", "O", "U"],
-      "completeContent": ["A", "E", "I", "O", "U"],
-      "options": ["E", "O", "U"]
-    },
-    {
-      "answer": "U",
-      "question": "COMPLETE AS VOGAIS",
-      "content": ["A", "E", "I", "O", " "],
-      "completeContent": ["A", "E", "I", "O", "U"],
-      "options": ["U", "E", "I"]
-    },
-    {
-      "answer": "A",
-      "question": "COMPLETE AS VOGAIS",
-      "content": [" ", "E", "I", "O", "U"],
-      "completeContent": ["A", "E", "I", "O", "U"],
-      "options": ["A", "O", "I"]
-    },
-    {
-      "answer": "I",
-      "question": "COMPLETE AS VOGAIS",
-      "content": ["A", "E", " ", "O", "U"],
-      "completeContent": ["A", "E", "I", "O", "U"],
-      "options": ["I", "A", "U"]
-    },
-    {
-      "answer": "O",
-      "question": "COMPLETE AS VOGAIS",
-      "content": ["A", "E", "I", " ", "U"],
-      "completeContent": ["A", "E", "I", "O", "U"],
-      "options": ["O", "E", "A"]
-    },
-    {
-      "answer": "O",
-      "question": "COMPLETE AS VOGAIS",
-      "content": ["A", "E", "I", " ", "U"],
-      "completeContent": ["A", "E", "I", "O", "U"],
-      "options": ["O", "A", "E", "U"]
-    },
-    {
-      "answer": "A",
-      "question": "COMPLETE AS VOGAIS",
-      "content": [" ", "E", "I", "O", "U"],
-      "completeContent": ["A", "E", "I", "O", "U"],
-      "options": ["A", "E", "I", "O"]
-    },
-
-    {
-      "answer": "I",
-      "question": "COMPLETE AS VOGAIS",
-      "content": ["A", "E", " ", "O", "U"],
-      "completeContent": ["A", "E", "I", "O", "U"],
-      "options": ["I", "E", "O", "U"]
-    },
-
-    {
-      "answer": "E",
-      "question": "COMPLETE AS VOGAIS",
-      "content": ["A", " ", "I", "O", "U"],
-      "completeContent": ["A", "E", "I", "O", "U"],
-      "options": ["E", "A", "U", "O"]
-    },
-    {
-      "answer": "U",
-      "question": "COMPLETE AS VOGAIS",
-      "content": ["A", "E", "I", "O", " "],
-      "completeContent": ["A", "E", "I", "O", "U"],
-      "options": ["U", "A", "E", "I"]
-    },
-    {
-      "answer": "E",
-      "question": "COMPLETE AS VOGAIS",
-      "content": ["A", " ", "I", "O", "U"],
-      "completeContent": ["A", "E", "I", "O", "U"],
-      "options": ["E", "A", "I", "O", "U"]
-    },
-    {
-      "answer": "A",
-      "question": "COMPLETE AS VOGAIS",
-      "content": [" ", "E", "I", "O", "U"],
-      "completeContent": ["A", "E", "I", "O", "U"],
-      "options": ["A", "E", "I", "O", "U"]
-    },
-    {
-      "answer": "I",
-      "question": "COMPLETE AS VOGAIS",
-      "content": ["A", "E", " ", "O", "U"],
-      "completeContent": ["A", "E", "I", "O", "U"],
-      "options": ["I", "A", "E", "O", "U"]
-    },
-    {
-      "answer": "O",
-      "question": "COMPLETE AS VOGAIS",
-      "content": ["A", "E", "I", " ", "U"],
-      "completeContent": ["A", "E", "I", "O", "U"],
-      "options": ["A", "E", "I", "U", "O"]
-    },
-    {
-      "answer": "U",
-      "question": "COMPLETE AS VOGAIS",
-      "content": ["A", "E", "I", "O", " "],
-      "completeContent": ["A", "E", "I", "O", "U"],
-      "options": ["U", "A", "E", "I", "O"]
-    },
-    {
-      "answer": "E",
-      "question": "COMPLETE AS VOGAIS",
-      "content": ["A", " ", "I", "O", "U"],
-      "completeContent": ["A", "E", "I", "O", "U"],
-      "options": ["A", "E", "I", "O", "U"]
+      "question": "COMPLETE AS SÍLABAS",
+      "entityKey": "mala",
+      "content": [" ", "LA"],
+      "completeContent": ["MA", "LA"],
+      "answer": "MA",
+      "options": ["MA", "ME"]
     }
   ]
 }
