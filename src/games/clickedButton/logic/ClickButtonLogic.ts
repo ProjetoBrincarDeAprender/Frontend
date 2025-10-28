@@ -84,7 +84,7 @@ export default class ClickButtonLogic {
     this.entity = this.scene.add
       .image(400, 240, entityKey)
       .setOrigin(0.5, 0.5)
-      .setScale(0.4);
+      .setScale(0.5);
   }
 
   /**
@@ -287,7 +287,7 @@ export default class ClickButtonLogic {
   private nextLevel(): void {
     this.clearLevelElements();
     if (!this.levelManager.nextLevel()) {
-      this.scene.scene.start("clickButtonStartScene");
+      this.scene.scene.start("EndScene");
     } else {
       this.showQuestion();
       this.showEntity();
