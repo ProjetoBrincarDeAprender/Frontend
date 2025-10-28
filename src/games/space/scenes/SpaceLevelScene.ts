@@ -4,12 +4,25 @@ import SpaceLevel from "../logic/SpaceLevel";
 import SpaceLogic from "../logic/SpaceLogic";
 
 export class SpaceGameScene extends Phaser.Scene {
-  private logic: SpaceLogic;
+  private logic!: SpaceLogic;
   private continueFromLevel: boolean = false;
+  private userId?: string;
+  private activityId?: number;
 
   constructor() {
     super({ key: "SpaceGameScene" });
-    this.logic = new SpaceLogic(this);
+  }
+
+  setUserId(userId: string) {
+    this.userId = userId;
+  }
+
+  setActivityId(activityId: number) {
+    this.activityId = activityId;
+  }
+
+  private initializeLogic() {
+    this.logic = new SpaceLogic(this, this.userId, this.activityId);
   }
 
   init(data: { continueFromLevel?: boolean } = {}) {
@@ -43,6 +56,9 @@ export class SpaceGameScene extends Phaser.Scene {
   }
 
   create() {
+    // Inicializar a lógica com os IDs
+    this.initializeLogic();
+
     // Configurar os níveis
     this.setupLevels();
 

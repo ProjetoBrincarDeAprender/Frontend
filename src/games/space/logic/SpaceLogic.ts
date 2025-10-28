@@ -1,6 +1,7 @@
 import ButtonFactory from "@/games/common/factories/ButtonFactory";
 import ButtonManager from "@/games/common/managers/ButtonManager";
 import Button from "@/games/common/models/Button";
+import { APIDataService } from "@/games/common/services/APIData.service";
 import Phaser from "phaser";
 import EffectManager from "../../common/managers/EffectManager";
 import GameStats from "../../common/managers/GameStats";
@@ -21,9 +22,13 @@ export default class SpaceLogic {
     | Phaser.GameObjects.Text
   )[] = [];
   private buttonsEnabled: boolean = true;
+  private userId?: string;
+  private activityId?: number;
 
-  constructor(scene: Phaser.Scene) {
+  constructor(scene: Phaser.Scene, userId?: string, activityId?: number) {
     this.scene = scene;
+    this.userId = userId;
+    this.activityId = activityId;
     this.gameStats = new GameStats();
     this.buttonManager = new ButtonManager(this.scene);
     this.effectManager = new EffectManager(this.scene);
@@ -225,12 +230,26 @@ export default class SpaceLogic {
   }
 
   private handleCorrectAnswer(): void {
-    // Efeito visual de sucesso
     this.scene.sound.play("correct", { volume: 0.7 });
 
-    // Adicionar estatísticas
     this.gameStats.addHitTime(this.scene.time.now);
-    this.gameStats.addMissCount(); // Registrar os misses do nível atual
+    this.gameStats.addMissCount();
+
+    const apiService = new APIDataService();
+
+    apiService.sendGameData(
+      this.userId || "10130001",
+      this.activityId || 3,
+      this.levelManager.getCurrentIndex() + 1,
+      {
+        attempts: this.gameStats.getCurrentLevelMisses(),
+        timeSpent: this.gameStats.getCurrentLevelTimeSpent(this.scene.time.now),
+        isCorrect: true,
+        answer: this.generateAnswerLog(),
+        neededHint: false, // temporario, dica não implementada
+      },
+    );
+
     this.gameStats.resetInitialLevelTime(this.scene.time.now);
     this.gameStats.resetActualLevelMisses(); // Resetar para o próximo nível
 
@@ -258,12 +277,44 @@ export default class SpaceLogic {
     });
   }
 
+  private generateAnswerLog(): string {
+    const currentLevel = this.getCurrentLevel();
+    const correctAnswer = currentLevel.getAnswer();
+    const options = currentLevel.getOptions();
+
+    const log = {
+      selectedAnswer: correctAnswer,
+      correctAnswer: correctAnswer,
+      options: options,
+      difficulty: currentLevel.getDifficulty(),
+    };
+
+    return JSON.stringify(log);
+  }
+
   private handleWrongAnswer(): void {
     // Efeito visual de erro
     this.scene.sound.play("incorrect", { volume: 0.7 });
 
     // Adicionar estatísticas
     this.gameStats.addMiss();
+
+    const apiService = new APIDataService();
+
+    console.log(this.userId);
+
+    apiService.sendGameData(
+      this.userId || "10130001",
+      this.activityId || 3,
+      this.levelManager.getCurrentIndex() + 1,
+      {
+        attempts: this.gameStats.getCurrentLevelMisses(),
+        timeSpent: this.gameStats.getCurrentLevelTimeSpent(this.scene.time.now),
+        isCorrect: false,
+        answer: this.generateAnswerLog(),
+        neededHint: false, // temporario, dica não implementada
+      },
+    );
 
     // Mostrar feedback negativo
     this.showFeedback("Tente novamente! 🤔", "#FF0000", true);

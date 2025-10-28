@@ -6,6 +6,7 @@ import { LevelCompletedScene } from "@/games/common/scenes/LevelCompletedScene";
 import { StartScene } from "@/games/common/scenes/StartScene";
 import { EventBus } from "@/games/common/utils/EventBus";
 import { SpaceGameScene } from "@/games/space/scenes/SpaceLevelScene";
+import { useUser } from "@/hooks/User/useUser";
 import Phaser from "phaser";
 import { useEffect, useRef } from "react";
 
@@ -14,10 +15,17 @@ export interface IRefSpaceGame {
   scene: Phaser.Scene | null;
 }
 
-export const SpaceGame = () => {
+interface SpaceGameProps {
+  activityId?: number;
+}
+
+export const SpaceGame = ({ activityId = 3 }: SpaceGameProps) => {
   const gameRef = useRef<Phaser.Game | null>(null);
+  const { user } = useUser();
 
   useEffect(() => {
+    if (gameRef.current) return;
+
     const config: Phaser.Types.Core.GameConfig = {
       type: Phaser.AUTO,
       width: 800,
@@ -56,16 +64,24 @@ export const SpaceGame = () => {
 
     gameRef.current = new Phaser.Game(config);
 
+    const setupGame = () => {
+      const scene = gameRef.current?.scene.scenes[1] as SpaceGameScene; // SpaceGameScene é a segunda cena
+      if (scene && user?.codigo_usuario) {
+        scene.setUserId(user.codigo_usuario.toString());
+        scene.setActivityId(activityId);
+      }
+    };
+    setTimeout(setupGame, 100);
+
     EventBus.once("current-scene-ready", (log: string) => {
       console.log({ log });
     });
 
     return () => {
-      if (gameRef.current) {
-        gameRef.current.destroy(true);
-      }
+      gameRef.current?.destroy(true);
+      gameRef.current = null;
     };
-  }, []);
+  }, [user, activityId]);
 
   return (
     <>
