@@ -4,13 +4,23 @@ import { MemoryGameLogic } from "../logic/MemoryGameLogic";
 export class MemoryGameScene extends Phaser.Scene {
   private logic!: MemoryGameLogic;
   private gameDataTimer?: Phaser.Time.TimerEvent;
+  private userId?: string;
+  private activityId?: number;
 
   constructor() {
     super({ key: "MemoryGameScene" });
   }
 
+  setUserId(userId: string) {
+    this.userId = userId;
+  }
+
+  setActivityId(activityId: number) {
+    this.activityId = activityId;
+  }
+
   init(data: { resetGame?: boolean } = {}) {
-    this.logic = new MemoryGameLogic(this);
+    this.logic = new MemoryGameLogic(this, this.userId, this.activityId);
 
     if (data.resetGame) {
       this.logic.resetGame();
@@ -62,11 +72,12 @@ export class MemoryGameScene extends Phaser.Scene {
     try {
       const attempts = this.logic.getCurrentAttempts();
       const levelTime = this.logic.getCurrentLevelTime();
-      const currentQuestionIndex = this.logic.getAbsoluteQuestionIndex();
+      // const currentQuestionIndex = this.logic.getAbsoluteQuestionIndex();
 
       const gameData = {
-        activityId: 1,
-        questionId: currentQuestionIndex + 1,
+        studentId: Number(this.userId) || 10130001,
+        activityId: this.activityId || 4,
+        questionId: 1,
         attempts: attempts,
         timeSpent: levelTime,
         responseDate: this.time.now,

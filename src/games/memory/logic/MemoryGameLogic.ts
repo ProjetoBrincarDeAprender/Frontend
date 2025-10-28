@@ -17,6 +17,8 @@ export class MemoryGameLogic {
   private levelStartTime: number = 0;
   private isShowingInitialCards: boolean = false;
   private gameStarted: boolean = false;
+  private userId?: string;
+  private activityId?: number;
 
   private textColors = [
     "#FF0000",
@@ -29,11 +31,13 @@ export class MemoryGameLogic {
     "#4400FF",
   ];
 
-  constructor(scene: Phaser.Scene) {
+  constructor(scene: Phaser.Scene, userId?: string, activityId?: number) {
     this.scene = scene;
     this.gameLevels = GameLevels;
     this.currentLevelIndex = 0;
     this.currentQuestionIndex = 0;
+    this.userId = userId;
+    this.activityId = activityId;
 
     this.EffectManager = new EffectManager(scene);
     this.gameStats = new GameStats();
@@ -430,7 +434,8 @@ export class MemoryGameLogic {
     try {
       const sendData = async () => {
         const levelData = {
-          activityId: 1,
+          studentId: Number(this.userId) || 10130001,
+          activityId: this.activityId || 4,
           questionId: this.getAbsoluteQuestionIndex(),
           isCorrect: true,
           answer: "ok",
