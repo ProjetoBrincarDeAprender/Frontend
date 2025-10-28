@@ -9,10 +9,13 @@
  * - Aplicar efeitos visuais e sonoros conforme resposta
  * - Controlar o fluxo entre níveis
  */
+import Phaser from "phaser";
 import LevelManager from "./LevelManager";
 import ButtonManager from "./ButtonManager";
 import EffectManager from "./EffectManager";
 import SoundManager from "./SoundManager";
+import GameStats from "./GameStats";
+import ClickButtonApi from "./ClickButtonApi";
 import type Button from "./Button";
 
 export default class ClickButtonLogic {
@@ -21,6 +24,9 @@ export default class ClickButtonLogic {
   private buttonManager: ButtonManager;
   private effectManager: EffectManager;
   private soundManager: SoundManager;
+  private gameStats: GameStats;
+  private api: ClickButtonApi;
+  private activityId: number;
   /** Objeto de texto da questão atual */
   private question?: Phaser.GameObjects.Text;
   /** Imagem da entidade auxiliar do nível */
@@ -46,6 +52,14 @@ export default class ClickButtonLogic {
     this.buttonManager = buttonManager;
     this.effectManager = new EffectManager(scene);
     this.soundManager = new SoundManager(scene);
+    this.api = new ClickButtonApi();
+    this.activityId = -1;
+    this.gameStats = new GameStats();
+    this.gameStats.resetInitialLevelTime(Date.now());
+  }
+
+  setActivityId(activityId: number): void {
+    this.activityId = activityId;
   }
 
   /**
@@ -70,7 +84,7 @@ export default class ClickButtonLogic {
     this.entity = this.scene.add
       .image(400, 240, entityKey)
       .setOrigin(0.5, 0.5)
-      .setScale(0.4);
+      .setScale(0.5);
   }
 
   /**
@@ -153,7 +167,23 @@ export default class ClickButtonLogic {
    * @param selectedOption Botão clicado pelo usuário
    */
   private handleOptionClick(selectedOption: Button): void {
+    const timeSpent = this.gameStats.getActualTimeSpent(Date.now());
+    this.gameStats.addTimeSpent(timeSpent);
+
     const answer = this.levelManager.getActualLevel().getAnswer();
+    const interaction = {
+      studentId: 10130001, // Usuário de teste. Ainda não sabemos como vamos pegar o ID
+      activityId: this.activityId,
+      questionId: 1, // Questões questionáveis
+      // questionId: this.levelManager.getActualIndex() + 1,
+      answer: this.levelManager.getActualLevel().getAnswer(),
+      timeSpent: timeSpent,
+      attempts: 1,
+      neededHint: false,
+      // responseDate: 0,
+      isCorrect: selectedOption.getButtonStringText() === answer,
+    };
+
     if (selectedOption.getButtonStringText() === answer) {
       this.setOptionsEnabled(false);
 
@@ -168,6 +198,7 @@ export default class ClickButtonLogic {
       this.updateContentToComplete();
       this.scene.time.delayedCall(3000, () => {
         this.nextLevel();
+        this.gameStats.resetInitialLevelTime(Date.now());
       });
     } else {
       selectedOption.disableInteractive();
@@ -182,8 +213,11 @@ export default class ClickButtonLogic {
 
       this.scene.time.delayedCall(400, () => {
         selectedOption.setInteractive();
+        this.gameStats.resetInitialLevelTime(Date.now());
       });
     }
+
+    this.api.sendGameData(interaction);
   }
 
   /**
@@ -253,7 +287,7 @@ export default class ClickButtonLogic {
   private nextLevel(): void {
     this.clearLevelElements();
     if (!this.levelManager.nextLevel()) {
-      this.scene.scene.start("clickButtonStartScene");
+      this.scene.scene.start("EndScene");
     } else {
       this.showQuestion();
       this.showEntity();

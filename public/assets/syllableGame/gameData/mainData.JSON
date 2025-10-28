@@ -1,0 +1,114 @@
+{
+  "config": {
+    "background": {
+      "image": "/assets/syllableGame/images/backgroundMain.png",
+      "overlayOpacity": 0.3
+    }
+  },
+
+  "textures": {
+    "buttons": {
+      "blue": {
+        "default": "/assets/common/buttons/squareBlueDefault.svg",
+        "hover": "/assets/common/buttons/squareBlueHover.svg",
+        "clicked": "/assets/common/buttons/squareBlueClicked.svg"
+      },
+      "red": {
+        "default": "/assets/common/buttons/squareRedDefault.svg",
+        "hover": "/assets/common/buttons/squareRedHover.svg",
+        "clicked": "/assets/common/buttons/squareRedClicked.svg"
+      }
+    },
+    "entities": [
+      {
+        "key": "bola",
+        "path": "/assets/syllableGame/images/entities/bola.png"
+      },
+      {
+        "key": "casa",
+        "path": "/assets/syllableGame/images/entities/casa.png"
+      },
+      {
+        "key": "sofa",
+        "path": "/assets/syllableGame/images/entities/sofa.png"
+      },
+      {
+        "key": "pato",
+        "path": "/assets/syllableGame/images/entities/pato.png"
+      },
+      {
+        "key": "mala",
+        "path": "/assets/syllableGame/images/entities/mala.png"
+      }
+    ],
+    "effects": [
+      {
+        "key": "star",
+        "texture": "/assets/common/star.svg"
+      }
+    ]
+  },
+
+  "audios": [
+    {
+      "key": "correct",
+      "path": "/assets/common/sounds/correct.mp3"
+    },
+    {
+      "key": "incorrect",
+      "path": "/assets/common/sounds/incorrect.mp3"
+    }
+  ],
+
+  "buttonConfig": {
+    "fontSize": 50,
+    "scale": 1.5
+  },
+
+  "info": {
+    "activityId": 2
+  },
+
+  "levels": [
+    {
+      "question": "COMPLETE AS SÍLABAS",
+      "entityKey": "bola",
+      "content": ["BO", " "],
+      "completeContent": ["BO", "LA"],
+      "answer": "LA",
+      "options": ["LA", "LU"]
+    },
+    {
+      "question": "COMPLETE AS SÍLABAS",
+      "entityKey": "casa",
+      "content": ["CA", " "],
+      "completeContent": ["CA", "SA"],
+      "answer": "SA",
+      "options": ["SE", "SA"]
+    },
+    {
+      "question": "COMPLETE AS SÍLABAS",
+      "entityKey": "sofa",
+      "content": ["SO", " "],
+      "completeContent": ["SO", "FÁ"],
+      "answer": "FÁ",
+      "options": ["FÁ", "FI"]
+    },
+    {
+      "question": "COMPLETE AS SÍLABAS",
+      "entityKey": "pato",
+      "content": [" ", "TO"],
+      "completeContent": ["PA", "TO"],
+      "answer": "PA",
+      "options": ["PE", "PA"]
+    },
+    {
+      "question": "COMPLETE AS SÍLABAS",
+      "entityKey": "mala",
+      "content": [" ", "LA"],
+      "completeContent": ["MA", "LA"],
+      "answer": "MA",
+      "options": ["MA", "ME"]
+    }
+  ]
+}

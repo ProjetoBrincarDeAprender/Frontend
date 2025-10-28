@@ -87,7 +87,7 @@ export default class GameScene extends Phaser.Scene {
           this.time.delayedCall(3000, () => {
             if (result.finished) {
               this.stopGameDataTimer();
-              this.scene.start("numbersCredits");
+              this.scene.start("EndScene");
             } else {
               this.setupLevel();
             }
