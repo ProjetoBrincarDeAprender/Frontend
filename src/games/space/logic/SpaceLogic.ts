@@ -104,15 +104,23 @@ export default class SpaceLogic {
     });
     this.buttons = [];
 
-    const buttonWidth = 180;
-    const spacing = 30;
-    const totalWidth =
-      options.length * buttonWidth + (options.length - 1) * spacing;
-    const startX = (this.scene.scale.width - totalWidth) / 2 + buttonWidth / 2;
-    const buttonY = this.scene.scale.height / 2 + 80;
+    // Configurações para layout em grid 2x2
+    const centerX = this.scene.scale.width / 2;
+    const centerY = this.scene.scale.height / 2 + 50;
+    const horizontalSpacing = 350; // Espaçamento horizontal entre colunas
+    const verticalSpacing = 200; // Espaçamento vertical entre linhas
+
+    // Calcular posições em formato grid 2x2
+    const positions = this.calculateGridLayout(
+      options.length,
+      centerX,
+      centerY,
+      horizontalSpacing,
+      verticalSpacing,
+    );
 
     options.forEach((option, index) => {
-      const x = startX + index * (buttonWidth + spacing);
+      const { x, y } = positions[index];
 
       if (hasImages && optionsImages) {
         // Para questões com imagens, criar apenas a imagem clicável sem fundo
@@ -120,8 +128,7 @@ export default class SpaceLogic {
         const showNames = currentLevel.getDifficulty() === "medium";
 
         const planetImage = this.scene.add
-          .image(x, showNames ? buttonY - 20 : buttonY, imageKey)
-          .setScale(0.7)
+          .image(x, showNames ? y - 20 : y, imageKey)
           .setInteractive();
 
         let planetText: Phaser.GameObjects.Text | null = null;
@@ -129,9 +136,9 @@ export default class SpaceLogic {
         // Adicionar o nome do planeta embaixo da imagem apenas para dificuldade medium
         if (showNames) {
           planetText = this.scene.add
-            .text(x, buttonY + 45, option.toUpperCase(), {
+            .text(x, y + 45, option.toUpperCase(), {
               fontFamily: "Comic Sans MS, Arial, sans-serif",
-              fontSize: "16px",
+              fontSize: "24px",
               color: "#FFFFFF",
               fontStyle: "bold",
               stroke: "#000000",
@@ -149,12 +156,12 @@ export default class SpaceLogic {
 
         // Adicionar efeitos hover na imagem
         planetImage.on("pointerover", () => {
-          planetImage.setScale(0.75);
+          planetImage.setScale(1.1);
           planetImage.setTint(0xdddddd);
           if (planetText) planetText.setScale(1.1);
         });
         planetImage.on("pointerout", () => {
-          planetImage.setScale(0.7);
+          planetImage.setScale(1);
           planetImage.clearTint();
           if (planetText) planetText.setScale(1.0);
         });
@@ -162,12 +169,12 @@ export default class SpaceLogic {
         // Adicionar efeitos hover no texto (apenas se existir)
         if (planetText) {
           planetText.on("pointerover", () => {
-            planetImage.setScale(0.75);
+            planetImage.setScale(1.1);
             planetImage.setTint(0xdddddd);
             planetText.setScale(1.1);
           });
           planetText.on("pointerout", () => {
-            planetImage.setScale(0.7);
+            planetImage.setScale(1);
             planetImage.clearTint();
             planetText.setScale(1.0);
           });
@@ -181,15 +188,15 @@ export default class SpaceLogic {
       } else {
         // Para questões só com texto, usar botão normal
         const button = this.buttonFactory.createButton({
-          positions: { x, y: buttonY },
+          positions: { x, y },
           textures: {
             default: "defaultButton",
             hover: "hoverButton",
             clicked: "clickedButton",
           },
           text: option,
-          fontSize: 24,
-          scale: 0.8,
+          fontSize: 32,
+          scale: 1,
           onClick: () => this.handleButtonClick(option),
         });
 
@@ -232,7 +239,6 @@ export default class SpaceLogic {
 
     // Ir para tela de conclusão após um delay
     this.scene.time.delayedCall(3500, () => {
-      const currentLevel = this.levelManager.getCurrentIndex();
       const hasNextLevel = this.levelManager.nextLevel();
       const isLastLevel = !hasNextLevel;
 
@@ -244,13 +250,10 @@ export default class SpaceLogic {
 
       if (isLastLevel) {
         // Ir diretamente para a cena final
-        this.scene.scene.start("SpaceEndScene");
+        this.scene.scene.start("EndScene");
       } else {
         // Se não é o último nível, ir para a cena de nível completo
-        this.scene.scene.start("SpaceLevelCompleteScene", {
-          level: currentLevel,
-          isLastLevel: false,
-        });
+        this.scene.scene.start("LevelCompleteScene");
       }
     });
   }
@@ -283,9 +286,23 @@ export default class SpaceLogic {
           fontStyle: "bold",
           stroke: "#000000",
           strokeThickness: 3,
+          padding: { left: 20, right: 20, top: 10, bottom: 10 },
         },
       )
       .setOrigin(0.5);
+
+    const graphics = this.scene.add.graphics();
+    graphics.fillStyle(0x000000, 0.5);
+    graphics.fillRoundedRect(
+      feedback.x - feedback.width / 2 - 20,
+      feedback.y - feedback.height / 2 - 10,
+      feedback.width + 40,
+      feedback.height + 20,
+      15,
+    );
+
+    // Garantir que o texto fique na frente do background
+    feedback.setDepth(1);
 
     // Animar entrada do feedback
     this.scene.tweens.add({
@@ -305,6 +322,7 @@ export default class SpaceLogic {
             ease: "Back.easeIn",
             onComplete: () => {
               feedback.destroy();
+              graphics.destroy();
               // Reativar botões se necessário (para respostas erradas)
               if (reactivateButtons) {
                 this.buttonsEnabled = true;
@@ -343,5 +361,60 @@ export default class SpaceLogic {
       const j = Math.floor(Math.random() * (i + 1));
       [array[i], array[j]] = [array[j], array[i]];
     }
+  }
+
+  private calculateGridLayout(
+    numButtons: number,
+    centerX: number,
+    centerY: number,
+    horizontalSpacing: number,
+    verticalSpacing: number,
+  ): { x: number; y: number }[] {
+    const positions: { x: number; y: number }[] = [];
+
+    for (let i = 0; i < numButtons; i++) {
+      let x: number;
+      let y: number;
+
+      if (numButtons === 1) {
+        // 1 botão: centro
+        x = centerX;
+        y = centerY;
+      } else if (numButtons === 2) {
+        // 2 botões: lado a lado na linha superior
+        const col = i % 2;
+        x =
+          centerX +
+          (col === 0 ? -horizontalSpacing / 2 : horizontalSpacing / 2);
+        y = centerY - verticalSpacing / 2;
+      } else if (numButtons === 3) {
+        // 3 botões: 2 na linha superior, 1 no centro da linha inferior
+        if (i < 2) {
+          // Primeira linha: 2 botões
+          const col = i % 2;
+          x =
+            centerX +
+            (col === 0 ? -horizontalSpacing / 2 : horizontalSpacing / 2);
+          y = centerY - verticalSpacing / 2;
+        } else {
+          // Segunda linha: 1 botão no centro
+          x = centerX;
+          y = centerY + verticalSpacing / 2;
+        }
+      } else {
+        // 4 ou mais botões: grid 2x2 padrão
+        const row = Math.floor(i / 2);
+        const col = i % 2;
+
+        x =
+          centerX +
+          (col === 0 ? -horizontalSpacing / 2 : horizontalSpacing / 2);
+        y = centerY + (row === 0 ? -verticalSpacing / 2 : verticalSpacing / 2);
+      }
+
+      positions.push({ x, y });
+    }
+
+    return positions;
   }
 }
