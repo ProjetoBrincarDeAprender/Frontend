@@ -1,0 +1,236 @@
+{
+  "config": {
+    "background": {
+      "image": "/assets/vowelsSequenceGame/images/backgroundMain.png",
+      "overlayOpacity": 0.3
+    }
+  },
+
+  "textures": {
+    "buttons": {
+      "blue": {
+        "default": "/assets/common/buttons/squareBlueDefault.svg",
+        "hover": "/assets/common/buttons/squareBlueHover.svg",
+        "clicked": "/assets/common/buttons/squareBlueClicked.svg"
+      },
+      "red": {
+        "default": "/assets/common/buttons/squareRedDefault.svg",
+        "hover": "/assets/common/buttons/squareRedHover.svg",
+        "clicked": "/assets/common/buttons/squareRedClicked.svg"
+      }
+    },
+    "effects": [
+      {
+        "key": "star",
+        "texture": "/assets/common/star.svg"
+      }
+    ]
+  },
+
+  "audios": [
+    {
+      "key": "correct",
+      "path": "/assets/common/sounds/correct.mp3"
+    },
+    {
+      "key": "incorrect",
+      "path": "/assets/common/sounds/incorrect.mp3"
+    }
+  ],
+
+  "buttonConfig": {
+    "fontSize": 50,
+    "scale": 1.5
+  },
+
+  "info": {
+    "activityId": 2
+  },
+
+  "levels": [
+    {
+      "answer": "A",
+      "question": "COMPLETE AS VOGAIS",
+      "content": [" ", "E", "I", "O", "U"],
+      "completeContent": ["A", "E", "I", "O", "U"],
+      "options": ["A", "U"]
+    },
+    {
+      "answer": "E",
+      "question": "COMPLETE AS VOGAIS",
+      "content": ["A", " ", "I", "O", "U"],
+      "completeContent": ["A", "E", "I", "O", "U"],
+      "options": ["A", "E"]
+    },
+    {
+      "answer": "I",
+      "question": "COMPLETE AS VOGAIS",
+      "content": ["A", "E", " ", "O", "U"],
+      "completeContent": ["A", "E", "I", "O", "U"],
+      "options": ["I", "O"]
+    },
+    {
+      "answer": "O",
+      "question": "COMPLETE AS VOGAIS",
+      "content": ["A", "E", "I", " ", "U"],
+      "completeContent": ["A", "E", "I", "O", "U"],
+      "options": ["O", "U"]
+    },
+    {
+      "answer": "U",
+      "question": "COMPLETE AS VOGAIS",
+      "content": ["A", "E", "I", "O", " "],
+      "completeContent": ["A", "E", "I", "O", "U"],
+      "options": ["U", "A"]
+    },
+    {
+      "answer": "I",
+      "question": "COMPLETE AS VOGAIS",
+      "content": ["A", "E", " ", "O", "U"],
+      "completeContent": ["A", "E", "I", "O", "U"],
+      "options": ["U", "I"]
+    },
+    {
+      "answer": "A",
+      "question": "COMPLETE AS VOGAIS",
+      "content": [" ", "E", "I", "O", "U"],
+      "completeContent": ["A", "E", "I", "O", "U"],
+      "options": ["E", "A"]
+    },
+    {
+      "answer": "U",
+      "question": "COMPLETE AS VOGAIS",
+      "content": ["A", "E", "I", "O", " "],
+      "completeContent": ["A", "E", "I", "O", "U"],
+      "options": ["A", "U"]
+    },
+    {
+      "answer": "E",
+      "question": "COMPLETE AS VOGAIS",
+      "content": ["A", " ", "I", "O", "U"],
+      "completeContent": ["A", "E", "I", "O", "U"],
+      "options": ["E", "I"]
+    },
+    {
+      "answer": "O",
+      "question": "COMPLETE AS VOGAIS",
+      "content": ["A", "E", "I", " ", "U"],
+      "completeContent": ["A", "E", "I", "O", "U"],
+      "options": ["A", "O"]
+    },
+    {
+      "answer": "E",
+      "question": "COMPLETE AS VOGAIS",
+      "content": ["A", " ", "I", "O", "U"],
+      "completeContent": ["A", "E", "I", "O", "U"],
+      "options": ["E", "O", "U"]
+    },
+    {
+      "answer": "U",
+      "question": "COMPLETE AS VOGAIS",
+      "content": ["A", "E", "I", "O", " "],
+      "completeContent": ["A", "E", "I", "O", "U"],
+      "options": ["U", "E", "I"]
+    },
+    {
+      "answer": "A",
+      "question": "COMPLETE AS VOGAIS",
+      "content": [" ", "E", "I", "O", "U"],
+      "completeContent": ["A", "E", "I", "O", "U"],
+      "options": ["A", "O", "I"]
+    },
+    {
+      "answer": "I",
+      "question": "COMPLETE AS VOGAIS",
+      "content": ["A", "E", " ", "O", "U"],
+      "completeContent": ["A", "E", "I", "O", "U"],
+      "options": ["I", "A", "U"]
+    },
+    {
+      "answer": "O",
+      "question": "COMPLETE AS VOGAIS",
+      "content": ["A", "E", "I", " ", "U"],
+      "completeContent": ["A", "E", "I", "O", "U"],
+      "options": ["O", "E", "A"]
+    },
+    {
+      "answer": "O",
+      "question": "COMPLETE AS VOGAIS",
+      "content": ["A", "E", "I", " ", "U"],
+      "completeContent": ["A", "E", "I", "O", "U"],
+      "options": ["O", "A", "E", "U"]
+    },
+    {
+      "answer": "A",
+      "question": "COMPLETE AS VOGAIS",
+      "content": [" ", "E", "I", "O", "U"],
+      "completeContent": ["A", "E", "I", "O", "U"],
+      "options": ["A", "E", "I", "O"]
+    },
+
+    {
+      "answer": "I",
+      "question": "COMPLETE AS VOGAIS",
+      "content": ["A", "E", " ", "O", "U"],
+      "completeContent": ["A", "E", "I", "O", "U"],
+      "options": ["I", "E", "O", "U"]
+    },
+
+    {
+      "answer": "E",
+      "question": "COMPLETE AS VOGAIS",
+      "content": ["A", " ", "I", "O", "U"],
+      "completeContent": ["A", "E", "I", "O", "U"],
+      "options": ["E", "A", "U", "O"]
+    },
+    {
+      "answer": "U",
+      "question": "COMPLETE AS VOGAIS",
+      "content": ["A", "E", "I", "O", " "],
+      "completeContent": ["A", "E", "I", "O", "U"],
+      "options": ["U", "A", "E", "I"]
+    },
+    {
+      "answer": "E",
+      "question": "COMPLETE AS VOGAIS",
+      "content": ["A", " ", "I", "O", "U"],
+      "completeContent": ["A", "E", "I", "O", "U"],
+      "options": ["E", "A", "I", "O", "U"]
+    },
+    {
+      "answer": "A",
+      "question": "COMPLETE AS VOGAIS",
+      "content": [" ", "E", "I", "O", "U"],
+      "completeContent": ["A", "E", "I", "O", "U"],
+      "options": ["A", "E", "I", "O", "U"]
+    },
+    {
+      "answer": "I",
+      "question": "COMPLETE AS VOGAIS",
+      "content": ["A", "E", " ", "O", "U"],
+      "completeContent": ["A", "E", "I", "O", "U"],
+      "options": ["I", "A", "E", "O", "U"]
+    },
+    {
+      "answer": "O",
+      "question": "COMPLETE AS VOGAIS",
+      "content": ["A", "E", "I", " ", "U"],
+      "completeContent": ["A", "E", "I", "O", "U"],
+      "options": ["A", "E", "I", "U", "O"]
+    },
+    {
+      "answer": "U",
+      "question": "COMPLETE AS VOGAIS",
+      "content": ["A", "E", "I", "O", " "],
+      "completeContent": ["A", "E", "I", "O", "U"],
+      "options": ["U", "A", "E", "I", "O"]
+    },
+    {
+      "answer": "E",
+      "question": "COMPLETE AS VOGAIS",
+      "content": ["A", " ", "I", "O", "U"],
+      "completeContent": ["A", "E", "I", "O", "U"],
+      "options": ["A", "E", "I", "O", "U"]
+    }
+  ]
+}
