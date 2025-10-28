@@ -84,7 +84,7 @@ export default class ClickButtonLogic {
     this.entity = this.scene.add
       .image(400, 240, entityKey)
       .setOrigin(0.5, 0.5)
-      .setScale(0.4);
+      .setScale(0.5);
   }
 
   /**
