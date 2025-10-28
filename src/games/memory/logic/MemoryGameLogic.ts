@@ -1,13 +1,15 @@
 import EffectManager from "@/games/common/managers/EffectManager";
 import GameStats from "@/games/common/managers/GameStats";
-import LevelManager from "@/games/common/managers/LevelManager";
 import api from "@/utils/api";
-import { MemoryGameLevel } from "../utils/memoryGameLevel";
+import type { MemoryCard } from "../utils/memoryGameLevel";
+import type { GameLevel } from "./levels";
 import { GameLevels } from "./levels";
 
 export class MemoryGameLogic {
   private scene: Phaser.Scene;
-  private LevelManager: LevelManager<MemoryGameLevel>;
+  private gameLevels: GameLevel[];
+  private currentLevelIndex: number = 0;
+  private currentQuestionIndex: number = 0;
   private EffectManager: EffectManager;
   private gameStats: GameStats;
   private cards: Phaser.GameObjects.Container[] = [];
@@ -16,21 +18,161 @@ export class MemoryGameLogic {
   private isShowingInitialCards: boolean = false;
   private gameStarted: boolean = false;
 
-  constructor(scene: Phaser.Scene) {
-    const levels: MemoryGameLevel[] = GameLevels;
-    this.scene = scene;
+  private textColors = [
+    "#FF0000",
+    "#00FF00",
+    "#0000FF",
+    "#FFFF00",
+    "#FF00FF",
+    "#00FFFF",
+    "#FFA500",
+    "#4400FF",
+  ];
 
-    this.LevelManager = new LevelManager(levels);
+  constructor(scene: Phaser.Scene) {
+    this.scene = scene;
+    this.gameLevels = GameLevels;
+    this.currentLevelIndex = 0;
+    this.currentQuestionIndex = 0;
+
     this.EffectManager = new EffectManager(scene);
     this.gameStats = new GameStats();
   }
 
+  private getRandomTextColor(): string {
+    return this.textColors[Math.floor(Math.random() * this.textColors.length)];
+  }
+
+  private availableImages = ["card-0", "card-1", "card-2", "card-3", "card-4"];
+  private availableTexts = [
+    "A",
+    "B",
+    "C",
+    "D",
+    "E",
+    "F",
+    "G",
+    "H",
+    "I",
+    "J",
+    "K",
+    "L",
+    "M",
+    "N",
+    "O",
+    "P",
+    "Q",
+    "R",
+    "S",
+    "T",
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9",
+    "10",
+    "♠",
+    "♥",
+    "♦",
+    "♣",
+    "★",
+    "♪",
+    "♫",
+    "☀",
+    "☁",
+    "❤",
+  ];
+
+  private processFullRandomCards(cards: MemoryCard[]) {
+    const cardsByValue = new Map<string, MemoryCard[]>();
+
+    cards.forEach((card) => {
+      if (card.useFullRandom) {
+        if (!cardsByValue.has(card.value)) {
+          cardsByValue.set(card.value, []);
+        }
+        cardsByValue.get(card.value)!.push(card);
+      }
+    });
+
+    // Set para rastrear combinações já utilizadas (tipo:conteúdo:cor)
+    // Evita que dois pares tenham exatamente a mesma combinação
+    const usedCombinations = new Set<string>();
+
+    cardsByValue.forEach((pairCards) => {
+      let isText: boolean;
+      let content: string;
+      let color: string | undefined;
+      let combinationKey: string;
+      let attempts = 0;
+
+      // Tenta até 100 vezes encontrar uma combinação única
+      do {
+        isText = Math.random() < 0.5;
+
+        if (isText) {
+          content =
+            this.availableTexts[
+              Math.floor(Math.random() * this.availableTexts.length)
+            ];
+          color =
+            this.textColors[Math.floor(Math.random() * this.textColors.length)];
+          combinationKey = `text:${content}:${color}`;
+        } else {
+          content =
+            this.availableImages[
+              Math.floor(Math.random() * this.availableImages.length)
+            ];
+          color = undefined;
+          combinationKey = `image:${content}`;
+        }
+
+        attempts++;
+      } while (usedCombinations.has(combinationKey) && attempts < 100);
+
+      // Adiciona a combinação ao set de usadas
+      usedCombinations.add(combinationKey);
+
+      // Aplica a configuração ao par de cartas
+      pairCards.forEach((card) => {
+        card.type = isText ? "text" : "image";
+        card.content = content;
+
+        if (isText) {
+          card.useRandomColor = true;
+          card.textColor = color;
+        } else {
+          delete card.useRandomColor;
+          delete card.textColor;
+        }
+      });
+    });
+  }
+
   private randomizeCards() {
-    if (this.LevelManager.isFinished()) return;
-    const cards = this.LevelManager.getCurrentLevel().cards;
+    if (this.isGameFinished()) return;
+    const cards = this.getCurrentQuestion().cards;
+
+    this.processFullRandomCards(cards);
+
     Phaser.Utils.Array.Shuffle(cards);
 
-    this.cards = cards.map((card, index) => {
+    const cardColorMap = new Map<string, string>();
+    cards.forEach((card) => {
+      if (
+        card.type === "text" &&
+        card.useRandomColor &&
+        !cardColorMap.has(card.value)
+      ) {
+        cardColorMap.set(card.value, this.getRandomTextColor());
+      }
+    });
+
+    this.cards = cards.map((card, index: number) => {
       const cardsPerRow = Math.ceil(Math.sqrt(cards.length));
       const totalRows = Math.ceil(cards.length / cardsPerRow);
 
@@ -62,21 +204,32 @@ export class MemoryGameLogic {
         .rectangle(0, 0, 100, 150, 0xffffff)
         .setStrokeStyle(2, 0x000000);
 
-      const cardImage = card.image
-        ? this.scene.add
-            .image(0, 0, card.image)
-            .setDisplaySize(80, 80)
-            .setVisible(false)
-        : null;
+      let cardContent: Phaser.GameObjects.GameObject | null = null;
 
-      const cardText = cardImage
-        ? null
-        : this.scene.add.text(0, 0, "", {
-            fontSize: "24px",
-            color: "#ffffff",
-          });
+      if (card.type === "image" && card.content) {
+        cardContent = this.scene.add
+          .image(0, 0, card.content)
+          .setDisplaySize(80, 80)
+          .setVisible(false);
+      } else if (card.type === "text") {
+        let textColor = "#000000";
 
-      const cardVisual = [cardBackground, cardImage, cardText].filter(
+        if (card.useRandomColor) {
+          textColor = cardColorMap.get(card.value) || this.getRandomTextColor();
+        } else if (card.textColor) {
+          textColor = card.textColor;
+        }
+
+        cardContent = this.scene.add
+          .text(0, 0, "", {
+            fontSize: "48px",
+            color: textColor,
+            fontStyle: "bold",
+          })
+          .setOrigin(0.5, 0.5);
+      }
+
+      const cardVisual = [cardBackground, cardContent].filter(
         (el) => el !== null,
       ) as Phaser.GameObjects.GameObject[];
 
@@ -85,6 +238,8 @@ export class MemoryGameLogic {
         .setSize(100, 150)
         .setInteractive();
       cardContainer.setData("value", card.value);
+      cardContainer.setData("type", card.type);
+      cardContainer.setData("content", card.content);
       cardContainer.setData("flipped", false);
       cardContainer.setData("matched", false);
       cardContainer.setData("animating", false);
@@ -139,7 +294,6 @@ export class MemoryGameLogic {
             const firstCardValue = firstCard.getData("value");
 
             if (firstCardValue === cardValue) {
-              // Som de acerto ao encontrar par
               this.scene.sound.play("correct", { volume: 0.7 });
               this.EffectManager.particles("star");
               this.showSuccessMessage();
@@ -150,7 +304,6 @@ export class MemoryGameLogic {
                 this.cards.forEach((c) => c.setInteractive());
               });
             } else {
-              // Som de erro ao não corresponder
               this.scene.sound.play("incorrect", { volume: 0.7 });
               this.gameStats.addMiss();
               this.showErrorMessage();
@@ -199,18 +352,27 @@ export class MemoryGameLogic {
   }
 
   private setCardDisplay(card: Phaser.GameObjects.Container, visible: boolean) {
-    const cardValue = card.getData("value");
+    const cardType = card.getData("type");
+    const cardContent = card.getData("content");
     card.setData("flipped", visible);
-    if (card.list[1] instanceof Phaser.GameObjects.Image) {
-      return (card.list[1] as Phaser.GameObjects.Image).setVisible(visible);
-    } else if (card.list[1] instanceof Phaser.GameObjects.Text) {
-      return visible
-        ? (card.list[1] as Phaser.GameObjects.Text).setText(cardValue)
-        : (card.list[1] as Phaser.GameObjects.Text).setText("");
+
+    if (card.list[1]) {
+      if (
+        cardType === "image" &&
+        card.list[1] instanceof Phaser.GameObjects.Image
+      ) {
+        (card.list[1] as Phaser.GameObjects.Image).setVisible(visible);
+      } else if (
+        cardType === "text" &&
+        card.list[1] instanceof Phaser.GameObjects.Text
+      ) {
+        const textObj = card.list[1] as Phaser.GameObjects.Text;
+        textObj.setText(visible ? cardContent : "");
+      }
     }
   }
 
-  public isLevelFinished() {
+  public isQuestionCompleted() {
     if (this.isShowingInitialCards || !this.gameStarted) {
       return false;
     }
@@ -220,17 +382,56 @@ export class MemoryGameLogic {
     return false;
   }
 
-  public finishLevel() {
+  public getCurrentQuestion() {
+    if (this.currentLevelIndex >= this.gameLevels.length) {
+      return this.gameLevels[this.gameLevels.length - 1].questions[0];
+    }
+    const currentLevel = this.gameLevels[this.currentLevelIndex];
+    if (this.currentQuestionIndex >= currentLevel.questions.length) {
+      return currentLevel.questions[currentLevel.questions.length - 1];
+    }
+    return currentLevel.questions[this.currentQuestionIndex];
+  }
+
+  public getCurrentLevel() {
+    return this.currentLevelIndex;
+  }
+
+  public getCurrentQuestionIndex() {
+    return this.currentQuestionIndex;
+  }
+
+  public isQuestionFinished() {
+    return (
+      this.currentQuestionIndex >=
+      this.gameLevels[this.currentLevelIndex].questions.length - 1
+    );
+  }
+
+  public isLevelFinished() {
+    return (
+      this.currentQuestionIndex >=
+      this.gameLevels[this.currentLevelIndex].questions.length
+    );
+  }
+
+  public isGameFinished() {
+    return this.currentLevelIndex >= this.gameLevels.length;
+  }
+
+  public finishQuestion() {
     const levelEndTime = this.scene.time.now;
     this.gameStats.addHitTime(levelEndTime);
     this.gameStats.addMissCount();
     this.gameStats.resetActualLevelMisses();
-    this.LevelManager.nextLevel();
+
+    this.currentQuestionIndex++;
+
     try {
       const sendData = async () => {
         const levelData = {
           activityId: 1,
-          questionId: this.getCurrentLevel(),
+          questionId: this.getAbsoluteQuestionIndex(),
           isCorrect: true,
           answer: "ok",
           timeSpent: levelEndTime - this.levelStartTime,
@@ -256,12 +457,33 @@ export class MemoryGameLogic {
     }
   }
 
-  public isGameFinished() {
-    return this.LevelManager.isFinished();
+  public finishLevel() {
+    this.currentLevelIndex++;
+    this.currentQuestionIndex = 0;
   }
 
-  public getCurrentLevel() {
-    return this.LevelManager.getCurrentIndex();
+  public getAbsoluteQuestionIndex() {
+    let absoluteIndex = 0;
+    for (let i = 0; i < this.currentLevelIndex; i++) {
+      absoluteIndex += this.gameLevels[i].questions.length;
+    }
+    return absoluteIndex + this.currentQuestionIndex;
+  }
+
+  public getCurrentLevelInfo() {
+    if (this.currentLevelIndex >= this.gameLevels.length) {
+      return {
+        difficulty: "Unknown",
+        questionNumber: 0,
+        totalQuestions: 0,
+      };
+    }
+    const currentLevel = this.gameLevels[this.currentLevelIndex];
+    return {
+      difficulty: currentLevel.difficulty,
+      questionNumber: this.currentQuestionIndex + 1,
+      totalQuestions: currentLevel.questions.length,
+    };
   }
 
   public getCurrentAttempts() {
@@ -276,7 +498,8 @@ export class MemoryGameLogic {
   }
 
   public resetGame() {
-    this.LevelManager.reset();
+    this.currentLevelIndex = 0;
+    this.currentQuestionIndex = 0;
     this.gameStats = new GameStats();
     this.levelStartTime = 0;
     this.isShowingInitialCards = false;
@@ -294,10 +517,19 @@ export class MemoryGameLogic {
     this.isShowingInitialCards = false;
   }
 
-  public setCurrentLevelFromRegistry(levelIndex: number) {
-    this.LevelManager.reset();
-    for (let i = 0; i < levelIndex; i++) {
-      this.LevelManager.nextLevel();
+  public setCurrentLevelFromRegistry(absoluteQuestionIndex: number) {
+    this.currentLevelIndex = 0;
+    this.currentQuestionIndex = 0;
+
+    let currentIndex = 0;
+    for (let levelIdx = 0; levelIdx < this.gameLevels.length; levelIdx++) {
+      const questionsInLevel = this.gameLevels[levelIdx].questions.length;
+      if (currentIndex + questionsInLevel > absoluteQuestionIndex) {
+        this.currentLevelIndex = levelIdx;
+        this.currentQuestionIndex = absoluteQuestionIndex - currentIndex;
+        break;
+      }
+      currentIndex += questionsInLevel;
     }
   }
 

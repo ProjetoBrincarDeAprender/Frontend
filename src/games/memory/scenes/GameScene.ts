@@ -62,11 +62,11 @@ export class MemoryGameScene extends Phaser.Scene {
     try {
       const attempts = this.logic.getCurrentAttempts();
       const levelTime = this.logic.getCurrentLevelTime();
-      const currentLevel = this.logic.getCurrentLevel();
+      const currentQuestionIndex = this.logic.getAbsoluteQuestionIndex();
 
       const gameData = {
         activityId: 1,
-        questionId: currentLevel + 1,
+        questionId: currentQuestionIndex + 1,
         attempts: attempts,
         timeSpent: levelTime,
         responseDate: this.time.now,
@@ -93,29 +93,39 @@ export class MemoryGameScene extends Phaser.Scene {
   }
 
   update() {
-    if (this.logic.isLevelFinished()) {
+    if (this.logic.isQuestionCompleted()) {
       this.time.delayedCall(4000, () => {
-        const completedLevel = this.logic.getCurrentLevel();
+        const currentLevel = this.logic.getCurrentLevel();
 
-        // Limpar timer quando o nível termina
+        // Limpar timer quando a questão termina
         if (this.gameDataTimer) {
           this.gameDataTimer.destroy();
           this.gameDataTimer = undefined;
         }
 
-        this.logic.finishLevel();
+        this.logic.finishQuestion();
 
         const isGameFinished = this.logic.isGameFinished();
+        const isLevelFinished = this.logic.isLevelFinished();
 
-        this.registry.set("currentLevel", this.logic.getCurrentLevel());
+        // Salva o progresso atual no registro
+        this.registry.set(
+          "currentLevel",
+          this.logic.getAbsoluteQuestionIndex(),
+        );
 
         if (isGameFinished) {
           this.scene.start("MemoryEndScene");
-        } else {
+        } else if (isLevelFinished) {
+          // Só vai para LevelCompleteScene quando termina todas as questões do nível
+          this.logic.finishLevel();
           this.scene.start("MemoryLevelCompleteScene", {
-            level: completedLevel,
-            isLastLevel: false,
+            level: currentLevel,
+            isLastLevel: this.logic.isGameFinished(),
           });
+        } else {
+          // Se ainda há questões no nível atual, apenas continua para a próxima questão
+          this.scene.restart();
         }
       });
     }

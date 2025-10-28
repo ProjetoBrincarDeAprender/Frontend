@@ -40,19 +40,19 @@ export class MemoryLevelCompleteScene extends Phaser.Scene {
       .setOrigin(0.5);
 
     if (!this.isLastLevel) {
+      // Determina o nome da dificuldade baseado no nível
+      const difficulties = ["FÁCIL", "MÉDIO", "DIFÍCIL", "MUITO DIFÍCIL"];
+      const difficultyName =
+        difficulties[this.currentLevel] || `NÍVEL ${this.currentLevel + 1}`;
+
       this.add
-        .text(
-          this.scale.width / 2,
-          300,
-          `NÍVEL ${this.currentLevel + 1} COMPLETO!`,
-          {
-            fontFamily: "Arial, sans-serif",
-            fontSize: "24px",
-            fontStyle: "bold",
-            color: "#FFFFFF",
-            padding: { left: 15, right: 15, top: 8, bottom: 8 },
-          },
-        )
+        .text(this.scale.width / 2, 300, `NÍVEL ${difficultyName} COMPLETO!`, {
+          fontFamily: "Arial, sans-serif",
+          fontSize: "24px",
+          fontStyle: "bold",
+          color: "#FFFFFF",
+          padding: { left: 15, right: 15, top: 8, bottom: 8 },
+        })
         .setOrigin(0.5);
     }
 
