@@ -5,7 +5,7 @@ import { APIDataService } from "@/games/common/services/APIData.service";
 import Phaser from "phaser";
 import EffectManager from "../../common/managers/EffectManager";
 import GameStats from "../../common/managers/GameStats";
-import LevelManager from "../../common/managers/LevelManager";
+import type { GameLevel } from "./SpaceGameData";
 import SpaceLevel from "./SpaceLevel";
 
 export default class SpaceLogic {
@@ -13,7 +13,9 @@ export default class SpaceLogic {
   private gameStats: GameStats;
   private buttonManager: ButtonManager;
   private effectManager: EffectManager;
-  private levelManager!: LevelManager<SpaceLevel>;
+  private gameLevels: GameLevel[] = [];
+  private currentLevelIndex: number = 0;
+  private currentQuestionIndex: number = 0;
   private buttonFactory: ButtonFactory;
   private questionText!: Phaser.GameObjects.Text;
   private buttons: (
@@ -38,20 +40,23 @@ export default class SpaceLogic {
     this.buttonsEnabled = true;
   }
 
-  getCurrentLevel(): SpaceLevel {
-    return this.levelManager.getCurrentLevel();
+  getCurrentQuestion(): SpaceLevel {
+    const currentLevel = this.gameLevels[this.currentLevelIndex];
+    return currentLevel.questions[this.currentQuestionIndex];
   }
 
-  setLevelManager(levels: SpaceLevel[]) {
-    this.levelManager = new LevelManager(levels);
+  getCurrentLevel(): GameLevel {
+    return this.gameLevels[this.currentLevelIndex];
+  }
+
+  setGameLevels(levels: GameLevel[]) {
+    this.gameLevels = levels;
 
     // Restaurar progresso se existir
-    const savedLevel = this.scene.registry.get("currentSpaceLevel");
-    if (savedLevel && savedLevel > 0) {
-      // Avançar para o nível salvo
-      for (let i = 0; i < savedLevel; i++) {
-        this.levelManager.nextLevel();
-      }
+    const savedProgress = this.scene.registry.get("currentSpaceProgress");
+    if (savedProgress) {
+      this.currentLevelIndex = savedProgress.levelIndex || 0;
+      this.currentQuestionIndex = savedProgress.questionIndex || 0;
     }
   }
 
@@ -66,10 +71,10 @@ export default class SpaceLogic {
   }
 
   createQuestion(): void {
-    const currentLevel = this.getCurrentLevel();
+    const currentQuestion = this.getCurrentQuestion();
 
     this.questionText = this.scene.add
-      .text(this.scene.scale.width / 2, 120, currentLevel.getQuestion(), {
+      .text(this.scene.scale.width / 2, 120, currentQuestion.getQuestion(), {
         fontFamily: "Comic Sans MS, Arial, sans-serif",
         fontSize: "32px",
         color: "#FFFFFF",
@@ -83,10 +88,10 @@ export default class SpaceLogic {
   }
 
   createButtons(): void {
-    const currentLevel = this.getCurrentLevel();
-    const originalOptions = currentLevel.getOptions();
-    const originalOptionsImages = currentLevel.getOptionsImages();
-    const hasImages = currentLevel.hasImages();
+    const currentQuestion = this.getCurrentQuestion();
+    const originalOptions = currentQuestion.getOptions();
+    const originalOptionsImages = currentQuestion.getOptionsImages();
+    const hasImages = currentQuestion.hasImages();
 
     // Garantir que os botões estejam habilitados
     this.buttonsEnabled = true;
@@ -130,7 +135,7 @@ export default class SpaceLogic {
       if (hasImages && optionsImages) {
         // Para questões com imagens, criar apenas a imagem clicável sem fundo
         const imageKey = optionsImages[index].replace(".png", "");
-        const showNames = currentLevel.getDifficulty() === "medium";
+        const showNames = currentQuestion.getDifficulty() === "medium";
 
         const planetImage = this.scene.add
           .image(x, showNames ? y - 20 : y, imageKey)
@@ -219,8 +224,8 @@ export default class SpaceLogic {
     // Bloquear todos os botões imediatamente
     this.buttonsEnabled = false;
 
-    const currentLevel = this.getCurrentLevel();
-    const isCorrect = currentLevel.isCorrectAnswer(selectedOption);
+    const currentQuestion = this.getCurrentQuestion();
+    const isCorrect = currentQuestion.isCorrectAnswer(selectedOption);
 
     if (isCorrect) {
       this.handleCorrectAnswer();
@@ -237,10 +242,13 @@ export default class SpaceLogic {
 
     const apiService = new APIDataService();
 
+    // Usar índice único baseado em nível e questão
+    const uniqueQuestionIndex = this.getUniqueQuestionIndex();
+
     apiService.sendGameData(
       this.userId || "10130001",
       this.activityId || 3,
-      this.levelManager.getCurrentIndex() + 1,
+      uniqueQuestionIndex,
       {
         attempts: this.gameStats.getCurrentLevelMisses(),
         timeSpent: this.gameStats.getCurrentLevelTimeSpent(this.scene.time.now),
@@ -251,42 +259,78 @@ export default class SpaceLogic {
     );
 
     this.gameStats.resetInitialLevelTime(this.scene.time.now);
-    this.gameStats.resetActualLevelMisses(); // Resetar para o próximo nível
+    this.gameStats.resetActualLevelMisses(); // Resetar para a próxima questão
 
     // Mostrar feedback positivo
     this.showFeedback("Correto! 🎉", "#00FF00");
 
-    // Ir para tela de conclusão após um delay
+    // Ir para próxima questão ou nível após um delay
     this.scene.time.delayedCall(3500, () => {
-      const hasNextLevel = this.levelManager.nextLevel();
-      const isLastLevel = !hasNextLevel;
-
-      // Salvar o progresso no registry para persistir entre cenas
-      this.scene.registry.set(
-        "currentSpaceLevel",
-        this.levelManager.getCurrentIndex(),
-      );
-
-      if (isLastLevel) {
-        // Ir diretamente para a cena final
-        this.scene.scene.start("EndScene");
-      } else {
-        // Se não é o último nível, ir para a cena de nível completo
-        this.scene.scene.start("LevelCompleteScene");
-      }
+      this.progressToNext();
     });
   }
 
-  private generateAnswerLog(): string {
+  private progressToNext(): void {
     const currentLevel = this.getCurrentLevel();
-    const correctAnswer = currentLevel.getAnswer();
-    const options = currentLevel.getOptions();
+    const hasNextQuestion =
+      this.currentQuestionIndex < currentLevel.questions.length - 1;
+
+    if (hasNextQuestion) {
+      // Próxima questão no mesmo nível
+      this.currentQuestionIndex++;
+      this.saveProgress();
+      this.setupLevel(); // Atualizar a interface para a nova questão
+    } else {
+      // Nível completo, verificar se há próximo nível
+      const hasNextLevel = this.currentLevelIndex < this.gameLevels.length - 1;
+
+      if (hasNextLevel) {
+        // Ir para tela de nível completo
+        this.scene.scene.start("SpaceLevelCompleteScene", {
+          level: this.currentLevelIndex,
+          difficulty: currentLevel.difficulty,
+          isLastLevel: false,
+        });
+      } else {
+        // Último nível completo, ir para tela final
+        this.scene.scene.start("SpaceEndScene");
+      }
+    }
+  }
+
+  private saveProgress(): void {
+    this.scene.registry.set("currentSpaceProgress", {
+      levelIndex: this.currentLevelIndex,
+      questionIndex: this.currentQuestionIndex,
+    });
+  }
+
+  private getUniqueQuestionIndex(): number {
+    let index = 1;
+    for (let i = 0; i < this.currentLevelIndex; i++) {
+      index += this.gameLevels[i].questions.length;
+    }
+    return index + this.currentQuestionIndex;
+  }
+
+  goToNextLevel(): void {
+    if (this.currentLevelIndex < this.gameLevels.length - 1) {
+      this.currentLevelIndex++;
+      this.currentQuestionIndex = 0;
+      this.saveProgress();
+    }
+  }
+
+  private generateAnswerLog(): string {
+    const currentQuestion = this.getCurrentQuestion();
+    const correctAnswer = currentQuestion.getAnswer();
+    const options = currentQuestion.getOptions();
 
     const log = {
       selectedAnswer: correctAnswer,
       correctAnswer: correctAnswer,
       options: options,
-      difficulty: currentLevel.getDifficulty(),
+      difficulty: currentQuestion.getDifficulty(),
     };
 
     return JSON.stringify(log);
@@ -303,10 +347,12 @@ export default class SpaceLogic {
 
     console.log(this.userId);
 
+    const uniqueQuestionIndex = this.getUniqueQuestionIndex();
+
     apiService.sendGameData(
       this.userId || "10130001",
       this.activityId || 3,
-      this.levelManager.getCurrentIndex() + 1,
+      uniqueQuestionIndex,
       {
         attempts: this.gameStats.getCurrentLevelMisses(),
         timeSpent: this.gameStats.getCurrentLevelTimeSpent(this.scene.time.now),
@@ -400,7 +446,10 @@ export default class SpaceLogic {
   }
 
   isGameFinished(): boolean {
-    return this.levelManager.isFinished();
+    return (
+      this.currentLevelIndex >= this.gameLevels.length - 1 &&
+      this.currentQuestionIndex >= this.getCurrentLevel().questions.length - 1
+    );
   }
 
   getGameStats(): GameStats {

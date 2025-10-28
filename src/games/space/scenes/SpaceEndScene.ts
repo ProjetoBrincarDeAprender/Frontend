@@ -189,7 +189,10 @@ export class SpaceEndScene extends Phaser.Scene {
         ease: "Power2.easeInOut",
         onComplete: () => {
           // Resetar progresso e voltar ao menu
-          this.registry.set("currentSpaceLevel", 0);
+          this.registry.set("currentSpaceProgress", {
+            levelIndex: 0,
+            questionIndex: 0,
+          });
           this.scene.start("SpaceMenuScene");
         },
       });
@@ -242,7 +245,10 @@ export class SpaceEndScene extends Phaser.Scene {
         ease: "Power2.easeInOut",
         onComplete: () => {
           // Resetar progresso e sair para página de games
-          this.registry.set("currentSpaceLevel", 0);
+          this.registry.set("currentSpaceProgress", {
+            levelIndex: 0,
+            questionIndex: 0,
+          });
           window.history.back();
         },
       });

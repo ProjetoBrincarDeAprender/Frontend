@@ -1,6 +1,5 @@
 import Phaser from "phaser";
-import { gameData } from "../logic/SpaceGameData";
-import SpaceLevel from "../logic/SpaceLevel";
+import { GameLevels } from "../logic/SpaceGameData";
 import SpaceLogic from "../logic/SpaceLogic";
 
 export class SpaceGameScene extends Phaser.Scene {
@@ -100,17 +99,6 @@ export class SpaceGameScene extends Phaser.Scene {
   }
 
   private setupLevels(): void {
-    const levels: SpaceLevel[] = gameData.levels.map(
-      (levelData) =>
-        new SpaceLevel(
-          levelData.question,
-          levelData.options,
-          levelData.optionsImages,
-          levelData.answer,
-          levelData.difficulty,
-        ),
-    );
-
-    this.logic.setLevelManager(levels);
+    this.logic.setGameLevels(GameLevels);
   }
 }
