@@ -3,6 +3,7 @@ import { AnimationManager } from '@/games/sum/components/animations/AnimationMan
 import EffectManager from '@/games/common/managers/EffectManager';
 import { LevelCompletedScene } from '@/games/common/scenes/LevelCompletedScene';
 import { EndScene } from '@/games/common/scenes/EndScene';
+import { HousingGameService } from '../services/HousingGameService';
 
 interface HousingQuestion {
     correctHousing: string;
@@ -19,6 +20,7 @@ interface HousingIntroLevel {
 export class GameScene extends Phaser.Scene {
     private animationsManager!: AnimationManager;
     private effectManager!: EffectManager;
+    private housingGameService!: HousingGameService;
     private currentLevel: number = 0;
     private score: number = 0;
     // private background!: Phaser.GameObjects.Image;
@@ -136,6 +138,7 @@ export class GameScene extends Phaser.Scene {
     create() {
         this.animationsManager = new AnimationManager(this);
         this.effectManager = new EffectManager(this);
+        this.housingGameService = new HousingGameService();
         
         this.registerStandardScenes();
         this.setupBackground();
@@ -343,6 +346,8 @@ export class GameScene extends Phaser.Scene {
     }
     
     private startQuestionLevel() {
+        this.housingGameService.startQuestion();
+        
         const questionIndex = this.currentLevel - this.housingIntroLevels.length;
         const question = this.housingQuestions[questionIndex];
                 
@@ -488,8 +493,28 @@ export class GameScene extends Phaser.Scene {
         });
     }
 
-    private selectOption(selectedHousing: string, correctHousing: string, selectedContainer: Phaser.GameObjects.Container) {
+    private async selectOption(selectedHousing: string, correctHousing: string, selectedContainer: Phaser.GameObjects.Container) {
         const isCorrect = selectedHousing === correctHousing;
+        
+        this.housingGameService.incrementAttempts();
+        
+        const isQuestionLevel = this.currentLevel >= this.housingIntroLevels.length;
+        if (isQuestionLevel) {
+            try {
+                const studentId = this.housingGameService.getStudentId();
+                const questionIndex = this.currentLevel - this.housingIntroLevels.length;
+                const questionId = questionIndex + 1; 
+                
+                
+                if (isCorrect) {
+                    await this.housingGameService.registerCorrectAnswer(studentId, questionId, selectedHousing);
+                } else {
+                    await this.housingGameService.registerIncorrectAnswer(studentId, questionId, selectedHousing);
+                }
+            } catch (error) {
+                console.error('Erro ao registrar interação:', error);
+            }
+        }
         
         this.optionContainers.forEach(container => {
             container.disableInteractive();
