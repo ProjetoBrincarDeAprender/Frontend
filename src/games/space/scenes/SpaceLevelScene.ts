@@ -1,10 +1,10 @@
 import { AudioManager } from "@/games/common/managers/AudioManager";
-import Phaser from "phaser";
+import { PreloadScene } from "@/games/common/scenes/PreloadScene";
 import { gameData } from "../logic/SpaceGameData";
 import SpaceLevel from "../logic/SpaceLevel";
 import SpaceLogic from "../logic/SpaceLogic";
 
-export class SpaceGameScene extends Phaser.Scene {
+export class SpaceGameScene extends PreloadScene {
   private logic: SpaceLogic;
   private continueFromLevel: boolean = false;
 
@@ -19,6 +19,7 @@ export class SpaceGameScene extends Phaser.Scene {
   }
 
   preload() {
+    super.preload();
     // Background
     this.load.image("background", "/assets/spaceGame/background.png");
 

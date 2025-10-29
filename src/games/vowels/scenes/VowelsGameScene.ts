@@ -1,8 +1,8 @@
 import { AudioManager } from "@/games/common/managers/AudioManager";
-import Phaser from "phaser";
+import { PreloadScene } from "@/games/common/scenes/PreloadScene";
 import VowelsLogic from "../logic/VowelsLogic";
 
-export default class VowelsGameScene extends Phaser.Scene {
+export default class VowelsGameScene extends PreloadScene {
   private gameData: any;
   private logic: VowelsLogic;
 
@@ -16,6 +16,7 @@ export default class VowelsGameScene extends Phaser.Scene {
   }
 
   preload() {
+    super.preload();
     this.load.json("mainData", "/assets/vowelsGame/gameData/mainData.JSON");
   }
 

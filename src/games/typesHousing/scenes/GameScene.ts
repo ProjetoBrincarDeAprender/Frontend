@@ -2,6 +2,7 @@ import { AudioManager } from "@/games/common/managers/AudioManager";
 import EffectManager from "@/games/common/managers/EffectManager";
 import { EndScene } from "@/games/common/scenes/EndScene";
 import { LevelCompletedScene } from "@/games/common/scenes/LevelCompletedScene";
+import { PreloadScene } from "@/games/common/scenes/PreloadScene";
 import { AnimationManager } from "@/games/sum/components/animations/AnimationManager";
 import Phaser from "phaser";
 import { HousingGameService } from "../services/HousingGameService";
@@ -18,7 +19,7 @@ interface HousingIntroLevel {
   description: string;
 }
 
-export class GameScene extends Phaser.Scene {
+export class GameScene extends PreloadScene {
   private animationsManager!: AnimationManager;
   private effectManager!: EffectManager;
   private housingGameService!: HousingGameService;
@@ -112,6 +113,7 @@ export class GameScene extends Phaser.Scene {
   }
 
   preload() {
+    super.preload();
     this.load.image("housingBackground", "/assets/housingGame/bg.svg");
     this.load.image("background", "/assets/housingGame/bg.svg");
     this.load.image("duda-thinking", "/assets/housingGame/duda-pensando.png");
