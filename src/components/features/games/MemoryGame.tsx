@@ -1,11 +1,11 @@
 import { Footer } from "@/components/Footer/Footer";
 import { Header } from "@/components/Header/Header";
 import { BackButton } from "@/components/utils/BackButton";
+import { EndScene } from "@/games/common/scenes/EndScene";
+import { LevelCompletedScene } from "@/games/common/scenes/LevelCompletedScene";
+import { StartScene } from "@/games/common/scenes/StartScene";
 import { EventBus } from "@/games/common/utils/EventBus";
-import { MemoryEndScene } from "@/games/memory/scenes/EndScene";
 import { MemoryGameScene } from "@/games/memory/scenes/GameScene";
-import { MemoryLevelCompleteScene } from "@/games/memory/scenes/LevelCompleteScene";
-import { MemoryMenuScene } from "@/games/memory/scenes/MenuScene";
 import { useUser } from "@/hooks/User/useUser";
 import Phaser from "phaser";
 import { useEffect, useRef } from "react";
@@ -31,10 +31,32 @@ export const MemoryGame = ({ activityId = 4 }: MemoryGameProps) => {
       width: 800,
       height: 600,
       scene: [
-        MemoryMenuScene,
+        StartScene.create(
+          "MemoryGameScene",
+          "/assets/memoryGame/fundo.png",
+          "background",
+          "Jogo da Memoria",
+          "/assets/common/dudaSentada.png",
+          "mascot",
+        ),
         MemoryGameScene,
-        MemoryLevelCompleteScene,
-        MemoryEndScene,
+        LevelCompletedScene.create(
+          "MemoryGameScene",
+          "StartScene",
+          "/assets/memoryGame/fundo.png",
+          "background",
+          "/assets/common/dudaSentada.png",
+          "mascot",
+          "PARABÉNS! NÍVEL COMPLETO!",
+        ),
+        EndScene.create(
+          "StartScene",
+          "/assets/memoryGame/fundo.png",
+          "background",
+          "PARABÉNS! VOCÊ TERMINOU O JOGO",
+          "/assets/common/dudaSentada.png",
+          "mascot",
+        ),
       ],
       parent: "game-container",
       backgroundColor: "#96D6F3",

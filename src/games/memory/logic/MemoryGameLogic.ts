@@ -423,6 +423,10 @@ export class MemoryGameLogic {
     return this.currentLevelIndex >= this.gameLevels.length;
   }
 
+  public isLastLevel() {
+    return this.currentLevelIndex >= this.gameLevels.length - 1;
+  }
+
   public finishQuestion() {
     const levelEndTime = this.scene.time.now;
     this.gameStats.addHitTime(levelEndTime);

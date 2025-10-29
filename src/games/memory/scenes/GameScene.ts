@@ -40,11 +40,11 @@ export class MemoryGameScene extends PreloadScene {
   preload() {
     super.preload();
     this.load.image("star", "/assets/common/star.svg");
-    this.load.image("card-0", "/assets/memoryGame/banguela.png");
-    this.load.image("card-1", "/assets/memoryGame/peppa.png");
-    this.load.image("card-2", "/assets/memoryGame/gato.png");
-    this.load.image("card-3", "/assets/memoryGame/papagaio.png");
-    this.load.image("card-4", "/assets/memoryGame/cavalo.png");
+    this.load.image("card-0", "/assets/memoryGame/card-0.png");
+    this.load.image("card-1", "/assets/memoryGame/card-1.png");
+    this.load.image("card-2", "/assets/memoryGame/card-2.png");
+    this.load.image("card-3", "/assets/memoryGame/card-3.png");
+    this.load.image("card-4", "/assets/memoryGame/card-4.png");
     this.load.image("background", "/assets/memoryGame/fundo.png");
     // Áudios de feedback
     this.load.audio("correct", "/assets/common/sounds/correct.mp3");
@@ -122,7 +122,6 @@ export class MemoryGameScene extends PreloadScene {
 
         this.logic.finishQuestion();
 
-        const isGameFinished = this.logic.isGameFinished();
         const isLevelFinished = this.logic.isLevelFinished();
 
         // Salva o progresso atual no registro
@@ -131,15 +130,22 @@ export class MemoryGameScene extends PreloadScene {
           this.logic.getAbsoluteQuestionIndex(),
         );
 
-        if (isGameFinished) {
-          this.scene.start("MemoryEndScene");
-        } else if (isLevelFinished) {
-          // Só vai para LevelCompleteScene quando termina todas as questões do nível
-          this.logic.finishLevel();
-          this.scene.start("MemoryLevelCompleteScene", {
-            level: currentLevel,
-            isLastLevel: this.logic.isGameFinished(),
-          });
+        if (isLevelFinished) {
+          // Nível completo, verificar se é o último nível ANTES de incrementar
+          const isLastLevel = this.logic.isLastLevel();
+
+          this.logic.finishLevel(); // Incrementa o nível
+
+          if (isLastLevel) {
+            // Era o último nível, jogo acabou
+            this.scene.start("EndScene");
+          } else {
+            // Ainda há mais níveis
+            this.scene.start("LevelCompleteScene", {
+              level: currentLevel,
+              isLastLevel: false,
+            });
+          }
         } else {
           // Se ainda há questões no nível atual, apenas continua para a próxima questão
           this.scene.restart();
