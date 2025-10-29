@@ -1,0 +1,65 @@
+{
+  "config": {
+    "background": {
+      "image": "/assets/simpleSyllableGame/images/backgroundMain.png",
+      "overlayOpacity": 0.3
+    }
+  },
+
+  "textures": {
+    "buttons": {
+      "blue": {
+        "default": "/assets/common/buttons/squareBlueDefault.svg",
+        "hover": "/assets/common/buttons/squareBlueHover.svg",
+        "clicked": "/assets/common/buttons/squareBlueClicked.svg"
+      },
+      "red": {
+        "default": "/assets/common/buttons/squareRedDefault.svg",
+        "hover": "/assets/common/buttons/squareRedHover.svg",
+        "clicked": "/assets/common/buttons/squareRedClicked.svg"
+      }
+    },
+    "entities": [],
+    "effects": [
+      {
+        "key": "star",
+        "texture": "/assets/common/star.svg"
+      }
+    ]
+  },
+
+  "audios": [
+    {
+      "key": "correct",
+      "path": "/assets/common/sounds/correct.mp3"
+    },
+    {
+      "key": "incorrect",
+      "path": "/assets/common/sounds/incorrect.mp3"
+    },
+    {
+      "key": "CA",
+      "path": "/assets/simpleSyllableGame/sounds/CA.mp3"
+    }
+  ],
+
+  "buttonConfig": {
+    "fontSize": 50,
+    "scale": 1.5
+  },
+
+  "info": {
+    "activityId": 2
+  },
+
+  "levels": [
+    {
+      "question": "COMPLETE AS SÍLABAS",
+      "audioKey": "CA",
+      "content": ["C", " "],
+      "completeContent": ["C", "A"],
+      "answer": "A",
+      "options": ["A", "O"]
+    }
+  ]
+}
