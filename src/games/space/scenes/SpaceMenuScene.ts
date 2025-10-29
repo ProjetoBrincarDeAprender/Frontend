@@ -127,7 +127,10 @@ export class SpaceMenuScene extends Phaser.Scene {
       fontSize: 24,
       onClick: () => {
         // Resetar progresso quando começar do menu
-        this.registry.set("currentSpaceLevel", 0);
+        this.registry.set("currentSpaceProgress", {
+          levelIndex: 0,
+          questionIndex: 0,
+        });
         this.scene.start("SpaceGameScene");
       },
     });

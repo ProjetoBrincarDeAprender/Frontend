@@ -3,11 +3,12 @@ export const ParallaxEffect = (
   scene: Phaser.Scene,
   target: Phaser.GameObjects.Image,
   y: number = 20,
+  duration: number = 2000,
 ) => {
   scene.add.tween({
     targets: target,
     y: target.getCenter().y + y,
-    duration: 2000,
+    duration: duration,
     ease: "Sine.easeInOut",
     yoyo: true,
     repeat: -1,
