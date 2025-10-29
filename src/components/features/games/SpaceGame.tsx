@@ -1,11 +1,11 @@
 import { Footer } from "@/components/Footer/Footer";
 import { Header } from "@/components/Header/Header";
 import { BackButton } from "@/components/utils/BackButton";
+import { StartScene } from "@/games/common/scenes/StartScene";
 import { EventBus } from "@/games/common/utils/EventBus";
 import { SpaceEndScene } from "@/games/space/scenes/SpaceEndScene";
 import { SpaceLevelCompleteScene } from "@/games/space/scenes/SpaceLevelCompleteScene";
 import { SpaceGameScene } from "@/games/space/scenes/SpaceLevelScene";
-import { SpaceMenuScene } from "@/games/space/scenes/SpaceMenuScene";
 import Phaser from "phaser";
 import { useEffect, useRef } from "react";
 
@@ -23,7 +23,7 @@ export const SpaceGame = () => {
       width: 800,
       height: 600,
       scene: [
-        SpaceMenuScene,
+        StartScene.create("SpaceGameScene"),
         SpaceGameScene,
         SpaceLevelCompleteScene,
         SpaceEndScene,
