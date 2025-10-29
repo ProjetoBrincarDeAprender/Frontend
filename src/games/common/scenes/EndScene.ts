@@ -72,9 +72,18 @@ export class EndScene extends Phaser.Scene {
   }
 
   private createBackground(): void {
-    this.add
-      .image(this.scale.width / 2, this.scale.height / 2, this.backgroundKey)
-      .setScale(1.0);
+    const bg = this.add.image(
+      this.scale.width / 2,
+      this.scale.height / 2,
+      this.backgroundKey,
+    );
+
+    // Calcular escala para preencher a tela sem zoom excessivo
+    const scaleX = this.scale.width / bg.width;
+    const scaleY = this.scale.height / bg.height;
+    const scale = Math.max(scaleX, scaleY);
+    bg.setScale(scale);
+
     // Overlay escuro por cima do background
     this.add.rectangle(
       this.scale.width / 2,

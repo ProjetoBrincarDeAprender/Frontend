@@ -1,5 +1,6 @@
-[ {
-    "title": "Coordenação Motora",
+[
+  {
+    "title": "Jogo das Formas",
     "gameIdUrl": "forms",
     "image": "/assets/forms/bg.png"
   },
@@ -12,8 +13,8 @@
     "title": "Jogo da Memoria",
     "gameIdUrl": "memory",
     "image": "/assets/memoryGame/image.png"
-  }, 
-   {
+  },
+  {
     "title": "Jogo das Profissões",
     "gameIdUrl": "professions",
     "image": "/assets/professions/bg.svg"
@@ -53,5 +54,4 @@
     "gameIdUrl": "simple-syllable",
     "image": "/assets/simpleSyllableGame/images/gamePrint.png"
   }
-  
 ]

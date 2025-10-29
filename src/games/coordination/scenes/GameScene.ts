@@ -180,7 +180,7 @@ export default class CoordinationGameScene extends Phaser.Scene {
               this.time.delayedCall(800, () => {
                 if (this.currentLevelIndex < this.levels.length - 1) {
                   this.currentLevelIndex++;
-                  this.startLevel();
+                  this.scene.start("LevelCompleteScene");
                 } else {
                   this.scene.start("EndScene");
                 }
