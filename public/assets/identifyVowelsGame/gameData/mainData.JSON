@@ -1,0 +1,174 @@
+{
+  "config": {
+    "background": {
+      "image": "/assets/identifyVowelsGame/images/backgroundMain.png",
+      "overlayOpacity": 0.3
+    }
+  },
+
+  "textures": {
+    "buttons": {
+      "blue": {
+        "default": "/assets/common/buttons/squareBlueDefault.svg",
+        "hover": "/assets/common/buttons/squareBlueHover.svg",
+        "clicked": "/assets/common/buttons/squareBlueClicked.svg"
+      },
+      "red": {
+        "default": "/assets/common/buttons/squareRedDefault.svg",
+        "hover": "/assets/common/buttons/squareRedHover.svg",
+        "clicked": "/assets/common/buttons/squareRedClicked.svg"
+      }
+    },
+    "effects": [
+      {
+        "key": "star",
+        "texture": "/assets/common/star.svg"
+      }
+    ],
+    "entities": [
+      {
+        "key": "abelha",
+        "path": "/assets/identifyVowelsGame/images/animals/abelha.svg"
+      },
+      {
+        "key": "elefante",
+        "path": "/assets/identifyVowelsGame/images/animals/elefante.svg"
+      },
+      {
+        "key": "hiena",
+        "path": "/assets/identifyVowelsGame/images/animals/hiena.svg"
+      },
+      {
+        "key": "onca",
+        "path": "/assets/identifyVowelsGame/images/animals/onca.svg"
+      },
+      {
+        "key": "urso",
+        "path": "/assets/identifyVowelsGame/images/animals/urso.svg"
+      },
+      {
+        "key": "gato",
+        "path": "/assets/identifyVowelsGame/images/animals/gato.svg"
+      },
+      {
+        "key": "esquilo",
+        "path": "/assets/identifyVowelsGame/images/animals/esquilo.svg"
+      },
+      {
+        "key": "iguana",
+        "path": "/assets/identifyVowelsGame/images/animals/iguana.svg"
+      },
+      {
+        "key": "ovelha",
+        "path": "/assets/identifyVowelsGame/images/animals/ovelha.svg"
+      },
+      {
+        "key": "urubu",
+        "path": "/assets/identifyVowelsGame/images/animals/urubu.svg"
+      }
+    ]
+  },
+
+  "audios": [
+    {
+      "key": "correct",
+      "path": "/assets/common/sounds/correct.mp3"
+    },
+    {
+      "key": "incorrect",
+      "path": "/assets/common/sounds/incorrect.mp3"
+    }
+  ],
+
+  "buttonConfig": {
+    "fontSize": 50,
+    "scale": 1.5
+  },
+
+  "info": {
+    "activityId": 2
+  },
+
+  "levels": [
+    {
+      "question": "ENCONTRE A VOGAL CORRETA",
+      "entityKey": "abelha",
+      "content": [" ", "B", "E", "L", "H", "A"],
+      "completeContent": ["A", "B", "E", "L", "H", "A"],
+      "options": ["A", "C"],
+      "answer": "A"
+    },
+    {
+      "question": "ENCONTRE A VOGAL CORRETA",
+      "entityKey": "elefante",
+      "content": ["E", "L", " ", "F", "A", "N", "T", "E"],
+      "completeContent": ["E", "L", "E", "F", "A", "N", "T", "E"],
+      "options": ["M", "E"],
+      "answer": "E"
+    },
+    {
+      "question": "ENCONTRE A VOGAL CORRETA",
+      "entityKey": "iguana",
+      "content": [" ", "G", "U", "A", "N", "A"],
+      "completeContent": ["I", "G", "U", "A", "N", "A"],
+      "options": ["N", "I", "C"],
+      "answer": "I"
+    },
+    {
+      "question": "ENCONTRE A VOGAL CORRETA",
+      "entityKey": "onca",
+      "content": [" ", "N", "Ç", "A"],
+      "completeContent": ["O", "N", "Ç", "A"],
+      "options": ["P", "M", "O"],
+      "answer": "O"
+    },
+    {
+      "question": "ENCONTRE A VOGAL CORRETA",
+      "entityKey": "urso",
+      "content": [" ", "R", "S", "O"],
+      "completeContent": ["U", "R", "S", "O"],
+      "options": ["U", "G", "J"],
+      "answer": "U"
+    },
+    {
+      "question": "ENCONTRE A VOGAL CORRETA",
+      "entityKey": "gato",
+      "content": ["G", " ", "T", "O"],
+      "completeContent": ["G", "A", "T", "O"],
+      "options": ["U", "A", "P"],
+      "answer": "A"
+    },
+    {
+      "question": "ENCONTRE A VOGAL CORRETA",
+      "entityKey": "esquilo",
+      "content": [" ", "S", "Q", "U", "I", "L", "O"],
+      "completeContent": ["E", "S", "Q", "U", "I", "L", "O"],
+      "options": ["E", "C", "O"],
+      "answer": "E"
+    },
+    {
+      "question": "ENCONTRE A VOGAL CORRETA",
+      "entityKey": "hiena",
+      "content": ["H", " ", "E", "N", "A"],
+      "completeContent": ["H", "I", "E", "N", "A"],
+      "options": ["E", "B", "I", "M"],
+      "answer": "I"
+    },
+    {
+      "question": "ENCONTRE A VOGAL CORRETA",
+      "entityKey": "ovelha",
+      "content": [" ", "V", "E", "L", "H", "A"],
+      "completeContent": ["O", "V", "E", "L", "H", "A"],
+      "options": ["M", "O", "E", "U"],
+      "answer": "O"
+    },
+    {
+      "question": "ENCONTRE A VOGAL CORRETA",
+      "entityKey": "urubu",
+      "content": ["U", "R", "U", "B", " "],
+      "completeContent": ["U", "R", "U", "B", "U"],
+      "options": ["U", "A", "O", "I", "E"],
+      "answer": "U"
+    }
+  ]
+}

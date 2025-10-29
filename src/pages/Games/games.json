@@ -15,6 +15,11 @@
     "image": "/assets/memoryGame/image.png"
   },
   {
+    "title": "Identifique a Vogal Correta",
+    "gameIdUrl": "identify-vowels",
+    "image": "/assets/identifyVowelsGame/images/backgroundMain.png"
+  },
+  {
     "title": "Jogo das Profissões",
     "gameIdUrl": "professions",
     "image": "/assets/professions/bg.svg"
@@ -25,11 +30,6 @@
     "image": "/assets/sumGame/image.png"
   },
   {
-    "title": "Jogo das Vogais",
-    "gameIdUrl": "vowels",
-    "image": "/assets/vowelsGame/images/vowelsGamePrint.png"
-  },
-  {
     "title": "Sequência de Números",
     "gameIdUrl": "numbers",
     "image": "/assets/numbersGame/startScreen.png"
@@ -37,7 +37,7 @@
   {
     "title": "Sequência de Vogais",
     "gameIdUrl": "vowelssequence",
-    "image": "/assets/vowelsSequenceGame/images/gamePrint.png"
+    "image": "/assets/vowelsSequenceGame/images/backgroundMain.png"
   },
   {
     "title": "Tipos de Moradia",
@@ -47,11 +47,11 @@
   {
     "title": "Usando Sílabas",
     "gameIdUrl": "syllable",
-    "image": "/assets/syllableGame/images/gamePrint.png"
+    "image": "/assets/syllableGame/images/backgroundMain.png"
   },
   {
     "title": "Criando Sílabas",
     "gameIdUrl": "simple-syllable",
-    "image": "/assets/simpleSyllableGame/images/gamePrint.png"
+    "image": "/assets/simpleSyllableGame/images/backgroundMain.png"
   }
 ]
