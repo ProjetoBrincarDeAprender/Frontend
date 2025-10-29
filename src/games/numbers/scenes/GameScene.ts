@@ -1,4 +1,5 @@
 import { AudioManager } from "@/games/common/managers/AudioManager";
+import { PreloadScene } from "@/games/common/scenes/PreloadScene";
 import api from "@/utils/api";
 import Phaser from "phaser";
 import Logic from "../logic/Logic";
@@ -7,7 +8,7 @@ import Logic from "../logic/Logic";
  * Cena principal do jogo de sequência numérica.
  * Gerencia ciclo de vida, integração com lógica e recursos visuais.
  */
-export default class GameScene extends Phaser.Scene {
+export default class GameScene extends PreloadScene {
   /** Instância da lógica do jogo (orquestra regras e progresso) */
   private logic: Logic;
   private gameDataTimer?: Phaser.Time.TimerEvent;
@@ -29,6 +30,7 @@ export default class GameScene extends Phaser.Scene {
    * Pré-carrega os recursos visuais necessários para o jogo.
    */
   preload() {
+    super.preload();
     this.load.image("star", "/assets/common/star.svg");
     this.load.image(
       "defaultButton",

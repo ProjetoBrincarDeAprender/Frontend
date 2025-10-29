@@ -38,35 +38,46 @@ export class AudioManager {
   }
 
   renderMuteButton() {
-    const soundButton = this.scene.add.container(1, 1);
+    const soundButton = this.scene.add.container(10, 10);
 
-    const btnText = this.scene.add
-      .text(10, 10, this.scene.sound.mute ? "-" : "", {
-        fontFamily: "Arial",
-        fontSize: 32,
-        padding: {
-          x: 5,
-          y: 5,
-        },
-      })
-      .setOrigin(0.5);
+    const createButton = () => {
+      const btnImage = this.scene.add
+        .image(0, 0, this.scene.sound.mute ? "audioOff" : "audioOn")
+        .setOrigin(0.5)
+        .setScale(0.7);
 
-    soundButton.add(btnText);
-
-    soundButton.setSize(btnText.width, btnText.height);
-
-    soundButton.on("pointerdown", () => {
-      console.log("Before: " + this.scene.sound.mute);
-      this.toggleSounds();
-      console.log("After: " + this.scene.sound.mute);
-      if (this.scene.sound.mute) {
-        btnText.setText("-");
-        return;
+      if (btnImage.postFX) {
+        btnImage.postFX.addColorMatrix().negative();
       }
-      btnText.setText("");
-    });
 
-    soundButton.setDepth(100);
-    soundButton.setInteractive();
+      soundButton.add(btnImage);
+      soundButton.setSize(btnImage.width, btnImage.height);
+
+      soundButton.on("pointerdown", () => {
+        console.log("Before: " + this.scene.sound.mute);
+        this.toggleSounds();
+        console.log("After: " + this.scene.sound.mute);
+        btnImage.setTexture(this.scene.sound.mute ? "audioOff" : "audioOn");
+      });
+
+      soundButton.setDepth(100);
+      soundButton.setInteractive();
+    };
+
+    if (
+      this.scene.textures.exists("audioOn") &&
+      this.scene.textures.exists("audioOff")
+    ) {
+      createButton();
+    } else {
+      this.scene.load.on("complete", () => {
+        if (
+          this.scene.textures.exists("audioOn") &&
+          this.scene.textures.exists("audioOff")
+        ) {
+          createButton();
+        }
+      });
+    }
   }
 }
