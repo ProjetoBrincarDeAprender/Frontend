@@ -1,7 +1,8 @@
 import Phaser from "phaser";
 import { AudioManager } from "../managers/AudioManager";
+import { PreloadScene } from "./PreloadScene";
 
-export class EndScene extends Phaser.Scene {
+export class EndScene extends PreloadScene {
   private restartSceneName: string;
   private backgroundKey: string;
   private backgroundPath: string;
@@ -52,6 +53,7 @@ export class EndScene extends Phaser.Scene {
   }
 
   preload() {
+    super.preload();
     this.load.image("trophy", "/assets/common/trophy.png");
     this.load.image(this.dudaImageKey, this.dudaImagePath);
     this.load.image("congrats", "/assets/common/congrats.svg");

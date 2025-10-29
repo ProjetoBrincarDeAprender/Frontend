@@ -1,5 +1,5 @@
 import { AudioManager } from "@/games/common/managers/AudioManager";
-import Phaser from "phaser";
+import { PreloadScene } from "@/games/common/scenes/PreloadScene";
 import ButtonManager from "../logic/ButtonManager";
 import ClickedButtonLevel from "../logic/ClickButtonLevel";
 import ClickButtonLogic from "../logic/ClickButtonLogic";
@@ -18,7 +18,7 @@ import LevelManager from "../logic/LevelManager";
  * - Controlar o fluxo de início e transição entre níveis
  */
 
-export default class ClickButtonGameScene extends Phaser.Scene {
+export default class ClickButtonGameScene extends PreloadScene {
   /** Dados principais do jogo carregados do JSON */
   private mainData: any;
   /** Caminho do arquivo JSON principal */
@@ -46,6 +46,7 @@ export default class ClickButtonGameScene extends Phaser.Scene {
    * Pré-carrega o arquivo JSON principal do jogo.
    */
   preload() {
+    super.preload();
     this.load.json("mainData", this.mainDataPath);
   }
 

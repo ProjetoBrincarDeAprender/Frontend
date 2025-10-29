@@ -1,8 +1,9 @@
 import { AudioManager } from "@/games/common/managers/AudioManager";
+import { PreloadScene } from "@/games/common/scenes/PreloadScene";
 import Phaser from "phaser";
 import CoordinationLevel, { type ShapeSpec } from "../logic/Level";
 
-export default class CoordinationGameScene extends Phaser.Scene {
+export default class CoordinationGameScene extends PreloadScene {
   private levels: CoordinationLevel[] = [];
   private currentLevelIndex = 0;
   private placedCount = 0;
@@ -18,6 +19,7 @@ export default class CoordinationGameScene extends Phaser.Scene {
   }
 
   preload() {
+    super.preload();
     // efeitos sonoros consistentes com outros jogos
     this.load.audio("correct", "/assets/common/sounds/correct.mp3");
     this.load.audio("incorrect", "/assets/common/sounds/incorrect.mp3");
