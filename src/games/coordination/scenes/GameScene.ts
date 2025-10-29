@@ -1,7 +1,9 @@
+import { AudioManager } from "@/games/common/managers/AudioManager";
+import { PreloadScene } from "@/games/common/scenes/PreloadScene";
 import Phaser from "phaser";
 import CoordinationLevel, { type ShapeSpec } from "../logic/Level";
 
-export default class CoordinationGameScene extends Phaser.Scene {
+export default class CoordinationGameScene extends PreloadScene {
   private levels: CoordinationLevel[] = [];
   private currentLevelIndex = 0;
   private placedCount = 0;
@@ -13,9 +15,11 @@ export default class CoordinationGameScene extends Phaser.Scene {
   init(data: { startLevel?: number } = {}) {
     this.currentLevelIndex = data.startLevel ?? 0;
     this.placedCount = 0;
+    new AudioManager(this);
   }
 
   preload() {
+    super.preload();
     // efeitos sonoros consistentes com outros jogos
     this.load.audio("correct", "/assets/common/sounds/correct.mp3");
     this.load.audio("incorrect", "/assets/common/sounds/incorrect.mp3");
@@ -367,7 +371,7 @@ export default class CoordinationGameScene extends Phaser.Scene {
     let rot = (Math.PI / 2) * 3;
     let cx = x;
     let cy = y;
-    let step = Math.PI / points;
+    const step = Math.PI / points;
     g.moveTo(cx, cy - outerRadius);
     for (let i = 0; i < points; i++) {
       cx = x + Math.cos(rot) * outerRadius;

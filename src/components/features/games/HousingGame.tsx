@@ -1,21 +1,13 @@
 import React, { useEffect, useRef } from "react";
 import Phaser from "phaser";
-import MathGame from "@/games/sum/scenes/GameScene";
-import { useUser } from "@/hooks/User/useUser";
 import { Footer } from "@/components/Footer/Footer";
 import { BackButton } from "@/components/utils/BackButton";
 import { Header } from "@/components/Header/Header";
-import { StartScene } from "@/games/typesHousing/scenes/StartScene";
 import { GameScene } from "@/games/typesHousing/scenes/GameScene";
-import { LevelCompletedScene } from "@/games/typesHousing/scenes/LevelCompletedScene";
+import { StartScene } from "@/games/common/scenes/StartScene";
 
-interface HousingGameProps {
-  activityId?: number;
-}
-
-const HousingGame: React.FC<HousingGameProps> = ({ activityId = 1 }) => {
+const HousingGame: React.FC = () => {
   const gameRef = useRef<Phaser.Game | null>(null);
-  const { user } = useUser();
 
   useEffect(() => {
     if (gameRef.current) return; 
@@ -26,7 +18,17 @@ const HousingGame: React.FC<HousingGameProps> = ({ activityId = 1 }) => {
       height: 600,
       parent: "game-container",
       backgroundColor: "#AED3E3",
-      scene: [StartScene, GameScene, LevelCompletedScene],
+      scene: [
+        // StartScene personalizada para Housing
+        StartScene.create(
+          "GameScene",                          // Vai para GameScene
+          "/assets/housingGame/bg.svg",         // Background do Housing
+          "housingBackground",                  // Chave do background
+          "TIPOS DE MORADIAS",             // Título específico
+        ),
+        // GameScene (registra automaticamente as outras cenas padrão)
+        GameScene
+      ],
       scale: {
         mode: Phaser.Scale.FIT,
         autoCenter: Phaser.Scale.CENTER_BOTH, 
@@ -35,20 +37,14 @@ const HousingGame: React.FC<HousingGameProps> = ({ activityId = 1 }) => {
 
     gameRef.current = new Phaser.Game(config);
 
-    const setupGame = () => {
-      const scene = gameRef.current?.scene.scenes[0] as MathGame;
-      if (scene && user?.codigo_usuario) {
-        scene.setUserId(user.codigo_usuario.toString());
-        scene.setActivityId(activityId);
-      }
-    };
-    setTimeout(setupGame, 100);
+    // Housing Game não precisa de configuração especial de usuário/atividade
+    // O GameScene gerencia tudo automaticamente
 
     return () => {
       gameRef.current?.destroy(true);
       gameRef.current = null;
     };
-  }, [user, activityId]);
+  }, []); // Housing Game não tem dependências externas
 
   return (
    <>

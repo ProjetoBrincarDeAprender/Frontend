@@ -1,7 +1,9 @@
+import { AudioManager } from "@/games/common/managers/AudioManager";
+import { PreloadScene } from "@/games/common/scenes/PreloadScene";
 import api from "@/utils/api";
 import { MemoryGameLogic } from "../logic/MemoryGameLogic";
 
-export class MemoryGameScene extends Phaser.Scene {
+export class MemoryGameScene extends PreloadScene {
   private logic!: MemoryGameLogic;
   private gameDataTimer?: Phaser.Time.TimerEvent;
   private userId?: string;
@@ -31,8 +33,12 @@ export class MemoryGameScene extends Phaser.Scene {
         this.logic.setCurrentLevelFromRegistry(savedLevel);
       }
     }
+
+    new AudioManager(this);
   }
+
   preload() {
+    super.preload();
     this.load.image("star", "/assets/common/star.svg");
     this.load.image("card-0", "/assets/memoryGame/banguela.png");
     this.load.image("card-1", "/assets/memoryGame/peppa.png");

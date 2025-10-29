@@ -1,11 +1,11 @@
 {
   "config": {
     "background": {
-      "image": "/assets/vowelsGame/images/backgroundMain.png",
+      "image": "/assets/vowelsSequenceGame/images/backgroundMain.png",
       "overlayOpacity": 0.3
     },
     "title": {
-      "image": "/assets/vowelsGame/images/title.png",
+      "image": "/assets/vowelsSequenceGame/images/title.png",
       "position": { "x": 400, "y": 150 }
     }
   },
