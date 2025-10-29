@@ -19,7 +19,6 @@ export interface ProfessionDragLevel {
 }
 
 export class ProfessionsGameData {
-    // Níveis introdutórios (0-6) - Duda explica cada profissão
     static readonly introLevels: ProfessionIntroLevel[] = [
         {
             professionType: 'duda',
@@ -30,42 +29,41 @@ export class ProfessionsGameData {
         {
             professionType: 'medico',
             professionName: 'Médico',
-            description: 'Este é um MÉDICO!\nEle cuida da nossa saúde.',
+            description: 'A MÉDICA trabalha no HOSPITAL!\nEla cuida da nossa saúde.',
             soundFile: '/assets/professions/sounds/medico.mp3'
         },
         {
             professionType: 'professor',
             professionName: 'Professor',
-            description: 'Esta é uma PROFESSORA!\nEla ensina muitas coisas.',
+            description: 'O PROFESSOR trabalha na ESCOLA!\nEle ensina muitas coisas.',
             soundFile: '/assets/professions/sounds/professor.mp3'
         },
         {
             professionType: 'bombeiro',
             professionName: 'Bombeiro',
-            description: 'Este é um BOMBEIRO!\nEle apaga o fogo e salva pessoas.',
+            description: 'O BOMBEIRO trabalha no QUARTEL!\nEle apaga o fogo e salva pessoas.',
             soundFile: '/assets/professions/sounds/bombeiro.mp3'
         },
         {
             professionType: 'cozinheira',
             professionName: 'Cozinheira',
-            description: 'Esta é uma COZINHEIRA!\nEla prepara comidas deliciosas.',
+            description: 'A COZINHEIRA trabalha na COZINHA!\nEla prepara comidas deliciosas.',
             soundFile: '/assets/professions/sounds/cozinheira.mp3'
         },
         {
             professionType: 'policial',
             professionName: 'Policial',
-            description: 'Este é um POLICIAL!\nEle protege as pessoas.',
+            description: 'O POLICIAL trabalha na DELEGACIA!\nEle protege as pessoas.',
             soundFile: '/assets/professions/sounds/policial.mp3'
         },
         {
             professionType: 'fim',
             professionName: 'Parabéns!',
-            description: 'Agora você conhece\ntodas as profissões! Vamos jogar!',
+            description: 'Agora você conhece\nalgumas das profissões! Vamos jogar!',
             soundFile: '/assets/professions/sounds/fim.mp3'
         }
     ];
 
-    // Níveis de pergunta (7-11) - Clicar na profissão correta
     static readonly questionLevels: ProfessionQuestion[] = [
         {
             correctProfession: 'medico',
@@ -94,7 +92,6 @@ export class ProfessionsGameData {
         }
     ];
 
-    // Níveis de arrastar (12-16) - Arrastar profissão para local de trabalho
     static readonly dragLevels: ProfessionDragLevel[] = [
         {
             profession: 'medico',

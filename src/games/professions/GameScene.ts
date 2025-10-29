@@ -18,49 +18,53 @@ export class GameScene extends Phaser.Scene {
     private questionText!: Phaser.GameObjects.Text;
     private professionNameText!: Phaser.GameObjects.Text;
     private optionContainers: Phaser.GameObjects.Container[] = [];
+    private nextButton: Phaser.GameObjects.Container | null = null;
+    private dudaImage: Phaser.GameObjects.Image | null = null;
     
-    // Para sistema de drag and drop
     private draggedProfession: Phaser.GameObjects.Image | null = null;
     private workplaceZones: Phaser.GameObjects.Zone[] = [];
+
+    private professionWorkplaceMap: { [key: string]: string } = {
+        'medico': 'hospital',
+        'professor': 'escola',
+        'bombeiro': 'quartel',
+        'cozinheira': 'cozinha',
+        'policial': 'delegacia'
+    };
 
     constructor() {
         super({ key: 'GameScene' });
     }
 
     init(data?: { currentLevel?: number; score?: number }) {
-        // Recuperar dados do registry ou usar dados passados ou padrões
         this.currentLevel = data?.currentLevel || this.registry.get('professionsCurrentLevel') || 0;
         this.score = data?.score || this.registry.get('professionsScore') || 0;
     }
 
     preload() {
-        // Backgrounds e UI
         this.load.image('professionsBackground', '/assets/professions/bg.svg');
         this.load.image('background', '/assets/professions/bg.svg');
-        this.load.image('duda-thinking', '/assets/professions/duda-pensando.png');
-        this.load.image('professionsDuda', '/assets/professions/duda-pensando.png');
-        this.load.image('professionsTrophy', '/assets/professions/trophy-professions.png');
+        this.load.image('duda-thinking', '/assets/common/duda/duda-pensando.png');
+        this.load.image('professionsDuda', '/assets/common/duda/girlmainpage.svg');
+        this.load.image('professionsTrophy', '/assets/common/trophy.png');
 
-        // Imagens das profissões
         this.load.image('medico', '/assets/professions/medica.svg');
         this.load.image('professor', '/assets/professions/professor.svg');
         this.load.image('bombeiro', '/assets/professions/bombeiro.svg');
         this.load.image('cozinheira', '/assets/professions/cozinheira.svg');
         this.load.image('policial', '/assets/professions/policial.svg');
 
-        // Imagens dos locais de trabalho
-        this.load.image('hospital', '/assets/professions/workplaces/hospital.svg');
-        this.load.image('escola', '/assets/professions/workplaces/escola.svg');
-        this.load.image('quartel', '/assets/professions/workplaces/quartel.svg');
-        this.load.image('delegacia', '/assets/professions/workplaces/delegacia.svg');
+        this.load.image('hospital', '/assets/professions/hospital.svg');
+        this.load.image('escola', '/assets/professions/escola.svg');
+        this.load.image('quartel', '/assets/professions/quartel.svg');
+        this.load.image('delegacia', '/assets/professions/delegacia.svg');
+        this.load.image('cozinha', '/assets/professions/cozinha.svg');
 
-        // Sons
         this.load.audio('correct-sound', '/assets/common/sounds/correct.mp3');
         this.load.audio('wrong-sound', '/assets/common/sounds/incorrect.mp3');
         this.load.audio('intro-sound', '/assets/professions/sounds/intro.mp3');
         this.load.audio('fim-sound', '/assets/professions/sounds/fim.mp3');
 
-        // Sons das profissões (Duda explicando)
         this.load.audio('medico-sound', '/assets/professions/sounds/medica.mp3');
         this.load.audio('professor-sound', '/assets/professions/sounds/professor.mp3');
         this.load.audio('bombeiro-sound', '/assets/professions/sounds/bombeiro.mp3');
@@ -73,6 +77,22 @@ export class GameScene extends Phaser.Scene {
         this.effectManager = new EffectManager(this);
         this.professionsGameService = new ProfessionsGameService();
         
+        this.input.dragDistanceThreshold = 16;
+        
+        this.input.on('drop', (_pointer: Phaser.Input.Pointer, _gameObject: Phaser.GameObjects.GameObject, dropZone: Phaser.GameObjects.Zone) => {
+            if (dropZone && dropZone.getData) {
+                const workplace = dropZone.getData('workplace');
+                const container = dropZone.getData('container');
+                if (workplace && this.draggedProfession) {
+                    const dragIndex = this.currentLevel - ProfessionsGameData.introLevels.length - ProfessionsGameData.questionLevels.length;
+                    const dragLevel = ProfessionsGameData.getDragLevel(dragIndex);
+                    if (dragLevel) {
+                        this.handleDrop(workplace, dragLevel.workplace, container);
+                    }
+                }
+            }
+        });
+        
         this.registerStandardScenes();
         this.setupBackground();
         this.setupUI();
@@ -80,7 +100,6 @@ export class GameScene extends Phaser.Scene {
     }
 
     private registerStandardScenes(): void {
-        // StartScene para profissões
         if (!this.scene.manager.getScene("StartScene")) {
             const professionsStartScene = new StartScene({
                 backgroundPath: "/assets/professionsGame/bg.svg",
@@ -93,7 +112,6 @@ export class GameScene extends Phaser.Scene {
             this.scene.add("StartScene", professionsStartScene);
         }
 
-        // LevelCompletedScene para profissões
         if (!this.scene.manager.getScene("LevelCompleteScene")) {
             const professionsLevelComplete = new LevelCompletedScene({
                 nextLevelScene: "GameScene",
@@ -104,7 +122,6 @@ export class GameScene extends Phaser.Scene {
             this.scene.add("LevelCompleteScene", professionsLevelComplete);
         }
 
-        // EndScene para profissões
         if (!this.scene.manager.getScene("EndScene")) {
             const professionsEndScene = new EndScene({
                 restartScene: "StartScene",
@@ -123,21 +140,19 @@ export class GameScene extends Phaser.Scene {
             this.scale.width,
             this.scale.height,
             0xAAC2FF
-            );
-            }
+        );
+    }
 
     private setupUI() {
-        // Texto da pergunta (visível apenas nos níveis de pergunta e drag)
-        this.questionText = this.add.text(this.scale.width / 2, 80, '', {
-            fontSize: '32px',
+        this.questionText = this.add.text(this.scale.width / 2, 100, '', {
+            fontSize: '42px',
             color: '#2D5AA0',
             fontFamily: 'Arial Black',
             align: 'center'
         }).setOrigin(0.5).setVisible(false);
 
-        // Nome da profissão (visível nos níveis de pergunta e drag)
-        this.professionNameText = this.add.text(this.scale.width / 2, 120, '', {
-            fontSize: '36px',
+        this.professionNameText = this.add.text(this.scale.width / 2, 200, '', {
+            fontSize: '48px',
             color: '#FF6B35',
             fontFamily: 'Arial Black',
             align: 'center'
@@ -145,20 +160,16 @@ export class GameScene extends Phaser.Scene {
     }
 
     private startLevel() {
-        // Limpar elementos da tela
         this.clearScreen();
         
         const totalIntroLevels = ProfessionsGameData.introLevels.length;
         const totalQuestionLevels = ProfessionsGameData.questionLevels.length;
         
         if (this.currentLevel < totalIntroLevels) {
-            // Níveis introdutórios (0-6)
             this.startIntroLevel(this.currentLevel);
         } else if (this.currentLevel < totalIntroLevels + totalQuestionLevels) {
-            // Níveis de pergunta (7-11)
             this.startQuestionLevel();
         } else {
-            // Níveis de drag and drop (12-16)
             this.startDragLevel();
         }
     }
@@ -167,21 +178,24 @@ export class GameScene extends Phaser.Scene {
         const introLevel = ProfessionsGameData.getIntroLevel(levelIndex);
         if (!introLevel) return;
 
-        // Criar balão de fala
+        if (!this.dudaImage) {
+            this.dudaImage = this.add.image(140, 300, 'professionsDuda').setScale(0.4);
+        }
+        this.dudaImage.setVisible(true);
+
         this.createSpeechBubble(introLevel);
         
-        // Mostrar imagem apropriada
-        if (introLevel.professionType === 'duda') {
-            // Mostrar Duda nos níveis de introdução e conclusão
-            const dudaImage = this.add.image(500, 380, 'professionsDuda').setScale(0.7);
-            this.optionContainers.push(this.add.container(0, 0, [dudaImage]));
-        } else {
-            // Mostrar imagem da profissão nos níveis específicos
-            const professionImage = this.add.image(500, 380, introLevel.professionType).setScale(0.7);
+        if (introLevel.professionType !== 'duda' && introLevel.professionType !== 'fim') {
+            const professionImage = this.add.image(380, 350, introLevel.professionType).setScale(0.35);
             this.optionContainers.push(this.add.container(0, 0, [professionImage]));
+            
+            const workplace = this.professionWorkplaceMap[introLevel.professionType];
+            if (workplace) {
+                const workplaceImage = this.add.image(620, 350, workplace).setScale(0.45);
+                this.optionContainers.push(this.add.container(0, 0, [workplaceImage]));
+            }
         }
 
-        // Tocar som da explicação
         if (introLevel.soundFile) {
             let soundKey: string;
             if (introLevel.professionType === 'duda' && introLevel.professionName === 'Introdução') {
@@ -194,24 +208,20 @@ export class GameScene extends Phaser.Scene {
             this.sound.play(soundKey, { volume: 0.7 });
         }
 
-        // Criar botão "Próximo"
         this.createNextButton();
     }
 
     private createSpeechBubble(introLevel: ProfessionIntroLevel) {
         const bubbleWidth = 450;
         const bubbleHeight = 150;
+        const speechBubbleContainer = this.add.container(450, 130);
         
-        const speechBubbleContainer = this.add.container(300, 220);
-        
-        // Fundo do balão
         const speechBubble = this.add.graphics();
         speechBubble.fillStyle(0xFFFFFF, 1);
         speechBubble.lineStyle(4, 0x2D5AA0);
         speechBubble.fillRoundedRect(-bubbleWidth/2, -bubbleHeight/2, bubbleWidth, bubbleHeight, 20);
         speechBubble.strokeRoundedRect(-bubbleWidth/2, -bubbleHeight/2, bubbleWidth, bubbleHeight, 20);
         
-        // Rabo do balão (triângulo)
         const tailPoints = [
             -bubbleWidth/2 + 40, bubbleHeight/2,
             -bubbleWidth/2 + 20, bubbleHeight/2 + 30,
@@ -220,10 +230,8 @@ export class GameScene extends Phaser.Scene {
         
         speechBubble.fillTriangle(tailPoints[0], tailPoints[1], tailPoints[2], tailPoints[3], tailPoints[4], tailPoints[5]);
         speechBubble.strokeTriangle(tailPoints[0], tailPoints[1], tailPoints[2], tailPoints[3], tailPoints[4], tailPoints[5]);
-        
         speechBubbleContainer.add(speechBubble);
         
-        // Texto do balão
         const bubbleText = this.add.text(0, -10, introLevel.description, {
             fontSize: '30px',
             color: '#2D5AA0',
@@ -235,7 +243,6 @@ export class GameScene extends Phaser.Scene {
         speechBubbleContainer.add(bubbleText);
         this.optionContainers.push(speechBubbleContainer);
         
-        // Animação de entrada
         speechBubbleContainer.setAlpha(0).setScale(0.5);
         this.tweens.add({
             targets: speechBubbleContainer,
@@ -249,33 +256,24 @@ export class GameScene extends Phaser.Scene {
     }
 
     private startQuestionLevel() {
-        // Iniciar cronômetro para medir tempo de resposta
         this.professionsGameService.startQuestion();
         
         const questionIndex = this.currentLevel - ProfessionsGameData.introLevels.length;
         const question = ProfessionsGameData.getQuestionLevel(questionIndex);
         if (!question) return;
         
-        // Mostrar UI de pergunta
         this.questionText.setText('Clique na profissão:').setVisible(true);
         this.professionNameText.setText(question.professionName).setVisible(true);
         
         const shuffledOptions = [...question.options].sort(() => Math.random() - 0.5);
-        
         this.createOptionContainers();
         
         shuffledOptions.forEach((profession, index) => {
             const container = this.optionContainers[index];
-            
             const professionImage = this.add.image(0, 0, profession);
-            professionImage.setDisplaySize(280, 210);
+            professionImage.setDisplaySize(280, 220);
             container.add(professionImage);
-            
-            // Configurar interatividade
-            container.setInteractive(
-                new Phaser.Geom.Rectangle(-140, -105, 280, 210),
-                Phaser.Geom.Rectangle.Contains
-            );
+            container.setData('profession', profession);
             
             container.on('pointerover', () => {
                 this.tweens.add({
@@ -306,30 +304,28 @@ export class GameScene extends Phaser.Scene {
     }
 
     private startDragLevel() {
-        // Iniciar cronômetro para medir tempo de resposta
         this.professionsGameService.startQuestion();
         
         const dragIndex = this.currentLevel - ProfessionsGameData.introLevels.length - ProfessionsGameData.questionLevels.length;
         const dragLevel = ProfessionsGameData.getDragLevel(dragIndex);
         if (!dragLevel) return;
         
-        // Mostrar UI de drag
-        this.questionText.setText('Arraste a profissão para o local de trabalho:').setVisible(true);
+        this.questionText.setText('Arraste a profissão\n para o local de trabalho:').setVisible(true);
         this.professionNameText.setText(dragLevel.professionName).setVisible(true);
         
-        // Criar imagem da profissão (arrastável)
-        const professionImage = this.add.image(150, 300, dragLevel.profession);
-        professionImage.setDisplaySize(200, 150);
+        this.createWorkplaceZones(dragLevel);
+        
+        const professionImage = this.add.image(120, 450, dragLevel.profession);
+        professionImage.setDisplaySize(250, 185);
         professionImage.setInteractive({ draggable: true });
         
-        // Configurar drag and drop
+        this.optionContainers.push(this.add.container(0, 0, [professionImage]));
         this.setupDragAndDrop(professionImage, dragLevel);
-        
-        // Criar zonas de trabalho
-        this.createWorkplaceZones(dragLevel);
     }
 
     private setupDragAndDrop(professionImage: Phaser.GameObjects.Image, _dragLevel: ProfessionDragLevel) {
+        this.input.setDraggable(professionImage);
+        
         professionImage.on('dragstart', () => {
             this.draggedProfession = professionImage;
             professionImage.setTint(0x888888);
@@ -342,45 +338,94 @@ export class GameScene extends Phaser.Scene {
         
         professionImage.on('dragend', () => {
             professionImage.clearTint();
-            this.draggedProfession = null;
         });
     }
 
     private createWorkplaceZones(dragLevel: ProfessionDragLevel) {
         const shuffledWorkplaces = [...dragLevel.workplaceOptions].sort(() => Math.random() - 0.5);
+        const containerColors = [0x8b00ff, 0x0066ff, 0x00cc66];
+        const { width } = this.cameras.main;
+        const startX = width / 2 - 120;
+        const containerWidth = 150;
+        const containerHeight = 150;
+        const spacing = 180;
+        
+        const workplaceNames: { [key: string]: string } = {
+            'hospital': 'HOSPITAL',
+            'escola': 'ESCOLA',
+            'quartel': 'QUARTEL',
+            'delegacia': 'DELEGACIA',
+            'cozinha': 'COZINHA'
+        };
         
         shuffledWorkplaces.forEach((workplace, index) => {
-            const x = 450 + (index * 120);
-            const y = 350;
+            const x = startX + index * spacing;
+            const y = 450;
             
-            // Imagem do local de trabalho
-            const workplaceImage = this.add.image(x, y, workplace);
-            workplaceImage.setDisplaySize(100, 100);
+            const workplaceName = workplaceNames[workplace] || workplace.toUpperCase();
+            const legendText = this.add.text(x, y - 100, workplaceName, {
+                fontSize: '24px',
+                color: '#FF6B35',
+                fontFamily: 'Arial Black',
+                align: 'center'
+            }).setOrigin(0.5);
             
-            // Zona de drop
-            const dropZone = this.add.zone(x, y, 120, 120);
-            dropZone.setRectangleDropZone(120, 120);
+            this.optionContainers.push(this.add.container(0, 0, [legendText]));
+            
+            const workplaceContainer = this.add.container(x, y);
+            
+            const rect = this.add.rectangle(0, 0, containerWidth, containerHeight, containerColors[index]);
+            rect.setStrokeStyle(4, 0xffffff);
+            workplaceContainer.add(rect);
+            
+            const workplaceImage = this.add.image(0, 0, workplace);
+            workplaceImage.setDisplaySize(240, 240);
+            workplaceContainer.add(workplaceImage);
+            
+            const dropZone = this.add.zone(x, y, containerWidth + 20, containerHeight + 20);
+            dropZone.setRectangleDropZone(containerWidth + 20, containerHeight + 20);
             dropZone.setData('workplace', workplace);
+            dropZone.setData('container', workplaceContainer);
             
-            // Visual da zona de drop
             const dropZoneGraphics = this.add.graphics();
-            dropZoneGraphics.lineStyle(3, 0x00ff00, 0.5);
-            dropZoneGraphics.strokeRect(x - 60, y - 60, 120, 120);
+            dropZoneGraphics.lineStyle(6, 0xFFD700, 0.8);
+            dropZoneGraphics.strokeRect(x - (containerWidth + 20)/2, y - (containerHeight + 20)/2, containerWidth + 20, containerHeight + 20);
             dropZoneGraphics.setVisible(false);
             
-            // Eventos da zona de drop
             dropZone.on('dragenter', () => {
                 dropZoneGraphics.setVisible(true);
+                this.tweens.add({
+                    targets: workplaceContainer,
+                    scaleX: 1.1,
+                    scaleY: 1.1,
+                    duration: 200,
+                    ease: 'Power2.easeOut'
+                });
             });
             
             dropZone.on('dragleave', () => {
                 dropZoneGraphics.setVisible(false);
+                this.tweens.add({
+                    targets: workplaceContainer,
+                    scaleX: 1,
+                    scaleY: 1,
+                    duration: 200,
+                    ease: 'Power2.easeOut'
+                });
             });
             
             dropZone.on('drop', () => {
                 dropZoneGraphics.setVisible(false);
+                this.tweens.add({
+                    targets: workplaceContainer,
+                    scaleX: 1,
+                    scaleY: 1,
+                    duration: 200,
+                    ease: 'Power2.easeOut'
+                });
+                
                 if (this.draggedProfession) {
-                    this.handleDrop(workplace, dragLevel.workplace);
+                    this.handleDrop(workplace, dragLevel.workplace, workplaceContainer);
                 }
             });
             
@@ -388,19 +433,14 @@ export class GameScene extends Phaser.Scene {
         });
     }
 
-    private async handleDrop(selectedWorkplace: string, correctWorkplace: string) {
+    private async handleDrop(selectedWorkplace: string, correctWorkplace: string, workplaceContainer?: Phaser.GameObjects.Container) {
         const isCorrect = selectedWorkplace === correctWorkplace;
-        
-        // Incrementar tentativas
         this.professionsGameService.incrementAttempts();
         
-        // Registrar interação para níveis de drag
         try {
             const studentId = this.professionsGameService.getStudentId();
             const dragIndex = this.currentLevel - ProfessionsGameData.introLevels.length - ProfessionsGameData.questionLevels.length;
-            const questionId = dragIndex + 6; // IDs 6-10 para níveis de drag
-            
-            console.log(`🎮 Registrando drag - Pergunta ${questionId}: ${selectedWorkplace} (${isCorrect ? 'CORRETA' : 'INCORRETA'})`);
+            const questionId = dragIndex + 6;
             
             if (isCorrect) {
                 await this.professionsGameService.registerCorrectAnswer(studentId, questionId, selectedWorkplace);
@@ -412,26 +452,58 @@ export class GameScene extends Phaser.Scene {
         }
         
         if (isCorrect) {
-            this.handleCorrectAnswer();
+            this.handleCorrectDrop(workplaceContainer);
         } else {
-            this.handleWrongAnswer();
+            this.handleWrongDrop(workplaceContainer);
+        }
+    }
+
+    private handleCorrectDrop(workplaceContainer?: Phaser.GameObjects.Container) {
+        this.score += 100;
+        this.draggedProfession = null;
+        
+        if (workplaceContainer) {
+            this.effectManager.growup(workplaceContainer, "Cubic.out", 1.3, 800);
+        }
+        
+        this.sound.play('correct-sound');
+        this.workplaceZones.forEach(zone => zone.disableInteractive());
+        
+        this.time.delayedCall(2000, () => {
+            this.goToNextLevel();
+        });
+    }
+
+    private handleWrongDrop(workplaceContainer?: Phaser.GameObjects.Container) {
+        if (workplaceContainer) {
+            this.animationsManager.incorrectAnswerEffect(workplaceContainer);
+        }
+        
+        this.sound.play('wrong-sound');
+        
+        if (this.draggedProfession) {
+            this.tweens.add({
+                targets: this.draggedProfession,
+                x: 120,
+                y: 450,
+                duration: 500,
+                ease: 'Power2.easeOut',
+                onComplete: () => {
+                    this.draggedProfession = null;
+                }
+            });
         }
     }
 
     private async selectProfession(selectedProfession: string, correctProfession: string, selectedContainer: Phaser.GameObjects.Container) {
         const isCorrect = selectedProfession === correctProfession;
-        
-        // Incrementar tentativas
         this.professionsGameService.incrementAttempts();
         
-        // Registrar interação para níveis de pergunta
         try {
             const studentId = this.professionsGameService.getStudentId();
             const questionIndex = this.currentLevel - ProfessionsGameData.introLevels.length;
-            const questionId = questionIndex + 1; // IDs 1-5 para níveis de pergunta
-            
-            console.log(`🎮 Registrando resposta - Pergunta ${questionId}: ${selectedProfession} (${isCorrect ? 'CORRETA' : 'INCORRETA'})`);
-            
+            const questionId = questionIndex + 1;
+                        
             if (isCorrect) {
                 await this.professionsGameService.registerCorrectAnswer(studentId, questionId, selectedProfession);
             } else {
@@ -441,9 +513,7 @@ export class GameScene extends Phaser.Scene {
             console.error('Erro ao registrar interação:', error);
         }
         
-        this.optionContainers.forEach(container => {
-            container.disableInteractive();
-        });
+        this.optionContainers.forEach(container => container.disableInteractive());
         
         if (isCorrect) {
             this.handleCorrectAnswer(selectedContainer);
@@ -474,7 +544,6 @@ export class GameScene extends Phaser.Scene {
         this.sound.play('wrong-sound');
         
         this.time.delayedCall(1000, () => {
-            // Reativar opções para nova tentativa
             this.optionContainers.forEach(c => {
                 if (c && c.scene) {
                     c.setInteractive();
@@ -488,18 +557,14 @@ export class GameScene extends Phaser.Scene {
         const totalQuestionLevels = ProfessionsGameData.questionLevels.length;
         const totalLevels = ProfessionsGameData.getTotalLevels();
         const isLastLevel = this.currentLevel + 1 >= totalLevels;
-        
-        // Verificar se é o fim de uma seção específica
         const isEndOfIntroLevels = this.currentLevel + 1 === totalIntroLevels;
         const isEndOfQuestionLevels = this.currentLevel + 1 === totalIntroLevels + totalQuestionLevels;
         
         if (isLastLevel) {
-            // Limpar registry e ir para EndScene
             this.registry.remove('professionsCurrentLevel');
             this.registry.remove('professionsScore');
             this.scene.start('EndScene');
         } else if (isEndOfIntroLevels || isEndOfQuestionLevels) {
-            // Mostrar LevelCompleteScene no fim dos níveis introdutórios e de pergunta
             this.registry.set('professionsCurrentLevel', this.currentLevel + 1);
             this.registry.set('professionsScore', this.score);
             
@@ -516,7 +581,6 @@ export class GameScene extends Phaser.Scene {
                 completionMessage: completionMessage
             });
         } else {
-            // Salvar progresso e ir para próximo nível
             this.registry.set('professionsCurrentLevel', this.currentLevel + 1);
             this.registry.set('professionsScore', this.score);
             
@@ -526,88 +590,93 @@ export class GameScene extends Phaser.Scene {
     }
 
     private createNextButton() {
-        const nextContainer = this.add.container(this.scale.width / 2, 520);
-        
-        // Sombra do botão
-        const shadow = this.add.graphics();
-        shadow.fillStyle(0x000000, 0.3);
-        shadow.fillRoundedRect(-122, -38, 244, 84, 20);
-        
-        // Botão principal
-        const buttonGraphics = this.add.graphics();
-        buttonGraphics.fillStyle(0x16a34a);
-        buttonGraphics.fillRoundedRect(-120, -40, 240, 80, 20);
-        
-        // Texto do botão
-        const nextText = this.add.text(0, 0, "PRÓXIMO", {
-            fontFamily: "Arial Black",
-            fontSize: "20px",
+        if (this.nextButton) {
+            this.nextButton.removeAllListeners();
+            this.nextButton.destroy();
+            this.nextButton = null;
+        }
+
+        const { width, height } = this.cameras.main;
+        const buttonX = width / 2;
+        const buttonY = height - 55;
+
+        this.nextButton = this.add.container(buttonX, buttonY);
+
+        const buttonBg = this.add.graphics();
+        buttonBg.fillStyle(0x28a745);
+        buttonBg.fillRoundedRect(-80, -25, 160, 50, 25);
+        buttonBg.lineStyle(3, 0xffffff);
+        buttonBg.strokeRoundedRect(-80, -25, 160, 50, 25);
+
+        const buttonText = this.add.text(0, 0, "PRÓXIMO", {
+            fontSize: "24px",
             color: "#FFFFFF",
-            fontStyle: "bold",
+            fontFamily: "Arial Black",
         }).setOrigin(0.5);
-        
-        nextContainer.add([shadow, buttonGraphics, nextText]);
-        
-        // Configurar interatividade
-        nextContainer.setInteractive(
-            new Phaser.Geom.Rectangle(-120, -40, 240, 80),
-            Phaser.Geom.Rectangle.Contains
-        );
-        
-        // Eventos
-        nextContainer.on("pointerover", () => {
-            buttonGraphics.clear();
-            buttonGraphics.fillStyle(0x22c55e);
-            buttonGraphics.fillRoundedRect(-120, -40, 240, 80, 20);
-            
+
+        this.nextButton.add([buttonBg, buttonText]);
+        this.nextButton.setSize(160, 50);
+        this.nextButton.setInteractive({ useHandCursor: true });
+
+        this.nextButton.on("pointerover", () => {
             this.tweens.add({
-                targets: nextContainer,
-                scale: 1.05,
-                duration: 150,
-                ease: "Power2.easeOut"
+                targets: this.nextButton,
+                scaleX: 1.1,
+                scaleY: 1.1,
+                duration: 200,
             });
         });
-        
-        nextContainer.on("pointerout", () => {
-            buttonGraphics.clear();
-            buttonGraphics.fillStyle(0x16a34a);
-            buttonGraphics.fillRoundedRect(-120, -40, 240, 80, 20);
-            
+
+        this.nextButton.on("pointerout", () => {
             this.tweens.add({
-                targets: nextContainer,
-                scale: 1,
-                duration: 150,
-                ease: "Power2.easeOut"
+                targets: this.nextButton,
+                scaleX: 1,
+                scaleY: 1,
+                duration: 200,
             });
         });
-        
-        nextContainer.on("pointerdown", () => {
-            this.tweens.add({
-                targets: nextContainer,
-                scale: 0.95,
-                duration: 100,
-                yoyo: true,
-                ease: "Power2.easeInOut",
-                onComplete: () => {
-                    this.goToNextLevel();
-                }
-            });
+
+        this.nextButton.on("pointerdown", () => {
+            this.goToNextLevel();
         });
-        
-        this.optionContainers.push(nextContainer);
+
+        this.nextButton.setAlpha(0);
+        this.tweens.add({
+            targets: this.nextButton,
+            alpha: 1,
+            duration: 500,
+            delay: 9000,
+        });
     }
 
     private createOptionContainers() {
-        const positions = [
-            { x: 200, y: 350 },
-            { x: 400, y: 350 },
-            { x: 600, y: 350 }
-        ];
-        
-        positions.forEach((pos) => {
-            const container = this.add.container(pos.x, pos.y);
+        const { width, height } = this.cameras.main;
+        const containerColors = [0x8b00ff, 0x0066ff, 0x00cc66];
+        const startX = width / 2 - 250;
+        const containerWidth = 200;
+        const containerHeight = 200;
+        const spacing = 250;
+
+        for (let i = 0; i < 3; i++) {
+            const x = startX + i * spacing;
+            const y = height / 2 + 100;
+            const container = this.add.container(x, y);
+
+            const rect = this.add.rectangle(0, 0, containerWidth, containerHeight, containerColors[i]);
+            rect.setStrokeStyle(4, 0xffffff);
+            container.add(rect);
+            container.setSize(containerWidth, containerHeight);
+
+            const hitArea = new Phaser.Geom.Rectangle(-containerWidth / 12, -containerHeight / 12, containerWidth, containerHeight);
+            container.setInteractive({
+                hitArea,
+                hitAreaCallback: Phaser.Geom.Rectangle.Contains,
+                useHandCursor: true,
+            });
+            container.setData("hitArea", hitArea);
+
             this.optionContainers.push(container);
-        });
+        }
     }
 
     private animateContainersEntry() {
@@ -628,7 +697,6 @@ export class GameScene extends Phaser.Scene {
     }
 
     private clearScreen() {
-        // Limpar containers de opções
         this.optionContainers.forEach(container => {
             if (container && container.scene) {
                 container.destroy();
@@ -636,7 +704,6 @@ export class GameScene extends Phaser.Scene {
         });
         this.optionContainers = [];
         
-        // Limpar zonas de workplace
         this.workplaceZones.forEach(zone => {
             if (zone && zone.scene) {
                 zone.destroy();
@@ -644,11 +711,20 @@ export class GameScene extends Phaser.Scene {
         });
         this.workplaceZones = [];
         
-        // Esconder textos de UI
         this.questionText.setVisible(false);
         this.professionNameText.setVisible(false);
         
-        // Resetar draggedProfession
+        const totalIntroLevels = ProfessionsGameData.introLevels.length;
+        if (this.dudaImage && this.currentLevel >= totalIntroLevels) {
+            this.dudaImage.setVisible(false);
+        }
+        
+        if (this.nextButton && this.currentLevel >= totalIntroLevels) {
+            this.nextButton.removeAllListeners();
+            this.nextButton.destroy();
+            this.nextButton = null;
+        }
+        
         this.draggedProfession = null;
     }
 }
