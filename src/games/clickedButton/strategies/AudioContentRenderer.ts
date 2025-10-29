@@ -38,7 +38,7 @@ export class AudioContentRenderer implements IContentRenderer {
         hover: "hoverButton",
         clicked: "clickedButton",
       },
-      text: "🔊 Repetir",
+      text: "🔊",
       fontSize: 32,
       scale: 1.0,
     });
