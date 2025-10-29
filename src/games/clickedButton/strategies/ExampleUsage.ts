@@ -1,5 +1,22 @@
 /**
- * Exemplo de como usar o sistema de estratégias de renderização
+ * Exemplo de como usar o sistema de est// 5. Nível combinado (imagem + áudio + texto)
+const levelCombined = {
+  answer: "TRÊS",
+  question: "Conte quantos objetos você vê e ouve:",
+  entityKey: "countingImage", // Imagem com objetos
+  audioKey: "countingSound", // Som que ajuda na contagem
+  options: ["UM", "DOIS", "TRÊS", "QUATRO"],
+  content: ["?", "?", "?"], // Espaços para mostrar a contagem
+  completeContent: ["1", "2", "3"] // Números após resposta correta
+};
+
+export const exampleLevels = [
+  levelWithImage,
+  levelWithTextOnly,
+  levelWithAudioOnly,
+  levelWithAudioAndText,
+  levelCombined
+];rização
  * com diferentes tipos de conteúdo: imagem + texto, apenas texto, e áudio.
  */
 
@@ -24,13 +41,23 @@ const levelWithTextOnly = {
   completeContent: ["C", "A", "S", "A"], // Palavra completa
 };
 
-// 3. Nível com áudio
-const levelWithAudio = {
+// 3. Nível com áudio (apenas som)
+const levelWithAudioOnly = {
   answer: "GATO",
   question: "Que animal você está ouvindo?",
   audioKey: "catSound", // Chave do áudio a ser reproduzido
   options: ["GATO", "CACHORRO", "PÁSSARO", "PEIXE"],
-  // Note: não há 'content' ou 'completeContent' para níveis de áudio
+  // Note: sem 'content' - apenas o botão de áudio será exibido
+};
+
+// 4. Nível com áudio + conteúdo textual
+const levelWithAudioAndText = {
+  answer: "CASA",
+  question: "Ouça o som e complete a palavra:",
+  audioKey: "houseSound", // Som que ajuda a identificar
+  content: ["C", "A", "S", "?"], // Array de letras abaixo do botão de áudio
+  completeContent: ["C", "A", "S", "A"], // Palavra completa após resposta
+  options: ["CARRO", "CASA", "CAMA", "CARTA"],
 };
 
 // 4. Nível combinado (imagem + áudio + texto)
@@ -47,7 +74,8 @@ const levelCombined = {
 export const exampleLevels = [
   levelWithImage,
   levelWithTextOnly,
-  levelWithAudio,
+  levelWithAudioOnly,
+  levelWithAudioAndText,
   levelCombined,
 ];
 

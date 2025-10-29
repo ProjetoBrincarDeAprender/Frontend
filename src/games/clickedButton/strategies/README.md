@@ -33,7 +33,7 @@ if (renderer) {
 
 ### 2. Prioridade das Estratégias
 
-1. **AudioContentRenderer** - Se tem `audioKey`
+1. **AudioContentRenderer** - Se tem `audioKey` (pode ter ou não `content`)
 2. **ImageContentRenderer** - Se tem `entityKey` + `content`
 3. **TextContentRenderer** - Se tem apenas `content`
 
@@ -64,7 +64,7 @@ if (renderer) {
 }
 ```
 
-#### Nível com Áudio
+#### Nível com Apenas Áudio
 
 ```json
 {
@@ -72,6 +72,19 @@ if (renderer) {
   "question": "Que animal você está ouvindo?",
   "audioKey": "catSound",
   "options": ["GATO", "CACHORRO", "PÁSSARO", "PEIXE"]
+}
+```
+
+#### Nível com Áudio + Conteúdo Textual
+
+```json
+{
+  "answer": "CASA",
+  "question": "Ouça o som e complete a palavra:",
+  "audioKey": "houseSound",
+  "content": ["C", "A", "S", "?"],
+  "completeContent": ["C", "A", "S", "A"],
+  "options": ["CARRO", "CASA", "CAMA", "CARTA"]
 }
 ```
 
