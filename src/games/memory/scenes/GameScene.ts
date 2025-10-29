@@ -1,3 +1,4 @@
+import { AudioManager } from "@/games/common/managers/AudioManager";
 import api from "@/utils/api";
 import { MemoryGameLogic } from "../logic/MemoryGameLogic";
 
@@ -21,7 +22,10 @@ export class MemoryGameScene extends Phaser.Scene {
         this.logic.setCurrentLevelFromRegistry(savedLevel);
       }
     }
+
+    new AudioManager(this);
   }
+
   preload() {
     this.load.image("star", "/assets/common/star.svg");
     this.load.image("card-0", "/assets/memoryGame/banguela.png");

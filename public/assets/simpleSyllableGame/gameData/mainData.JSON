@@ -1,0 +1,113 @@
+{
+  "config": {
+    "background": {
+      "image": "/assets/simpleSyllableGame/images/backgroundMain.png",
+      "overlayOpacity": 0.3
+    }
+  },
+
+  "textures": {
+    "buttons": {
+      "blue": {
+        "default": "/assets/common/buttons/squareBlueDefault.svg",
+        "hover": "/assets/common/buttons/squareBlueHover.svg",
+        "clicked": "/assets/common/buttons/squareBlueClicked.svg"
+      },
+      "red": {
+        "default": "/assets/common/buttons/squareRedDefault.svg",
+        "hover": "/assets/common/buttons/squareRedHover.svg",
+        "clicked": "/assets/common/buttons/squareRedClicked.svg"
+      }
+    },
+    "entities": [],
+    "effects": [
+      {
+        "key": "star",
+        "texture": "/assets/common/star.svg"
+      }
+    ]
+  },
+
+  "audios": [
+    {
+      "key": "correct",
+      "path": "/assets/common/sounds/correct.mp3"
+    },
+    {
+      "key": "incorrect",
+      "path": "/assets/common/sounds/incorrect.mp3"
+    },
+    {
+      "key": "CA",
+      "path": "/assets/simpleSyllableGame/sounds/CA.mp3"
+    },
+    {
+      "key": "PA",
+      "path": "/assets/simpleSyllableGame/sounds/PA.mp3"
+    },
+    {
+      "key": "BA",
+      "path": "/assets/simpleSyllableGame/sounds/BA.mp3"
+    },
+    {
+      "key": "MA",
+      "path": "/assets/simpleSyllableGame/sounds/MA.mp3"
+    },
+    {
+      "key": "TA",
+      "path": "/assets/simpleSyllableGame/sounds/TA.mp3"
+    }
+  ],
+
+  "buttonConfig": {
+    "fontSize": 50,
+    "scale": 1.5
+  },
+
+  "info": {
+    "activityId": 2
+  },
+
+  "levels": [
+    {
+      "question": "COMPLETE AS SÍLABAS",
+      "audioKey": "CA",
+      "content": ["C", " "],
+      "completeContent": ["C", "A"],
+      "answer": "A",
+      "options": ["A", "O"]
+    },
+    {
+      "question": "COMPLETE AS SÍLABAS",
+      "audioKey": "PA",
+      "content": ["P", " "],
+      "completeContent": ["P", "A"],
+      "answer": "A",
+      "options": ["A", "E"]
+    },
+    {
+      "question": "COMPLETE AS SÍLABAS",
+      "audioKey": "BA",
+      "content": ["B", " "],
+      "completeContent": ["B", "A"],
+      "answer": "A",
+      "options": ["A", "I"]
+    },
+    {
+      "question": "COMPLETE AS SÍLABAS",
+      "audioKey": "MA",
+      "content": ["M", " "],
+      "completeContent": ["M", "A"],
+      "answer": "A",
+      "options": ["A", "U"]
+    },
+    {
+      "question": "COMPLETE AS SÍLABAS",
+      "audioKey": "TA",
+      "content": ["T", " "],
+      "completeContent": ["T", "A"],
+      "answer": "A",
+      "options": ["A", "O"]
+    }
+  ]
+}
