@@ -1,5 +1,4 @@
 export class SpaceLevelCompleteScene extends Phaser.Scene {
-  private currentLevel: number = 0;
   private difficulty: string = "";
   private isLastLevel: boolean = false;
 
@@ -8,7 +7,6 @@ export class SpaceLevelCompleteScene extends Phaser.Scene {
   }
 
   init(data: { level: number; difficulty: string; isLastLevel: boolean }) {
-    this.currentLevel = data.level || 0;
     this.difficulty = data.difficulty || "";
     this.isLastLevel = data.isLastLevel || false;
   }
