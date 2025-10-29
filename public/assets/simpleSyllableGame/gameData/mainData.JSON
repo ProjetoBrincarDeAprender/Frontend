@@ -40,6 +40,22 @@
     {
       "key": "CA",
       "path": "/assets/simpleSyllableGame/sounds/CA.mp3"
+    },
+    {
+      "key": "PA",
+      "path": "/assets/simpleSyllableGame/sounds/PA.mp3"
+    },
+    {
+      "key": "BA",
+      "path": "/assets/simpleSyllableGame/sounds/BA.mp3"
+    },
+    {
+      "key": "MA",
+      "path": "/assets/simpleSyllableGame/sounds/MA.mp3"
+    },
+    {
+      "key": "TA",
+      "path": "/assets/simpleSyllableGame/sounds/TA.mp3"
     }
   ],
 
@@ -58,6 +74,38 @@
       "audioKey": "CA",
       "content": ["C", " "],
       "completeContent": ["C", "A"],
+      "answer": "A",
+      "options": ["A", "O"]
+    },
+    {
+      "question": "COMPLETE AS SÍLABAS",
+      "audioKey": "PA",
+      "content": ["P", " "],
+      "completeContent": ["P", "A"],
+      "answer": "A",
+      "options": ["A", "E"]
+    },
+    {
+      "question": "COMPLETE AS SÍLABAS",
+      "audioKey": "BA",
+      "content": ["B", " "],
+      "completeContent": ["B", "A"],
+      "answer": "A",
+      "options": ["A", "I"]
+    },
+    {
+      "question": "COMPLETE AS SÍLABAS",
+      "audioKey": "MA",
+      "content": ["M", " "],
+      "completeContent": ["M", "A"],
+      "answer": "A",
+      "options": ["A", "U"]
+    },
+    {
+      "question": "COMPLETE AS SÍLABAS",
+      "audioKey": "TA",
+      "content": ["T", " "],
+      "completeContent": ["T", "A"],
       "answer": "A",
       "options": ["A", "O"]
     }
