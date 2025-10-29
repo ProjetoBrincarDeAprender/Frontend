@@ -1,3 +1,4 @@
+import { AudioManager } from "@/games/common/managers/AudioManager";
 import Phaser from "phaser";
 import { gameData } from "../logic/SpaceGameData";
 import SpaceLevel from "../logic/SpaceLevel";
@@ -14,6 +15,7 @@ export class SpaceGameScene extends Phaser.Scene {
 
   init(data: { continueFromLevel?: boolean } = {}) {
     this.continueFromLevel = data.continueFromLevel || false;
+    new AudioManager(this, 0.7);
   }
 
   preload() {

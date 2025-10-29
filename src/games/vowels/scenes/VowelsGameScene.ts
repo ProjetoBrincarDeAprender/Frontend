@@ -1,3 +1,4 @@
+import { AudioManager } from "@/games/common/managers/AudioManager";
 import Phaser from "phaser";
 import VowelsLogic from "../logic/VowelsLogic";
 
@@ -8,6 +9,10 @@ export default class VowelsGameScene extends Phaser.Scene {
   constructor() {
     super("vowelsGameScene");
     this.logic = new VowelsLogic(this);
+  }
+
+  init() {
+    new AudioManager(this);
   }
 
   preload() {

@@ -1,12 +1,13 @@
+import { AudioManager as GlobalAudioManager } from "@/games/common/managers/AudioManager";
 import Phaser from "phaser";
+import Button from "../../common/models/Button";
 import MathLevel, { LevelType } from "../MathLevel";
-import MathLogic from "../logic/logic";
 import { AudioManager } from "../audio/AudioManager";
 import { AnimationManager } from "../components/animations/AnimationManager";
-import { NumberDisplay } from "../components/ui/NumberDisplay";
-import { SubmitButton } from "../components/buttons/SubmitButton";
 import { StartButton } from "../components/buttons/StartButton";
-import Button from "../../common/models/Button";
+import { SubmitButton } from "../components/buttons/SubmitButton";
+import { NumberDisplay } from "../components/ui/NumberDisplay";
+import MathLogic from "../logic/logic";
 
 export default class MathGame extends Phaser.Scene {
   private logic!: MathLogic;
@@ -36,6 +37,10 @@ export default class MathGame extends Phaser.Scene {
 
   setActivityId(activityId: number) {
     this.activityId = activityId;
+  }
+
+  init() {
+    new GlobalAudioManager(this);
   }
 
   preload() {
@@ -294,8 +299,6 @@ export default class MathGame extends Phaser.Scene {
       this.handleAnswer();
     });
 
-  
-
     this.setupKeyboardInput();
   }
 
@@ -383,10 +386,9 @@ export default class MathGame extends Phaser.Scene {
   private proceedToNextLevel(finished: boolean) {
     this.time.delayedCall(3000, () => {
       if (!finished) {
-
         const currentLevelIndex = this.logic.getCurrentLevelIndex();
         const isEndOfMultipleChoice = currentLevelIndex === 5;
-        
+
         if (isEndOfMultipleChoice) {
           this.audioManager.playComplete();
           this.scene.start("SumLevelCompleteScene", { isLastLevel: false });

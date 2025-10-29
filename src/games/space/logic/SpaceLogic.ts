@@ -219,7 +219,7 @@ export default class SpaceLogic {
 
   private handleCorrectAnswer(): void {
     // Efeito visual de sucesso
-    this.scene.sound.play("correct", { volume: 0.7 });
+    this.scene.sound.play("correct");
 
     // Adicionar estatísticas
     this.gameStats.addHitTime(this.scene.time.now);

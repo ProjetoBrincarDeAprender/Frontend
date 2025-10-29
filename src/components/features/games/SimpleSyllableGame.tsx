@@ -4,15 +4,11 @@ import { useEffect, useRef } from "react";
 import { Header } from "@/components/Header/Header";
 import { BackButton } from "@/components/utils/BackButton";
 import { StartScene } from "@/games/common/scenes/StartScene";
+import { EndScene } from "@/games/common/scenes/EndScene";
 import Phaser from "phaser";
 import ClickButtonGameScene from "@/games/clickedButton/scenes/ClickButtonGame";
 
-export interface IRefClickButtonGame {
-  game: Phaser.Game | null;
-  scene: Phaser.Scene | null;
-}
-
-const VowelsSequenceGame: React.FC = () => {
+const SimpleSyllableGame: React.FC = () => {
   const gameRef = useRef<Phaser.Game | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
 
@@ -21,22 +17,27 @@ const VowelsSequenceGame: React.FC = () => {
 
     const startScene = new StartScene({
       nextSceneName: "clickButtonGameScene",
-      backgroundPath: "/assets/vowelsSequenceGame/images/backgroundMain.png",
+      backgroundPath: "/assets/syllableGame/images/backgroundStart.png",
       backgroundKey: "startBg",
-      gameTitle: "SEQUÊNCIA DE VOGAIS",
+      gameTitle: "SÍLABAS",
       // trophyImagePath: "/assets/common/duda/dudaClap.png",
       // trophyImageKey: "dudaClap",
     });
 
     const gameScene = new ClickButtonGameScene(
-      "/assets/vowelsSequenceGame/gameData/mainData.JSON",
+      "/assets/syllableGame/gameData/mainData.JSON",
     );
+
+    const endScene = new EndScene({
+      backgroundPath: "/assets/syllableGame/images/backgroundMain.png",
+      backgroundKey: "endBg",
+    });
 
     const config: Phaser.Types.Core.GameConfig = {
       type: Phaser.AUTO,
       width: 800,
       height: 600,
-      scene: [startScene, gameScene],
+      scene: [startScene, gameScene, endScene],
       parent: containerRef.current,
       backgroundColor: "#ffffff",
     };
@@ -70,4 +71,4 @@ const VowelsSequenceGame: React.FC = () => {
   );
 };
 
-export default VowelsSequenceGame;
+export default SimpleSyllableGame;

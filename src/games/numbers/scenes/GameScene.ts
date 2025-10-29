@@ -1,6 +1,7 @@
-import Logic from "../logic/Logic";
-import Phaser from "phaser";
+import { AudioManager } from "@/games/common/managers/AudioManager";
 import api from "@/utils/api";
+import Phaser from "phaser";
+import Logic from "../logic/Logic";
 
 /**
  * Cena principal do jogo de sequência numérica.
@@ -18,6 +19,10 @@ export default class GameScene extends Phaser.Scene {
   constructor() {
     super("numbersGameScene");
     this.logic = new Logic(this);
+  }
+
+  init() {
+    new AudioManager(this);
   }
 
   /**

@@ -16,6 +16,8 @@ import EffectManager from "./EffectManager";
 import SoundManager from "./SoundManager";
 import GameStats from "./GameStats";
 import ClickButtonApi from "./ClickButtonApi";
+import { ContentRendererFactory } from "../strategies/ContentRendererFactory";
+import type { IContentRenderer } from "../strategies/IContentRenderer";
 import type Button from "./Button";
 
 export default class ClickButtonLogic {
@@ -27,14 +29,11 @@ export default class ClickButtonLogic {
   private gameStats: GameStats;
   private api: ClickButtonApi;
   private activityId: number;
+  private contentRenderer?: IContentRenderer;
   /** Objeto de texto da questão atual */
   private question?: Phaser.GameObjects.Text;
-  /** Imagem da entidade auxiliar do nível */
-  private entity?: Phaser.GameObjects.Image;
   /** Botões das opções de resposta */
   private options: Button[] = [];
-  /** Botões do conteúdo/estímulo do nível */
-  private content: Button[] = [];
 
   /**
    * Inicializa a lógica do jogo, recebendo a cena e os gerenciadores necessários.
@@ -77,56 +76,23 @@ export default class ClickButtonLogic {
 
   /**
    * Exibe a entidade visual (imagem auxiliar) do nível, se existir.
+   * E renderiza o conteúdo usando a estratégia apropriada.
    */
   public showEntity(): void {
-    const entityKey = this.levelManager.getActualLevel().getEntityKey();
-    if (!entityKey) return;
-    this.entity = this.scene.add
-      .image(400, 240, entityKey)
-      .setOrigin(0.5, 0.5)
-      .setScale(0.4);
+    // Esta lógica foi movida para showContent()
   }
 
   /**
-   * Exibe o conteúdo/estímulo do nível (ex: sequência, palavra, etc).
+   * Exibe o conteúdo/estímulo do nível usando a estratégia apropriada.
    */
   public showContent(): void {
-    const content = this.levelManager.getActualLevel().getContent();
-    if (!content) return;
+    const currentLevel = this.levelManager.getActualLevel();
+    const renderer = ContentRendererFactory.getRenderer(currentLevel);
 
-    const imageKey = this.levelManager.getActualLevel().getEntityKey();
-    let newPositionY, scale;
-    if (imageKey) {
-      newPositionY = 380;
-      scale = 0.8;
-    } else {
-      newPositionY = 300;
-      scale = 1.2;
+    if (renderer) {
+      this.contentRenderer = renderer;
+      this.contentRenderer.render(currentLevel, this.scene, this.buttonManager);
     }
-
-    const newContent: Button[] = [];
-    const spaceBetweenContent = 60;
-    let buttonWidth = 20 * scale;
-    const totalWidthOccupied =
-      (content.length - 1) * spaceBetweenContent + buttonWidth * content.length;
-    const startX = (this.scene.cameras.main.width - totalWidthOccupied) / 2;
-
-    for (let i = 0; i < content.length; i++) {
-      const newPositionX = startX + i * (buttonWidth + spaceBetweenContent);
-      const contentItem = this.buttonManager.createButton({
-        positions: { x: newPositionX, y: newPositionY },
-        textures: {
-          default: "defaultButton",
-          hover: "hoverButton",
-          clicked: "clickedButton",
-        },
-        text: content[i],
-        fontSize: 40,
-        scale: scale,
-      });
-      newContent.push(contentItem);
-    }
-    this.content = newContent;
   }
 
   /**
@@ -224,59 +190,22 @@ export default class ClickButtonLogic {
    * Atualiza o conteúdo do nível para o estado "completo" após resposta correta.
    */
   private updateContentToComplete(): void {
-    if (!this.content) return;
-    this.content.forEach((text) => text.destroy());
-    this.content = [];
+    if (!this.contentRenderer) return;
 
-    const completeContent = this.levelManager
-      .getActualLevel()
-      .getCompleteContent();
-    if (!completeContent) return;
-
-    const imageKey = this.levelManager.getActualLevel().getEntityKey();
-    let newPositionY, scale;
-    if (imageKey) {
-      newPositionY = 380;
-      scale = 0.8;
-    } else {
-      newPositionY = 300;
-      scale = 1.2;
-    }
-
-    const newContent: Button[] = [];
-    const spaceBetweenContent = 60;
-    let buttonWidth = 20 * scale;
-    const totalWidthOccupied =
-      (completeContent.length - 1) * spaceBetweenContent +
-      buttonWidth * completeContent.length;
-    const startX = (this.scene.cameras.main.width - totalWidthOccupied) / 2;
-
-    for (let i = 0; i < completeContent.length; i++) {
-      const newPositionX = startX + i * (buttonWidth + spaceBetweenContent);
-      const contentItem = this.buttonManager.createButton({
-        positions: { x: newPositionX, y: newPositionY },
-        textures: {
-          default: "defaultButton",
-          hover: "hoverButton",
-          clicked: "clickedButton",
-        },
-        text: completeContent[i],
-        fontSize: 40,
-        scale: scale,
-      });
-      newContent.push(contentItem);
-    }
-    this.content = newContent;
+    const currentLevel = this.levelManager.getActualLevel();
+    this.contentRenderer.updateToComplete(
+      currentLevel,
+      this.scene,
+      this.buttonManager,
+    );
   }
 
   /**
-   * Limpa todos os elementos visuais do nível atual (questão, entidade, conteúdo, opções).
+   * Limpa todos os elementos visuais do nível atual (questão, conteúdo, opções).
    */
   private clearLevelElements(): void {
     this.question?.destroy();
-    this.entity?.destroy();
-    this.content.forEach((text) => text.destroy());
-    this.content = [];
+    this.contentRenderer?.clear();
     this.options.forEach((option) => option.destroy());
     this.options = [];
   }
@@ -287,7 +216,7 @@ export default class ClickButtonLogic {
   private nextLevel(): void {
     this.clearLevelElements();
     if (!this.levelManager.nextLevel()) {
-      this.scene.scene.start("clickButtonStartScene");
+      this.scene.scene.start("EndScene");
     } else {
       this.showQuestion();
       this.showEntity();
