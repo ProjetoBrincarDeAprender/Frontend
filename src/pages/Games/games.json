@@ -44,9 +44,14 @@
     "image": "/assets/housingGame/bg.svg"
   },
   {
-    "title": "Jogo das Sílabas",
+    "title": "Usando Sílabas",
     "gameIdUrl": "syllable",
     "image": "/assets/syllableGame/images/gamePrint.png"
+  },
+  {
+    "title": "Criando Sílabas",
+    "gameIdUrl": "simple-syllable",
+    "image": "/assets/simpleSyllableGame/images/gamePrint.png"
   }
   
 ]

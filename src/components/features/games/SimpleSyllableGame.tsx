@@ -17,7 +17,7 @@ const SimpleSyllableGame: React.FC = () => {
 
     const startScene = new StartScene({
       nextSceneName: "clickButtonGameScene",
-      backgroundPath: "/assets/syllableGame/images/backgroundStart.png",
+      backgroundPath: "/assets/simpleSyllableGame/images/backgroundStart.png",
       backgroundKey: "startBg",
       gameTitle: "SÍLABAS",
       // trophyImagePath: "/assets/common/duda/dudaClap.png",
@@ -25,11 +25,11 @@ const SimpleSyllableGame: React.FC = () => {
     });
 
     const gameScene = new ClickButtonGameScene(
-      "/assets/syllableGame/gameData/mainData.JSON",
+      "/assets/simpleSyllableGame/gameData/mainData.JSON",
     );
 
     const endScene = new EndScene({
-      backgroundPath: "/assets/syllableGame/images/backgroundMain.png",
+      backgroundPath: "/assets/simpleSyllableGame/images/backgroundMain.png",
       backgroundKey: "endBg",
     });
 
