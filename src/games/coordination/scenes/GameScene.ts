@@ -7,6 +7,7 @@ export default class CoordinationGameScene extends PreloadScene {
   private levels: CoordinationLevel[] = [];
   private currentLevelIndex = 0;
   private placedCount = 0;
+  private dragTrail: Phaser.GameObjects.Graphics | null = null;
 
   constructor() {
     super({ key: "CoordinationGameScene" });
@@ -23,6 +24,9 @@ export default class CoordinationGameScene extends PreloadScene {
     // efeitos sonoros consistentes com outros jogos
     this.load.audio("correct", "/assets/common/sounds/correct.mp3");
     this.load.audio("incorrect", "/assets/common/sounds/incorrect.mp3");
+
+    // Recursos visuais para deixar o jogo mais bonito
+    this.load.image("star-sparkle", "/assets/common/star.svg");
   }
 
   create() {
@@ -61,15 +65,287 @@ export default class CoordinationGameScene extends PreloadScene {
   }
 
   private addBackground() {
-    // Fundo suave
+    // Gradiente de céu azul claro para baixo
     const g = this.add.graphics();
-    g.fillStyle(0x96d6f3, 1);
+    g.fillGradientStyle(0x87ceeb, 0x87ceeb, 0xe0f6ff, 0xe0f6ff, 1);
     g.fillRect(0, 0, 800, 600);
+
+    // Adicionar decorações encantadoras
+    this.addSun();
+    this.addRainbow();
+    this.addClouds();
+    this.addFloatingStars();
+    this.addButterflies();
+    this.addBalloons();
+  }
+
+  // ☀️ Sol sorridente e animado
+  private addSun() {
+    const sun = this.add.graphics();
+    sun.fillStyle(0xffd700, 1);
+    sun.fillCircle(0, 0, 35);
+
+    // Raios do sol
+    sun.lineStyle(4, 0xffa500, 1);
+    for (let i = 0; i < 8; i++) {
+      const angle = (i * Math.PI * 2) / 8;
+      const x1 = Math.cos(angle) * 40;
+      const y1 = Math.sin(angle) * 40;
+      const x2 = Math.cos(angle) * 55;
+      const y2 = Math.sin(angle) * 55;
+      sun.lineBetween(x1, y1, x2, y2);
+    }
+
+    sun.setPosition(720, 80);
+
+    // Animação de rotação suave
+    this.tweens.add({
+      targets: sun,
+      rotation: Math.PI * 2,
+      duration: 20000,
+      repeat: -1,
+      ease: "Linear",
+    });
+
+    // Animação de pulsação
+    this.tweens.add({
+      targets: sun,
+      scale: { from: 0.95, to: 1.05 },
+      duration: 3000,
+      yoyo: true,
+      repeat: -1,
+      ease: "Sine.easeInOut",
+    });
+  }
+
+  // 🌈 Arco-íris decorativo
+  private addRainbow() {
+    const rainbow = this.add.graphics();
+    const colors = [
+      0xff0000, 0xff7f00, 0xffff00, 0x00ff00, 0x0000ff, 0x4b0082, 0x9400d3,
+    ];
+    const centerX = 100;
+    const centerY = 150;
+
+    colors.forEach((color, i) => {
+      rainbow.lineStyle(8, color, 0.6);
+      rainbow.beginPath();
+      rainbow.arc(centerX, centerY, 80 + i * 10, Math.PI, 0, false);
+      rainbow.strokePath();
+    });
+
+    rainbow.setAlpha(0.7);
+  }
+
+  // ☁️ Nuvens flutuantes
+  private addClouds() {
+    const cloudPositions = [
+      { x: 150, y: 100, scale: 0.8, speed: 25000 },
+      { x: 450, y: 130, scale: 1.0, speed: 30000 },
+      { x: 650, y: 90, scale: 0.7, speed: 22000 },
+    ];
+
+    cloudPositions.forEach((pos) => {
+      const cloud = this.createCloud(pos.x, pos.y);
+      cloud.setScale(pos.scale);
+      cloud.setAlpha(0.85);
+
+      // Movimento horizontal suave
+      this.tweens.add({
+        targets: cloud,
+        x: pos.x + 50,
+        duration: pos.speed,
+        yoyo: true,
+        repeat: -1,
+        ease: "Sine.easeInOut",
+      });
+
+      // Movimento vertical sutil
+      this.tweens.add({
+        targets: cloud,
+        y: pos.y + 10,
+        duration: pos.speed / 2,
+        yoyo: true,
+        repeat: -1,
+        ease: "Sine.easeInOut",
+      });
+    });
+  }
+
+  private createCloud(x: number, y: number): Phaser.GameObjects.Graphics {
+    const cloud = this.add.graphics();
+    cloud.fillStyle(0xffffff, 1);
+
+    // Nuvem fofa com círculos sobrepostos
+    cloud.fillCircle(0, 0, 25);
+    cloud.fillCircle(-20, 5, 20);
+    cloud.fillCircle(20, 5, 20);
+    cloud.fillCircle(-10, -10, 18);
+    cloud.fillCircle(10, -10, 18);
+
+    cloud.setPosition(x, y);
+    return cloud;
+  }
+
+  // ⭐ Estrelas piscando
+  private addFloatingStars() {
+    for (let i = 0; i < 12; i++) {
+      const x = Phaser.Math.Between(50, 750);
+      const y = Phaser.Math.Between(50, 200);
+      const star = this.add.image(x, y, "star-sparkle");
+      star.setScale(Phaser.Math.FloatBetween(0.15, 0.3));
+      star.setAlpha(0.6);
+
+      // Piscando
+      this.tweens.add({
+        targets: star,
+        alpha: { from: 0.3, to: 0.9 },
+        scale: { from: star.scale * 0.8, to: star.scale * 1.2 },
+        duration: Phaser.Math.Between(1500, 3000),
+        yoyo: true,
+        repeat: -1,
+        ease: "Sine.easeInOut",
+        delay: Phaser.Math.Between(0, 2000),
+      });
+
+      // Rotação
+      this.tweens.add({
+        targets: star,
+        rotation: Math.PI * 2,
+        duration: Phaser.Math.Between(4000, 8000),
+        repeat: -1,
+        ease: "Linear",
+      });
+    }
+  }
+
+  // 🦋 Borboletas voando
+  private addButterflies() {
+    const butterflyColors = [0xff69b4, 0x9370db, 0xffd700];
+
+    for (let i = 0; i < 3; i++) {
+      const butterfly = this.createButterfly(butterflyColors[i]);
+      const startX = Phaser.Math.Between(100, 700);
+      const startY = Phaser.Math.Between(200, 400);
+      butterfly.setPosition(startX, startY);
+      butterfly.setScale(0.6);
+
+      // Movimento de voo (forma de onda)
+      this.tweens.add({
+        targets: butterfly,
+        x: { from: startX, to: startX + Phaser.Math.Between(-200, 200) },
+        y: { from: startY, to: startY + Phaser.Math.Between(-100, 100) },
+        duration: Phaser.Math.Between(5000, 8000),
+        yoyo: true,
+        repeat: -1,
+        ease: "Sine.easeInOut",
+      });
+
+      // Bater de asas
+      this.tweens.add({
+        targets: butterfly,
+        scaleX: { from: 0.5, to: 0.7 },
+        duration: 200,
+        yoyo: true,
+        repeat: -1,
+        ease: "Sine.easeInOut",
+      });
+    }
+  }
+
+  private createButterfly(color: number): Phaser.GameObjects.Graphics {
+    const butterfly = this.add.graphics();
+
+    // Corpo
+    butterfly.fillStyle(0x000000, 1);
+    butterfly.fillEllipse(0, 0, 4, 12);
+
+    // Asas
+    butterfly.fillStyle(color, 1);
+    butterfly.lineStyle(1, 0x000000, 1);
+
+    // Asa esquerda superior
+    butterfly.fillEllipse(-8, -5, 10, 8);
+    butterfly.strokeEllipse(-8, -5, 10, 8);
+
+    // Asa esquerda inferior
+    butterfly.fillEllipse(-8, 5, 10, 8);
+    butterfly.strokeEllipse(-8, 5, 10, 8);
+
+    // Asa direita superior
+    butterfly.fillEllipse(8, -5, 10, 8);
+    butterfly.strokeEllipse(8, -5, 10, 8);
+
+    // Asa direita inferior
+    butterfly.fillEllipse(8, 5, 10, 8);
+    butterfly.strokeEllipse(8, 5, 10, 8);
+
+    return butterfly;
+  }
+
+  // 🎈 Balões subindo
+  private addBalloons() {
+    const balloonColors = [0xff6b6b, 0xffd93d, 0x6bc2ff, 0x7cd992, 0xbf7cff];
+
+    for (let i = 0; i < 5; i++) {
+      const x = Phaser.Math.Between(100, 700);
+      const balloon = this.createBalloon(balloonColors[i]);
+      balloon.setPosition(x, 650);
+      balloon.setScale(0.5);
+
+      // Subir e descer suavemente
+      this.tweens.add({
+        targets: balloon,
+        y: Phaser.Math.Between(350, 500),
+        duration: Phaser.Math.Between(8000, 12000),
+        yoyo: true,
+        repeat: -1,
+        ease: "Sine.easeInOut",
+        delay: i * 1500,
+      });
+
+      // Balanço lateral
+      this.tweens.add({
+        targets: balloon,
+        x: x + Phaser.Math.Between(-20, 20),
+        duration: Phaser.Math.Between(2000, 3000),
+        yoyo: true,
+        repeat: -1,
+        ease: "Sine.easeInOut",
+      });
+    }
+  }
+
+  private createBalloon(color: number): Phaser.GameObjects.Graphics {
+    const balloon = this.add.graphics();
+
+    // Corpo do balão
+    balloon.fillStyle(color, 1);
+    balloon.lineStyle(2, 0x000000, 1);
+    balloon.fillEllipse(0, 0, 15, 20);
+    balloon.strokeEllipse(0, 0, 15, 20);
+
+    // Brilho
+    balloon.fillStyle(0xffffff, 0.4);
+    balloon.fillCircle(-5, -8, 5);
+
+    // Cordinha
+    balloon.lineStyle(1, 0x8b4513, 1);
+    balloon.beginPath();
+    balloon.moveTo(0, 20);
+    balloon.lineTo(0, 35);
+    balloon.strokePath();
+
+    return balloon;
   }
 
   private startLevel() {
     this.children.removeAll();
     this.addBackground();
+
+    // Criar trail para efeito de arrasto
+    this.dragTrail = this.add.graphics();
+    this.dragTrail.setDepth(999);
 
     // permitir que drop zones recebam eventos de 'drag over'
     this.input.dragDistanceThreshold = 0;
@@ -80,13 +356,62 @@ export default class CoordinationGameScene extends PreloadScene {
     const level = this.levels[this.currentLevelIndex];
     const title =
       `${level.getName()}: Arraste as formas até as sombras`.toUpperCase();
-    this.add
-      .text(400, 50, title, {
-        fontSize: "24px",
-        color: "#1e3a8a",
+
+    // Título com fundo colorido e animado
+    const titleBg = this.add.graphics();
+    titleBg.fillStyle(0x5b8fff, 0.9);
+    titleBg.fillRoundedRect(400 - 370, 30, 740, 60, 30);
+    titleBg.lineStyle(4, 0xffffff, 0.8);
+    titleBg.strokeRoundedRect(400 - 370, 30, 740, 60, 30);
+
+    const titleText = this.add
+      .text(400, 60, title, {
+        fontSize: "22px",
+        color: "#FFFFFF",
         fontFamily: "Arial Black",
+        stroke: "#2D5BA8",
+        strokeThickness: 4,
       })
       .setOrigin(0.5);
+
+    // Animação do título
+    this.tweens.add({
+      targets: [titleBg, titleText],
+      y: "+=3",
+      duration: 1500,
+      yoyo: true,
+      repeat: -1,
+      ease: "Sine.easeInOut",
+    });
+
+    // Estrelinhas decorativas ao redor do título
+    for (let i = 0; i < 3; i++) {
+      const starLeft = this.add.image(50 + i * 30, 60, "star-sparkle");
+      starLeft.setScale(0.25);
+      starLeft.setTint(0xffd700);
+
+      const starRight = this.add.image(750 - i * 30, 60, "star-sparkle");
+      starRight.setScale(0.25);
+      starRight.setTint(0xffd700);
+
+      this.tweens.add({
+        targets: [starLeft, starRight],
+        rotation: Math.PI * 2,
+        duration: 3000 + i * 500,
+        repeat: -1,
+        ease: "Linear",
+      });
+
+      this.tweens.add({
+        targets: [starLeft, starRight],
+        scale: { from: 0.2, to: 0.35 },
+        duration: 1000,
+        yoyo: true,
+        repeat: -1,
+        ease: "Sine.easeInOut",
+        delay: i * 200,
+      });
+    }
 
     const shapes = level.getShapes();
     this.placedCount = 0;
@@ -142,15 +467,45 @@ export default class CoordinationGameScene extends PreloadScene {
         // reset flags por início de novo arrasto
         piece.setData("returned", false);
         piece.setData("isShaking", false);
+
+        // Limpar trilha anterior
+        if (this.dragTrail) {
+          this.dragTrail.clear();
+        }
       });
 
       piece.on("drag", (_pointer: any, dragX: number, dragY: number) => {
         piece.setPosition(dragX, dragY);
+
+        // Efeito de trilha brilhante ao arrastar
+        if (this.dragTrail) {
+          this.dragTrail.lineStyle(8, pieceSpec.color, 0.3);
+          this.dragTrail.lineBetween(piece.x - 5, piece.y, piece.x, piece.y);
+
+          // Criar partículas brilhantes
+          if (Math.random() > 0.7) {
+            this.createSparkle(dragX, dragY, pieceSpec.color);
+          }
+        }
       });
 
       piece.on("dragend", () => {
         piece.setAlpha(1);
         piece.setDepth(1);
+
+        // Limpar trilha
+        if (this.dragTrail) {
+          this.tweens.add({
+            targets: this.dragTrail,
+            alpha: 0,
+            duration: 300,
+            onComplete: () => {
+              this.dragTrail?.clear();
+              if (this.dragTrail) this.dragTrail.alpha = 1;
+            },
+          });
+        }
+
         // Se não foi colocado corretamente e não está no shake de erro, e ainda não foi retornado
         if (
           !piece.getData("isPlaced") &&
@@ -178,14 +533,28 @@ export default class CoordinationGameScene extends PreloadScene {
             piece.setData("isPlaced", true);
             this.placedCount++;
             this.tweenPulse(piece);
+
+            // Efeitos visuais de sucesso!
+            this.createSuccessParticles(
+              dropZone.x,
+              dropZone.y,
+              pieceSpec.color,
+            );
+            this.createStarBurst(dropZone.x, dropZone.y);
+
             if (this.placedCount === shapes.length) {
               this.time.delayedCall(800, () => {
-                if (this.currentLevelIndex < this.levels.length - 1) {
-                  this.currentLevelIndex++;
-                  this.scene.start("LevelCompleteScene");
-                } else {
-                  this.scene.start("EndScene");
-                }
+                // Confetes de celebração!
+                this.createConfetti();
+
+                this.time.delayedCall(1500, () => {
+                  if (this.currentLevelIndex < this.levels.length - 1) {
+                    this.currentLevelIndex++;
+                    this.scene.start("LevelCompleteScene");
+                  } else {
+                    this.scene.start("EndScene");
+                  }
+                });
               });
             }
           } else {
@@ -387,5 +756,131 @@ export default class CoordinationGameScene extends PreloadScene {
     g.lineTo(x, y - outerRadius);
     g.closePath();
     g.fillPath();
+  }
+
+  // ✨ Partículas brilhantes ao arrastar
+  private createSparkle(x: number, y: number, color: number) {
+    const sparkle = this.add.graphics();
+    sparkle.fillStyle(color, 0.8);
+    sparkle.fillCircle(0, 0, 3);
+    sparkle.setPosition(x, y);
+
+    this.tweens.add({
+      targets: sparkle,
+      alpha: 0,
+      scale: 0,
+      duration: 500,
+      ease: "Cubic.easeOut",
+      onComplete: () => sparkle.destroy(),
+    });
+  }
+
+  // 🎆 Explosão de estrelas quando acerta
+  private createStarBurst(x: number, y: number) {
+    for (let i = 0; i < 8; i++) {
+      const angle = (i / 8) * Math.PI * 2;
+      const star = this.add.image(x, y, "star-sparkle");
+      star.setScale(0.2);
+      star.setTint(0xffd700);
+
+      const distance = 60;
+      const targetX = x + Math.cos(angle) * distance;
+      const targetY = y + Math.sin(angle) * distance;
+
+      this.tweens.add({
+        targets: star,
+        x: targetX,
+        y: targetY,
+        alpha: 0,
+        scale: 0.4,
+        duration: 600,
+        ease: "Cubic.easeOut",
+        onComplete: () => star.destroy(),
+      });
+
+      this.tweens.add({
+        targets: star,
+        rotation: Math.PI * 2,
+        duration: 600,
+        ease: "Linear",
+      });
+    }
+  }
+
+  // 💫 Partículas coloridas quando acerta
+  private createSuccessParticles(x: number, y: number, color: number) {
+    for (let i = 0; i < 12; i++) {
+      const particle = this.add.graphics();
+      particle.fillStyle(color, 1);
+      particle.fillCircle(0, 0, 5);
+      particle.setPosition(x, y);
+
+      const angle = Math.random() * Math.PI * 2;
+      const speed = Phaser.Math.Between(50, 150);
+      const targetX = x + Math.cos(angle) * speed;
+      const targetY = y + Math.sin(angle) * speed;
+
+      this.tweens.add({
+        targets: particle,
+        x: targetX,
+        y: targetY,
+        alpha: 0,
+        scale: { from: 1, to: 0.2 },
+        duration: 800,
+        ease: "Cubic.easeOut",
+        onComplete: () => particle.destroy(),
+      });
+    }
+  }
+
+  // 🎊 Confetes quando completa o nível
+  private createConfetti() {
+    const colors = [
+      0xff6b6b, 0xffd93d, 0x6bc2ff, 0x7cd992, 0xbf7cff, 0xffb6c1, 0xffa500,
+    ];
+
+    for (let i = 0; i < 50; i++) {
+      const x = Phaser.Math.Between(0, 800);
+      const confetti = this.add.graphics();
+      const color = Phaser.Utils.Array.GetRandom(colors);
+
+      confetti.fillStyle(color, 1);
+
+      // Diferentes formas de confete
+      const shape = Phaser.Math.Between(0, 2);
+      if (shape === 0) {
+        confetti.fillRect(-5, -5, 10, 10); // quadrado
+      } else if (shape === 1) {
+        confetti.fillCircle(0, 0, 5); // círculo
+      } else {
+        confetti.fillTriangle(-5, 5, 0, -5, 5, 5); // triângulo
+      }
+
+      confetti.setPosition(x, -20);
+
+      this.tweens.add({
+        targets: confetti,
+        y: 650,
+        duration: Phaser.Math.Between(2000, 4000),
+        ease: "Cubic.easeIn",
+        onComplete: () => confetti.destroy(),
+      });
+
+      this.tweens.add({
+        targets: confetti,
+        rotation: Math.PI * Phaser.Math.Between(2, 6),
+        duration: Phaser.Math.Between(1000, 2000),
+        repeat: 2,
+        ease: "Linear",
+      });
+
+      // Movimento lateral
+      this.tweens.add({
+        targets: confetti,
+        x: x + Phaser.Math.Between(-100, 100),
+        duration: Phaser.Math.Between(1500, 3000),
+        ease: "Sine.easeInOut",
+      });
+    }
   }
 }
