@@ -1,8 +1,9 @@
-import ClickButtonLogic from "../logic/ClickButtonLogic";
-import ClickedButtonLevel from "../logic/ClickButtonLevel";
-import LevelManager from "../logic/LevelManager";
-import ButtonManager from "../logic/ButtonManager";
+import { AudioManager } from "@/games/common/managers/AudioManager";
 import Phaser from "phaser";
+import ButtonManager from "../logic/ButtonManager";
+import ClickedButtonLevel from "../logic/ClickButtonLevel";
+import ClickButtonLogic from "../logic/ClickButtonLogic";
+import LevelManager from "../logic/LevelManager";
 /**
  * Classe ClickButtonGameScene
  *
@@ -43,6 +44,10 @@ export default class ClickButtonGameScene extends Phaser.Scene {
    */
   preload() {
     this.load.json("mainData", this.mainDataPath);
+  }
+
+  init() {
+    new AudioManager(this);
   }
 
   /**
