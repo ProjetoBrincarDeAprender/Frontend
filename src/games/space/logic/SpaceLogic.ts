@@ -235,7 +235,8 @@ export default class SpaceLogic {
   }
 
   private handleCorrectAnswer(): void {
-    this.scene.sound.play("correct", { volume: 0.7 });
+    // Efeito visual de sucesso
+    this.scene.sound.play("correct");
 
     this.gameStats.addHitTime(this.scene.time.now);
     this.gameStats.addMissCount();

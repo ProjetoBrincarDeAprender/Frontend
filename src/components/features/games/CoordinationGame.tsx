@@ -3,7 +3,8 @@ import { Header } from "@/components/Header/Header";
 import { BackButton } from "@/components/utils/BackButton";
 import CoordinationGameScene from "@/games/coordination/scenes/GameScene";
 import { EndScene } from "@/games/common/scenes/EndScene";
-import ClickButtonStartScene from "@/games/clickedButton/scenes/ClickButtonStart";
+import { StartScene } from "@/games/common/scenes/StartScene";
+import { LevelCompletedScene } from "@/games/common/scenes/LevelCompletedScene";
 import Phaser from "phaser";
 import { useEffect, useRef } from "react";
 
@@ -14,23 +15,31 @@ export const CoordinationGame = () => {
   useEffect(() => {
     if (!containerRef.current) return;
 
-    const CoordinationStartScene = new ClickButtonStartScene(
-      "/assets/forms/gameData/startData.JSON",
-      "CoordinationGameScene",
-    );
-
     const config: Phaser.Types.Core.GameConfig = {
       type: Phaser.AUTO,
       width: 800,
       height: 600,
       scene: [
-        CoordinationStartScene,
+        // Tela inicial padronizada mantendo o background do jogo de formas
+        StartScene.create(
+          "CoordinationGameScene",
+          "/assets/forms/bg2.png",
+          "formsBg",
+          "Jogo Das Formas",
+        ),
         CoordinationGameScene,
+        // Tela de nível completo padronizada mantendo o background
+        LevelCompletedScene.create(
+          "CoordinationGameScene",
+          "StartScene",
+          "/assets/forms/bg.png",
+          "formsBg",
+        ),
         // Tela final comum com customização para o jogo de formas
         EndScene.create(
-          "clickButtonStartScene",
-          undefined,
-          undefined,
+          "StartScene",
+          "/assets/forms/bg.png",
+          "formsBg",
           "VOCÊ COMPLETOU AS FORMAS!",
         ),
       ],

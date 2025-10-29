@@ -3,8 +3,8 @@ import { EventBus } from "@/games/common/utils/EventBus";
 import { useEffect, useRef } from "react";
 import { Header } from "@/components/Header/Header";
 import { BackButton } from "@/components/utils/BackButton";
+import { StartScene } from "@/games/common/scenes/StartScene";
 import Phaser from "phaser";
-import ClickButtonStartScene from "@/games/clickedButton/scenes/ClickButtonStart";
 import ClickButtonGameScene from "@/games/clickedButton/scenes/ClickButtonGame";
 
 export interface IRefClickButtonGame {
@@ -19,10 +19,16 @@ const VowelsSequenceGame: React.FC = () => {
   useEffect(() => {
     if (!containerRef.current) return;
 
-    const clickButtonStartScene = new ClickButtonStartScene(
-      "/assets/vowelsSequenceGame/gameData/startData.JSON",
-    );
-    const clickButtonGameScene = new ClickButtonGameScene(
+    const startScene = new StartScene({
+      nextSceneName: "clickButtonGameScene",
+      backgroundPath: "/assets/vowelsSequenceGame/images/backgroundMain.png",
+      backgroundKey: "startBg",
+      gameTitle: "SEQUÊNCIA DE VOGAIS",
+      // trophyImagePath: "/assets/common/duda/dudaClap.png",
+      // trophyImageKey: "dudaClap",
+    });
+
+    const gameScene = new ClickButtonGameScene(
       "/assets/vowelsSequenceGame/gameData/mainData.JSON",
     );
 
@@ -30,7 +36,7 @@ const VowelsSequenceGame: React.FC = () => {
       type: Phaser.AUTO,
       width: 800,
       height: 600,
-      scene: [clickButtonStartScene, clickButtonGameScene],
+      scene: [startScene, gameScene],
       parent: containerRef.current,
       backgroundColor: "#ffffff",
     };

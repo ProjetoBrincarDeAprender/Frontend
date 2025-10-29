@@ -1,8 +1,10 @@
-import ClickButtonLogic from "../logic/ClickButtonLogic";
-import ClickedButtonLevel from "../logic/ClickButtonLevel";
-import LevelManager from "../logic/LevelManager";
+import { AudioManager } from "@/games/common/managers/AudioManager";
+import { PreloadScene } from "@/games/common/scenes/PreloadScene";
 import ButtonManager from "../logic/ButtonManager";
-import Phaser from "phaser";
+import ClickedButtonLevel from "../logic/ClickButtonLevel";
+import ClickButtonLogic from "../logic/ClickButtonLogic";
+import EffectManager from "../logic/EffectManager";
+import LevelManager from "../logic/LevelManager";
 /**
  * Classe ClickButtonGameScene
  *
@@ -16,7 +18,7 @@ import Phaser from "phaser";
  * - Controlar o fluxo de início e transição entre níveis
  */
 
-export default class ClickButtonGameScene extends Phaser.Scene {
+export default class ClickButtonGameScene extends PreloadScene {
   /** Dados principais do jogo carregados do JSON */
   private mainData: any;
   /** Caminho do arquivo JSON principal */
@@ -27,6 +29,7 @@ export default class ClickButtonGameScene extends Phaser.Scene {
   private levelManager!: LevelManager;
   /** Gerenciador de botões */
   private buttonManager: ButtonManager;
+  private effectManager: EffectManager;
 
   /**
    * Inicializa a cena principal do jogo, recebendo o caminho do JSON de dados.
@@ -36,13 +39,19 @@ export default class ClickButtonGameScene extends Phaser.Scene {
     super("clickButtonGameScene");
     this.mainDataPath = mainDataPath;
     this.buttonManager = new ButtonManager(this);
+    this.effectManager = new EffectManager(this);
   }
 
   /**
    * Pré-carrega o arquivo JSON principal do jogo.
    */
   preload() {
+    super.preload();
     this.load.json("mainData", this.mainDataPath);
+  }
+
+  init() {
+    new AudioManager(this);
   }
 
   /**
@@ -129,6 +138,7 @@ export default class ClickButtonGameScene extends Phaser.Scene {
     const scaleX = this.cameras.main.width / background.width;
     const scaleY = this.cameras.main.height / background.height;
     const scale = Math.max(scaleX, scaleY);
+    this.effectManager.overlay(0.4);
     background.setScale(scale);
   }
 
