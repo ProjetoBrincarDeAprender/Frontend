@@ -1,13 +1,13 @@
 export class SpaceLevelCompleteScene extends Phaser.Scene {
-  private currentLevel: number = 0;
+  private difficulty: string = "";
   private isLastLevel: boolean = false;
 
   constructor() {
     super({ key: "SpaceLevelCompleteScene" });
   }
 
-  init(data: { level: number; isLastLevel: boolean }) {
-    this.currentLevel = data.level || 0;
+  init(data: { level: number; difficulty: string; isLastLevel: boolean }) {
+    this.difficulty = data.difficulty || "";
     this.isLastLevel = data.isLastLevel || false;
   }
 
@@ -57,11 +57,13 @@ export class SpaceLevelCompleteScene extends Phaser.Scene {
       .setOrigin(0.5);
 
     if (!this.isLastLevel) {
+      const difficultyName =
+        this.difficulty.charAt(0).toUpperCase() + this.difficulty.slice(1);
       this.add
         .text(
           this.scale.width / 2,
           300,
-          `NÍVEL ${this.currentLevel + 1} COMPLETO!`,
+          `NÍVEL ${difficultyName.toUpperCase()} COMPLETO!`,
           {
             fontFamily: "Comic Sans MS, Arial, sans-serif",
             fontSize: "24px",
@@ -223,6 +225,15 @@ export class SpaceLevelCompleteScene extends Phaser.Scene {
         yoyo: true,
         ease: "Power2.easeInOut",
         onComplete: () => {
+          // Avançar para o próximo nível ao continuar
+          const currentProgress = this.registry.get("currentSpaceProgress") || {
+            levelIndex: 0,
+            questionIndex: 0,
+          };
+          this.registry.set("currentSpaceProgress", {
+            levelIndex: currentProgress.levelIndex + 1,
+            questionIndex: 0,
+          });
           this.scene.start("SpaceGameScene", { continueFromLevel: true });
         },
       });
@@ -283,7 +294,10 @@ export class SpaceLevelCompleteScene extends Phaser.Scene {
             this.scene.start("SpaceEndScene");
           } else {
             // Se não é o último nível, voltar para o menu
-            this.registry.set("currentSpaceLevel", 0);
+            this.registry.set("currentSpaceProgress", {
+              levelIndex: 0,
+              questionIndex: 0,
+            });
             this.scene.start("SpaceMenuScene");
           }
         },

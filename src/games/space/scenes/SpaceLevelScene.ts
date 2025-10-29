@@ -1,16 +1,29 @@
-import { AudioManager } from "@/games/common/managers/AudioManager";
-import { PreloadScene } from "@/games/common/scenes/PreloadScene";
-import { gameData } from "../logic/SpaceGameData";
-import SpaceLevel from "../logic/SpaceLevel";
+import { GameLevels } from "../logic/SpaceGameData";
 import SpaceLogic from "../logic/SpaceLogic";
 
+import { AudioManager } from "@/games/common/managers/AudioManager";
+import { PreloadScene } from "@/games/common/scenes/PreloadScene";
+
 export class SpaceGameScene extends PreloadScene {
-  private logic: SpaceLogic;
+  private logic!: SpaceLogic;
   private continueFromLevel: boolean = false;
+  private userId?: string;
+  private activityId?: number;
 
   constructor() {
     super({ key: "SpaceGameScene" });
-    this.logic = new SpaceLogic(this);
+  }
+
+  setUserId(userId: string) {
+    this.userId = userId;
+  }
+
+  setActivityId(activityId: number) {
+    this.activityId = activityId;
+  }
+
+  private initializeLogic() {
+    this.logic = new SpaceLogic(this, this.userId, this.activityId);
   }
 
   init(data: { continueFromLevel?: boolean } = {}) {
@@ -46,6 +59,9 @@ export class SpaceGameScene extends PreloadScene {
   }
 
   create() {
+    // Inicializar a lógica com os IDs
+    this.initializeLogic();
+
     // Configurar os níveis
     this.setupLevels();
 
@@ -87,17 +103,6 @@ export class SpaceGameScene extends PreloadScene {
   }
 
   private setupLevels(): void {
-    const levels: SpaceLevel[] = gameData.levels.map(
-      (levelData) =>
-        new SpaceLevel(
-          levelData.question,
-          levelData.options,
-          levelData.optionsImages,
-          levelData.answer,
-          levelData.difficulty,
-        ),
-    );
-
-    this.logic.setLevelManager(levels);
+    this.logic.setGameLevels(GameLevels);
   }
 }

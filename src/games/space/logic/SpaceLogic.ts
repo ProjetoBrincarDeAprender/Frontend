@@ -1,10 +1,11 @@
 import ButtonFactory from "@/games/common/factories/ButtonFactory";
 import ButtonManager from "@/games/common/managers/ButtonManager";
 import Button from "@/games/common/models/Button";
+import { APIDataService } from "@/games/common/services/APIData.service";
 import Phaser from "phaser";
 import EffectManager from "../../common/managers/EffectManager";
 import GameStats from "../../common/managers/GameStats";
-import LevelManager from "../../common/managers/LevelManager";
+import type { GameLevel } from "./SpaceGameData";
 import SpaceLevel from "./SpaceLevel";
 
 export default class SpaceLogic {
@@ -12,7 +13,9 @@ export default class SpaceLogic {
   private gameStats: GameStats;
   private buttonManager: ButtonManager;
   private effectManager: EffectManager;
-  private levelManager!: LevelManager<SpaceLevel>;
+  private gameLevels: GameLevel[] = [];
+  private currentLevelIndex: number = 0;
+  private currentQuestionIndex: number = 0;
   private buttonFactory: ButtonFactory;
   private questionText!: Phaser.GameObjects.Text;
   private buttons: (
@@ -21,9 +24,13 @@ export default class SpaceLogic {
     | Phaser.GameObjects.Text
   )[] = [];
   private buttonsEnabled: boolean = true;
+  private userId?: string;
+  private activityId?: number;
 
-  constructor(scene: Phaser.Scene) {
+  constructor(scene: Phaser.Scene, userId?: string, activityId?: number) {
     this.scene = scene;
+    this.userId = userId;
+    this.activityId = activityId;
     this.gameStats = new GameStats();
     this.buttonManager = new ButtonManager(this.scene);
     this.effectManager = new EffectManager(this.scene);
@@ -33,20 +40,23 @@ export default class SpaceLogic {
     this.buttonsEnabled = true;
   }
 
-  getCurrentLevel(): SpaceLevel {
-    return this.levelManager.getCurrentLevel();
+  getCurrentQuestion(): SpaceLevel {
+    const currentLevel = this.gameLevels[this.currentLevelIndex];
+    return currentLevel.questions[this.currentQuestionIndex];
   }
 
-  setLevelManager(levels: SpaceLevel[]) {
-    this.levelManager = new LevelManager(levels);
+  getCurrentLevel(): GameLevel {
+    return this.gameLevels[this.currentLevelIndex];
+  }
+
+  setGameLevels(levels: GameLevel[]) {
+    this.gameLevels = levels;
 
     // Restaurar progresso se existir
-    const savedLevel = this.scene.registry.get("currentSpaceLevel");
-    if (savedLevel && savedLevel > 0) {
-      // Avançar para o nível salvo
-      for (let i = 0; i < savedLevel; i++) {
-        this.levelManager.nextLevel();
-      }
+    const savedProgress = this.scene.registry.get("currentSpaceProgress");
+    if (savedProgress) {
+      this.currentLevelIndex = savedProgress.levelIndex || 0;
+      this.currentQuestionIndex = savedProgress.questionIndex || 0;
     }
   }
 
@@ -61,10 +71,10 @@ export default class SpaceLogic {
   }
 
   createQuestion(): void {
-    const currentLevel = this.getCurrentLevel();
+    const currentQuestion = this.getCurrentQuestion();
 
     this.questionText = this.scene.add
-      .text(this.scene.scale.width / 2, 120, currentLevel.getQuestion(), {
+      .text(this.scene.scale.width / 2, 120, currentQuestion.getQuestion(), {
         fontFamily: "Comic Sans MS, Arial, sans-serif",
         fontSize: "32px",
         color: "#FFFFFF",
@@ -78,10 +88,10 @@ export default class SpaceLogic {
   }
 
   createButtons(): void {
-    const currentLevel = this.getCurrentLevel();
-    const originalOptions = currentLevel.getOptions();
-    const originalOptionsImages = currentLevel.getOptionsImages();
-    const hasImages = currentLevel.hasImages();
+    const currentQuestion = this.getCurrentQuestion();
+    const originalOptions = currentQuestion.getOptions();
+    const originalOptionsImages = currentQuestion.getOptionsImages();
+    const hasImages = currentQuestion.hasImages();
 
     // Garantir que os botões estejam habilitados
     this.buttonsEnabled = true;
@@ -104,24 +114,31 @@ export default class SpaceLogic {
     });
     this.buttons = [];
 
-    const buttonWidth = 180;
-    const spacing = 30;
-    const totalWidth =
-      options.length * buttonWidth + (options.length - 1) * spacing;
-    const startX = (this.scene.scale.width - totalWidth) / 2 + buttonWidth / 2;
-    const buttonY = this.scene.scale.height / 2 + 80;
+    // Configurações para layout em grid 2x2
+    const centerX = this.scene.scale.width / 2;
+    const centerY = this.scene.scale.height / 2 + 50;
+    const horizontalSpacing = 350; // Espaçamento horizontal entre colunas
+    const verticalSpacing = 200; // Espaçamento vertical entre linhas
+
+    // Calcular posições em formato grid 2x2
+    const positions = this.calculateGridLayout(
+      options.length,
+      centerX,
+      centerY,
+      horizontalSpacing,
+      verticalSpacing,
+    );
 
     options.forEach((option, index) => {
-      const x = startX + index * (buttonWidth + spacing);
+      const { x, y } = positions[index];
 
       if (hasImages && optionsImages) {
         // Para questões com imagens, criar apenas a imagem clicável sem fundo
         const imageKey = optionsImages[index].replace(".png", "");
-        const showNames = currentLevel.getDifficulty() === "medium";
+        const showNames = currentQuestion.getDifficulty() === "medium";
 
         const planetImage = this.scene.add
-          .image(x, showNames ? buttonY - 20 : buttonY, imageKey)
-          .setScale(0.7)
+          .image(x, showNames ? y - 20 : y, imageKey)
           .setInteractive();
 
         let planetText: Phaser.GameObjects.Text | null = null;
@@ -129,9 +146,9 @@ export default class SpaceLogic {
         // Adicionar o nome do planeta embaixo da imagem apenas para dificuldade medium
         if (showNames) {
           planetText = this.scene.add
-            .text(x, buttonY + 45, option.toUpperCase(), {
+            .text(x, y + 45, option.toUpperCase(), {
               fontFamily: "Comic Sans MS, Arial, sans-serif",
-              fontSize: "16px",
+              fontSize: "24px",
               color: "#FFFFFF",
               fontStyle: "bold",
               stroke: "#000000",
@@ -149,12 +166,12 @@ export default class SpaceLogic {
 
         // Adicionar efeitos hover na imagem
         planetImage.on("pointerover", () => {
-          planetImage.setScale(0.75);
+          planetImage.setScale(1.1);
           planetImage.setTint(0xdddddd);
           if (planetText) planetText.setScale(1.1);
         });
         planetImage.on("pointerout", () => {
-          planetImage.setScale(0.7);
+          planetImage.setScale(1);
           planetImage.clearTint();
           if (planetText) planetText.setScale(1.0);
         });
@@ -162,12 +179,12 @@ export default class SpaceLogic {
         // Adicionar efeitos hover no texto (apenas se existir)
         if (planetText) {
           planetText.on("pointerover", () => {
-            planetImage.setScale(0.75);
+            planetImage.setScale(1.1);
             planetImage.setTint(0xdddddd);
             planetText.setScale(1.1);
           });
           planetText.on("pointerout", () => {
-            planetImage.setScale(0.7);
+            planetImage.setScale(1);
             planetImage.clearTint();
             planetText.setScale(1.0);
           });
@@ -181,15 +198,15 @@ export default class SpaceLogic {
       } else {
         // Para questões só com texto, usar botão normal
         const button = this.buttonFactory.createButton({
-          positions: { x, y: buttonY },
+          positions: { x, y },
           textures: {
             default: "defaultButton",
             hover: "hoverButton",
             clicked: "clickedButton",
           },
           text: option,
-          fontSize: 24,
-          scale: 0.8,
+          fontSize: 32,
+          scale: 1,
           onClick: () => this.handleButtonClick(option),
         });
 
@@ -207,8 +224,8 @@ export default class SpaceLogic {
     // Bloquear todos os botões imediatamente
     this.buttonsEnabled = false;
 
-    const currentLevel = this.getCurrentLevel();
-    const isCorrect = currentLevel.isCorrectAnswer(selectedOption);
+    const currentQuestion = this.getCurrentQuestion();
+    const isCorrect = currentQuestion.isCorrectAnswer(selectedOption);
 
     if (isCorrect) {
       this.handleCorrectAnswer();
@@ -221,38 +238,103 @@ export default class SpaceLogic {
     // Efeito visual de sucesso
     this.scene.sound.play("correct");
 
-    // Adicionar estatísticas
     this.gameStats.addHitTime(this.scene.time.now);
-    this.gameStats.addMissCount(); // Registrar os misses do nível atual
+    this.gameStats.addMissCount();
+
+    const apiService = new APIDataService();
+
+    // Usar índice único baseado em nível e questão
+    const uniqueQuestionIndex = this.getUniqueQuestionIndex();
+
+    apiService.sendGameData(
+      this.userId || "10130001",
+      this.activityId || 3,
+      uniqueQuestionIndex,
+      {
+        attempts: this.gameStats.getCurrentLevelMisses(),
+        timeSpent: this.gameStats.getCurrentLevelTimeSpent(this.scene.time.now),
+        isCorrect: true,
+        answer: this.generateAnswerLog(),
+        neededHint: false, // temporario, dica não implementada
+      },
+    );
+
     this.gameStats.resetInitialLevelTime(this.scene.time.now);
-    this.gameStats.resetActualLevelMisses(); // Resetar para o próximo nível
+    this.gameStats.resetActualLevelMisses(); // Resetar para a próxima questão
 
     // Mostrar feedback positivo
     this.showFeedback("Correto! 🎉", "#00FF00");
 
-    // Ir para tela de conclusão após um delay
+    // Ir para próxima questão ou nível após um delay
     this.scene.time.delayedCall(3500, () => {
-      const currentLevel = this.levelManager.getCurrentIndex();
-      const hasNextLevel = this.levelManager.nextLevel();
-      const isLastLevel = !hasNextLevel;
+      this.progressToNext();
+    });
+  }
 
-      // Salvar o progresso no registry para persistir entre cenas
-      this.scene.registry.set(
-        "currentSpaceLevel",
-        this.levelManager.getCurrentIndex(),
-      );
+  private progressToNext(): void {
+    const currentLevel = this.getCurrentLevel();
+    const hasNextQuestion =
+      this.currentQuestionIndex < currentLevel.questions.length - 1;
 
-      if (isLastLevel) {
-        // Ir diretamente para a cena final
-        this.scene.scene.start("SpaceEndScene");
-      } else {
-        // Se não é o último nível, ir para a cena de nível completo
+    if (hasNextQuestion) {
+      // Próxima questão no mesmo nível
+      this.currentQuestionIndex++;
+      this.saveProgress();
+      this.setupLevel(); // Atualizar a interface para a nova questão
+    } else {
+      // Nível completo, verificar se há próximo nível
+      const hasNextLevel = this.currentLevelIndex < this.gameLevels.length - 1;
+
+      if (hasNextLevel) {
+        // Ir para tela de nível completo
         this.scene.scene.start("SpaceLevelCompleteScene", {
-          level: currentLevel,
+          level: this.currentLevelIndex,
+          difficulty: currentLevel.difficulty,
           isLastLevel: false,
         });
+      } else {
+        // Último nível completo, ir para tela final
+        this.scene.scene.start("SpaceEndScene");
       }
+    }
+  }
+
+  private saveProgress(): void {
+    this.scene.registry.set("currentSpaceProgress", {
+      levelIndex: this.currentLevelIndex,
+      questionIndex: this.currentQuestionIndex,
     });
+  }
+
+  private getUniqueQuestionIndex(): number {
+    let index = 1;
+    for (let i = 0; i < this.currentLevelIndex; i++) {
+      index += this.gameLevels[i].questions.length;
+    }
+    return index + this.currentQuestionIndex;
+  }
+
+  goToNextLevel(): void {
+    if (this.currentLevelIndex < this.gameLevels.length - 1) {
+      this.currentLevelIndex++;
+      this.currentQuestionIndex = 0;
+      this.saveProgress();
+    }
+  }
+
+  private generateAnswerLog(): string {
+    const currentQuestion = this.getCurrentQuestion();
+    const correctAnswer = currentQuestion.getAnswer();
+    const options = currentQuestion.getOptions();
+
+    const log = {
+      selectedAnswer: correctAnswer,
+      correctAnswer: correctAnswer,
+      options: options,
+      difficulty: currentQuestion.getDifficulty(),
+    };
+
+    return JSON.stringify(log);
   }
 
   private handleWrongAnswer(): void {
@@ -261,6 +343,25 @@ export default class SpaceLogic {
 
     // Adicionar estatísticas
     this.gameStats.addMiss();
+
+    const apiService = new APIDataService();
+
+    console.log(this.userId);
+
+    const uniqueQuestionIndex = this.getUniqueQuestionIndex();
+
+    apiService.sendGameData(
+      this.userId || "10130001",
+      this.activityId || 3,
+      uniqueQuestionIndex,
+      {
+        attempts: this.gameStats.getCurrentLevelMisses(),
+        timeSpent: this.gameStats.getCurrentLevelTimeSpent(this.scene.time.now),
+        isCorrect: false,
+        answer: this.generateAnswerLog(),
+        neededHint: false, // temporario, dica não implementada
+      },
+    );
 
     // Mostrar feedback negativo
     this.showFeedback("Tente novamente! 🤔", "#FF0000", true);
@@ -283,9 +384,23 @@ export default class SpaceLogic {
           fontStyle: "bold",
           stroke: "#000000",
           strokeThickness: 3,
+          padding: { left: 20, right: 20, top: 10, bottom: 10 },
         },
       )
       .setOrigin(0.5);
+
+    const graphics = this.scene.add.graphics();
+    graphics.fillStyle(0x000000, 0.5);
+    graphics.fillRoundedRect(
+      feedback.x - feedback.width / 2 - 20,
+      feedback.y - feedback.height / 2 - 10,
+      feedback.width + 40,
+      feedback.height + 20,
+      15,
+    );
+
+    // Garantir que o texto fique na frente do background
+    feedback.setDepth(1);
 
     // Animar entrada do feedback
     this.scene.tweens.add({
@@ -305,6 +420,7 @@ export default class SpaceLogic {
             ease: "Back.easeIn",
             onComplete: () => {
               feedback.destroy();
+              graphics.destroy();
               // Reativar botões se necessário (para respostas erradas)
               if (reactivateButtons) {
                 this.buttonsEnabled = true;
@@ -331,7 +447,10 @@ export default class SpaceLogic {
   }
 
   isGameFinished(): boolean {
-    return this.levelManager.isFinished();
+    return (
+      this.currentLevelIndex >= this.gameLevels.length - 1 &&
+      this.currentQuestionIndex >= this.getCurrentLevel().questions.length - 1
+    );
   }
 
   getGameStats(): GameStats {
@@ -343,5 +462,60 @@ export default class SpaceLogic {
       const j = Math.floor(Math.random() * (i + 1));
       [array[i], array[j]] = [array[j], array[i]];
     }
+  }
+
+  private calculateGridLayout(
+    numButtons: number,
+    centerX: number,
+    centerY: number,
+    horizontalSpacing: number,
+    verticalSpacing: number,
+  ): { x: number; y: number }[] {
+    const positions: { x: number; y: number }[] = [];
+
+    for (let i = 0; i < numButtons; i++) {
+      let x: number;
+      let y: number;
+
+      if (numButtons === 1) {
+        // 1 botão: centro
+        x = centerX;
+        y = centerY;
+      } else if (numButtons === 2) {
+        // 2 botões: lado a lado na linha superior
+        const col = i % 2;
+        x =
+          centerX +
+          (col === 0 ? -horizontalSpacing / 2 : horizontalSpacing / 2);
+        y = centerY - verticalSpacing / 2;
+      } else if (numButtons === 3) {
+        // 3 botões: 2 na linha superior, 1 no centro da linha inferior
+        if (i < 2) {
+          // Primeira linha: 2 botões
+          const col = i % 2;
+          x =
+            centerX +
+            (col === 0 ? -horizontalSpacing / 2 : horizontalSpacing / 2);
+          y = centerY - verticalSpacing / 2;
+        } else {
+          // Segunda linha: 1 botão no centro
+          x = centerX;
+          y = centerY + verticalSpacing / 2;
+        }
+      } else {
+        // 4 ou mais botões: grid 2x2 padrão
+        const row = Math.floor(i / 2);
+        const col = i % 2;
+
+        x =
+          centerX +
+          (col === 0 ? -horizontalSpacing / 2 : horizontalSpacing / 2);
+        y = centerY + (row === 0 ? -verticalSpacing / 2 : verticalSpacing / 2);
+      }
+
+      positions.push({ x, y });
+    }
+
+    return positions;
   }
 }
