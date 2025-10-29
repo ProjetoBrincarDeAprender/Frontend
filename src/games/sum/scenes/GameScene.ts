@@ -1,4 +1,5 @@
 import { AudioManager as GlobalAudioManager } from "@/games/common/managers/AudioManager";
+import { PreloadScene } from "@/games/common/scenes/PreloadScene";
 import Phaser from "phaser";
 import Button from "../../common/models/Button";
 import MathLevel, { LevelType } from "../MathLevel";
@@ -9,7 +10,7 @@ import { SubmitButton } from "../components/buttons/SubmitButton";
 import { NumberDisplay } from "../components/ui/NumberDisplay";
 import MathLogic from "../logic/logic";
 
-export default class MathGame extends Phaser.Scene {
+export default class MathGame extends PreloadScene {
   private logic!: MathLogic;
   private audioManager!: AudioManager;
   private animationManager!: AnimationManager;
@@ -44,6 +45,7 @@ export default class MathGame extends Phaser.Scene {
   }
 
   preload() {
+    super.preload();
     this.loadAssets();
     this.audioManager = new AudioManager(this);
     this.audioManager.preloadSounds();

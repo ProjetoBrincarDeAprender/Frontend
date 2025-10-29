@@ -1,7 +1,8 @@
 import Phaser from "phaser";
 import { AudioManager } from "../managers/AudioManager";
+import { PreloadScene } from "./PreloadScene";
 
-export class StartScene extends Phaser.Scene {
+export class StartScene extends PreloadScene {
   private backgroundKey: string;
   private backgroundPath: string;
   private trophyImagePath: string;
@@ -53,6 +54,7 @@ export class StartScene extends Phaser.Scene {
   }
 
   preload() {
+    super.preload();
     this.load.image(this.trophyImageKey, this.trophyImagePath);
     this.load.image(this.backgroundKey, this.backgroundPath);
     this.load.image("bgTitle", "/assets/common/bgTitle.svg");
@@ -231,9 +233,18 @@ export class StartScene extends Phaser.Scene {
   }
 
   private createBackground() {
-    this.add
-      .image(this.scale.width / 2, this.scale.height / 2, this.backgroundKey)
-      .setScale(1.0);
+    const bg = this.add.image(
+      this.scale.width / 2,
+      this.scale.height / 2,
+      this.backgroundKey,
+    );
+
+    // Calcular escala para preencher a tela sem zoom excessivo
+    const scaleX = this.scale.width / bg.width;
+    const scaleY = this.scale.height / bg.height;
+    const scale = Math.max(scaleX, scaleY);
+    bg.setScale(scale);
+
     // Overlay escuro por cima do background
     this.add.rectangle(
       this.scale.width / 2,
