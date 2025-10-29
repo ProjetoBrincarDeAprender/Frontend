@@ -4,25 +4,40 @@ import { useEffect, useRef } from "react";
 import { Header } from "@/components/Header/Header";
 import { BackButton } from "@/components/utils/BackButton";
 import Phaser from "phaser";
-import VowelsStartScene from "@/games/vowels/scenes/VowelsStartScene";
-import VowelsGameScene from "@/games/vowels/scenes/VowelsGameScene";
-import VowelsCreditsScene from "@/games/vowels/scenes/VowelsCreditsScene";
+import { StartScene } from "@/games/common/scenes/StartScene";
+import { EndScene } from "@/games/common/scenes/EndScene";
+import ClickButtonGameScene from "@/games/clickedButton/scenes/ClickButtonGame";
 
-export interface IRefVowelsGame {
-  game: Phaser.Game | null;
-  scene: Phaser.Scene | null;
-}
-
-const VowelsGame: React.FC = () => {
+const IdentifyVowelsGame: React.FC = () => {
   const gameRef = useRef<Phaser.Game | null>(null);
+  const containerRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
+    if (!containerRef.current) return;
+
+    const startScene = new StartScene({
+      nextSceneName: "clickButtonGameScene",
+      backgroundPath: "/assets/identifyVowelsGame/images/backgroundMain.png",
+      backgroundKey: "startBg",
+      gameTitle: "Identificar Vogais",
+    });
+
+    const gameScene = new ClickButtonGameScene(
+      "/assets/identifyVowelsGame/gameData/mainData.JSON",
+    );
+
+    const endScene = new EndScene({
+      restartScene: "clickButtonGameScene",
+      backgroundPath: "/assets/identifyVowelsGame/images/backgroundMain.png",
+      backgroundKey: "endBg",
+    });
+
     const config: Phaser.Types.Core.GameConfig = {
       type: Phaser.AUTO,
       width: 800,
       height: 600,
-      scene: [VowelsStartScene, VowelsGameScene, VowelsCreditsScene],
-      parent: "game-container",
+      scene: [startScene, gameScene, endScene],
+      parent: containerRef.current,
       backgroundColor: "#ffffff",
     };
 
@@ -45,7 +60,7 @@ const VowelsGame: React.FC = () => {
         <Header />
         <BackButton />
         <div
-          id="game-container"
+          ref={containerRef}
           className="relative"
           style={{ width: 800, height: 600 }}
         ></div>
@@ -55,4 +70,4 @@ const VowelsGame: React.FC = () => {
   );
 };
 
-export default VowelsGame;
+export default IdentifyVowelsGame;
