@@ -6,13 +6,23 @@ import { MemoryGameLogic } from "../logic/MemoryGameLogic";
 export class MemoryGameScene extends PreloadScene {
   private logic!: MemoryGameLogic;
   private gameDataTimer?: Phaser.Time.TimerEvent;
+  private userId?: string;
+  private activityId?: number;
 
   constructor() {
     super({ key: "MemoryGameScene" });
   }
 
+  setUserId(userId: string) {
+    this.userId = userId;
+  }
+
+  setActivityId(activityId: number) {
+    this.activityId = activityId;
+  }
+
   init(data: { resetGame?: boolean } = {}) {
-    this.logic = new MemoryGameLogic(this);
+    this.logic = new MemoryGameLogic(this, this.userId, this.activityId);
 
     if (data.resetGame) {
       this.logic.resetGame();
@@ -30,11 +40,11 @@ export class MemoryGameScene extends PreloadScene {
   preload() {
     super.preload();
     this.load.image("star", "/assets/common/star.svg");
-    this.load.image("card-0", "/assets/memoryGame/banguela.png");
-    this.load.image("card-1", "/assets/memoryGame/peppa.png");
-    this.load.image("card-2", "/assets/memoryGame/gato.png");
-    this.load.image("card-3", "/assets/memoryGame/papagaio.png");
-    this.load.image("card-4", "/assets/memoryGame/cavalo.png");
+    this.load.image("card-0", "/assets/memoryGame/card-0.png");
+    this.load.image("card-1", "/assets/memoryGame/card-1.png");
+    this.load.image("card-2", "/assets/memoryGame/card-2.png");
+    this.load.image("card-3", "/assets/memoryGame/card-3.png");
+    this.load.image("card-4", "/assets/memoryGame/card-4.png");
     this.load.image("background", "/assets/memoryGame/fundo.png");
     // Áudios de feedback
     this.load.audio("correct", "/assets/common/sounds/correct.mp3");
@@ -68,11 +78,12 @@ export class MemoryGameScene extends PreloadScene {
     try {
       const attempts = this.logic.getCurrentAttempts();
       const levelTime = this.logic.getCurrentLevelTime();
-      const currentLevel = this.logic.getCurrentLevel();
+      // const currentQuestionIndex = this.logic.getAbsoluteQuestionIndex();
 
       const gameData = {
-        activityId: 1,
-        questionId: currentLevel + 1,
+        studentId: Number(this.userId) || 10130001,
+        activityId: this.activityId || 4,
+        questionId: 1,
         attempts: attempts,
         timeSpent: levelTime,
         responseDate: this.time.now,
@@ -99,29 +110,45 @@ export class MemoryGameScene extends PreloadScene {
   }
 
   update() {
-    if (this.logic.isLevelFinished()) {
+    if (this.logic.isQuestionCompleted()) {
       this.time.delayedCall(4000, () => {
-        const completedLevel = this.logic.getCurrentLevel();
+        const currentLevel = this.logic.getCurrentLevel();
 
-        // Limpar timer quando o nível termina
+        // Limpar timer quando a questão termina
         if (this.gameDataTimer) {
           this.gameDataTimer.destroy();
           this.gameDataTimer = undefined;
         }
 
-        this.logic.finishLevel();
+        this.logic.finishQuestion();
 
-        const isGameFinished = this.logic.isGameFinished();
+        const isLevelFinished = this.logic.isLevelFinished();
 
-        this.registry.set("currentLevel", this.logic.getCurrentLevel());
+        // Salva o progresso atual no registro
+        this.registry.set(
+          "currentLevel",
+          this.logic.getAbsoluteQuestionIndex(),
+        );
 
-        if (isGameFinished) {
-          this.scene.start("MemoryEndScene");
+        if (isLevelFinished) {
+          // Nível completo, verificar se é o último nível ANTES de incrementar
+          const isLastLevel = this.logic.isLastLevel();
+
+          this.logic.finishLevel(); // Incrementa o nível
+
+          if (isLastLevel) {
+            // Era o último nível, jogo acabou
+            this.scene.start("EndScene");
+          } else {
+            // Ainda há mais níveis
+            this.scene.start("LevelCompleteScene", {
+              level: currentLevel,
+              isLastLevel: false,
+            });
+          }
         } else {
-          this.scene.start("MemoryLevelCompleteScene", {
-            level: completedLevel,
-            isLastLevel: false,
-          });
+          // Se ainda há questões no nível atual, apenas continua para a próxima questão
+          this.scene.restart();
         }
       });
     }
