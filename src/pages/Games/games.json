@@ -44,11 +44,6 @@
     "image": "/assets/housingGame/bg.svg"
   },
   {
-    "title": "Jogo do Espaço",
-    "gameIdUrl": "space",
-    "image": "/assets/spaceGame/thumbnail.png"
-  },
-  {
     "title": "Jogo das Sílabas",
     "gameIdUrl": "syllable",
     "image": "/assets/syllableGame/images/gamePrint.png"
