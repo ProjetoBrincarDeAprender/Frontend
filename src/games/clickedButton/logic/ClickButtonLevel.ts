@@ -3,6 +3,7 @@
  * - answer: resposta correta do nível
  * - question: pergunta/comando do nível
  * - entityKey: chave da imagem auxiliar (opcional)
+ * - audioKey: chave do áudio a ser reproduzido (opcional)
  * - options: alternativas de resposta
  * - content: conteúdo/estímulo do nível (opcional)
  * - completeContent: conteúdo completo após resposta correta (opcional)
@@ -11,6 +12,7 @@ interface IClickButtonLevel {
   answer: string;
   question: string;
   entityKey?: string;
+  audioKey?: string;
   options: string[];
   content?: string[];
   completeContent?: string[];
@@ -27,6 +29,8 @@ export default class ClickButtonLevel {
   private question: string;
   /** Chave da imagem auxiliar (opcional) */
   private entityKey?: string;
+  /** Chave do áudio a ser reproduzido (opcional) */
+  private audioKey?: string;
   /** Conteúdo/estímulo do nível (opcional) */
   private content?: string[];
   /** Conteúdo completo após resposta correta (opcional) */
@@ -42,6 +46,7 @@ export default class ClickButtonLevel {
     this.answer = data.answer;
     this.question = data.question;
     this.entityKey = data.entityKey;
+    this.audioKey = data.audioKey;
     this.content = data.content;
     this.completeContent = data.completeContent;
     this.options = data.options;
@@ -96,5 +101,15 @@ export default class ClickButtonLevel {
       return this.completeContent;
     }
     return [];
+  }
+
+  /**
+   * Retorna a chave do áudio do nível, se existir.
+   */
+  public getAudioKey(): string {
+    if (this.audioKey) {
+      return this.audioKey;
+    }
+    return "";
   }
 }
