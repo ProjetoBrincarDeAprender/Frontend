@@ -1,0 +1,123 @@
+{
+  "config": {
+    "background": {
+      "image": "/assets/numbersGame/background.png",
+      "overlayOpacity": 0.3
+    }
+  },
+
+  "textures": {
+    "buttons": {
+      "blue": {
+        "default": "/assets/common/buttons/squareBlueDefault.svg",
+        "hover": "/assets/common/buttons/squareBlueHover.svg",
+        "clicked": "/assets/common/buttons/squareBlueClicked.svg"
+      },
+      "red": {
+        "default": "/assets/common/buttons/squareRedDefault.svg",
+        "hover": "/assets/common/buttons/squareRedHover.svg",
+        "clicked": "/assets/common/buttons/squareRedClicked.svg"
+      }
+    },
+    "entities": [],
+    "effects": [
+      {
+        "key": "star",
+        "texture": "/assets/common/star.svg"
+      }
+    ]
+  },
+
+  "audios": [
+    {
+      "key": "correct",
+      "path": "/assets/common/sounds/correct.mp3"
+    },
+    {
+      "key": "incorrect",
+      "path": "/assets/common/sounds/incorrect.mp3"
+    }
+  ],
+
+  "buttonConfig": {
+    "fontSize": 50,
+    "scale": 1.5
+  },
+
+  "info": {
+    "activityId": 2
+  },
+
+  "levels": [
+    {
+      "question": "COMPLETE A SEQUÊNCIA",
+      "content": ["1", "2", "3", " "],
+      "completeContent": ["1", "2", "3", "4"],
+      "answer": "4",
+      "options": ["4", "1", "2"]
+    },
+    {
+      "question": "COMPLETE A SEQUÊNCIA",
+      "content": ["5", "6", " ", "8"],
+      "completeContent": ["5", "6", "7", "8"],
+      "answer": "7",
+      "options": ["7", "5", "9"]
+    },
+    {
+      "question": "COMPLETE A SEQUÊNCIA",
+      "content": ["10", " ", "12", "13"],
+      "completeContent": ["10", "11", "12", "13"],
+      "answer": "11",
+      "options": ["11", "10", "12"]
+    },
+    {
+      "question": "COMPLETE A SEQUÊNCIA",
+      "content": ["2", "4", "6", " "],
+      "completeContent": ["2", "4", "6", "8"],
+      "answer": "8",
+      "options": ["8", "6", "10"]
+    },
+    {
+      "question": "COMPLETE A SEQUÊNCIA",
+      "content": ["15", " ", "17", "18"],
+      "completeContent": ["15", "16", "17", "18"],
+      "answer": "16",
+      "options": ["16", "15", "18"]
+    },
+    {
+      "question": "COMPLETE A SEQUÊNCIA",
+      "content": ["2", "4", "6", " "],
+      "completeContent": ["2", "4", "6", "8"],
+      "answer": "8",
+      "options": ["8", "10", "6"]
+    },
+    {
+      "question": "COMPLETE A SEQUÊNCIA",
+      "content": ["10", "12", " ", "16"],
+      "completeContent": ["10", "12", "14", "16"],
+      "answer": "14",
+      "options": ["14", "12", "16"]
+    },
+    {
+      "question": "COMPLETE A SEQUÊNCIA",
+      "content": ["20", "22", " ", "26"],
+      "completeContent": ["20", "22", "24", "26"],
+      "answer": "24",
+      "options": ["24", "22", "26"]
+    },
+    {
+      "question": "COMPLETE A SEQUÊNCIA",
+      "content": ["3", "5", "7", " "],
+      "completeContent": ["3", "5", "7", "9"],
+      "answer": "9",
+      "options": ["9", "7", "11"]
+    },
+    {
+      "question": "COMPLETE A SEQUÊNCIA",
+      "content": ["11", "13", " ", "17"],
+      "completeContent": ["11", "13", "15", "17"],
+      "answer": "15",
+      "options": ["15", "13", "17"]
+    }
+  ]
+}
