@@ -31,6 +31,7 @@ import Logout from "./pages/Logout/Logout";
 import { Profile } from "./pages/Profile/Profile";
 import { RecoverPassword } from "./pages/RecoverPassword/RecoverPassword";
 import { SendPasswordToken } from "./pages/SendPasswordToken/SendPasswordToken";
+import SyllableGame from "./components/features/games/SyllableGame";
 
 function App() {
   return (
@@ -86,6 +87,7 @@ function App() {
         <Route path="forms" element={<CoordinationGame />} />
         <Route path="vowelssequence" element={<VowelsSequenceGame />} />
         <Route path="space" element={<SpaceGame />} />
+        <Route path="syllable" element={<SyllableGame />} />
       </Route>
 
       <Route element={<AuthGuard requireAuth />}>
