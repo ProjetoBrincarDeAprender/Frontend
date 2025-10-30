@@ -40,7 +40,10 @@ const SumGame: React.FC<SumGameProps> = ({ activityId = 1 }) => {
     const setupGame = () => {
       const scene = gameRef.current?.scene.getScene('StartScene') as StartScene;
       if (scene) {
-        // Usar ID padrão se usuário não estiver disponível
+        // Limpar qualquer progresso anterior quando inicia novo jogo
+        scene.registry.remove('sumCurrentLevel');
+        
+        // Configurar dados do jogo
         const userId = user?.codigo_usuario ? user.codigo_usuario.toString() : '10130001';
         scene.registry.set('sumUserId', userId);
         scene.registry.set('sumActivityId', activityId);

@@ -48,6 +48,12 @@ export class GameScene extends Phaser.Scene {
         menuScene: "StartScene",
         backgroundPath: "/assets/sumGame/FUNDO.png",
         backgroundKey: "sumBackground",
+        onMenuReturn: () => {
+          // Limpar todos os dados do registry quando volta ao menu
+          this.registry.remove('sumCurrentLevel');
+          this.registry.remove('sumUserId');
+          this.registry.remove('sumActivityId');
+        }
       });
       this.scene.add("LevelCompleteScene", sumLevelComplete);
     }
@@ -57,7 +63,13 @@ export class GameScene extends Phaser.Scene {
         restartScene: "StartScene",
         backgroundPath: "/assets/sumGame/FUNDO.png",
         backgroundKey: "sumBackground",
-        subtitleMessage: "VOCÊ AJUDOU O SAPINHO!"
+        subtitleMessage: "VOCÊ AJUDOU O SAPINHO!",
+        onRestart: () => {
+          // Limpar todos os dados do registry quando reinicia
+          this.registry.remove('sumCurrentLevel');
+          this.registry.remove('sumUserId');
+          this.registry.remove('sumActivityId');
+        }
       });
       this.scene.add("EndScene", sumEndScene);
     }

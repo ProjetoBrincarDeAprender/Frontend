@@ -10,6 +10,7 @@ export class LevelCompletedScene extends PreloadScene {
   private nextLevelScene: string;
   private menuScene: string;
   private levelTitle: string;
+  private onMenuReturn?: () => void; // Callback para reset do jogo
 
   constructor(config?: {
     backgroundPath?: string;
@@ -19,6 +20,7 @@ export class LevelCompletedScene extends PreloadScene {
     nextLevelScene?: string;
     menuScene?: string;
     levelTitle?: string;
+    onMenuReturn?: () => void;
   }) {
     super({ key: "LevelCompleteScene" });
     this.backgroundPath =
@@ -30,6 +32,7 @@ export class LevelCompletedScene extends PreloadScene {
     this.nextLevelScene = config?.nextLevelScene || "GameScene";
     this.menuScene = config?.menuScene || "StartScene";
     this.levelTitle = config?.levelTitle || "NÍVEL CONCLUÍDO!";
+    this.onMenuReturn = config?.onMenuReturn;
   }
 
   init() {
@@ -45,6 +48,7 @@ export class LevelCompletedScene extends PreloadScene {
     dudaImagePath?: string,
     dudaImageKey?: string,
     levelTitle?: string,
+    onMenuReturn?: () => void,
   ): LevelCompletedScene {
     return new LevelCompletedScene({
       nextLevelScene,
@@ -54,6 +58,7 @@ export class LevelCompletedScene extends PreloadScene {
       dudaImagePath,
       dudaImageKey,
       levelTitle,
+      onMenuReturn,
     });
   }
 
@@ -320,6 +325,11 @@ export class LevelCompletedScene extends PreloadScene {
         yoyo: true,
         ease: "Power2.easeInOut",
         onComplete: () => {
+          // Executar callback de reset antes de voltar ao menu
+          if (this.onMenuReturn) {
+            this.onMenuReturn();
+          }
+          
           // Vai para o menu
           if (this.menuScene.startsWith("/")) {
             // Se começa com '/', é uma URL - redireciona

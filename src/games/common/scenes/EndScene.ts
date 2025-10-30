@@ -9,6 +9,7 @@ export class EndScene extends PreloadScene {
   private subtitleMessage: string;
   private dudaImagePath: string;
   private dudaImageKey: string;
+  private onRestart?: () => void; // Callback para reset do jogo
 
   constructor(config?: {
     restartScene?: string;
@@ -17,6 +18,7 @@ export class EndScene extends PreloadScene {
     subtitleMessage?: string;
     dudaImagePath?: string;
     dudaImageKey?: string;
+    onRestart?: () => void;
   }) {
     super({ key: "EndScene" });
     this.restartSceneName = config?.restartScene || "/games";
@@ -27,6 +29,7 @@ export class EndScene extends PreloadScene {
     this.dudaImagePath =
       config?.dudaImagePath || "/assets/common/duda/dudaClap.png";
     this.dudaImageKey = config?.dudaImageKey || "dudaClap";
+    this.onRestart = config?.onRestart;
   }
 
   init() {
@@ -41,6 +44,7 @@ export class EndScene extends PreloadScene {
     subtitleMessage?: string,
     dudaImagePath?: string,
     dudaImageKey?: string,
+    onRestart?: () => void,
   ): EndScene {
     return new EndScene({
       restartScene,
@@ -49,6 +53,7 @@ export class EndScene extends PreloadScene {
       subtitleMessage,
       dudaImagePath,
       dudaImageKey,
+      onRestart,
     });
   }
 
@@ -208,6 +213,11 @@ export class EndScene extends PreloadScene {
         yoyo: true,
         ease: "Power2.easeInOut",
         onComplete: () => {
+          // Executar callback de reset antes de reiniciar
+          if (this.onRestart) {
+            this.onRestart();
+          }
+          
           // Vai para a cena especificada ou para /games se não especificado
           if (this.restartSceneName.startsWith("/")) {
             // Se começa com '/', é uma URL - redireciona
