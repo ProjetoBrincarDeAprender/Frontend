@@ -7,7 +7,6 @@ import { AnimationManager } from "../components/animations/AnimationManager";
 import { SubmitButton } from "../components/buttons/SubmitButton";
 import { NumberDisplay } from "../components/ui/NumberDisplay";
 import MathLogic from "../logic/logic";
-import { StartScene } from "@/games/common/scenes/StartScene";
 import { LevelCompletedScene } from "@/games/common/scenes/LevelCompletedScene";
 import { EndScene } from "@/games/common/scenes/EndScene";
 
@@ -42,17 +41,6 @@ export class GameScene extends Phaser.Scene {
   }
 
   private registerStandardScenes(): void {
-    if (!this.scene.manager.getScene("StartScene")) {
-      const sumStartScene = new StartScene({
-        backgroundPath: "/assets/sumGame/FUNDO.png",
-        backgroundKey: "sumBackground",
-        trophyImagePath: "/assets/common/trophy.png",
-        trophyImageKey: "sumTrophy",
-        gameTitle: "AJUDE O SAPINHO A SOMAR!",
-        nextSceneName: "GameScene"
-      });
-      this.scene.add("StartScene", sumStartScene);
-    }
 
     if (!this.scene.manager.getScene("LevelCompleteScene")) {
       const sumLevelComplete = new LevelCompletedScene({
@@ -271,7 +259,7 @@ export class GameScene extends Phaser.Scene {
       this.cursor = undefined;
     }
 
-    this.add.text(80, 490, "DIGITE A RESPOSTA: ", {
+    this.add.text(60, 470, "DIGITE A RESPOSTA: ", {
       fontSize: "24px",
       color: "#000",
       fontFamily: "Arial Black",

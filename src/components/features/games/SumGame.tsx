@@ -2,8 +2,6 @@ import React, { useEffect, useRef } from "react";
 import Phaser from "phaser";
 import { GameScene } from "@/games/sum/scenes/GameScene";
 import { StartScene } from "@/games/common/scenes/StartScene";
-import { LevelCompletedScene } from "@/games/common/scenes/LevelCompletedScene";
-import { EndScene } from "@/games/common/scenes/EndScene";
 import { useUser } from "@/hooks/User/useUser";
 import { Footer } from "@/components/Footer/Footer";
 import { BackButton } from "@/components/utils/BackButton";
@@ -26,7 +24,11 @@ const SumGame: React.FC<SumGameProps> = ({ activityId = 1 }) => {
       height: 600,
       parent: "game-container",
       backgroundColor: "#AED3E3",
-      scene: [StartScene, GameScene, LevelCompletedScene, EndScene],
+      scene: [StartScene.create("GameScene",
+        "/assets/sumGame/FUNDO.png",
+        "sumBackground",
+        "JOGO DA SOMA"         
+        ), GameScene],
       scale: {
         mode: Phaser.Scale.FIT,
         autoCenter: Phaser.Scale.CENTER_BOTH, 
