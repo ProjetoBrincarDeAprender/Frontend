@@ -1,38 +1,39 @@
 import { Footer } from "@/components/Footer/Footer";
 import { EventBus } from "@/games/common/utils/EventBus";
-import { EndScene } from "@/games/common/scenes/EndScene";
-import GameScene from "@/games/numbers/scenes/GameScene";
-import StartScene from "@/games/numbers/scenes/StartScene";
-import Phaser from "phaser";
 import { useEffect, useRef } from "react";
 import { Header } from "@/components/Header/Header";
 import { BackButton } from "@/components/utils/BackButton";
-
-export interface IRefNumbersGame {
-  game: Phaser.Game | null;
-  scene: Phaser.Scene | null;
-}
+import { EndScene } from "@/games/common/scenes/EndScene";
+import { StartScene } from "@/games/common/scenes/StartScene";
+import ClickButtonGameScene from "@/games/clickedButton/scenes/ClickButtonGame";
+import Phaser from "phaser";
 
 const NumbersGame: React.FC = () => {
   const gameRef = useRef<Phaser.Game | null>(null);
+  const containerRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
+    if (!containerRef.current) return;
+
     const config: Phaser.Types.Core.GameConfig = {
       type: Phaser.AUTO,
       width: 800,
       height: 600,
       scene: [
-        StartScene,
-        GameScene,
-        // Tela final comum com customização para o jogo de números
+        StartScene.create(
+          "clickButtonGameScene",
+          "/assets/numbersGame/background.png",
+          "NÚMEROS",
+        ),
+        new ClickButtonGameScene("/assets/numbersGame/gameData/mainData.JSON"),
         EndScene.create(
           "numbersStart",
           undefined,
           undefined,
           "VOCÊ COMPLETOU TODAS AS SEQUÊNCIAS!",
         ),
-      ], // StartScene como primeira cena
-      parent: "numbers-game-container",
+      ],
+      parent: containerRef.current,
       backgroundColor: "#ffffff",
     };
 
@@ -55,7 +56,7 @@ const NumbersGame: React.FC = () => {
         <Header />
         <BackButton />
         <div
-          id="numbers-game-container"
+          ref={containerRef}
           className="relative"
           style={{ width: 800, height: 600 }}
         ></div>
