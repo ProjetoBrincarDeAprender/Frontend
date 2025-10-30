@@ -12,6 +12,7 @@ export default class MazeGameScene extends Phaser.Scene {
   private shapeBody!: Phaser.Physics.Matter.Sprite;
   private target!: Phaser.GameObjects.Graphics;
   private walls: Phaser.GameObjects.Rectangle[] = [];
+  private wallBodies: any[] = [];
   private isDragging = false;
   private startPos = { x: 0, y: 0 };
 
@@ -85,8 +86,13 @@ export default class MazeGameScene extends Phaser.Scene {
     // Limpar elementos anteriores
     this.walls.forEach((wall) => wall.destroy());
     this.walls = [];
+    this.wallBodies.forEach((body) => this.matter.world.remove(body));
+    this.wallBodies = [];
     if (this.shape) this.shape.destroy();
-    if (this.shapeBody) this.shapeBody.destroy();
+    if (this.shapeBody) {
+      this.matter.world.remove(this.shapeBody as any);
+      this.shapeBody = null as any;
+    }
     if (this.target) this.target.destroy();
 
     const level = this.levels[this.currentLevelIndex];
@@ -107,6 +113,9 @@ export default class MazeGameScene extends Phaser.Scene {
         strokeThickness: 3,
       })
       .setOrigin(0.5);
+
+    // Criar bordas do tabuleiro (para evitar que a forma saia)
+    this.createBoardBorders();
 
     // Criar paredes
     this.createWalls(level);
@@ -138,7 +147,7 @@ export default class MazeGameScene extends Phaser.Scene {
       wall.setStrokeStyle(2, 0x654321);
 
       // Física da parede
-      this.matter.add.rectangle(
+      const wallBody = this.matter.add.rectangle(
         wallData.x + wallData.width / 2,
         wallData.y + wallData.height / 2,
         wallData.width,
@@ -147,6 +156,49 @@ export default class MazeGameScene extends Phaser.Scene {
       );
 
       this.walls.push(wall);
+      this.wallBodies.push(wallBody);
+    });
+  }
+
+  private createBoardBorders() {
+    const borderThickness = 30;
+    const borderColor = 0x654321;
+
+    // Bordas visuais e físicas ao redor do tabuleiro
+    const borders = [
+      // Topo
+      { x: 0, y: 0, width: 800, height: borderThickness },
+      // Esquerda
+      { x: 0, y: 0, width: borderThickness, height: 600 },
+      // Direita
+      { x: 800 - borderThickness, y: 0, width: borderThickness, height: 600 },
+      // Baixo
+      { x: 0, y: 600 - borderThickness, width: 800, height: borderThickness },
+    ];
+
+    borders.forEach((border) => {
+      // Visual da borda
+      const wall = this.add.rectangle(
+        border.x + border.width / 2,
+        border.y + border.height / 2,
+        border.width,
+        border.height,
+        borderColor,
+      );
+      wall.setStrokeStyle(2, 0x4a3319);
+      wall.setAlpha(0.8);
+
+      // Física da borda
+      const wallBody = this.matter.add.rectangle(
+        border.x + border.width / 2,
+        border.y + border.height / 2,
+        border.width,
+        border.height,
+        { isStatic: true, label: "wall" },
+      );
+
+      this.walls.push(wall);
+      this.wallBodies.push(wallBody);
     });
   }
 
