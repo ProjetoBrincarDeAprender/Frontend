@@ -89,7 +89,7 @@ function App() {
         <Route path="housing" element={<HousingGame />} />
         <Route path="forms" element={<CoordinationGame />} />
         <Route path="maze" element={<MazeGame />} />
-        <Route path="vowelssequence" element={<VowelsSequenceGame />} />
+        <Route path="vowels-sequence" element={<VowelsSequenceGame />} />
         <Route path="space" element={<SpaceGame />} />
         <Route path="professions" element={<ProfessionsGame />} />
         <Route path="syllable" element={<SyllableGame />} />
