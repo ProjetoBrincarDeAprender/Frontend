@@ -7,6 +7,7 @@ import { SpaceGame } from "./components/features/games/SpaceGame";
 import SumGame from "./components/features/games/SumGame";
 import VowelsSequenceGame from "./components/features/games/VowelsSequenceGame";
 import ProfessionsGame from "./components/features/games/ProfessionsGame";
+import { MazeGame } from "./components/features/games/MazeGame";
 import { AuthGuard } from "./guards/AuthGuard";
 import { Calm } from "./pages/Calm/Calm";
 import Dashboard from "./pages/Dashboard/Admin/Dashboard";
@@ -87,6 +88,7 @@ function App() {
         <Route path="numbers" element={<NumbersGame />} />
         <Route path="housing" element={<HousingGame />} />
         <Route path="forms" element={<CoordinationGame />} />
+        <Route path="maze" element={<MazeGame />} />
         <Route path="vowelssequence" element={<VowelsSequenceGame />} />
         <Route path="space" element={<SpaceGame />} />
         <Route path="professions" element={<ProfessionsGame />} />

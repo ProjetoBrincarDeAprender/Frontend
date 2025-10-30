@@ -5,6 +5,11 @@
     "image": "/assets/forms/bg.png"
   },
   {
+    "title": "Labirinto das Formas",
+    "gameIdUrl": "maze",
+    "image": "/assets/maze/bg.png"
+  },
+  {
     "title": "Jogo do Espaço",
     "gameIdUrl": "space",
     "image": "/assets/spaceGame/thumbnail.png"
