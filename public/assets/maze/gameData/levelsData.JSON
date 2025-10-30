@@ -26,9 +26,10 @@
       "walls": [
         { "x": 50, "y": 400, "width": 25, "height": 150 },
         { "x": 50, "y": 400, "width": 350, "height": 25 },
+        { "x": 50, "y": 525, "width": 700, "height": 25 },
         { "x": 375, "y": 50, "width": 25, "height": 375 },
         { "x": 375, "y": 50, "width": 375, "height": 25 },
-        { "x": 725, "y": 50, "width": 25, "height": 125 }
+        { "x": 725, "y": 50, "width": 25, "height": 500 }
       ]
     },
     {
