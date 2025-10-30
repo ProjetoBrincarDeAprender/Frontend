@@ -21,7 +21,12 @@ export default class MazeGameScene extends Phaser.Scene {
   }
 
   init(data: { startLevel?: number } = {}) {
-    this.currentLevelIndex = data.startLevel ?? 0;
+    // Permite iniciar pelo próximo nível salvo no Registry quando vindo da cena comum
+    const regNext = this.registry.get("mazeNextLevel");
+    this.currentLevelIndex =
+      data.startLevel ?? (typeof regNext === "number" ? regNext : 0);
+    // Limpa o valor para evitar reaproveitar em reinícios
+    this.registry.set("mazeNextLevel", null);
     new AudioManager(this);
   }
 
@@ -509,10 +514,9 @@ export default class MazeGameScene extends Phaser.Scene {
       onComplete: () => {
         this.time.delayedCall(1000, () => {
           if (this.currentLevelIndex < this.levels.length - 1) {
-            // Passa o próximo nível para a MazeLevelCompleteScene
-            this.scene.start("MazeLevelCompleteScene", {
-              nextLevel: this.currentLevelIndex + 1,
-            });
+            // Salva o próximo nível no Registry e usa a cena padronizada
+            this.registry.set("mazeNextLevel", this.currentLevelIndex + 1);
+            this.scene.start("LevelCompleteScene");
           } else {
             this.scene.start("EndScene");
           }

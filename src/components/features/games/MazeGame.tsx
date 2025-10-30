@@ -2,7 +2,7 @@ import { Footer } from "@/components/Footer/Footer";
 import { Header } from "@/components/Header/Header";
 import { BackButton } from "@/components/utils/BackButton";
 import MazeGameScene from "@/games/maze/scenes/GameScene";
-import { MazeLevelCompleteScene } from "@/games/maze/scenes/LevelCompleteScene";
+import { LevelCompletedScene } from "@/games/common/scenes/LevelCompletedScene";
 import { EndScene } from "@/games/common/scenes/EndScene";
 import { StartScene } from "@/games/common/scenes/StartScene";
 import Phaser from "phaser";
@@ -34,7 +34,15 @@ export const MazeGame = () => {
           "JOGO DO LABIRINTO",
         ),
         MazeGameScene,
-        new MazeLevelCompleteScene(),
+        LevelCompletedScene.create(
+          "MazeGameScene",
+          "StartScene",
+          "/assets/maze/bg.png",
+          "mazeBg",
+          "/assets/common/duda/dudaClap.png",
+          "dudaClap",
+          "NÍVEL CONCLUÍDO!",
+        ),
         EndScene.create(
           "StartScene",
           "/assets/maze/bg.png",
