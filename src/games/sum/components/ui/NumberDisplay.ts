@@ -43,7 +43,7 @@ export class NumberDisplay {
         { 
           fontSize: '48px', 
           color: '#000000',
-          fontStyle: 'bold'
+          fontFamily: 'Arial Black'
         }
       );
       plusText.setDepth(11);

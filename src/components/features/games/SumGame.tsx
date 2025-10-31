@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import Phaser from "phaser";
-import MathGame from "@/games/sum/scenes/GameScene";
-import { SumLevelCompleteScene } from "@/games/sum/scenes/LevelCompleteScene";
+import { GameScene } from "@/games/sum/scenes/GameScene";
+import { StartScene } from "@/games/common/scenes/StartScene";
 import { useUser } from "@/hooks/User/useUser";
 import { Footer } from "@/components/Footer/Footer";
 import { BackButton } from "@/components/utils/BackButton";
@@ -24,7 +24,11 @@ const SumGame: React.FC<SumGameProps> = ({ activityId = 1 }) => {
       height: 600,
       parent: "game-container",
       backgroundColor: "#AED3E3",
-      scene: [MathGame, SumLevelCompleteScene],
+      scene: [StartScene.create("GameScene",
+        "/assets/sumGame/FUNDO.png",
+        "sumBackground",
+        "JOGO DA SOMA"         
+        ), GameScene],
       scale: {
         mode: Phaser.Scale.FIT,
         autoCenter: Phaser.Scale.CENTER_BOTH, 
@@ -34,10 +38,15 @@ const SumGame: React.FC<SumGameProps> = ({ activityId = 1 }) => {
     gameRef.current = new Phaser.Game(config);
 
     const setupGame = () => {
-      const scene = gameRef.current?.scene.scenes[0] as MathGame;
-      if (scene && user?.codigo_usuario) {
-        scene.setUserId(user.codigo_usuario.toString());
-        scene.setActivityId(activityId);
+      const scene = gameRef.current?.scene.getScene('StartScene') as StartScene;
+      if (scene) {
+        // Limpar qualquer progresso anterior quando inicia novo jogo
+        scene.registry.remove('sumCurrentLevel');
+        
+        // Configurar dados do jogo
+        const userId = user?.codigo_usuario ? user.codigo_usuario.toString() : '10130001';
+        scene.registry.set('sumUserId', userId);
+        scene.registry.set('sumActivityId', activityId);
       }
     };
     setTimeout(setupGame, 100);

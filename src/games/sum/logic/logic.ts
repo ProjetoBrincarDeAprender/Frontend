@@ -10,9 +10,10 @@ export default class MathLogic {
   private dataManager: SumGameDataManager;
   private effectManager: EffectManager;
 
-  constructor(scene: Phaser.Scene, levels: MathLevel[], userId: string = "default_user", activityId?: number) {
+  constructor(scene: Phaser.Scene, levels: MathLevel[], userId: string = "default_user", activityId?: number, startingLevel: number = 0) {
     this.scene = scene;
     this.levels = levels;
+    this.currentLevelIndex = startingLevel;
     this.dataManager = new SumGameDataManager(userId, activityId);
     this.effectManager = new EffectManager(this.scene);
     
@@ -32,6 +33,10 @@ export default class MathLogic {
 
   getCurrentLevel(): MathLevel | null {
     return this.levels[this.currentLevelIndex] || null;
+  }
+
+  getLevelByIndex(index: number): MathLevel | null {
+    return this.levels[index] || null;
   }
 
   getCurrentLevelIndex(): number {
