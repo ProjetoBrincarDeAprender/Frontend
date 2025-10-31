@@ -76,20 +76,19 @@ export class TextContentRenderer implements IContentRenderer {
     const buttonWidth = 20 * scale;
     const totalWidthOccupied =
       (content.length - 1) * spaceBetweenContent + buttonWidth * content.length;
-    const startX = (scene.cameras.main.width - totalWidthOccupied) / 2;
+    const startX = (scene.cameras.main.width - totalWidthOccupied) / 2 + 14;
 
     for (let i = 0; i < content.length; i++) {
       const newPositionX = startX + i * (buttonWidth + spaceBetweenContent);
       const contentItem = buttonManager.createButton({
         positions: { x: newPositionX, y: positionY },
         textures: {
-          default: "defaultButton",
-          hover: "hoverButton",
-          clicked: "clickedButton",
+          default: "whiteButton",
         },
         text: content[i],
         fontSize: 40,
         scale: scale,
+        color: "#000000",
       });
       newContent.push(contentItem);
     }

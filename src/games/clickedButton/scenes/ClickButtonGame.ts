@@ -71,7 +71,6 @@ export default class ClickButtonGameScene extends PreloadScene {
       this.setLogic();
       this.createBackground();
       this.setupQuestion();
-      this.setupEntity();
       this.setupContent();
       this.setupOptions();
       this.clickButtonLogic.setActivityId(this.mainData.info.activityId);
@@ -106,6 +105,7 @@ export default class ClickButtonGameScene extends PreloadScene {
     this.load.image("defaultButton", buttonTexturesUrl.blue.default);
     this.load.image("hoverButton", buttonTexturesUrl.blue.hover);
     this.load.image("clickedButton", buttonTexturesUrl.blue.clicked);
+    this.load.image("whiteButton", buttonTexturesUrl.white.default);
   }
 
   /**
@@ -161,13 +161,6 @@ export default class ClickButtonGameScene extends PreloadScene {
       this.levelManager,
       this.buttonManager,
     );
-  }
-
-  /**
-   * Exibe a entidade auxiliar do nível atual.
-   */
-  private setupEntity(): void {
-    this.clickButtonLogic.showEntity();
   }
 
   /**
