@@ -8,7 +8,7 @@ import { StartScene } from "@/games/common/scenes/StartScene";
 import { EndScene } from "@/games/common/scenes/EndScene";
 import ClickButtonGameScene from "@/games/clickedButton/scenes/ClickButtonGame";
 
-const IdentifyVowelsGame: React.FC = () => {
+const VowelsGame: React.FC = () => {
   const gameRef = useRef<Phaser.Game | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
 
@@ -17,18 +17,18 @@ const IdentifyVowelsGame: React.FC = () => {
 
     const startScene = new StartScene({
       nextSceneName: "clickButtonGameScene",
-      backgroundPath: "/assets/identifyVowelsGame/images/backgroundMain.png",
+      backgroundPath: "/assets/vowelsGame/images/backgroundMain.png",
       backgroundKey: "startBg",
-      gameTitle: "Identificar Vogais",
+      gameTitle: "JOGO DAS VOGAIS",
     });
 
     const gameScene = new ClickButtonGameScene(
-      "/assets/identifyVowelsGame/gameData/mainData.JSON",
+      "/assets/vowelsGame/gameData/mainData.JSON",
     );
 
     const endScene = new EndScene({
       restartScene: "clickButtonGameScene",
-      backgroundPath: "/assets/identifyVowelsGame/images/backgroundMain.png",
+      backgroundPath: "/assets/vowelsGame/images/backgroundMain.png",
       backgroundKey: "endBg",
     });
 
@@ -70,4 +70,4 @@ const IdentifyVowelsGame: React.FC = () => {
   );
 };
 
-export default IdentifyVowelsGame;
+export default VowelsGame;

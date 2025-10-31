@@ -75,14 +75,6 @@ export default class ClickButtonLogic {
   }
 
   /**
-   * Exibe a entidade visual (imagem auxiliar) do nível, se existir.
-   * E renderiza o conteúdo usando a estratégia apropriada.
-   */
-  public showEntity(): void {
-    // Esta lógica foi movida para showContent()
-  }
-
-  /**
    * Exibe o conteúdo/estímulo do nível usando a estratégia apropriada.
    */
   public showContent(): void {
@@ -219,7 +211,6 @@ export default class ClickButtonLogic {
       this.scene.scene.start("EndScene");
     } else {
       this.showQuestion();
-      this.showEntity();
       this.showContent();
       this.showOptions();
     }

@@ -34,6 +34,7 @@ export default class Button extends Phaser.GameObjects.Container {
    * @param clickImage Imagem para clique
    * @param buttonText Texto do botão
    * @param fontSize Tamanho da fonte
+   * @param color Cor do botão
    */
   constructor(
     scene: Phaser.Scene,
@@ -44,6 +45,7 @@ export default class Button extends Phaser.GameObjects.Container {
     clickImage: string = defaultImage,
     buttonText: string = "",
     fontSize: number = 32,
+    color: string = "#ffffffff",
   ) {
     super(scene, x, y);
 
@@ -52,8 +54,9 @@ export default class Button extends Phaser.GameObjects.Container {
     this.clickImage = scene.add.image(0, 0, clickImage);
     this.buttonText = scene.add
       .text(0, 0, buttonText, {
-        fontFamily: "Arial",
+        fontFamily: "Arial Black",
         fontSize: `${fontSize}px`,
+        color: color,
       })
       .setOrigin(0.5);
 

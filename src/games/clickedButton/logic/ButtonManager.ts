@@ -11,6 +11,7 @@ interface ButtonConfig {
   text?: string;
   fontSize?: number;
   scale?: number;
+  color?: string;
 }
 
 export default class ButtonManager {
@@ -74,6 +75,7 @@ export default class ButtonManager {
     text,
     fontSize,
     scale = 1,
+    color,
   }: ButtonConfig): Button {
     const button = new Button(
       this.scene,
@@ -84,6 +86,7 @@ export default class ButtonManager {
       textures.clicked, // Imagem do clique (clickImage)
       text ? text : "", // Texto do botão (buttonText)
       fontSize ? fontSize : undefined, // Tamanho da fonte padrão (defaultFontSize)
+      color ? color : "#ffffffff", // Cor do texto do botão
     );
 
     this.scene.add.existing(button).setScale(scale);

@@ -17,6 +17,9 @@
         "default": "/assets/common/buttons/squareRedDefault.svg",
         "hover": "/assets/common/buttons/squareRedHover.svg",
         "clicked": "/assets/common/buttons/squareRedClicked.svg"
+      },
+      "white": {
+        "default": "/assets/common/buttons/squareWhite.svg"
       }
     },
     "entities": [],
