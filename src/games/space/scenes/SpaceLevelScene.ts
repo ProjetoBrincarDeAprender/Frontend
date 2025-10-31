@@ -6,7 +6,6 @@ import { PreloadScene } from "@/games/common/scenes/PreloadScene";
 
 export class SpaceGameScene extends PreloadScene {
   private logic!: SpaceLogic;
-  private continueFromLevel: boolean = false;
   private userId?: string;
   private activityId?: number;
 
@@ -26,8 +25,7 @@ export class SpaceGameScene extends PreloadScene {
     this.logic = new SpaceLogic(this, this.userId, this.activityId);
   }
 
-  init(data: { continueFromLevel?: boolean } = {}) {
-    this.continueFromLevel = data.continueFromLevel || false;
+  init(_data: { continueFromLevel?: boolean } = {}) {
     new AudioManager(this, 0.7);
   }
 
@@ -65,10 +63,7 @@ export class SpaceGameScene extends PreloadScene {
     // Configurar os níveis
     this.setupLevels();
 
-    // Se for continuação, não resetar - o nível já foi avançado
-    if (!this.continueFromLevel) {
-      // Primeira vez ou restart - começar do nível 0
-    }
+    // A cena LevelCompletedScene já está sendo criada no componente React
 
     // Criar elementos da UI
     this.logic.createBackground();

@@ -57,6 +57,17 @@ export default class SpaceLogic {
     if (savedProgress) {
       this.currentLevelIndex = savedProgress.levelIndex || 0;
       this.currentQuestionIndex = savedProgress.questionIndex || 0;
+
+      console.log(
+        `Progresso restaurado: Nível ${this.currentLevelIndex}, Questão ${this.currentQuestionIndex}`,
+      );
+    } else {
+      // Primeira vez - inicializar no nível 0, questão 0
+      this.currentLevelIndex = 0;
+      this.currentQuestionIndex = 0;
+      this.saveProgress();
+
+      console.log("Novo jogo iniciado: Nível 0, Questão 0");
     }
   }
 
@@ -286,15 +297,16 @@ export default class SpaceLogic {
       const hasNextLevel = this.currentLevelIndex < this.gameLevels.length - 1;
 
       if (hasNextLevel) {
-        // Ir para tela de nível completo
-        this.scene.scene.start("SpaceLevelCompleteScene", {
-          level: this.currentLevelIndex,
-          difficulty: currentLevel.difficulty,
-          isLastLevel: false,
-        });
+        // Incrementar o nível e salvar no registry
+        this.currentLevelIndex++;
+        this.currentQuestionIndex = 0;
+        this.saveProgress();
+
+        // Ir para cena padrão de level complete
+        this.scene.scene.start("LevelCompleteScene");
       } else {
         // Último nível completo, ir para tela final
-        this.scene.scene.start("SpaceEndScene");
+        this.scene.scene.start("EndScene");
       }
     }
   }
@@ -345,8 +357,6 @@ export default class SpaceLogic {
     this.gameStats.addMiss();
 
     const apiService = new APIDataService();
-
-    console.log(this.userId);
 
     const uniqueQuestionIndex = this.getUniqueQuestionIndex();
 
