@@ -58,7 +58,7 @@ export class AudioContentRenderer implements IContentRenderer {
     const contentArray = level.getContent();
     if (contentArray && contentArray.length > 0) {
       const newPositionY = 380; // Mesma posição Y usada na ImageContentRenderer
-      const scale = 0.8; // Mesma escala usada na ImageContentRenderer
+      const scale = 1.2; // Mesma escala usada na ImageContentRenderer
 
       const contentButtons = this.createContentButtons(
         contentArray,
@@ -91,7 +91,7 @@ export class AudioContentRenderer implements IContentRenderer {
     const completeContent = level.getCompleteContent();
     if (completeContent && completeContent.length > 0) {
       const newPositionY = 380;
-      const scale = 0.8;
+      const scale = 1.2;
 
       const contentButtons = this.createContentButtons(
         completeContent,
@@ -136,17 +136,16 @@ export class AudioContentRenderer implements IContentRenderer {
     const buttonWidth = 20 * scale;
     const totalWidthOccupied =
       (content.length - 1) * spaceBetweenContent + buttonWidth * content.length;
-    const startX = (scene.cameras.main.width - totalWidthOccupied) / 2;
+    const startX = (scene.cameras.main.width - totalWidthOccupied) / 2 + 15;
 
     for (let i = 0; i < content.length; i++) {
       const newPositionX = startX + i * (buttonWidth + spaceBetweenContent);
       const contentItem = buttonManager.createButton({
         positions: { x: newPositionX, y: positionY },
         textures: {
-          default: "defaultButton",
-          hover: "hoverButton",
-          clicked: "clickedButton",
+          default: "whiteButton",
         },
+        color: "#000000",
         text: content[i],
         fontSize: 40,
         scale: scale,

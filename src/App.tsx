@@ -5,7 +5,6 @@ import { MemoryGame } from "./components/features/games/MemoryGame";
 import NumbersGame from "./components/features/games/NumbersGame";
 import { SpaceGame } from "./components/features/games/SpaceGame";
 import SumGame from "./components/features/games/SumGame";
-import VowelsSequenceGame from "./components/features/games/VowelsSequenceGame";
 import ProfessionsGame from "./components/features/games/ProfessionsGame";
 import { MazeGame } from "./components/features/games/MazeGame";
 import { AuthGuard } from "./guards/AuthGuard";
@@ -34,7 +33,7 @@ import { RecoverPassword } from "./pages/RecoverPassword/RecoverPassword";
 import { SendPasswordToken } from "./pages/SendPasswordToken/SendPasswordToken";
 import SyllableGame from "./components/features/games/SyllableGame";
 import SimpleSyllableGame from "./components/features/games/SimpleSyllableGame";
-import IdentifyVowelsGame from "./components/features/games/IdentifyVowelsGame";
+import VowelsGame from "./components/features/games/VowelsGame";
 
 function App() {
   return (
@@ -82,14 +81,13 @@ function App() {
 
       <Route path="/games">
         <Route index element={<Games />} />
-        <Route path="identify-vowels" element={<IdentifyVowelsGame />} />
+        <Route path="vowels" element={<VowelsGame />} />
         <Route path="memory" element={<MemoryGame />} />
         <Route path="sum" element={<SumGame />} />
         <Route path="numbers" element={<NumbersGame />} />
         <Route path="housing" element={<HousingGame />} />
         <Route path="forms" element={<CoordinationGame />} />
         <Route path="maze" element={<MazeGame />} />
-        <Route path="vowels-sequence" element={<VowelsSequenceGame />} />
         <Route path="space" element={<SpaceGame />} />
         <Route path="professions" element={<ProfessionsGame />} />
         <Route path="syllable" element={<SyllableGame />} />

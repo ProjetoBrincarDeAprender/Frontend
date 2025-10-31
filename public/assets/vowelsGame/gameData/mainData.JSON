@@ -1,0 +1,179 @@
+{
+  "config": {
+    "background": {
+      "image": "/assets/vowelsGame/images/backgroundMain.png",
+      "overlayOpacity": 0.3
+    }
+  },
+
+  "textures": {
+    "buttons": {
+      "blue": {
+        "default": "/assets/common/buttons/squareBlueDefault.svg",
+        "hover": "/assets/common/buttons/squareBlueHover.svg",
+        "clicked": "/assets/common/buttons/squareBlueClicked.svg"
+      },
+      "red": {
+        "default": "/assets/common/buttons/squareRedDefault.svg",
+        "hover": "/assets/common/buttons/squareRedHover.svg",
+        "clicked": "/assets/common/buttons/squareRedClicked.svg"
+      },
+      "white": {
+        "default": "/assets/common/buttons/squareWhite.svg"
+      }
+    },
+    "effects": [
+      {
+        "key": "star",
+        "texture": "/assets/common/star.svg"
+      }
+    ],
+    "entities": [
+      {
+        "key": "abelha",
+        "path": "/assets/vowelsGame/images/animals/abelha.svg"
+      },
+      {
+        "key": "elefante",
+        "path": "/assets/vowelsGame/images/animals/elefante.svg"
+      },
+      {
+        "key": "iguana",
+        "path": "/assets/vowelsGame/images/animals/iguana.svg"
+      },
+      {
+        "key": "onca",
+        "path": "/assets/vowelsGame/images/animals/onca.svg"
+      },
+      {
+        "key": "urso",
+        "path": "/assets/vowelsGame/images/animals/urso.svg"
+      }
+    ]
+  },
+
+  "audios": [
+    {
+      "key": "correct",
+      "path": "/assets/common/sounds/correct.mp3"
+    },
+    {
+      "key": "incorrect",
+      "path": "/assets/common/sounds/incorrect.mp3"
+    }
+  ],
+
+  "buttonConfig": {
+    "fontSize": 50,
+    "scale": 1.5
+  },
+
+  "info": {
+    "activityId": 2
+  },
+
+  "levels": [
+    {
+      "answer": "U",
+      "question": "COMPLETE AS VOGAIS",
+      "content": ["A", "E", "I", "O", " "],
+      "completeContent": ["A", "E", "I", "O", "U"],
+      "options": ["U", "E", "I"]
+    },
+    {
+      "answer": "A",
+      "question": "COMPLETE AS VOGAIS",
+      "content": [" ", "E", "I", "O", "U"],
+      "completeContent": ["A", "E", "I", "O", "U"],
+      "options": ["A", "O", "I"]
+    },
+    {
+      "answer": "I",
+      "question": "COMPLETE AS VOGAIS",
+      "content": ["A", "E", " ", "O", "U"],
+      "completeContent": ["A", "E", "I", "O", "U"],
+      "options": ["I", "A", "U"]
+    },
+    {
+      "answer": "O",
+      "question": "COMPLETE AS VOGAIS",
+      "content": ["A", "E", "I", " ", "U"],
+      "completeContent": ["A", "E", "I", "O", "U"],
+      "options": ["O", "E", "A"]
+    },
+    {
+      "answer": "E",
+      "question": "COMPLETE AS VOGAIS",
+      "content": ["A", " ", "I", "O", "U"],
+      "completeContent": ["A", "E", "I", "O", "U"],
+      "options": ["O", "A", "E", "U"]
+    },
+    {
+      "answer": "A",
+      "question": "COMPLETE AS VOGAIS",
+      "content": [" ", "E", "I", "O", "U"],
+      "completeContent": ["A", "E", "I", "O", "U"],
+      "options": ["A", "E", "I", "O", "U"]
+    },
+    {
+      "answer": "I",
+      "question": "COMPLETE AS VOGAIS",
+      "content": ["A", "E", " ", "O", "U"],
+      "completeContent": ["A", "E", "I", "O", "U"],
+      "options": ["I", "A", "E", "O", "U"]
+    },
+    {
+      "answer": "O",
+      "question": "COMPLETE AS VOGAIS",
+      "content": ["A", "E", "I", " ", "U"],
+      "completeContent": ["A", "E", "I", "O", "U"],
+      "options": ["A", "E", "I", "U", "O"]
+    },
+    {
+      "answer": "U",
+      "question": "COMPLETE AS VOGAIS",
+      "content": ["A", "E", "I", "O", " "],
+      "completeContent": ["A", "E", "I", "O", "U"],
+      "options": ["U", "A", "E", "I", "O"]
+    },
+    {
+      "answer": "E",
+      "question": "COMPLETE AS VOGAIS",
+      "content": ["A", " ", "I", "O", "U"],
+      "completeContent": ["A", "E", "I", "O", "U"],
+      "options": ["A", "E", "I", "O", "U"]
+    },
+    {
+      "question": "ENCONTRE A VOGAL CORRETA",
+      "entityKey": "urso",
+      "content": [" ", "R", "S", "O"],
+      "completeContent": ["U", "R", "S", "O"],
+      "options": ["U", "G", "A", "J"],
+      "answer": "U"
+    },
+    {
+      "question": "ENCONTRE A VOGAL CORRETA",
+      "entityKey": "elefante",
+      "content": ["E", "L", " ", "F", "A", "N", "T", "E"],
+      "completeContent": ["E", "L", "E", "F", "A", "N", "T", "E"],
+      "options": ["M", "E", "O", "J"],
+      "answer": "E"
+    },
+    {
+      "question": "ENCONTRE A VOGAL CORRETA",
+      "entityKey": "iguana",
+      "content": [" ", "G", "U", "A", "N", "A"],
+      "completeContent": ["I", "G", "U", "A", "N", "A"],
+      "options": ["N", "I", "C", "K"],
+      "answer": "I"
+    },
+    {
+      "question": "ENCONTRE A VOGAL CORRETA",
+      "entityKey": "onca",
+      "content": [" ", "N", "Ç", "A"],
+      "completeContent": ["O", "N", "Ç", "A"],
+      "options": ["U", "M", "O", "A", "L"],
+      "answer": "O"
+    }
+  ]
+}

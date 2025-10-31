@@ -97,13 +97,12 @@ export class ImageContentRenderer implements IContentRenderer {
       const contentItem = buttonManager.createButton({
         positions: { x: newPositionX, y: positionY },
         textures: {
-          default: "defaultButton",
-          hover: "hoverButton",
-          clicked: "clickedButton",
+          default: "whiteButton",
         },
         text: content[i],
         fontSize: 40,
         scale: scale,
+        color: "#000000",
       });
       newContent.push(contentItem);
     }
