@@ -20,9 +20,9 @@
     "image": "/assets/memoryGame/fundo.png"
   },
   {
-    "title": "Identifique a Vogal Correta",
-    "gameIdUrl": "identify-vowels",
-    "image": "/assets/identifyVowelsGame/images/backgroundMain.png"
+    "title": "Jogo das Vogais",
+    "gameIdUrl": "vowels",
+    "image": "/assets/vowelsGame/images/backgroundMain.png"
   },
   {
     "title": "Jogo das Profissões",
@@ -38,11 +38,6 @@
     "title": "Sequência de Números",
     "gameIdUrl": "numbers",
     "image": "/assets/numbersGame/background.png"
-  },
-  {
-    "title": "Sequência de Vogais",
-    "gameIdUrl": "vowels-sequence",
-    "image": "/assets/vowelsSequenceGame/images/backgroundMain.png"
   },
   {
     "title": "Tipos de Moradia",
