@@ -1,16 +1,16 @@
 import { AudioManager as GlobalAudioManager } from "@/games/common/managers/AudioManager";
-import { PreloadScene } from "@/games/common/scenes/PreloadScene";
 import Phaser from "phaser";
 import Button from "../../common/models/Button";
 import MathLevel, { LevelType } from "../MathLevel";
 import { AudioManager } from "../audio/AudioManager";
 import { AnimationManager } from "../components/animations/AnimationManager";
-import { StartButton } from "../components/buttons/StartButton";
 import { SubmitButton } from "../components/buttons/SubmitButton";
 import { NumberDisplay } from "../components/ui/NumberDisplay";
 import MathLogic from "../logic/logic";
+import { LevelCompletedScene } from "@/games/common/scenes/LevelCompletedScene";
+import { EndScene } from "@/games/common/scenes/EndScene";
 
-export default class MathGame extends PreloadScene {
+export class GameScene extends Phaser.Scene {
   private logic!: MathLogic;
   private audioManager!: AudioManager;
   private animationManager!: AnimationManager;
@@ -29,30 +29,60 @@ export default class MathGame extends PreloadScene {
   private cursorTween?: Phaser.Tweens.Tween;
 
   constructor() {
-    super("MathGame");
-  }
-
-  setUserId(userId: string) {
-    this.userId = userId;
-  }
-
-  setActivityId(activityId: number) {
-    this.activityId = activityId;
+    super({ key: 'GameScene' });
   }
 
   init() {
+    this.userId = this.registry.get('sumUserId') || '10130001';
+    this.activityId = this.registry.get('sumActivityId') || 1;
+    
     new GlobalAudioManager(this);
+    this.registerStandardScenes();
+  }
+
+  private registerStandardScenes(): void {
+
+    if (!this.scene.manager.getScene("LevelCompleteScene")) {
+      const sumLevelComplete = new LevelCompletedScene({
+        nextLevelScene: "GameScene",
+        menuScene: "StartScene",
+        backgroundPath: "/assets/sumGame/FUNDO.png",
+        backgroundKey: "sumBackground",
+        onMenuReturn: () => {
+          // Limpar todos os dados do registry quando volta ao menu
+          this.registry.remove('sumCurrentLevel');
+          this.registry.remove('sumUserId');
+          this.registry.remove('sumActivityId');
+        }
+      });
+      this.scene.add("LevelCompleteScene", sumLevelComplete);
+    }
+
+    if (!this.scene.manager.getScene("EndScene")) {
+      const sumEndScene = new EndScene({
+        restartScene: "StartScene",
+        backgroundPath: "/assets/sumGame/FUNDO.png",
+        backgroundKey: "sumBackground",
+        subtitleMessage: "VOCÊ AJUDOU O SAPINHO!",
+        onRestart: () => {
+          // Limpar todos os dados do registry quando reinicia
+          this.registry.remove('sumCurrentLevel');
+          this.registry.remove('sumUserId');
+          this.registry.remove('sumActivityId');
+        }
+      });
+      this.scene.add("EndScene", sumEndScene);
+    }
   }
 
   preload() {
-    super.preload();
     this.loadAssets();
     this.audioManager = new AudioManager(this);
     this.audioManager.preloadSounds();
   }
 
   private loadAssets() {
-    this.load.image("backgroundStart", "/assets/sumGame/FUNDO.png");
+    this.load.image("sumBackground", "/assets/sumGame/FUNDO.png");
     this.load.image("frog", "/assets/sumGame/sapita.png");
     this.load.image("sapoFala", "/assets/sumGame/sapita-fala.png");
     this.load.image("um", "/assets/sumGame/um.png");
@@ -61,29 +91,17 @@ export default class MathGame extends PreloadScene {
     this.load.image("quatro", "/assets/sumGame/quatro.png");
     this.load.image("cinco", "/assets/sumGame/cinco.png");
     this.load.image("star", "/assets/common/star.svg");
-    this.load.image(
-      "defaultButton",
-      "/assets/common/buttons/squareBlueDefault.svg",
-    );
-    this.load.image(
-      "hoverButton",
-      "/assets/common/buttons/squareBlueHover.svg",
-    );
-    this.load.image(
-      "clickedButton",
-      "/assets/common/buttons/squareBlueClicked.svg",
-    );
+    this.load.image("sumTrophy", "/assets/common/trophy.png");
+    this.load.image("defaultButton", "/assets/common/buttons/squareBlueDefault.svg");
+    this.load.image("hoverButton", "/assets/common/buttons/squareBlueHover.svg");
+    this.load.image("clickedButton", "/assets/common/buttons/squareBlueClicked.svg");
   }
 
   create() {
     this.initializeManagers();
-
-    if (!this.logic) {
-      this.initializeLogic();
-      this.createStartScene();
-    } else {
-      this.createLevelScene();
-    }
+    this.initializeLogic();
+    this.setupBackground();
+    this.startLevel();
   }
 
   private initializeManagers() {
@@ -115,41 +133,24 @@ export default class MathGame extends PreloadScene {
       );
     }
 
-    this.logic = new MathLogic(this, levels, this.userId, this.activityId);
+    // Pegar o nível salvo do registry, se existir
+    const savedLevel = this.registry.get('sumCurrentLevel') || 0;
+    this.logic = new MathLogic(this, levels, this.userId, this.activityId, savedLevel);
   }
 
-  createStartScene() {
-    this.add.image(400, 300, "backgroundStart").setScale(0.8);
-    this.add.image(320, 430, "frog").setScale(0.4);
-
-    this.createTitle();
-    this.createStartButton();
+  private setupBackground() {
+    this.add.rectangle(
+      this.scale.width / 2,
+      this.scale.height / 2,
+      this.scale.width,
+      this.scale.height,
+      0xAED3E3
+    );
   }
 
-  private createTitle() {
-    const titleBg = this.add.graphics();
-    titleBg.fillStyle(0x1e62a7, 1);
-    titleBg.fillRoundedRect(180, 60, 448, 80, 20);
-
-    this.add
-      .text(400, 100, "AJUDE O SAPINHO A SOMAR!", {
-        fontSize: "30px",
-        fontFamily: "baloobhai",
-        color: "#fff",
-      })
-      .setOrigin(0.5);
-  }
-
-  private createStartButton() {
-    new StartButton(this, 400, 200, () => {
-      this.scene.restart();
-      this.createLevelScene();
-    });
-  }
-
-  createLevelScene() {
+  private startLevel() {
     this.clearScene();
-
+    
     this.currentLevel = this.logic.getCurrentLevel();
     if (!this.currentLevel) {
       console.error("Nível atual não encontrado");
@@ -174,7 +175,7 @@ export default class MathGame extends PreloadScene {
   }
 
   private createLevelBackground() {
-    this.add.image(400, 300, "backgroundStart").setScale(0.8);
+    this.add.image(400, 300, "sumBackground").setDisplaySize(800, 600);
     this.add.image(380, 360, "sapoFala").setScale(1.0);
   }
 
@@ -185,7 +186,7 @@ export default class MathGame extends PreloadScene {
       .text(430, 250, equationString, {
         fontSize: "46px",
         color: "#F67800",
-        fontStyle: "bold",
+        fontFamily: "Arial Black"
       })
       .setOrigin(0.5);
   }
@@ -270,12 +271,14 @@ export default class MathGame extends PreloadScene {
       this.cursor = undefined;
     }
 
-    this.add.text(90, 490, "DIGITE A RESPOSTA: ", {
+    this.add.text(60, 470, "DIGITE A RESPOSTA: ", {
       fontSize: "24px",
       color: "#000",
-      fontStyle: "bold",
+      fontFamily: "Arial Black",
       backgroundColor: "#ffffff",
+      padding: { x: 10, y: 10 }
     });
+    
     this.answerText = this.add
       .text(392, 500, " ", {
         fontSize: "48px",
@@ -327,6 +330,7 @@ export default class MathGame extends PreloadScene {
   }
 
   handleMultipleChoiceAnswer(selectedAnswer: number, clickedButton: Button) {
+    const currentIndex = this.logic.getCurrentLevelIndex();
     const result = this.logic.checkAnswer(selectedAnswer);
 
     if (result.correct) {
@@ -338,8 +342,7 @@ export default class MathGame extends PreloadScene {
       );
 
       this.updateEquationWithCorrectAnswer();
-
-      this.proceedToNextLevel(result.finished);
+      this.proceedToNextLevel(currentIndex);
     } else {
       this.audioManager.playIncorrect();
       this.animationManager.incorrectAnswerEffect(clickedButton);
@@ -347,7 +350,14 @@ export default class MathGame extends PreloadScene {
   }
 
   handleAnswer() {
-    const result = this.logic.checkAnswer(parseInt(this.inputText));
+    const userAnswer = parseInt(this.inputText);
+    
+    if (isNaN(userAnswer)) {
+      return;
+    }
+    
+    const currentIndex = this.logic.getCurrentLevelIndex();
+    const result = this.logic.checkAnswer(userAnswer);
 
     if (result.correct) {
       this.audioManager.playCorrect2();
@@ -355,8 +365,7 @@ export default class MathGame extends PreloadScene {
       this.createMultipleStars(this.answerText!.x, this.answerText!.y);
 
       this.updateEquationWithCorrectAnswer();
-
-      this.proceedToNextLevel(result.finished);
+      this.proceedToNextLevel(currentIndex);
     } else {
       this.audioManager.playIncorrect();
       this.animationManager.incorrectAnswerEffect(this.answerText!);
@@ -369,13 +378,13 @@ export default class MathGame extends PreloadScene {
 
   private createMultipleStars(centerX: number, centerY: number) {
     const starPositions = [
-      { x: centerX, y: centerY - 50 },
-      { x: centerX - 40, y: centerY - 30 },
-      { x: centerX + 40, y: centerY - 30 },
-      { x: centerX - 50, y: centerY },
-      { x: centerX + 50, y: centerY },
-      { x: centerX - 30, y: centerY + 30 },
-      { x: centerX + 30, y: centerY + 30 },
+      { x: centerX, y: centerY - 100 },
+      { x: centerX - 80, y: centerY - 60 },
+      { x: centerX + 80, y: centerY - 60 },
+      { x: centerX - 100, y: centerY },
+      { x: centerX + 100, y: centerY },
+      { x: centerX - 60, y: centerY + 60 },
+      { x: centerX + 60, y: centerY + 60 },
     ];
 
     starPositions.forEach((pos, index) => {
@@ -385,22 +394,27 @@ export default class MathGame extends PreloadScene {
     });
   }
 
-  private proceedToNextLevel(finished: boolean) {
+  private proceedToNextLevel(levelIndexBeforeIncrement: number) {
     this.time.delayedCall(3000, () => {
-      if (!finished) {
-        const currentLevelIndex = this.logic.getCurrentLevelIndex();
-        const isEndOfMultipleChoice = currentLevelIndex === 5;
-
-        if (isEndOfMultipleChoice) {
-          this.audioManager.playComplete();
-          this.scene.start("SumLevelCompleteScene", { isLastLevel: false });
-        } else {
-          this.resetInput();
-          this.createLevelScene();
-        }
+      // Usar o índice que foi capturado ANTES do incremento
+      // Agora precisamos incrementar 1 para ver onde estamos após a resposta correta
+      const nextLevelIndex = levelIndexBeforeIncrement + 1;
+      
+      if (nextLevelIndex === 5) {
+        this.registry.set('sumCurrentLevel', nextLevelIndex);
+        this.scene.start('LevelCompleteScene', {
+          currentLevel: nextLevelIndex,
+          completionMessage: 'Ótimo! Agora vamos\ndigitar as respostas!'
+        });
+      } else if (nextLevelIndex >= 10) {
+        // Limpar todos os dados do registry ao finalizar o jogo
+        this.registry.remove('sumCurrentLevel');
+        this.registry.remove('sumUserId');
+        this.registry.remove('sumActivityId');
+        this.scene.start('EndScene');
       } else {
-        this.audioManager.playComplete();
-        this.showEndScene();
+        this.registry.set('sumCurrentLevel', nextLevelIndex);
+        this.startLevel();
       }
     });
   }
@@ -408,7 +422,7 @@ export default class MathGame extends PreloadScene {
   private resetInput() {
     this.inputText = "";
     if (this.answerText) {
-      this.answerText.setText(" ");
+      this.answerText.setText("");
     }
     this.updateCursorPosition();
   }
@@ -448,72 +462,6 @@ export default class MathGame extends PreloadScene {
       this.submitButton.destroy();
       this.submitButton = undefined;
     }
-  }
-
-  showEndScene() {
-    this.clearScene();
-
-    this.cameras.main.setBackgroundColor("#AED3E3");
-    this.children.removeAll();
-
-    this.createEndSceneContent();
-  }
-
-  private createEndSceneContent() {
-    this.add.image(400, 300, "backgroundStart").setScale(0.8);
-    this.add.image(380, 360, "sapoFala").setScale(0.9);
-
-    this.createEndTitle();
-    this.createEndMessage();
-    this.createStars();
-    this.createMoreGamesButton();
-  }
-
-  private createEndTitle() {
-    const titleBg = this.add.graphics();
-    titleBg.fillStyle(0x1e90ff, 0.8);
-    titleBg.fillRoundedRect(100, 60, 600, 80, 20);
-
-    this.add
-      .text(400, 100, "PARABÉNS! VOCÊ AJUDOU O SAPINHO!", {
-        fontSize: "30px",
-        fontFamily: "Arial",
-        color: "#fff",
-      })
-      .setOrigin(0.5);
-  }
-
-  private createEndMessage() {
-    this.add
-      .text(420, 265, "OBRIGADO!", {
-        fontSize: "30px",
-        color: "#000",
-      })
-      .setOrigin(0.5);
-  }
-
-  private createStars() {
-    const starPositions = [
-      { x: 200, y: 150, scale: 0.3 },
-      { x: 600, y: 150, scale: 0.3 },
-      { x: 150, y: 250, scale: 0.2 },
-      { x: 650, y: 250, scale: 0.2 },
-    ];
-
-    starPositions.forEach((star) => {
-      this.add
-        .image(star.x, star.y, "star")
-        .setScale(star.scale)
-        .setTint(0xffd700);
-    });
-  }
-
-  private createMoreGamesButton() {
-    const button = new StartButton(this, 500, 450, () => {
-      window.location.href = "/games";
-    });
-
-    button.setText("MAIS JOGOS");
   }
 
   private updateCursorPosition() {

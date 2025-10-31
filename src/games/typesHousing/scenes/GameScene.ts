@@ -1,7 +1,6 @@
 import { AudioManager } from "@/games/common/managers/AudioManager";
 import EffectManager from "@/games/common/managers/EffectManager";
 import { EndScene } from "@/games/common/scenes/EndScene";
-import { LevelCompletedScene } from "@/games/common/scenes/LevelCompletedScene";
 import { PreloadScene } from "@/games/common/scenes/PreloadScene";
 import { AnimationManager } from "@/games/sum/components/animations/AnimationManager";
 import Phaser from "phaser";
@@ -30,6 +29,7 @@ export class GameScene extends PreloadScene {
   private housingNameText!: Phaser.GameObjects.Text;
   private optionContainers: Phaser.GameObjects.Container[] = [];
   private nextButton!: Phaser.GameObjects.Container;
+  private dudaImage!: Phaser.GameObjects.Image;
 
   // Níveis introdutórios (0-6) - apenas explicação
   private housingIntroLevels: HousingIntroLevel[] = [
@@ -152,18 +152,6 @@ export class GameScene extends PreloadScene {
   }
 
   private registerStandardScenes(): void {
-    if (!this.scene.manager.getScene("LevelCompleteScene")) {
-      const housingLevelComplete = new LevelCompletedScene({
-        nextLevelScene: "GameScene",
-        menuScene: "StartScene",
-        backgroundPath: "/assets/housingGame/bg.svg",
-        backgroundKey: "housingBackground",
-      });
-
-      // Registrar a cena LevelCompleteScene
-      this.scene.add("LevelCompleteScene", housingLevelComplete);
-    }
-
     if (!this.scene.manager.getScene("EndScene")) {
       // EndScene personalizada para Housing
       const housingEndScene = new EndScene({
@@ -384,7 +372,7 @@ export class GameScene extends PreloadScene {
     if (introLevel.housingType !== "duda" && introLevel.housingType !== "fim") {
       const housingImage = this.add
         .image(500, 380, introLevel.housingType)
-        .setScale(0.7);
+        .setScale(0.3);
 
       const emptyContainer = this.add.container(0, 0);
       emptyContainer.add(housingImage);
@@ -395,6 +383,10 @@ export class GameScene extends PreloadScene {
   }
 
   private startQuestionLevel() {
+    if (this.dudaImage && this.dudaImage.scene) {
+      this.dudaImage.destroy();
+    }
+
     this.housingGameService.startQuestion();
 
     const questionIndex = this.currentLevel - this.housingIntroLevels.length;
@@ -413,7 +405,7 @@ export class GameScene extends PreloadScene {
       const container = this.optionContainers[index];
 
       const housingImage = this.add.image(0, 0, housing);
-      housingImage.setDisplaySize(280, 210);
+      housingImage.setDisplaySize(220, 210);
       container.add(housingImage);
 
       container.removeAllListeners("pointerdown");
@@ -451,7 +443,7 @@ export class GameScene extends PreloadScene {
   private createNextButton() {
     // Adicionar a Duda apenas uma vez ao criar o primeiro botão
     if (this.currentLevel === 0) {
-      this.add.image(130, 300, "duda").setScale(0.4);
+      this.dudaImage = this.add.image(130, 300, "duda").setScale(0.4);
     }
 
     const { width, height } = this.cameras.main;
@@ -516,16 +508,9 @@ export class GameScene extends PreloadScene {
   private goToNextLevel() {
     this.currentLevel++;
 
-    const totalIntroLevels = this.housingIntroLevels.length;
-
-    if (this.currentLevel === totalIntroLevels) {
-      this.registry.set("housingCurrentLevel", this.currentLevel);
-      this.registry.set("housingScore", this.score);
-      this.scene.start("LevelCompleteScene");
-    } else {
-      this.registry.set("housingCurrentLevel", this.currentLevel);
-      this.startLevel();
-    }
+    // Apenas salvar o progresso e continuar para o próximo nível
+    this.registry.set("housingCurrentLevel", this.currentLevel);
+    this.startLevel();
   }
 
   private animateContainersEntry() {

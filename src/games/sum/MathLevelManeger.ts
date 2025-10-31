@@ -3,13 +3,15 @@ import MathLevel from "./MathLevel";
 import type { SumGameSession, SumLevelData } from "./SumGameData";
 
 interface UserInteraction {
+  studentId: number;
   activityId: number;
-  // questionId: number;
+  questionId: number;
   answer: string;
-  isCorrect: boolean;
   timeSpent: number;
   attempts: number;
-  responseDate: number;
+  neededHint: boolean;
+  responseDate: string;
+  isCorrect: boolean;
 }
 
 function getCurrentUser(): { id: number | string; name?: string } {
@@ -17,8 +19,9 @@ function getCurrentUser(): { id: number | string; name?: string } {
     const userData = localStorage.getItem("user");
     if (userData) {
       const user = JSON.parse(userData);
+      const userId = user.codigo_usuario_id || user.codigo_usuario || user.id;
       return {
-        id: user.codigo_usuario_id || user.id || "usuario_publico",
+        id: userId ? parseInt(userId.toString()) : 10130001,
         name: user.nome || user.name,
       };
     }
@@ -28,13 +31,13 @@ function getCurrentUser(): { id: number | string; name?: string } {
       .find((row) => row.startsWith("authToken="));
 
     if (authToken) {
-      return { id: "usuario_logado" };
+      return { id: 10130001 };
     }
 
-    return { id: "usuario_publico" };
+    return { id: 10130001 };
   } catch (error) {
     console.warn("Erro ao obter usuário:", error);
-    return { id: "usuario_publico" };
+    return { id: 10130001 };
   }
 }
 
@@ -70,9 +73,12 @@ export class SumGameDataManager {
   private activityId: number = 2;
 
   constructor(userId: string, activityId?: number) {
+    // Garantir que sempre temos um userId válido
+    const validUserId = userId && userId !== 'default_user' ? userId : '10130001';
+    
     this.gameSession = {
       gameId: this.generateGameId(),
-      userId,
+      userId: validUserId,
       startTime: Date.now(),
       totalTime: 0,
       levelsData: [],
@@ -170,18 +176,20 @@ export class SumGameDataManager {
       isCorrect: isCorrect,
       wrongAnswers: levelData.wrongAnswers,
       timeSpent: Math.round(levelData.timeSpent),
-      userId: user.id,
+      userId: user.id || 10130001,
       userName: user.name || "Usuário Anônimo",
     };
 
     return {
+      studentId: typeof user.id === 'number' ? user.id : parseInt(user.id.toString()) || 10130001,
       activityId: this.activityId,
-      // questionId: levelData.level,
+      questionId: levelData.level,
       answer: JSON.stringify(levelResult),
-      isCorrect: isCorrect,
       timeSpent: Math.round(levelData.timeSpent * 1000),
       attempts: levelData.userAnswers.length,
-      responseDate: Date.now(),
+      neededHint: false,
+      responseDate: new Date().toISOString(),
+      isCorrect: isCorrect,
     };
   }
 
@@ -259,13 +267,15 @@ export class SumGameDataManager {
     };
 
     return {
+      studentId: parseInt(this.gameSession.userId.toString()),
       activityId: this.activityId,
-      // questionId: 1,
+      questionId: 1,
       answer: JSON.stringify(gameResult),
-      isCorrect: totalCorrectAnswers === this.gameSession.levelsCompleted,
       timeSpent: Math.round(totalTime * 1000),
       attempts: this.gameSession.totalWrongAnswers + 1,
-      responseDate: Date.now(),
+      neededHint: false,
+      responseDate: new Date().toISOString(),
+      isCorrect: totalCorrectAnswers === this.gameSession.levelsCompleted,
     };
   }
 
