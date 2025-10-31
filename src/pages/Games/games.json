@@ -12,7 +12,7 @@
   {
     "title": "Jogo do Espaço",
     "gameIdUrl": "space",
-    "image": "/assets/spaceGame/thumbnail.png"
+    "image": "/assets/spaceGame/background.png"
   },
   {
     "title": "Jogo da Memoria",
@@ -37,11 +37,11 @@
   {
     "title": "Sequência de Números",
     "gameIdUrl": "numbers",
-    "image": "/assets/numbersGame/startScreen.png"
+    "image": "/assets/numbersGame/background.png"
   },
   {
     "title": "Sequência de Vogais",
-    "gameIdUrl": "vowelssequence",
+    "gameIdUrl": "vowels-sequence",
     "image": "/assets/vowelsSequenceGame/images/backgroundMain.png"
   },
   {

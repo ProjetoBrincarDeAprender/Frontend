@@ -557,23 +557,17 @@ export class GameScene extends Phaser.Scene {
         const totalQuestionLevels = ProfessionsGameData.questionLevels.length;
         const totalLevels = ProfessionsGameData.getTotalLevels();
         const isLastLevel = this.currentLevel + 1 >= totalLevels;
-        const isEndOfIntroLevels = this.currentLevel + 1 === totalIntroLevels;
         const isEndOfQuestionLevels = this.currentLevel + 1 === totalIntroLevels + totalQuestionLevels;
         
         if (isLastLevel) {
             this.registry.remove('professionsCurrentLevel');
             this.registry.remove('professionsScore');
             this.scene.start('EndScene');
-        } else if (isEndOfIntroLevels || isEndOfQuestionLevels) {
+        } else if (isEndOfQuestionLevels) {
             this.registry.set('professionsCurrentLevel', this.currentLevel + 1);
             this.registry.set('professionsScore', this.score);
             
-            let completionMessage = '';
-            if (isEndOfIntroLevels) {
-                completionMessage = 'Você aprendeu sobre\ntodas as profissões!';
-            } else if (isEndOfQuestionLevels) {
-                completionMessage = 'Ótimo! Agora vamos\npraticar mais!';
-            }
+            const completionMessage = 'Ótimo! Agora vamos\npraticar mais!';
             
             this.scene.start('LevelCompleteScene', {
                 currentLevel: this.currentLevel + 1,
