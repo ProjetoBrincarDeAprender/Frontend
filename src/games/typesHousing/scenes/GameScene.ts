@@ -372,7 +372,7 @@ export class GameScene extends PreloadScene {
     if (introLevel.housingType !== "duda" && introLevel.housingType !== "fim") {
       const housingImage = this.add
         .image(500, 380, introLevel.housingType)
-        .setScale(0.7);
+        .setScale(0.35);
 
       const emptyContainer = this.add.container(0, 0);
       emptyContainer.add(housingImage);
@@ -405,7 +405,7 @@ export class GameScene extends PreloadScene {
       const container = this.optionContainers[index];
 
       const housingImage = this.add.image(0, 0, housing);
-      housingImage.setDisplaySize(280, 210);
+      housingImage.setDisplaySize(220, 210);
       container.add(housingImage);
 
       container.removeAllListeners("pointerdown");
