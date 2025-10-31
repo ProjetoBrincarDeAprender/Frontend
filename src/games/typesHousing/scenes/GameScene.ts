@@ -372,7 +372,7 @@ export class GameScene extends PreloadScene {
     if (introLevel.housingType !== "duda" && introLevel.housingType !== "fim") {
       const housingImage = this.add
         .image(500, 380, introLevel.housingType)
-        .setScale(0.35);
+        .setScale(0.3);
 
       const emptyContainer = this.add.container(0, 0);
       emptyContainer.add(housingImage);
