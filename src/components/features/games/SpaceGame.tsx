@@ -5,6 +5,7 @@ import { EndScene } from "@/games/common/scenes/EndScene";
 import { LevelCompletedScene } from "@/games/common/scenes/LevelCompletedScene";
 import { StartScene } from "@/games/common/scenes/StartScene";
 import { EventBus } from "@/games/common/utils/EventBus";
+import { SpaceHistoryScene } from "@/games/space/scenes/SpaceHistoryScene";
 import { SpaceGameScene } from "@/games/space/scenes/SpaceLevelScene";
 import { useUser } from "@/hooks/User/useUser";
 import Phaser from "phaser";
@@ -32,13 +33,14 @@ export const SpaceGame = ({ activityId = 3 }: SpaceGameProps) => {
       height: 600,
       scene: [
         StartScene.create(
-          "SpaceGameScene",
+          "SpaceHistoryScene",
           "/assets/spaceGame/background.png",
           "background",
           "VAMOS JOGAR",
           "/assets/common/trophy.png",
           "trophy",
         ),
+        SpaceHistoryScene,
         SpaceGameScene,
         LevelCompletedScene.create(
           "SpaceGameScene",
