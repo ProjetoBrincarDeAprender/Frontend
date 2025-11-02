@@ -30,6 +30,7 @@ export class GameScene extends PreloadScene {
   private optionContainers: Phaser.GameObjects.Container[] = [];
   private nextButton!: Phaser.GameObjects.Container;
   private dudaImage!: Phaser.GameObjects.Image;
+  private isTransitioning: boolean = false;
 
   // Níveis introdutórios (0-6) - apenas explicação
   private housingIntroLevels: HousingIntroLevel[] = [
@@ -253,6 +254,9 @@ export class GameScene extends PreloadScene {
       this.scene.start("EndScene");
       return;
     }
+    
+    this.isTransitioning = false;
+    
     this.optionContainers.forEach((container) => {
       if (container && container.scene) {
         container.removeAllListeners();
@@ -433,6 +437,7 @@ export class GameScene extends PreloadScene {
       });
 
       container.on("pointerdown", () => {
+        if (this.isTransitioning) return;
         this.selectOption(housing, question.correctHousing, container);
       });
     });
@@ -493,6 +498,7 @@ export class GameScene extends PreloadScene {
     });
 
     this.nextButton.on("pointerdown", () => {
+      if (this.isTransitioning) return;
       this.goToNextLevel();
     });
 
@@ -506,6 +512,7 @@ export class GameScene extends PreloadScene {
   }
 
   private goToNextLevel() {
+    this.isTransitioning = true;
     this.currentLevel++;
 
     // Apenas salvar o progresso e continuar para o próximo nível
@@ -535,6 +542,9 @@ export class GameScene extends PreloadScene {
     correctHousing: string,
     selectedContainer: Phaser.GameObjects.Container,
   ) {
+    if (this.isTransitioning) return;
+    
+    this.isTransitioning = true;
     const isCorrect = selectedHousing === correctHousing;
 
     this.housingGameService.incrementAttempts();
@@ -609,7 +619,8 @@ export class GameScene extends PreloadScene {
 
     this.sound.play("wrong-sound");
 
-    this.time.delayedCall(1000, () => {
+    this.time.delayedCall(3000, () => {
+      this.isTransitioning = false;
       this.optionContainers.forEach((c) => {
         if (c && c.scene) {
           const hitArea: Phaser.Geom.Rectangle | undefined =
