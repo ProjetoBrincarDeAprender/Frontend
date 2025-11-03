@@ -86,7 +86,7 @@ export default class SpaceLogic {
 
     this.questionText = this.scene.add
       .text(this.scene.scale.width / 2, 120, currentQuestion.getQuestion(), {
-        fontFamily: "Comic Sans MS, Arial, sans-serif",
+        fontFamily: "Arial Black",
         fontSize: "32px",
         color: "#FFFFFF",
         fontStyle: "bold",
@@ -158,7 +158,7 @@ export default class SpaceLogic {
         if (showNames) {
           planetText = this.scene.add
             .text(x, y + 45, option.toUpperCase(), {
-              fontFamily: "Comic Sans MS, Arial, sans-serif",
+              fontFamily: "Arial Black",
               fontSize: "24px",
               color: "#FFFFFF",
               fontStyle: "bold",
@@ -384,7 +384,7 @@ export default class SpaceLogic {
   ): void {
     const feedback = this.scene.add
       .text(this.scene.scale.width / 2, this.scene.scale.height / 2, text, {
-        fontFamily: "Comic Sans MS, Arial, sans-serif",
+        fontFamily: "Arial Black",
         fontSize: "28px",
         color: "#FFFFFF",
         fontStyle: "bold",

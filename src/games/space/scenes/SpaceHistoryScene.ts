@@ -166,7 +166,7 @@ export class SpaceHistoryScene extends Phaser.Scene {
       .text(0, 0, text, {
         fontSize: "24px",
         color: "#000000",
-        fontFamily: "Arial, sans-serif",
+        fontFamily: "Arial Black",
         align: "center",
         wordWrap: { width: bubbleWidth - 40 },
         padding: { left: 20, right: 20, top: 10, bottom: 10 },
@@ -375,7 +375,7 @@ export class SpaceHistoryScene extends Phaser.Scene {
       .text(this.scale.width - 10, this.scale.height - 10, "PULAR", {
         fontSize: "8px",
         color: "#ffffff",
-        fontFamily: "Arial, sans-serif",
+        fontFamily: "Arial Black",
       })
       .setOrigin(0.5);
 
