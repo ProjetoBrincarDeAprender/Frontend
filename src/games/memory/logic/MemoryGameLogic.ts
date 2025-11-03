@@ -21,14 +21,14 @@ export class MemoryGameLogic {
   private activityId?: number;
 
   private textColors = [
-    "#FF0000",
-    "#00FF00",
-    "#0000FF",
-    "#FFFF00",
-    "#FF00FF",
-    "#00FFFF",
-    "#FFA500",
-    "#4400FF",
+    "#CC0000",
+    "#00CC00",
+    "#0000CC",
+    "#cccc00",
+    "#EE00CC",
+    "#00CCCC",
+    "#CC7300",
+    "#4400CC",
   ];
 
   constructor(scene: Phaser.Scene, userId?: string, activityId?: number) {
@@ -205,7 +205,7 @@ export class MemoryGameLogic {
       const x = startX + col * (cardWidth + horizontalSpacing);
       const y = startY + row * (cardHeight + verticalSpacing);
       const cardBackground = this.scene.add
-        .rectangle(0, 0, 100, 150, 0xffffff)
+        .rectangle(0, 0, 100, 150, 0xddeeff)
         .setStrokeStyle(2, 0x000000);
 
       let cardContent: Phaser.GameObjects.GameObject | null = null;
