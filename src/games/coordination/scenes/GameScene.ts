@@ -8,6 +8,8 @@ export default class CoordinationGameScene extends PreloadScene {
   private currentLevelIndex = 0;
   private placedCount = 0;
   private dragTrail: Phaser.GameObjects.Graphics | null = null;
+  // Camada apenas para os elementos do nível atual (não inclui fundo nem botão de áudio)
+  private levelContainer?: Phaser.GameObjects.Container;
 
   constructor() {
     super({ key: "CoordinationGameScene" });
@@ -345,12 +347,17 @@ export default class CoordinationGameScene extends PreloadScene {
   }
 
   private startLevel() {
-    this.children.removeAll();
-    this.addBackground();
+    // Limpa apenas os elementos do nível anterior, preservando HUD (ex.: botão de áudio)
+    if (this.levelContainer) {
+      this.levelContainer.destroy(true);
+    }
+    this.levelContainer = this.add.container(0, 0);
 
-    // Criar trail para efeito de arrasto
+    // Criar trail para efeito de arrasto (fica dentro do container do nível)
     this.dragTrail = this.add.graphics();
-    this.dragTrail.setDepth(999);
+    // Mantém a trilha acima do fundo e abaixo das peças
+    this.dragTrail.setDepth(12);
+    this.levelContainer.add(this.dragTrail);
 
     // permitir que drop zones recebam eventos de 'drag over'
     this.input.dragDistanceThreshold = 0;
@@ -368,6 +375,7 @@ export default class CoordinationGameScene extends PreloadScene {
     titleBg.fillRoundedRect(400 - 370, 30, 740, 60, 30);
     titleBg.lineStyle(4, 0xffffff, 0.8);
     titleBg.strokeRoundedRect(400 - 370, 30, 740, 60, 30);
+    this.levelContainer.add(titleBg);
 
     const titleText = this.add
       .text(400, 60, title, {
@@ -378,6 +386,7 @@ export default class CoordinationGameScene extends PreloadScene {
         strokeThickness: 4,
       })
       .setOrigin(0.5);
+    this.levelContainer.add(titleText);
 
     // Animação do título
     this.tweens.add({
@@ -394,10 +403,12 @@ export default class CoordinationGameScene extends PreloadScene {
       const starLeft = this.add.image(50 + i * 30, 60, "star-sparkle");
       starLeft.setScale(0.25);
       starLeft.setTint(0xffd700);
+      this.levelContainer!.add(starLeft);
 
       const starRight = this.add.image(750 - i * 30, 60, "star-sparkle");
       starRight.setScale(0.25);
       starRight.setTint(0xffd700);
+      this.levelContainer!.add(starRight);
 
       this.tweens.add({
         targets: [starLeft, starRight],
@@ -437,15 +448,22 @@ export default class CoordinationGameScene extends PreloadScene {
       const y = startY + i * spacingY;
       const shadow = this.createShapeGraphic(rightX, y, shadowSpec, true, r);
       shadow.setName(`${shadowSpec.type}-target-${i}`);
+      // Sombras sempre abaixo das peças
+      shadow.setDepth(10);
+      this.levelContainer!.add(shadow);
       // Área alvo para hit test
       const targetZone = this.add
         .zone(rightX, y, hitSize, hitSize)
         .setRectangleDropZone(hitSize, hitSize);
       targetZone.setName(`${shadowSpec.type}-zone-${i}`);
+      this.levelContainer!.add(targetZone);
 
       const pieceSpec = shapes[pieceOrder[i]];
       const piece = this.createShapeGraphic(leftX, y, pieceSpec, false, r);
       piece.setName(`${pieceSpec.type}-piece-${i}`);
+      // Peças sempre acima das sombras
+      piece.setDepth(20);
+      this.levelContainer!.add(piece);
       // Definir hit area explícita para permitir eventos em Graphics
       const hitArea = new Phaser.Geom.Rectangle(
         -hitSize / 2,
@@ -467,7 +485,9 @@ export default class CoordinationGameScene extends PreloadScene {
       piece.on("pointerout", () => this.input.setDefaultCursor("default"));
 
       piece.on("dragstart", () => {
+        // Garante que a peça fique no topo durante o arrasto
         piece.setDepth(1000);
+        this.levelContainer?.bringToTop(piece);
         piece.setAlpha(0.9);
         // reset flags por início de novo arrasto
         piece.setData("returned", false);
@@ -496,7 +516,8 @@ export default class CoordinationGameScene extends PreloadScene {
 
       piece.on("dragend", () => {
         piece.setAlpha(1);
-        piece.setDepth(1);
+        // Mantém acima das sombras após soltar
+        piece.setDepth(20);
 
         // Limpar trilha
         if (this.dragTrail) {
