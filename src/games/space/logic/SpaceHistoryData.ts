@@ -8,7 +8,7 @@ export const HistoryData: {
   },
   {
     image: null,
-    text: "Mas antes vamos conhecer alguns planetas e astros e suas características",
+    text: "Mas antes vamos conhecer alguns planetas, astros e suas características",
   },
   {
     image: { path: "/assets/spaceGame/history/viaLactea.png", scale: 0.5 },
