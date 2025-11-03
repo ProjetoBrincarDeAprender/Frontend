@@ -21,14 +21,14 @@ export class MemoryGameLogic {
   private activityId?: number;
 
   private textColors = [
-    "#FF0000",
-    "#00FF00",
-    "#0000FF",
-    "#FFFF00",
-    "#FF00FF",
-    "#00FFFF",
-    "#FFA500",
-    "#4400FF",
+    "#CC0000",
+    "#00CC00",
+    "#0000CC",
+    "#cccc00",
+    "#EE00CC",
+    "#00CCCC",
+    "#CC7300",
+    "#4400CC",
   ];
 
   constructor(scene: Phaser.Scene, userId?: string, activityId?: number) {
@@ -205,7 +205,7 @@ export class MemoryGameLogic {
       const x = startX + col * (cardWidth + horizontalSpacing);
       const y = startY + row * (cardHeight + verticalSpacing);
       const cardBackground = this.scene.add
-        .rectangle(0, 0, 100, 150, 0xffffff)
+        .rectangle(0, 0, 100, 150, 0xddeeff)
         .setStrokeStyle(2, 0x000000);
 
       let cardContent: Phaser.GameObjects.GameObject | null = null;
@@ -213,7 +213,7 @@ export class MemoryGameLogic {
       if (card.type === "image" && card.content) {
         cardContent = this.scene.add
           .image(0, 0, card.content)
-          .setDisplaySize(80, 80)
+          .setDisplaySize(110, 110)
           .setVisible(false);
       } else if (card.type === "text") {
         let textColor = "#000000";
@@ -226,9 +226,9 @@ export class MemoryGameLogic {
 
         cardContent = this.scene.add
           .text(0, 0, "", {
-            fontSize: "48px",
+            fontFamily: "Architects Daughter",
+            fontSize: "64px",
             color: textColor,
-            fontStyle: "bold",
           })
           .setOrigin(0.5, 0.5);
       }
@@ -554,7 +554,7 @@ export class MemoryGameLogic {
     this.feedbackMessage = this.scene.add
       .text(this.scene.scale.width / 2, 100, message, {
         fontSize: "28px",
-        fontFamily: "Arial, sans-serif",
+        fontFamily: "Arial Black",
         fontStyle: "bold",
         color: color,
         padding: { left: 20, right: 20, top: 10, bottom: 10 },
