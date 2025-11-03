@@ -24,6 +24,7 @@ const NumbersGame: React.FC = () => {
           "clickButtonGameScene",
           "/assets/numbersGame/background.png",
           "NÚMEROS",
+          "SEQUENCIA NUMÉRICA",
         ),
         new ClickButtonGameScene("/assets/numbersGame/gameData/mainData.JSON"),
         EndScene.create(

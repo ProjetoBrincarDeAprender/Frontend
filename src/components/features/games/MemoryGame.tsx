@@ -35,7 +35,7 @@ export const MemoryGame = ({ activityId = 4 }: MemoryGameProps) => {
           "MemoryGameScene",
           "/assets/memoryGame/fundo.png",
           "background",
-          "Jogo da Memoria",
+          "JOGO DA MEMÓRIA",
           "/assets/common/dudaSentada.png",
           "mascot",
         ),
