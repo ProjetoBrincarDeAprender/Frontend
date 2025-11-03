@@ -38,13 +38,13 @@ export class AudioManager {
   }
 
   renderMuteButton() {
-    const soundButton = this.scene.add.container(10, 10);
+    const soundButton = this.scene.add.container(20, 20);
 
     const createButton = () => {
       const btnImage = this.scene.add
         .image(0, 0, this.scene.sound.mute ? "audioOff" : "audioOn")
         .setOrigin(0.5)
-        .setScale(0.7);
+        .setScale(1.7);
 
       if (btnImage.postFX) {
         btnImage.postFX.addColorMatrix().negative();
@@ -54,9 +54,7 @@ export class AudioManager {
       soundButton.setSize(btnImage.width, btnImage.height);
 
       soundButton.on("pointerdown", () => {
-        console.log("Before: " + this.scene.sound.mute);
         this.toggleSounds();
-        console.log("After: " + this.scene.sound.mute);
         btnImage.setTexture(this.scene.sound.mute ? "audioOff" : "audioOn");
       });
 
