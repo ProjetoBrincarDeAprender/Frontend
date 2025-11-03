@@ -29,7 +29,9 @@ export class GameScene extends PreloadScene {
   private housingNameText!: Phaser.GameObjects.Text;
   private optionContainers: Phaser.GameObjects.Container[] = [];
   private nextButton!: Phaser.GameObjects.Container;
+  private previousButton!: Phaser.GameObjects.Container;
   private dudaImage!: Phaser.GameObjects.Image;
+  private isTransitioning: boolean = false;
 
   // Níveis introdutórios (0-6) - apenas explicação
   private housingIntroLevels: HousingIntroLevel[] = [
@@ -253,6 +255,9 @@ export class GameScene extends PreloadScene {
       this.scene.start("EndScene");
       return;
     }
+    
+    this.isTransitioning = false;
+    
     this.optionContainers.forEach((container) => {
       if (container && container.scene) {
         container.removeAllListeners();
@@ -264,6 +269,11 @@ export class GameScene extends PreloadScene {
     if (this.nextButton && this.nextButton.scene) {
       this.nextButton.removeAllListeners();
       this.nextButton.destroy();
+    }
+
+    if (this.previousButton && this.previousButton.scene) {
+      this.previousButton.removeAllListeners();
+      this.previousButton.destroy();
     }
 
     if (this.currentLevel < totalIntroLevels) {
@@ -371,11 +381,22 @@ export class GameScene extends PreloadScene {
 
     if (introLevel.housingType !== "duda" && introLevel.housingType !== "fim") {
       const housingImage = this.add
-        .image(500, 380, introLevel.housingType)
+        .image(500, 370, introLevel.housingType)
         .setScale(0.3);
 
+      // Adicionar legenda em laranja abaixo da imagem
+      const housingLegend = this.add
+        .text(500, 490, introLevel.housingName.toUpperCase(), {
+          fontSize: "32px",
+          color: "#ff4500",
+          fontFamily: "Arial Black",
+          fontStyle: "bold",
+          align: "center",
+        })
+        .setOrigin(0.5);
+
       const emptyContainer = this.add.container(0, 0);
-      emptyContainer.add(housingImage);
+      emptyContainer.add([housingImage, housingLegend]);
       this.optionContainers.push(emptyContainer);
     }
 
@@ -433,6 +454,7 @@ export class GameScene extends PreloadScene {
       });
 
       container.on("pointerdown", () => {
+        if (this.isTransitioning) return;
         this.selectOption(housing, question.correctHousing, container);
       });
     });
@@ -441,25 +463,25 @@ export class GameScene extends PreloadScene {
   }
 
   private createNextButton() {
-    // Adicionar a Duda apenas uma vez ao criar o primeiro botão
-    if (this.currentLevel === 0) {
+    if (!this.dudaImage || !this.dudaImage.scene) {
       this.dudaImage = this.add.image(130, 300, "duda").setScale(0.4);
     }
+    this.dudaImage.setVisible(true);
 
     const { width, height } = this.cameras.main;
-    const buttonX = width / 2;
+    
+    const nextButtonX = width / 2 + 100;
     const buttonY = height - 60;
 
-    this.nextButton = this.add.container(buttonX, buttonY);
+    this.nextButton = this.add.container(nextButtonX, buttonY);
 
-    const buttonBg = this.add.graphics();
-    buttonBg.fillStyle(0x28a745); // Verde
-    buttonBg.fillRoundedRect(-80, -25, 160, 50, 25);
-    buttonBg.lineStyle(3, 0xffffff);
-    buttonBg.strokeRoundedRect(-80, -25, 160, 50, 25);
+    const nextButtonBg = this.add.graphics();
+    nextButtonBg.fillStyle(0x28a745); // Verde
+    nextButtonBg.fillRoundedRect(-80, -25, 160, 50, 25);
+    nextButtonBg.lineStyle(3, 0xffffff);
+    nextButtonBg.strokeRoundedRect(-80, -25, 160, 50, 25);
 
-    // Texto do botão
-    const buttonText = this.add
+    const nextButtonText = this.add
       .text(0, 0, "PRÓXIMO", {
         fontSize: "24px",
         color: "#FFFFFF",
@@ -467,13 +489,12 @@ export class GameScene extends PreloadScene {
       })
       .setOrigin(0.5);
 
-    this.nextButton.add([buttonBg, buttonText]);
+    this.nextButton.add([nextButtonBg, nextButtonText]);
     this.nextButton.setSize(160, 50);
     this.nextButton.setInteractive({
       useHandCursor: true,
     });
 
-    // Eventos do botão
     this.nextButton.on("pointerover", () => {
       this.tweens.add({
         targets: this.nextButton,
@@ -493,6 +514,7 @@ export class GameScene extends PreloadScene {
     });
 
     this.nextButton.on("pointerdown", () => {
+      if (this.isTransitioning) return;
       this.goToNextLevel();
     });
 
@@ -501,16 +523,86 @@ export class GameScene extends PreloadScene {
       targets: this.nextButton,
       alpha: 1,
       duration: 500,
-      delay: 9000, //delay do botao
+      delay: 9000,
     });
+
+    if (this.currentLevel > 0) {
+      const prevButtonX = width / 2 - 100;
+
+      this.previousButton = this.add.container(prevButtonX, buttonY);
+
+      const prevButtonBg = this.add.graphics();
+      prevButtonBg.fillStyle(0xffa500); // Laranja
+      prevButtonBg.fillRoundedRect(-80, -25, 160, 50, 25);
+      prevButtonBg.lineStyle(3, 0xffffff);
+      prevButtonBg.strokeRoundedRect(-80, -25, 160, 50, 25);
+
+      const prevButtonText = this.add
+        .text(0, 0, "ANTERIOR", {
+          fontSize: "24px",
+          color: "#FFFFFF",
+          fontFamily: "Arial Black",
+        })
+        .setOrigin(0.5);
+
+      this.previousButton.add([prevButtonBg, prevButtonText]);
+      this.previousButton.setSize(160, 50);
+      this.previousButton.setInteractive({
+        useHandCursor: true,
+      });
+
+      // Eventos do botão ANTERIOR
+      this.previousButton.on("pointerover", () => {
+        this.tweens.add({
+          targets: this.previousButton,
+          scaleX: 1.1,
+          scaleY: 1.1,
+          duration: 200,
+        });
+      });
+
+      this.previousButton.on("pointerout", () => {
+        this.tweens.add({
+          targets: this.previousButton,
+          scaleX: 1,
+          scaleY: 1,
+          duration: 200,
+        });
+      });
+
+      this.previousButton.on("pointerdown", () => {
+        if (this.isTransitioning) return;
+        this.goToPreviousLevel();
+      });
+
+      this.previousButton.setAlpha(0);
+      this.tweens.add({
+        targets: this.previousButton,
+        alpha: 1,
+        duration: 500,
+        delay: 9000,
+      });
+    }
   }
 
   private goToNextLevel() {
+    this.isTransitioning = true;
     this.currentLevel++;
 
     // Apenas salvar o progresso e continuar para o próximo nível
     this.registry.set("housingCurrentLevel", this.currentLevel);
     this.startLevel();
+  }
+
+  private goToPreviousLevel() {
+    if (this.currentLevel > 0) {
+      this.isTransitioning = true;
+      this.currentLevel--;
+
+      // Salvar o progresso e voltar para o nível anterior
+      this.registry.set("housingCurrentLevel", this.currentLevel);
+      this.startLevel();
+    }
   }
 
   private animateContainersEntry() {
@@ -535,6 +627,9 @@ export class GameScene extends PreloadScene {
     correctHousing: string,
     selectedContainer: Phaser.GameObjects.Container,
   ) {
+    if (this.isTransitioning) return;
+    
+    this.isTransitioning = true;
     const isCorrect = selectedHousing === correctHousing;
 
     this.housingGameService.incrementAttempts();
@@ -609,7 +704,8 @@ export class GameScene extends PreloadScene {
 
     this.sound.play("wrong-sound");
 
-    this.time.delayedCall(1000, () => {
+    this.time.delayedCall(3000, () => {
+      this.isTransitioning = false;
       this.optionContainers.forEach((c) => {
         if (c && c.scene) {
           const hitArea: Phaser.Geom.Rectangle | undefined =

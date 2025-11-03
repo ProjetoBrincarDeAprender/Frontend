@@ -27,12 +27,24 @@ export class GameScene extends Phaser.Scene {
   private keyboardHandler?: (event: KeyboardEvent) => void;
   private cursor?: Phaser.GameObjects.Rectangle;
   private cursorTween?: Phaser.Tweens.Tween;
+  private isTransitioning: boolean = false;
 
   constructor() {
     super({ key: 'GameScene' });
   }
 
   init() {
+    this.inputText = "";
+    this.correctAnswer = 0;
+    this.currentLevel = null;
+    this.choiceButtons = [];
+    this.submitButton = undefined;
+    this.keyboardHandler = undefined;
+    this.cursor = undefined;
+    this.cursorTween = undefined;
+    this.answerText = undefined;
+    this.isTransitioning = false;
+    
     this.userId = this.registry.get('sumUserId') || '10130001';
     this.activityId = this.registry.get('sumActivityId') || 1;
     
@@ -77,7 +89,10 @@ export class GameScene extends Phaser.Scene {
 
   preload() {
     this.loadAssets();
-    this.audioManager = new AudioManager(this);
+    
+    if (!this.audioManager) {
+      this.audioManager = new AudioManager(this);
+    }
     this.audioManager.preloadSounds();
   }
 
@@ -98,6 +113,9 @@ export class GameScene extends Phaser.Scene {
   }
 
   create() {
+    // Garantir que começamos com estado limpo
+    this.clearScene();
+    
     this.initializeManagers();
     this.initializeLogic();
     this.setupBackground();
@@ -105,7 +123,9 @@ export class GameScene extends Phaser.Scene {
   }
 
   private initializeManagers() {
-    this.audioManager.createSounds();
+    if (this.audioManager) {
+      this.audioManager.createSounds();
+    }
     this.animationManager = new AnimationManager(this);
     this.numberDisplay = new NumberDisplay(this);
   }
@@ -133,6 +153,17 @@ export class GameScene extends Phaser.Scene {
       );
     }
 
+    for (let i = 0; i < 5; i++) {
+      levels.push(
+        new MathLevel(
+          Phaser.Math.Between(1, 5),
+          Phaser.Math.Between(1, 5),
+          LevelType.THREE_NUMBERS,
+          Phaser.Math.Between(1, 5)
+        ),
+      );
+    }
+
     // Pegar o nível salvo do registry, se existir
     const savedLevel = this.registry.get('sumCurrentLevel') || 0;
     this.logic = new MathLogic(this, levels, this.userId, this.activityId, savedLevel);
@@ -150,6 +181,12 @@ export class GameScene extends Phaser.Scene {
 
   private startLevel() {
     this.clearScene();
+    this.isTransitioning = false;
+    
+    if (!this.logic) {
+      console.error("Logic não foi inicializado");
+      return;
+    }
     
     this.currentLevel = this.logic.getCurrentLevel();
     if (!this.currentLevel) {
@@ -162,10 +199,17 @@ export class GameScene extends Phaser.Scene {
 
     this.createLevelBackground();
     this.createEquationDisplay(this.currentLevel);
-    this.numberDisplay.display([
-      this.currentLevel.number1,
-      this.currentLevel.number2,
-    ]);
+    
+    if (this.numberDisplay) {
+      const numbersToDisplay = [this.currentLevel.number1, this.currentLevel.number2];
+      
+      const number3 = this.currentLevel.getNumber3();
+      if (this.currentLevel.isThreeNumbers() && number3 !== undefined) {
+        numbersToDisplay.push(number3);
+      }
+      
+      this.numberDisplay.display(numbersToDisplay);
+    }
 
     if (this.currentLevel.isMultipleChoice()) {
       this.createMultipleChoiceInterface(this.currentLevel);
@@ -180,11 +224,20 @@ export class GameScene extends Phaser.Scene {
   }
 
   private createEquationDisplay(level: MathLevel) {
-    const equationString = `${level.getNumber1()} + ${level.getNumber2()} = ?`;
+    let equationString: string;
+    let fontSize: string;
+    
+    if (level.isThreeNumbers() && level.getNumber3() !== undefined) {
+      equationString = `${level.getNumber1()} + ${level.getNumber2()} + ${level.getNumber3()} = ?`;
+      fontSize = "36px";
+    } else {
+      equationString = `${level.getNumber1()} + ${level.getNumber2()} = ?`;
+      fontSize = "46px";
+    }
 
     this.equationText = this.add
       .text(430, 250, equationString, {
-        fontSize: "46px",
+        fontSize: fontSize,
         color: "#F67800",
         fontFamily: "Arial Black"
       })
@@ -197,7 +250,16 @@ export class GameScene extends Phaser.Scene {
       return;
     }
 
-    const equationString = `${this.currentLevel.getNumber1()} + ${this.currentLevel.getNumber2()} = ${this.correctAnswer}`;
+    let equationString: string;
+    let fontSize: string;
+    
+    if (this.currentLevel.isThreeNumbers() && this.currentLevel.getNumber3() !== undefined) {
+      equationString = `${this.currentLevel.getNumber1()} + ${this.currentLevel.getNumber2()} + ${this.currentLevel.getNumber3()} = ${this.correctAnswer}`;
+      fontSize = "36px";
+    } else {
+      equationString = `${this.currentLevel.getNumber1()} + ${this.currentLevel.getNumber2()} = ${this.correctAnswer}`;
+      fontSize = "46px"; 
+    }
 
     this.tweens.add({
       targets: this.equationText,
@@ -208,6 +270,7 @@ export class GameScene extends Phaser.Scene {
       yoyo: true,
       onStart: () => {
         this.equationText.setTint(0x00ff00);
+        this.equationText.setFontSize(fontSize);
       },
       onYoyo: () => {
         this.equationText.setText(equationString);
@@ -249,6 +312,7 @@ export class GameScene extends Phaser.Scene {
       this.choiceButtons.push(button);
 
       button.on("pointerdown", () => {
+        if (this.isTransitioning) return;
         this.handleMultipleChoiceAnswer(choice, button);
       });
     });
@@ -313,10 +377,14 @@ export class GameScene extends Phaser.Scene {
     }
 
     this.keyboardHandler = (event: KeyboardEvent) => {
+      if (this.isTransitioning) return;
+      
       if (event.key >= "0" && event.key <= "9") {
-        this.inputText += event.key;
-        this.answerText!.setText(this.inputText);
-        this.updateCursorPosition();
+        if (this.inputText.length < 2) {
+          this.inputText += event.key;
+          this.answerText!.setText(this.inputText);
+          this.updateCursorPosition();
+        }
       } else if (event.key === "Backspace") {
         this.inputText = this.inputText.slice(0, -1);
         this.answerText!.setText(this.inputText);
@@ -330,8 +398,13 @@ export class GameScene extends Phaser.Scene {
   }
 
   handleMultipleChoiceAnswer(selectedAnswer: number, clickedButton: Button) {
+    if (this.isTransitioning) return;
+    
+    this.isTransitioning = true;
     const currentIndex = this.logic.getCurrentLevelIndex();
     const result = this.logic.checkAnswer(selectedAnswer);
+
+    this.choiceButtons.forEach(button => button.disableInteractive());
 
     if (result.correct) {
       this.audioManager.playCorrect();
@@ -346,18 +419,34 @@ export class GameScene extends Phaser.Scene {
     } else {
       this.audioManager.playIncorrect();
       this.animationManager.incorrectAnswerEffect(clickedButton);
+      
+      this.time.delayedCall(2000, () => {
+        this.isTransitioning = false;
+        this.choiceButtons.forEach(button => {
+          if (button && button.scene) {
+            button.setInteractive();
+          }
+        });
+      });
     }
   }
 
   handleAnswer() {
+    if (this.isTransitioning) return;
+    
     const userAnswer = parseInt(this.inputText);
     
     if (isNaN(userAnswer)) {
       return;
     }
     
+    this.isTransitioning = true;
     const currentIndex = this.logic.getCurrentLevelIndex();
     const result = this.logic.checkAnswer(userAnswer);
+
+    if (this.submitButton) {
+      this.submitButton.disableInteractive();
+    }
 
     if (result.correct) {
       this.audioManager.playCorrect2();
@@ -370,8 +459,12 @@ export class GameScene extends Phaser.Scene {
       this.audioManager.playIncorrect();
       this.animationManager.incorrectAnswerEffect(this.answerText!);
 
-      this.time.delayedCall(1000, () => {
+      this.time.delayedCall(2000, () => {
+        this.isTransitioning = false;
         this.resetInput();
+        if (this.submitButton && this.submitButton.scene) {
+          this.submitButton.setInteractive();
+        }
       });
     }
   }
@@ -395,9 +488,8 @@ export class GameScene extends Phaser.Scene {
   }
 
   private proceedToNextLevel(levelIndexBeforeIncrement: number) {
+    this.isTransitioning = true;
     this.time.delayedCall(3000, () => {
-      // Usar o índice que foi capturado ANTES do incremento
-      // Agora precisamos incrementar 1 para ver onde estamos após a resposta correta
       const nextLevelIndex = levelIndexBeforeIncrement + 1;
       
       if (nextLevelIndex === 5) {
@@ -406,8 +498,13 @@ export class GameScene extends Phaser.Scene {
           currentLevel: nextLevelIndex,
           completionMessage: 'Ótimo! Agora vamos\ndigitar as respostas!'
         });
-      } else if (nextLevelIndex >= 10) {
-        // Limpar todos os dados do registry ao finalizar o jogo
+      } else if (nextLevelIndex === 10) {
+        this.registry.set('sumCurrentLevel', nextLevelIndex);
+        this.scene.start('LevelCompleteScene', {
+          currentLevel: nextLevelIndex,
+          completionMessage: 'Perfeito! Agora vamos\nsomar 3 números!'
+        });
+      } else if (nextLevelIndex >= 15) {
         this.registry.remove('sumCurrentLevel');
         this.registry.remove('sumUserId');
         this.registry.remove('sumActivityId');
@@ -421,14 +518,19 @@ export class GameScene extends Phaser.Scene {
 
   private resetInput() {
     this.inputText = "";
-    if (this.answerText) {
+    if (this.answerText && this.answerText.scene) {
       this.answerText.setText("");
     }
-    this.updateCursorPosition();
+    if (this.cursor && this.answerText) {
+      this.updateCursorPosition();
+    }
   }
 
   private clearScene() {
-    this.numberDisplay.clear();
+    if (this.numberDisplay) {
+      this.numberDisplay.clear();
+    }
+    
     this.clearChoiceButtons();
     this.resetInput();
 
@@ -465,8 +567,12 @@ export class GameScene extends Phaser.Scene {
   }
 
   private updateCursorPosition() {
-    if (!this.answerText || !this.cursor) return;
-    const bounds = this.answerText.getBounds();
-    this.cursor.setPosition(bounds.left + 8, bounds.centerY);
+    if (!this.answerText || !this.cursor || !this.answerText.scene) return;
+    try {
+      const bounds = this.answerText.getBounds();
+      this.cursor.setPosition(bounds.left + 8, bounds.centerY);
+    } catch (error) {
+      console.warn("Erro ao atualizar posição do cursor:", error);
+    }
   }
 }
