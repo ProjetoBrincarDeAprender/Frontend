@@ -19,6 +19,7 @@ export class GameScene extends Phaser.Scene {
     private professionNameText!: Phaser.GameObjects.Text;
     private optionContainers: Phaser.GameObjects.Container[] = [];
     private nextButton: Phaser.GameObjects.Container | null = null;
+    private previousButton: Phaser.GameObjects.Container | null = null;
     private dudaImage: Phaser.GameObjects.Image | null = null;
     
     private draggedProfession: Phaser.GameObjects.Image | null = null;
@@ -38,8 +39,15 @@ export class GameScene extends Phaser.Scene {
     }
 
     init(data?: { currentLevel?: number; score?: number }) {
-        this.currentLevel = data?.currentLevel || this.registry.get('professionsCurrentLevel') || 0;
-        this.score = data?.score || this.registry.get('professionsScore') || 0;
+        if (!data || (data.currentLevel === undefined && data.score === undefined)) {
+            this.currentLevel = 0;
+            this.score = 0;
+            this.registry.remove('professionsCurrentLevel');
+            this.registry.remove('professionsScore');
+        } else {
+            this.currentLevel = data.currentLevel !== undefined ? data.currentLevel : this.registry.get('professionsCurrentLevel') || 0;
+            this.score = data.score !== undefined ? data.score : this.registry.get('professionsScore') || 0;
+        }
     }
 
     preload() {
@@ -191,11 +199,35 @@ export class GameScene extends Phaser.Scene {
         this.createSpeechBubble(introLevel);
         
         if (introLevel.professionType !== 'duda' && introLevel.professionType !== 'fim') {
-            const professionImage = this.add.image(380, 350, introLevel.professionType).setScale(0.35);
+            const professionLegend = this.add.text(380, 230, introLevel.professionName.toUpperCase(), {
+                fontSize: '28px',
+                color: '#FF6B35',
+                fontFamily: 'Arial Black',
+                align: 'center'
+            }).setOrigin(0.5);
+            this.optionContainers.push(this.add.container(0, 0, [professionLegend]));
+            
+            const professionImage = this.add.image(380, 350, introLevel.professionType).setScale(0.25);
             this.optionContainers.push(this.add.container(0, 0, [professionImage]));
             
             const workplace = this.professionWorkplaceMap[introLevel.professionType];
             if (workplace) {
+                const workplaceNames: { [key: string]: string } = {
+                    'hospital': 'HOSPITAL',
+                    'escola': 'ESCOLA', 
+                    'quartel': 'QUARTEL',
+                    'cozinha': 'COZINHA',
+                    'delegacia': 'DELEGACIA'
+                };
+                
+                const workplaceLegend = this.add.text(620, 230, workplaceNames[workplace], {
+                    fontSize: '28px',
+                    color: '#FF6B35',
+                    fontFamily: 'Arial Black',
+                    align: 'center'
+                }).setOrigin(0.5);
+                this.optionContainers.push(this.add.container(0, 0, [workplaceLegend]));
+                
                 const workplaceImage = this.add.image(620, 350, workplace).setScale(0.45);
                 this.optionContainers.push(this.add.container(0, 0, [workplaceImage]));
             }
@@ -315,8 +347,8 @@ export class GameScene extends Phaser.Scene {
         const dragIndex = this.currentLevel - ProfessionsGameData.introLevels.length - ProfessionsGameData.questionLevels.length;
         const dragLevel = ProfessionsGameData.getDragLevel(dragIndex);
         if (!dragLevel) return;
-        
-        this.questionText.setText('Arraste a profissão\n para o local de trabalho:').setVisible(true);
+
+        this.questionText.setText('Leve o profissional\n ao local de trabalho:').setVisible(true);
         this.professionNameText.setText(dragLevel.professionName).setVisible(true);
         
         this.createWorkplaceZones(dragLevel);
@@ -605,31 +637,40 @@ export class GameScene extends Phaser.Scene {
     }
 
     private createNextButton() {
+        // Limpar botões existentes
         if (this.nextButton) {
             this.nextButton.removeAllListeners();
             this.nextButton.destroy();
             this.nextButton = null;
         }
+        
+        if (this.previousButton) {
+            this.previousButton.removeAllListeners();
+            this.previousButton.destroy();
+            this.previousButton = null;
+        }
 
         const { width, height } = this.cameras.main;
-        const buttonX = width / 2;
+        
+        // Criar botão PRÓXIMO
+        const nextButtonX = width / 2 + 100;
         const buttonY = height - 55;
 
-        this.nextButton = this.add.container(buttonX, buttonY);
+        this.nextButton = this.add.container(nextButtonX, buttonY);
 
-        const buttonBg = this.add.graphics();
-        buttonBg.fillStyle(0x28a745);
-        buttonBg.fillRoundedRect(-80, -25, 160, 50, 25);
-        buttonBg.lineStyle(3, 0xffffff);
-        buttonBg.strokeRoundedRect(-80, -25, 160, 50, 25);
+        const nextButtonBg = this.add.graphics();
+        nextButtonBg.fillStyle(0x28a745);
+        nextButtonBg.fillRoundedRect(-80, -25, 160, 50, 25);
+        nextButtonBg.lineStyle(3, 0xffffff);
+        nextButtonBg.strokeRoundedRect(-80, -25, 160, 50, 25);
 
-        const buttonText = this.add.text(0, 0, "PRÓXIMO", {
+        const nextButtonText = this.add.text(0, 0, "PRÓXIMO", {
             fontSize: "24px",
             color: "#FFFFFF",
             fontFamily: "Arial Black",
         }).setOrigin(0.5);
 
-        this.nextButton.add([buttonBg, buttonText]);
+        this.nextButton.add([nextButtonBg, nextButtonText]);
         this.nextButton.setSize(160, 50);
         this.nextButton.setInteractive({ useHandCursor: true });
 
@@ -656,6 +697,59 @@ export class GameScene extends Phaser.Scene {
             this.goToNextLevel();
         });
 
+        if (this.currentLevel > 0) {
+            const prevButtonX = width / 2 - 100;
+            
+            this.previousButton = this.add.container(prevButtonX, buttonY);
+
+            const prevButtonBg = this.add.graphics();
+            prevButtonBg.fillStyle(0xFF6B35);
+            prevButtonBg.fillRoundedRect(-80, -25, 160, 50, 25);
+            prevButtonBg.lineStyle(3, 0xffffff);
+            prevButtonBg.strokeRoundedRect(-80, -25, 160, 50, 25);
+
+            const prevButtonText = this.add.text(0, 0, "ANTERIOR", {
+                fontSize: "22px",
+                color: "#FFFFFF",
+                fontFamily: "Arial Black",
+            }).setOrigin(0.5);
+
+            this.previousButton.add([prevButtonBg, prevButtonText]);
+            this.previousButton.setSize(160, 50);
+            this.previousButton.setInteractive({ useHandCursor: true });
+
+            this.previousButton.on("pointerover", () => {
+                this.tweens.add({
+                    targets: this.previousButton,
+                    scaleX: 1.1,
+                    scaleY: 1.1,
+                    duration: 200,
+                });
+            });
+
+            this.previousButton.on("pointerout", () => {
+                this.tweens.add({
+                    targets: this.previousButton,
+                    scaleX: 1,
+                    scaleY: 1,
+                    duration: 200,
+                });
+            });
+
+            this.previousButton.on("pointerdown", () => {
+                if (this.isTransitioning) return;
+                this.goToPreviousLevel();
+            });
+
+            this.previousButton.setAlpha(0);
+            this.tweens.add({
+                targets: this.previousButton,
+                alpha: 1,
+                duration: 500,
+                delay: 9000,
+            });
+        }
+
         this.nextButton.setAlpha(0);
         this.tweens.add({
             targets: this.nextButton,
@@ -663,6 +757,15 @@ export class GameScene extends Phaser.Scene {
             duration: 500,
             delay: 9000,
         });
+    }
+
+    private goToPreviousLevel() {
+        if (this.currentLevel <= 0) return;
+        
+        this.isTransitioning = true;
+        this.currentLevel--;
+        this.registry.set('professionsCurrentLevel', this.currentLevel);
+        this.startLevel();
     }
 
     private createOptionContainers() {
@@ -740,6 +843,12 @@ export class GameScene extends Phaser.Scene {
             this.nextButton.removeAllListeners();
             this.nextButton.destroy();
             this.nextButton = null;
+        }
+        
+        if (this.previousButton && this.currentLevel >= totalIntroLevels) {
+            this.previousButton.removeAllListeners();
+            this.previousButton.destroy();
+            this.previousButton = null;
         }
         
         this.draggedProfession = null;

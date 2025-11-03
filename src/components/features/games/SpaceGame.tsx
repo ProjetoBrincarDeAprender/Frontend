@@ -36,7 +36,7 @@ export const SpaceGame = ({ activityId = 3 }: SpaceGameProps) => {
           "SpaceHistoryScene",
           "/assets/spaceGame/background.png",
           "background",
-          "VAMOS JOGAR",
+          "JOGO DO ESPAÇO",
           "/assets/common/trophy.png",
           "trophy",
         ),
