@@ -446,10 +446,11 @@ export class GameScene extends PreloadScene {
   }
 
   private createNextButton() {
-    // Adicionar a Duda apenas uma vez ao criar o primeiro botão
-    if (this.currentLevel === 0) {
+    // Sempre criar uma nova imagem da Duda ou garantir que ela esteja visível nos níveis introdutórios
+    if (!this.dudaImage || !this.dudaImage.scene) {
       this.dudaImage = this.add.image(130, 300, "duda").setScale(0.4);
     }
+    this.dudaImage.setVisible(true);
 
     const { width, height } = this.cameras.main;
     const buttonX = width / 2;

@@ -182,7 +182,8 @@ export class GameScene extends Phaser.Scene {
         const introLevel = ProfessionsGameData.getIntroLevel(levelIndex);
         if (!introLevel) return;
 
-        if (!this.dudaImage) {
+        // Sempre criar uma nova imagem da Duda ou garantir que ela esteja visível
+        if (!this.dudaImage || !this.dudaImage.scene) {
             this.dudaImage = this.add.image(140, 300, 'professionsDuda').setScale(0.4);
         }
         this.dudaImage.setVisible(true);
@@ -730,6 +731,7 @@ export class GameScene extends Phaser.Scene {
         this.professionNameText.setVisible(false);
         
         const totalIntroLevels = ProfessionsGameData.introLevels.length;
+        // Só esconder a Duda se estivermos nos níveis de pergunta ou drag, não nos introdutórios
         if (this.dudaImage && this.currentLevel >= totalIntroLevels) {
             this.dudaImage.setVisible(false);
         }
