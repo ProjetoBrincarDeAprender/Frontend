@@ -446,7 +446,6 @@ export class GameScene extends PreloadScene {
   }
 
   private createNextButton() {
-    // Sempre criar uma nova imagem da Duda ou garantir que ela esteja visível nos níveis introdutórios
     if (!this.dudaImage || !this.dudaImage.scene) {
       this.dudaImage = this.add.image(130, 300, "duda").setScale(0.4);
     }

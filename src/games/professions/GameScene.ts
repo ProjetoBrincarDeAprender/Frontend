@@ -315,8 +315,8 @@ export class GameScene extends Phaser.Scene {
         const dragIndex = this.currentLevel - ProfessionsGameData.introLevels.length - ProfessionsGameData.questionLevels.length;
         const dragLevel = ProfessionsGameData.getDragLevel(dragIndex);
         if (!dragLevel) return;
-        
-        this.questionText.setText('Arraste a profissão\n para o local de trabalho:').setVisible(true);
+
+        this.questionText.setText('Leve o profissional\n ao local de trabalho:').setVisible(true);
         this.professionNameText.setText(dragLevel.professionName).setVisible(true);
         
         this.createWorkplaceZones(dragLevel);
