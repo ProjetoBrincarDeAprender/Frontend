@@ -23,6 +23,7 @@ export class GameScene extends Phaser.Scene {
     
     private draggedProfession: Phaser.GameObjects.Image | null = null;
     private workplaceZones: Phaser.GameObjects.Zone[] = [];
+    private isTransitioning: boolean = false;
 
     private professionWorkplaceMap: { [key: string]: string } = {
         'medico': 'hospital',
@@ -80,6 +81,8 @@ export class GameScene extends Phaser.Scene {
         this.input.dragDistanceThreshold = 16;
         
         this.input.on('drop', (_pointer: Phaser.Input.Pointer, _gameObject: Phaser.GameObjects.GameObject, dropZone: Phaser.GameObjects.Zone) => {
+            if (this.isTransitioning) return;
+            
             if (dropZone && dropZone.getData) {
                 const workplace = dropZone.getData('workplace');
                 const container = dropZone.getData('container');
@@ -161,6 +164,7 @@ export class GameScene extends Phaser.Scene {
 
     private startLevel() {
         this.clearScreen();
+        this.isTransitioning = false;
         
         const totalIntroLevels = ProfessionsGameData.introLevels.length;
         const totalQuestionLevels = ProfessionsGameData.questionLevels.length;
@@ -178,7 +182,8 @@ export class GameScene extends Phaser.Scene {
         const introLevel = ProfessionsGameData.getIntroLevel(levelIndex);
         if (!introLevel) return;
 
-        if (!this.dudaImage) {
+        // Sempre criar uma nova imagem da Duda ou garantir que ela esteja visível
+        if (!this.dudaImage || !this.dudaImage.scene) {
             this.dudaImage = this.add.image(140, 300, 'professionsDuda').setScale(0.4);
         }
         this.dudaImage.setVisible(true);
@@ -296,6 +301,7 @@ export class GameScene extends Phaser.Scene {
             });
             
             container.on('pointerdown', () => {
+                if (this.isTransitioning) return;
                 this.selectProfession(profession, question.correctProfession, container);
             });
         });
@@ -434,6 +440,9 @@ export class GameScene extends Phaser.Scene {
     }
 
     private async handleDrop(selectedWorkplace: string, correctWorkplace: string, workplaceContainer?: Phaser.GameObjects.Container) {
+        if (this.isTransitioning) return;
+        
+        this.isTransitioning = true;
         const isCorrect = selectedWorkplace === correctWorkplace;
         this.professionsGameService.incrementAttempts();
         
@@ -490,12 +499,22 @@ export class GameScene extends Phaser.Scene {
                 ease: 'Power2.easeOut',
                 onComplete: () => {
                     this.draggedProfession = null;
+                   
+                        this.isTransitioning = false;
+                
                 }
             });
+        } else {
+          
+                this.isTransitioning = false;
+            
         }
     }
 
     private async selectProfession(selectedProfession: string, correctProfession: string, selectedContainer: Phaser.GameObjects.Container) {
+        if (this.isTransitioning) return;
+        
+        this.isTransitioning = true;
         const isCorrect = selectedProfession === correctProfession;
         this.professionsGameService.incrementAttempts();
         
@@ -543,7 +562,8 @@ export class GameScene extends Phaser.Scene {
         
         this.sound.play('wrong-sound');
         
-        this.time.delayedCall(1000, () => {
+        this.time.delayedCall(3000, () => {
+            this.isTransitioning = false;
             this.optionContainers.forEach(c => {
                 if (c && c.scene) {
                     c.setInteractive();
@@ -553,6 +573,7 @@ export class GameScene extends Phaser.Scene {
     }
 
     private goToNextLevel() {
+        this.isTransitioning = true;
         const totalIntroLevels = ProfessionsGameData.introLevels.length;
         const totalQuestionLevels = ProfessionsGameData.questionLevels.length;
         const totalLevels = ProfessionsGameData.getTotalLevels();
@@ -631,6 +652,7 @@ export class GameScene extends Phaser.Scene {
         });
 
         this.nextButton.on("pointerdown", () => {
+            if (this.isTransitioning) return;
             this.goToNextLevel();
         });
 
@@ -709,6 +731,7 @@ export class GameScene extends Phaser.Scene {
         this.professionNameText.setVisible(false);
         
         const totalIntroLevels = ProfessionsGameData.introLevels.length;
+        // Só esconder a Duda se estivermos nos níveis de pergunta ou drag, não nos introdutórios
         if (this.dudaImage && this.currentLevel >= totalIntroLevels) {
             this.dudaImage.setVisible(false);
         }
