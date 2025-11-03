@@ -25,7 +25,7 @@ export const CoordinationGame = () => {
           "CoordinationGameScene",
           "/assets/forms/bg2.png",
           "formsBg",
-          "Jogo Das Formas",
+          "JOGO DAS FORMAS",
         ),
         CoordinationGameScene,
         // Tela de nível completo padronizada mantendo o background

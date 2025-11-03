@@ -9,9 +9,21 @@ export class ThoughtBubble {
   create(centerX: number, centerY: number, spacing: number, numberCount: number): Phaser.GameObjects.Graphics {
     this.graphics = this.scene.add.graphics();
 
-    const bubbleWidth = (numberCount === 1) ? 120 : spacing + 200;
+    let bubbleWidth: number;
+    let bubbleX: number;
+    
+    if (numberCount === 1) {
+      bubbleWidth = 120;
+      bubbleX = centerX;
+    } else if (numberCount === 3) {
+      bubbleWidth = (spacing * 2) + 220; 
+      bubbleX = centerX + spacing;
+    } else {
+      bubbleWidth = spacing + 200;
+      bubbleX = centerX + (spacing / 2) - 10;
+    }
+    
     const bubbleHeight = 130;
-    const bubbleX = (numberCount === 1) ? centerX : centerX + (spacing / 2) - 10;
     
     this.graphics.clear();
     this.graphics.fillStyle(0xffffff, 0.95);
