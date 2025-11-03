@@ -39,8 +39,15 @@ export class GameScene extends Phaser.Scene {
     }
 
     init(data?: { currentLevel?: number; score?: number }) {
-        this.currentLevel = data?.currentLevel || this.registry.get('professionsCurrentLevel') || 0;
-        this.score = data?.score || this.registry.get('professionsScore') || 0;
+        if (!data || (data.currentLevel === undefined && data.score === undefined)) {
+            this.currentLevel = 0;
+            this.score = 0;
+            this.registry.remove('professionsCurrentLevel');
+            this.registry.remove('professionsScore');
+        } else {
+            this.currentLevel = data.currentLevel !== undefined ? data.currentLevel : this.registry.get('professionsCurrentLevel') || 0;
+            this.score = data.score !== undefined ? data.score : this.registry.get('professionsScore') || 0;
+        }
     }
 
     preload() {
