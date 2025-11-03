@@ -14,7 +14,12 @@ export default class CoordinationGameScene extends PreloadScene {
   }
 
   init(data: { startLevel?: number } = {}) {
-    this.currentLevelIndex = data.startLevel ?? 0;
+    // Permite continuar do próximo nível usando Registry quando vindo da cena comum
+    const regNext = this.registry.get("coordNextLevel");
+    this.currentLevelIndex =
+      data.startLevel ?? (typeof regNext === "number" ? regNext : 0);
+    // limpa para evitar reaproveitar valor em reinícios
+    this.registry.set("coordNextLevel", null);
     this.placedCount = 0;
     new AudioManager(this);
   }
@@ -549,7 +554,11 @@ export default class CoordinationGameScene extends PreloadScene {
 
                 this.time.delayedCall(1500, () => {
                   if (this.currentLevelIndex < this.levels.length - 1) {
-                    this.currentLevelIndex++;
+                    // Salva o próximo nível no Registry e usa a cena padronizada
+                    this.registry.set(
+                      "coordNextLevel",
+                      this.currentLevelIndex + 1,
+                    );
                     this.scene.start("LevelCompleteScene");
                   } else {
                     this.scene.start("EndScene");
