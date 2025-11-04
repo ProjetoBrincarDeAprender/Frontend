@@ -31,6 +31,9 @@ const UseSyllableGame: React.FC = () => {
       nextLevelScene: "clickButtonGameScene",
       backgroundPath: "/assets/useSyllableGame/images/backgroundMain.png",
       backgroundKey: "levelBg",
+      onMenuReturn: () => {
+        ClickButtonGameScene.resetRegistry(gameScene);
+      },
     });
 
     const endScene = new EndScene({
