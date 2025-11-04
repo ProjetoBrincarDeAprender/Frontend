@@ -28,7 +28,7 @@ export class ImageContentRenderer implements IContentRenderer {
       this.entity = scene.add
         .image(400, 240, entityKey)
         .setOrigin(0.5, 0.5)
-        .setScale(0.5);
+        .setScale(0.3);
     }
 
     // Renderiza o conteúdo textual

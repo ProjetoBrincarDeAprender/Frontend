@@ -42,6 +42,26 @@
       {
         "key": "mala",
         "path": "/assets/useSyllableGame/images/entities/mala.png"
+      },
+      {
+        "key": "cavalo",
+        "path": "/assets/useSyllableGame/images/entities/cavalo.png"
+      },
+      {
+        "key": "banana",
+        "path": "/assets/useSyllableGame/images/entities/banana.png"
+      },
+      {
+        "key": "pipoca",
+        "path": "/assets/useSyllableGame/images/entities/pipoca.png"
+      },
+      {
+        "key": "camisa",
+        "path": "/assets/useSyllableGame/images/entities/camisa.png"
+      },
+      {
+        "key": "boneca",
+        "path": "/assets/useSyllableGame/images/entities/boneca.png"
       }
     ],
     "effects": [

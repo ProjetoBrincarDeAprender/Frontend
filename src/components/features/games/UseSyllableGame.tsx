@@ -5,6 +5,7 @@ import { Header } from "@/components/Header/Header";
 import { BackButton } from "@/components/utils/BackButton";
 import { StartScene } from "@/games/common/scenes/StartScene";
 import { EndScene } from "@/games/common/scenes/EndScene";
+import { LevelCompletedScene } from "@/games/common/scenes/LevelCompletedScene";
 import Phaser from "phaser";
 import ClickButtonGameScene from "@/games/clickedButton/scenes/ClickButtonGame";
 
@@ -26,6 +27,12 @@ const UseSyllableGame: React.FC = () => {
       "/assets/useSyllableGame/gameData/mainData.JSON",
     );
 
+    const levelComplete = new LevelCompletedScene({
+      nextLevelScene: "clickButtonGameScene",
+      backgroundPath: "/assets/useSyllableGame/images/backgroundMain.png",
+      backgroundKey: "levelBg",
+    });
+
     const endScene = new EndScene({
       restartScene: "clickButtonGameScene",
       backgroundPath: "/assets/useSyllableGame/images/backgroundMain.png",
@@ -36,7 +43,7 @@ const UseSyllableGame: React.FC = () => {
       type: Phaser.AUTO,
       width: 800,
       height: 600,
-      scene: [startScene, gameScene, endScene],
+      scene: [startScene, levelComplete, gameScene, endScene],
       parent: containerRef.current,
       backgroundColor: "#ffffff",
     };
