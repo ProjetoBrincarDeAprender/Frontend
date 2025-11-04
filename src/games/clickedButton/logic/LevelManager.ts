@@ -49,6 +49,13 @@ export default class LevelManager {
   }
 
   /**
+   * Seta o índice do nível atual.
+   */
+  public setActualIndex(index: number): void {
+    this.actualIndex = index;
+  }
+
+  /**
    * Avança para o próximo nível.
    * @returns true se ainda há níveis restantes, false se terminou
    */
