@@ -100,6 +100,66 @@
     {
       "key": "incorrect",
       "path": "/assets/common/sounds/incorrect.mp3"
+    },
+    {
+      "key": "bola",
+      "path": "/assets/useSyllableGame/sounds/bola.mp3"
+    },
+    {
+      "key": "casa",
+      "path": "/assets/useSyllableGame/sounds/casa.mp3"
+    },
+    {
+      "key": "sofa",
+      "path": "/assets/useSyllableGame/sounds/sofa.mp3"
+    },
+    {
+      "key": "pato",
+      "path": "/assets/useSyllableGame/sounds/pato.mp3"
+    },
+    {
+      "key": "mala",
+      "path": "/assets/useSyllableGame/sounds/mala.mp3"
+    },
+    {
+      "key": "cavalo",
+      "path": "/assets/useSyllableGame/sounds/cavalo.mp3"
+    },
+    {
+      "key": "banana",
+      "path": "/assets/useSyllableGame/sounds/banana.mp3"
+    },
+    {
+      "key": "pipoca",
+      "path": "/assets/useSyllableGame/sounds/pipoca.mp3"
+    },
+    {
+      "key": "camisa",
+      "path": "/assets/useSyllableGame/sounds/camisa.mp3"
+    },
+    {
+      "key": "boneca",
+      "path": "/assets/useSyllableGame/sounds/boneca.mp3"
+    },
+    {
+      "key": "abacaxi",
+      "path": "/assets/useSyllableGame/sounds/abacaxi.mp3"
+    },
+    {
+      "key": "elefante",
+      "path": "/assets/useSyllableGame/sounds/elefante.mp3"
+    },
+    {
+      "key": "bicicleta",
+      "path": "/assets/useSyllableGame/sounds/bicicleta.mp3"
+    },
+    {
+      "key": "parafuso",
+      "path": "/assets/useSyllableGame/sounds/parafuso.mp3"
+    },
+    {
+      "key": "borboleta",
+      "path": "/assets/useSyllableGame/sounds/borboleta.mp3"
     }
   ],
 

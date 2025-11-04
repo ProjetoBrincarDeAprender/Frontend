@@ -153,6 +153,7 @@ export default class ClickButtonLogic {
       });
       this.effectManager.starEffect(selectedOption.x, selectedOption.y);
       this.soundManager.play("correct");
+      this.soundManager.play(this.levelManager.getActualLevel().getEntityKey());
       this.updateContentToComplete();
       this.scene.time.delayedCall(3000, () => {
         this.nextLevel();
