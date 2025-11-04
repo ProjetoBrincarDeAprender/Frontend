@@ -13,30 +13,9 @@ export function PopularGames({ className = "" }: PopularGamesProps) {
         DESTAQUES
       </h2>
       <div className="flex gap-8 px-8 py-16">
-        <Card
-          gameIdUrl="sum"
-          title="Jogo da Soma"
-          variant="game"
-          image="/assets/sumGame/image.png"
-        />
-        <Card
-          gameIdUrl="numbers"
-          title="Sequência de Números"
-          variant="game"
-          image="/assets/numbersGame/startScreen.png"
-        />
-        <Card
-          gameIdUrl="vowels"
-          title="Jogo das Vogais"
-          variant="game"
-          image="/assets/vowelsGame/images/vowelsGamePrint.png"
-        />
-        <Card
-          gameIdUrl="memory"
-          title="Jogo da Memória"
-          variant="game"
-          image="/assets/memoryGame/image.png"
-        />
+        <Card title="Em Breve" variant="future" />
+        <Card title="Em Breve" variant="future" />
+        <Card title="Em Breve" variant="future" />
       </div>
     </section>
   );

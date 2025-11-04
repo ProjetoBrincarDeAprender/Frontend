@@ -3,9 +3,9 @@ import defaultImage from "../../../assets/cardplaceholder.svg";
 
 export interface CardProps {
   title: string;
-  gameIdUrl: string;
+  gameIdUrl?: string;
   image?: string;
-  variant?: "game" | "skill";
+  variant?: "game" | "skill" | "future";
 }
 
 export function Card({
@@ -29,11 +29,13 @@ export function Card({
         <h1 className="text-3xl">{title}</h1>
         <a
           href={
-            variant === "game" ? `/games/${gameIdUrl}` : `skills/${gameIdUrl}`
+            variant === "game" || variant === "future"
+              ? `/games/${gameIdUrl}`
+              : `skills/${gameIdUrl}`
           }
           className="m-auto mb-8 rounded-xl px-4 py-2 transition"
         >
-          Jogar
+          {variant === "future" ? "Em breve" : "Jogar"}
         </a>
       </main>
     </div>
