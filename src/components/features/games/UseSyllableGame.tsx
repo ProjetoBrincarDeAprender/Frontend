@@ -8,7 +8,7 @@ import { EndScene } from "@/games/common/scenes/EndScene";
 import Phaser from "phaser";
 import ClickButtonGameScene from "@/games/clickedButton/scenes/ClickButtonGame";
 
-const SyllableGame: React.FC = () => {
+const UseSyllableGame: React.FC = () => {
   const gameRef = useRef<Phaser.Game | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
 
@@ -17,19 +17,18 @@ const SyllableGame: React.FC = () => {
 
     const startScene = new StartScene({
       nextSceneName: "clickButtonGameScene",
-      backgroundPath: "/assets/syllableGame/images/backgroundStart.png",
+      backgroundPath: "/assets/useSyllableGame/images/backgroundStart.png",
       backgroundKey: "startBg",
-      gameTitle: "SÍLABAS",
-      // trophyImagePath: "/assets/common/duda/dudaClap.png",
-      // trophyImageKey: "dudaClap",
+      gameTitle: "USANDO SÍLABAS",
     });
 
     const gameScene = new ClickButtonGameScene(
-      "/assets/syllableGame/gameData/mainData.JSON",
+      "/assets/useSyllableGame/gameData/mainData.JSON",
     );
 
     const endScene = new EndScene({
-      backgroundPath: "/assets/syllableGame/images/backgroundMain.png",
+      restartScene: "clickButtonGameScene",
+      backgroundPath: "/assets/useSyllableGame/images/backgroundMain.png",
       backgroundKey: "endBg",
     });
 
@@ -71,4 +70,4 @@ const SyllableGame: React.FC = () => {
   );
 };
 
-export default SyllableGame;
+export default UseSyllableGame;

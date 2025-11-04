@@ -36,7 +36,7 @@ export class ImageContentRenderer implements IContentRenderer {
     if (!content) return null;
 
     const newPositionY = 380;
-    const scale = 0.8;
+    const scale = 1.2;
 
     return this.createContentButtons(
       content,
@@ -60,7 +60,7 @@ export class ImageContentRenderer implements IContentRenderer {
     if (!completeContent) return null;
 
     const newPositionY = 380;
-    const scale = 0.8;
+    const scale = 1.2;
 
     return this.createContentButtons(
       completeContent,
@@ -89,7 +89,9 @@ export class ImageContentRenderer implements IContentRenderer {
     const spaceBetweenContent = 60;
     const buttonWidth = 20 * scale;
     const totalWidthOccupied =
-      (content.length - 1) * spaceBetweenContent + buttonWidth * content.length;
+      (content.length - 1) * spaceBetweenContent +
+      buttonWidth * content.length -
+      20;
     const startX = (scene.cameras.main.width - totalWidthOccupied) / 2;
 
     for (let i = 0; i < content.length; i++) {
@@ -100,7 +102,7 @@ export class ImageContentRenderer implements IContentRenderer {
           default: "whiteButton",
         },
         text: content[i],
-        fontSize: 40,
+        fontSize: 30,
         scale: scale,
         color: "#000000",
       });

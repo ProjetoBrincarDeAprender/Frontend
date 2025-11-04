@@ -106,7 +106,7 @@ export default class ClickButtonLogic {
           clicked: "clickedButton",
         },
         text: options[i],
-        fontSize: 40,
+        fontSize: 32,
         scale: 1.4,
       });
       newOptions.push(option);

@@ -1,7 +1,7 @@
 {
   "config": {
     "background": {
-      "image": "/assets/syllableGame/images/backgroundMain.png",
+      "image": "/assets/useSyllableGame/images/backgroundMain.png",
       "overlayOpacity": 0.3
     }
   },
@@ -25,23 +25,23 @@
     "entities": [
       {
         "key": "bola",
-        "path": "/assets/syllableGame/images/entities/bola.png"
+        "path": "/assets/useSyllableGame/images/entities/bola.png"
       },
       {
         "key": "casa",
-        "path": "/assets/syllableGame/images/entities/casa.png"
+        "path": "/assets/useSyllableGame/images/entities/casa.png"
       },
       {
         "key": "sofa",
-        "path": "/assets/syllableGame/images/entities/sofa.png"
+        "path": "/assets/useSyllableGame/images/entities/sofa.png"
       },
       {
         "key": "pato",
-        "path": "/assets/syllableGame/images/entities/pato.png"
+        "path": "/assets/useSyllableGame/images/entities/pato.png"
       },
       {
         "key": "mala",
-        "path": "/assets/syllableGame/images/entities/mala.png"
+        "path": "/assets/useSyllableGame/images/entities/mala.png"
       }
     ],
     "effects": [
@@ -62,11 +62,6 @@
       "path": "/assets/common/sounds/incorrect.mp3"
     }
   ],
-
-  "buttonConfig": {
-    "fontSize": 50,
-    "scale": 1.5
-  },
 
   "info": {
     "activityId": 2
@@ -112,6 +107,46 @@
       "completeContent": ["MA", "LA"],
       "answer": "MA",
       "options": ["MA", "ME"]
+    },
+    {
+      "question": "COMPLETE AS SÍLABAS",
+      "entityKey": "cavalo",
+      "content": ["CA", "VA", " "],
+      "completeContent": ["CA", "VA", "LO"],
+      "answer": "LO",
+      "options": ["LE", "LU", "LO"]
+    },
+    {
+      "question": "COMPLETE AS SÍLABAS",
+      "entityKey": "banana",
+      "content": ["BA", "NA", " "],
+      "completeContent": ["BA", "NA", "NA"],
+      "answer": "NA",
+      "options": ["NO", "NA", "NE"]
+    },
+    {
+      "question": "COMPLETE AS SÍLABAS",
+      "entityKey": "pipoca",
+      "content": ["PI", " ", "CA"],
+      "completeContent": ["PI", "PO", "CA"],
+      "answer": "PO",
+      "options": ["PA", "PE", "PO"]
+    },
+    {
+      "question": "COMPLETE AS SÍLABAS",
+      "entityKey": "camisa",
+      "content": ["CA", "MI", " "],
+      "completeContent": ["CA", "MI", "SA"],
+      "answer": "SA",
+      "options": ["SO", "SU", "SA"]
+    },
+    {
+      "question": "COMPLETE AS SÍLABAS",
+      "entityKey": "boneca",
+      "content": ["BO", " ", "CA"],
+      "completeContent": ["BO", "NE", "CA"],
+      "answer": "NE",
+      "options": ["NA", "NO", "NE"]
     }
   ]
 }
