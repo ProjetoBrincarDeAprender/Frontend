@@ -156,6 +156,18 @@ export default class ClickButtonGameScene extends PreloadScene {
       (level: any) => new ClickedButtonLevel(level),
     );
     this.levelManager = new LevelManager(levels);
+
+    // Analisa o nível atual salvo no registry
+    const actualIndex = this.registry.get("actualIndex");
+    if (actualIndex) {
+      this.levelManager.setActualIndex(actualIndex);
+    } else {
+      this.registry.set("actualIndex", 0);
+    }
+  }
+
+  public static resetRegistry(scene: Phaser.Scene): void {
+    scene.registry.set("actualIndex", 0);
   }
 
   /**

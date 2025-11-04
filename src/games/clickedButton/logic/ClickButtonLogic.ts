@@ -207,13 +207,28 @@ export default class ClickButtonLogic {
    */
   private nextLevel(): void {
     this.clearLevelElements();
-    if (!this.levelManager.nextLevel()) {
+    this.levelManager.nextLevel();
+    this.scene.registry.set("actualIndex", this.levelManager.getActualIndex());
+
+    if (this.levelManager.isFinished()) {
+      this.scene.registry.set("actualIndex", 0);
       this.scene.scene.start("EndScene");
+    } else if (this.isMileStone()) {
+      this.scene.scene.start("LevelCompleteScene");
     } else {
       this.showQuestion();
       this.showContent();
       this.showOptions();
     }
+  }
+
+  private isMileStone(): boolean {
+    const actualIndex = this.scene.registry.get("actualIndex");
+    const allLevels = this.levelManager.getLevels();
+    if (actualIndex < allLevels.length - 1 && actualIndex % 5 === 0) {
+      return true;
+    }
+    return false;
   }
 
   /**
