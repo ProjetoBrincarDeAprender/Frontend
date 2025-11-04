@@ -4,6 +4,7 @@ import { BgManager } from "@/games/common/managers/BgManager";
 import ButtonManager from "@/games/common/managers/ButtonManager";
 import Phaser from "phaser";
 import { HistoryData } from "../logic/SpaceHistoryData";
+
 export class SpaceHistoryScene extends Phaser.Scene {
   private audioManager!: AudioManager;
   private buttonManager!: ButtonManager;
@@ -11,6 +12,7 @@ export class SpaceHistoryScene extends Phaser.Scene {
   private contentContainer?: Phaser.GameObjects.Container;
   private buttonsContainer?: Phaser.GameObjects.Container;
   private mascot?: Phaser.GameObjects.Image;
+  private currentAudio?: Phaser.Sound.BaseSound;
 
   constructor() {
     super({ key: "SpaceHistoryScene" });
@@ -44,6 +46,10 @@ export class SpaceHistoryScene extends Phaser.Scene {
       if (image != null) {
         this.load.image("infoImage_" + index, image.path);
       }
+      this.load.audio(
+        "infoAudio_" + index,
+        "/assets/spaceGame/history/lines/" + "line" + (index + 1) + ".m4a",
+      );
     });
   }
 
@@ -69,6 +75,11 @@ export class SpaceHistoryScene extends Phaser.Scene {
   }
 
   private clearContent(): void {
+    // Parar áudio atual se estiver tocando
+    if (this.currentAudio && this.currentAudio.isPlaying) {
+      this.currentAudio.stop();
+    }
+
     if (this.contentContainer) {
       this.contentContainer.destroy();
       this.contentContainer = undefined;
@@ -155,7 +166,7 @@ export class SpaceHistoryScene extends Phaser.Scene {
       .text(0, 0, text, {
         fontSize: "24px",
         color: "#000000",
-        fontFamily: "Arial, sans-serif",
+        fontFamily: "Arial Black",
         align: "center",
         wordWrap: { width: bubbleWidth - 40 },
         padding: { left: 20, right: 20, top: 10, bottom: 10 },
@@ -197,6 +208,54 @@ export class SpaceHistoryScene extends Phaser.Scene {
     }
   }
 
+  private playCurrentAudio(): void {
+    const currentChat = this.registry.get("currentChat") as number;
+    const audioKey = `infoAudio_${currentChat}`;
+
+    // Parar áudio anterior se estiver tocando
+    if (this.currentAudio && this.currentAudio.isPlaying) {
+      this.currentAudio.stop();
+    }
+
+    try {
+      // Tocar novo áudio
+      this.currentAudio = this.sound.add(audioKey, { volume: 0.7 });
+
+      if (this.currentAudio) {
+        this.currentAudio.play();
+
+        // Quando o áudio terminar, mostrar os botões
+        this.currentAudio.once("complete", () => {
+          this.showButtons();
+        });
+
+        // Tratamento para caso o áudio seja interrompido
+        this.currentAudio.once("stop", () => {
+          this.showButtons();
+        });
+      } else {
+        // Se não conseguir criar o áudio, mostrar botões imediatamente
+        this.showButtons();
+      }
+    } catch (error) {
+      // Se houver erro ao carregar/tocar o áudio, mostrar botões imediatamente
+      console.warn(`Áudio ${audioKey} não encontrado ou erro ao tocar:`, error);
+      this.showButtons();
+    }
+  }
+
+  private showButtons(): void {
+    if (this.buttonsContainer) {
+      this.buttonsContainer.setVisible(true);
+    }
+  }
+
+  private hideButtons(): void {
+    if (this.buttonsContainer) {
+      this.buttonsContainer.setVisible(false);
+    }
+  }
+
   private handleChats(): void {
     const currentChat = this.registry.get("currentChat") as number;
     const chatData = HistoryData[currentChat];
@@ -206,6 +265,12 @@ export class SpaceHistoryScene extends Phaser.Scene {
     if (chatData.image) {
       this.createImage();
     }
+
+    // Esconder os botões inicialmente
+    this.hideButtons();
+
+    // Tocar o áudio do chat atual
+    this.playCurrentAudio();
   }
 
   private handleNext(): void {
@@ -218,6 +283,12 @@ export class SpaceHistoryScene extends Phaser.Scene {
         levelIndex: 0,
         questionIndex: 0,
       });
+
+      // Parar áudio antes de trocar de cena
+      if (this.currentAudio && this.currentAudio.isPlaying) {
+        this.currentAudio.stop();
+      }
+
       this.mascot?.destroy();
       this.mascot = undefined;
       this.scene.start("SpaceGameScene");
@@ -285,6 +356,65 @@ export class SpaceHistoryScene extends Phaser.Scene {
 
     if (this.buttonsContainer) {
       this.buttonsContainer.add(nextBtn);
+    }
+
+    // Botão pequeno para pular no canto inferior direito
+    const skipBtn = this.add
+      .rectangle(
+        this.scale.width - 10,
+        this.scale.height - 10,
+        10,
+        10,
+        0x666666,
+        0.7,
+      )
+      .setInteractive();
+
+    // Adicionar texto "PULAR" no botão
+    const skipText = this.add
+      .text(this.scale.width - 10, this.scale.height - 10, "PULAR", {
+        fontSize: "8px",
+        color: "#ffffff",
+        fontFamily: "Arial Black",
+      })
+      .setOrigin(0.5);
+
+    // Efeitos hover
+    skipBtn.on("pointerover", () => {
+      skipBtn.setAlpha(0.9);
+    });
+
+    skipBtn.on("pointerout", () => {
+      skipBtn.setAlpha(0.7);
+    });
+
+    // Ação do botão pular - vai direto para o jogo
+    skipBtn.on("pointerdown", () => {
+      // Limpar o progresso antes de iniciar o jogo
+      this.registry.set("currentSpaceProgress", {
+        levelIndex: 0,
+        questionIndex: 0,
+      });
+
+      // Parar áudio antes de trocar de cena
+      if (this.currentAudio && this.currentAudio.isPlaying) {
+        this.currentAudio.stop();
+      }
+
+      this.mascot?.destroy();
+      this.mascot = undefined;
+      this.scene.start("SpaceGameScene");
+    });
+
+    if (this.buttonsContainer) {
+      this.buttonsContainer.add([skipBtn, skipText]);
+    }
+  }
+
+  shutdown() {
+    // Limpar áudio quando a cena for destruída
+    if (this.currentAudio && this.currentAudio.isPlaying) {
+      this.currentAudio.stop();
     }
   }
 

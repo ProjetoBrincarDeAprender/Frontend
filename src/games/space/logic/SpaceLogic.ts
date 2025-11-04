@@ -86,7 +86,7 @@ export default class SpaceLogic {
 
     this.questionText = this.scene.add
       .text(this.scene.scale.width / 2, 120, currentQuestion.getQuestion(), {
-        fontFamily: "Comic Sans MS, Arial, sans-serif",
+        fontFamily: "Arial Black",
         fontSize: "32px",
         color: "#FFFFFF",
         fontStyle: "bold",
@@ -158,7 +158,7 @@ export default class SpaceLogic {
         if (showNames) {
           planetText = this.scene.add
             .text(x, y + 45, option.toUpperCase(), {
-              fontFamily: "Comic Sans MS, Arial, sans-serif",
+              fontFamily: "Arial Black",
               fontSize: "24px",
               color: "#FFFFFF",
               fontStyle: "bold",
@@ -274,7 +274,7 @@ export default class SpaceLogic {
     this.gameStats.resetActualLevelMisses(); // Resetar para a próxima questão
 
     // Mostrar feedback positivo
-    this.showFeedback("Correto! 🎉", "#00FF00");
+    this.showFeedback("Correto! 🎉", 0x00ff00);
 
     // Ir para próxima questão ou nível após um delay
     this.scene.time.delayedCall(3500, () => {
@@ -374,33 +374,28 @@ export default class SpaceLogic {
     );
 
     // Mostrar feedback negativo
-    this.showFeedback("Tente novamente! 🤔", "#FF0000", true);
+    this.showFeedback("Tente novamente! 🤔", 0xff0000, true);
   }
 
   private showFeedback(
     text: string,
-    color: string,
+    color: number,
     reactivateButtons: boolean = false,
   ): void {
     const feedback = this.scene.add
-      .text(
-        this.scene.scale.width / 2,
-        this.scene.scale.height / 2 - 50,
-        text,
-        {
-          fontFamily: "Comic Sans MS, Arial, sans-serif",
-          fontSize: "28px",
-          color: color,
-          fontStyle: "bold",
-          stroke: "#000000",
-          strokeThickness: 3,
-          padding: { left: 20, right: 20, top: 10, bottom: 10 },
-        },
-      )
+      .text(this.scene.scale.width / 2, this.scene.scale.height / 2, text, {
+        fontFamily: "Arial Black",
+        fontSize: "28px",
+        color: "#FFFFFF",
+        fontStyle: "bold",
+        stroke: "#000000",
+        strokeThickness: 3,
+        padding: { left: 20, right: 20, top: 10, bottom: 10 },
+      })
       .setOrigin(0.5);
 
     const graphics = this.scene.add.graphics();
-    graphics.fillStyle(0x000000, 0.5);
+    graphics.fillStyle(color, 0.7);
     graphics.fillRoundedRect(
       feedback.x - feedback.width / 2 - 20,
       feedback.y - feedback.height / 2 - 10,

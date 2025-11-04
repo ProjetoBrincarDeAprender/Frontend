@@ -109,6 +109,8 @@ export default class ClickButtonGameScene extends PreloadScene {
     const whiteButton = buttonTexturesUrl.white;
     if (whiteButton) {
       this.load.image("whiteButton", whiteButton.default);
+    } else {
+      this.load.image("whiteButton", buttonTexturesUrl.blue.default);
     }
   }
 
