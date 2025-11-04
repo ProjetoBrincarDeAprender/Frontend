@@ -17,6 +17,9 @@
         "default": "/assets/common/buttons/squareRedDefault.svg",
         "hover": "/assets/common/buttons/squareRedHover.svg",
         "clicked": "/assets/common/buttons/squareRedClicked.svg"
+      },
+      "white": {
+        "default": "/assets/common/buttons/squareWhite.svg"
       }
     },
     "entities": [],
@@ -54,14 +57,14 @@
       "content": ["1", "2", "3", " "],
       "completeContent": ["1", "2", "3", "4"],
       "answer": "4",
-      "options": ["4", "1", "2"]
+      "options": ["1", "2", "4"]
     },
     {
       "question": "COMPLETE A SEQUÊNCIA",
       "content": ["5", "6", " ", "8"],
       "completeContent": ["5", "6", "7", "8"],
       "answer": "7",
-      "options": ["7", "5", "9"]
+      "options": ["5", "7", "9"]
     },
     {
       "question": "COMPLETE A SEQUÊNCIA",
@@ -75,7 +78,7 @@
       "content": ["2", "4", "6", " "],
       "completeContent": ["2", "4", "6", "8"],
       "answer": "8",
-      "options": ["8", "6", "10"]
+      "options": ["6", "8", "10"]
     },
     {
       "question": "COMPLETE A SEQUÊNCIA",
@@ -89,14 +92,14 @@
       "content": ["2", "4", "6", " "],
       "completeContent": ["2", "4", "6", "8"],
       "answer": "8",
-      "options": ["8", "10", "6"]
+      "options": ["10", "6", "8"]
     },
     {
       "question": "COMPLETE A SEQUÊNCIA",
       "content": ["10", "12", " ", "16"],
       "completeContent": ["10", "12", "14", "16"],
       "answer": "14",
-      "options": ["14", "12", "16"]
+      "options": ["12", "16", "14"]
     },
     {
       "question": "COMPLETE A SEQUÊNCIA",

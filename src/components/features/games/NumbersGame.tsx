@@ -28,10 +28,10 @@ const NumbersGame: React.FC = () => {
         ),
         new ClickButtonGameScene("/assets/numbersGame/gameData/mainData.JSON"),
         EndScene.create(
-          "numbersStart",
+          "clickButtonGameScene",
           undefined,
           undefined,
-          "VOCÊ COMPLETOU TODAS AS SEQUÊNCIAS!",
+          "VOCÊ COMPLETOU\nTODAS AS SEQUÊNCIAS!",
         ),
       ],
       parent: containerRef.current,
