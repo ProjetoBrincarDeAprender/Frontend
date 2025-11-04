@@ -47,7 +47,7 @@ export const MazeGame = () => {
           "StartScene",
           "/assets/maze/bg.png",
           "mazeBg",
-          "VOCÊ COMPLETOU TODOS OS LABIRINTOS!",
+          "VOCÊ VENCEU OS LABIRINTOS!",
         ),
       ],
       parent: containerRef.current,

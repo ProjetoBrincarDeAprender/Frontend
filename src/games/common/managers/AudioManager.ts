@@ -51,15 +51,27 @@ export class AudioManager {
       }
 
       soundButton.add(btnImage);
-      soundButton.setSize(btnImage.width, btnImage.height);
+      soundButton.setDepth(100);
 
-      soundButton.on("pointerdown", () => {
+      // Área de clique baseada no tamanho exibido (considera escala)
+      const hitRadius =
+        Math.max(btnImage.displayWidth, btnImage.displayHeight) / 2;
+      btnImage.setInteractive(
+        new Phaser.Geom.Circle(0, 0, hitRadius),
+        Phaser.Geom.Circle.Contains,
+      );
+
+      btnImage.on("pointerdown", () => {
         this.toggleSounds();
-        btnImage.setTexture(this.scene.sound.mute ? "audioOn" : "audioOff");
+        btnImage.setTexture(this.scene.sound.mute ? "audioOff" : "audioOn");
       });
 
-      soundButton.setDepth(100);
-      soundButton.setInteractive();
+      btnImage.on("pointerover", () => {
+        this.scene.input.setDefaultCursor("pointer");
+      });
+      btnImage.on("pointerout", () => {
+        this.scene.input.setDefaultCursor("default");
+      });
     };
 
     if (
