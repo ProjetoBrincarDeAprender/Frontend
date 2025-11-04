@@ -17,7 +17,6 @@ export default class GameStats {
     const deltaTime = finalTime - this.initialLevelTime;
     this.hitTimes.push(deltaTime);
     this.initialLevelTime = finalTime;
-    console.log(deltaTime);
   }
 
   addMissCount(): void {

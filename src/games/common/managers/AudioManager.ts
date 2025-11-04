@@ -55,7 +55,7 @@ export class AudioManager {
 
       soundButton.on("pointerdown", () => {
         this.toggleSounds();
-        btnImage.setTexture(this.scene.sound.mute ? "audioOff" : "audioOn");
+        btnImage.setTexture(this.scene.sound.mute ? "audioOn" : "audioOff");
       });
 
       soundButton.setDepth(100);
