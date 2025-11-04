@@ -43,5 +43,10 @@
     "title": "Tipos de Moradia",
     "gameIdUrl": "housing",
     "image": "/assets/housingGame/bg.svg"
+  },
+  {
+    "title": "Usando Sílabas",
+    "gameIdUrl": "use-syllable",
+    "image": "/assets/useSyllableGame/images/backgroundMain.png"
   }
 ]
