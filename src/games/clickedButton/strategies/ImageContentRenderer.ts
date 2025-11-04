@@ -95,6 +95,7 @@ export class ImageContentRenderer implements IContentRenderer {
     const startX = (scene.cameras.main.width - totalWidthOccupied) / 2;
 
     for (let i = 0; i < content.length; i++) {
+      const dynamicFontSize = this.calculateFontSize(content[i], scale);
       const newPositionX = startX + i * (buttonWidth + spaceBetweenContent);
       const contentItem = buttonManager.createButton({
         positions: { x: newPositionX, y: positionY },
@@ -102,7 +103,7 @@ export class ImageContentRenderer implements IContentRenderer {
           default: "whiteButton",
         },
         text: content[i],
-        fontSize: 30,
+        fontSize: dynamicFontSize,
         scale: scale,
         color: "#000000",
       });
@@ -111,5 +112,37 @@ export class ImageContentRenderer implements IContentRenderer {
 
     this.content = newContent;
     return newContent;
+  }
+
+  private calculateFontSize(
+    text: string,
+    buttonScale: number = 1.0,
+    baseSize: number = 30,
+    minSize: number = 16,
+    maxSize: number = 40,
+  ): number {
+    if (!text || text.trim().length === 0) {
+      return baseSize;
+    }
+
+    const textLength = text.trim().length;
+    let fontSize = baseSize;
+
+    // Ajusta fontSize baseado no comprimento do texto
+    if (textLength <= 1) {
+      fontSize = maxSize;
+    } else if (textLength <= 2) {
+      fontSize = baseSize * 0.9;
+    } else if (textLength <= 3) {
+      fontSize = baseSize * 0.65;
+    } else {
+      fontSize = baseSize * 0.5;
+    }
+
+    // Ajusta para a escala do botão
+    fontSize *= buttonScale;
+
+    // Garante que está dentro dos limites
+    return Math.max(minSize, Math.min(maxSize, Math.round(fontSize)));
   }
 }

@@ -62,6 +62,26 @@
       {
         "key": "boneca",
         "path": "/assets/useSyllableGame/images/entities/boneca.png"
+      },
+      {
+        "key": "abacaxi",
+        "path": "/assets/useSyllableGame/images/entities/abacaxi.png"
+      },
+      {
+        "key": "elefante",
+        "path": "/assets/useSyllableGame/images/entities/elefante.png"
+      },
+      {
+        "key": "bicicleta",
+        "path": "/assets/useSyllableGame/images/entities/bicicleta.png"
+      },
+      {
+        "key": "parafuso",
+        "path": "/assets/useSyllableGame/images/entities/parafuso.png"
+      },
+      {
+        "key": "borboleta",
+        "path": "/assets/useSyllableGame/images/entities/borboleta.png"
       }
     ],
     "effects": [
@@ -167,6 +187,46 @@
       "completeContent": ["BO", "NE", "CA"],
       "answer": "NE",
       "options": ["NA", "NO", "NE"]
+    },
+    {
+      "question": "COMPLETE AS SÍLABAS",
+      "entityKey": "abacaxi",
+      "content": ["A", "BA", "CA", " "],
+      "completeContent": ["A", "BA", "CA", "XI"],
+      "answer": "XI",
+      "options": ["XO", "XA", "XE", "XI"]
+    },
+    {
+      "question": "COMPLETE AS SÍLABAS",
+      "entityKey": "elefante",
+      "content": ["E", " ", "FAN", "TE"],
+      "completeContent": ["E", "LE", "FAN", "TE"],
+      "answer": "LE",
+      "options": ["LA", "LI", "LE", "LU"]
+    },
+    {
+      "question": "COMPLETE AS SÍLABAS",
+      "entityKey": "bicicleta",
+      "content": [" ", "CI", "CLE", "TA"],
+      "completeContent": ["BI", "CI", "CLE", "TA"],
+      "answer": "BI",
+      "options": ["BA", "BE", "BI", "BO"]
+    },
+    {
+      "question": "COMPLETE AS SÍLABAS",
+      "entityKey": "parafuso",
+      "content": ["PA", "RA", " ", "SO"],
+      "completeContent": ["PA", "RA", "FU", "SO"],
+      "answer": "FU",
+      "options": ["FA", "FE", "FI", "FU"]
+    },
+    {
+      "question": "COMPLETE AS SÍLABAS",
+      "entityKey": "borboleta",
+      "content": ["BOR", "BO", "LE", " "],
+      "completeContent": ["BOR", "BO", "LE", "TA"],
+      "answer": "TA",
+      "options": ["TE", "TI", "TO", "TA"]
     }
   ]
 }
