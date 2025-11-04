@@ -106,7 +106,7 @@ export default class ClickButtonLogic {
           clicked: "clickedButton",
         },
         text: options[i],
-        fontSize: 40,
+        fontSize: 32,
         scale: 1.4,
       });
       newOptions.push(option);
@@ -153,6 +153,7 @@ export default class ClickButtonLogic {
       });
       this.effectManager.starEffect(selectedOption.x, selectedOption.y);
       this.soundManager.play("correct");
+      this.soundManager.play(this.levelManager.getActualLevel().getEntityKey());
       this.updateContentToComplete();
       this.scene.time.delayedCall(3000, () => {
         this.nextLevel();
