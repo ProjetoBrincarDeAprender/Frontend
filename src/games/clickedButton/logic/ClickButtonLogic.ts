@@ -223,9 +223,9 @@ export default class ClickButtonLogic {
   }
 
   private isMileStone(): boolean {
-    const actualIndex = this.levelManager.getActualIndex();
+    const actualIndex = this.scene.registry.get("actualIndex");
     const allLevels = this.levelManager.getLevels();
-    if (actualIndex < allLevels.length - 1 && (actualIndex + 1) % 5 === 0) {
+    if (actualIndex < allLevels.length - 1 && actualIndex % 5 === 0) {
       return true;
     }
     return false;
