@@ -107,11 +107,12 @@ export class GameScene extends PreloadScene {
   }
 
   init(data?: { currentLevel?: number; score?: number }) {
-    // Recuperar dados do registry ou usar dados passados ou padrões
+    new AudioManager(this, 0.7);
+    
+    // Recuperar dados do registry 
     this.currentLevel =
       data?.currentLevel || this.registry.get("housingCurrentLevel") || 0;
     this.score = data?.score || this.registry.get("housingScore") || 0;
-    new AudioManager(this);
   }
 
   preload() {
@@ -122,6 +123,9 @@ export class GameScene extends PreloadScene {
     this.load.image("housingDuda", "/assets/housingGame/duda-pensando.png");
     this.load.image("houseTrophy", "/assets/housingGame/casa.png");
     this.load.image("duda", "/assets/housingGame/girlmainpage.svg");
+
+    this.load.image("audioOn", "/assets/common/buttons/audioOn.svg");
+    this.load.image("audioOff", "/assets/common/buttons/audioOff.svg");
 
     this.load.image("casa", "/assets/housingGame/casa.png");
     this.load.image("castelo", "/assets/housingGame/castelo.png");
