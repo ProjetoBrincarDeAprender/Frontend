@@ -6,6 +6,7 @@ export interface CardProps {
   gameIdUrl?: string;
   image?: string;
   variant?: "game" | "skill" | "future";
+  disabled?: boolean;
 }
 
 export function Card({
@@ -13,7 +14,21 @@ export function Card({
   title,
   image = defaultImage,
   variant = "game",
+  disabled = false,
 }: CardProps) {
+  const linkHref = disabled
+    ? undefined
+    : variant === "game" || variant === "future"
+      ? `/games/${gameIdUrl}`
+      : `skills/${gameIdUrl}`;
+
+  const handleClick: React.MouseEventHandler<HTMLAnchorElement> = (e) => {
+    if (disabled) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+  };
+
   return (
     <div
       className={`card-${variant} font-2 z-2 m-auto flex h-96 w-64 flex-col rounded-4xl p-2 text-center font-medium shadow-2xl`}
@@ -28,14 +43,13 @@ export function Card({
       <main className="flex h-1/2 flex-col justify-between gap-4 py-4">
         <h1 className="text-3xl">{title}</h1>
         <a
-          href={
-            variant === "game" || variant === "future"
-              ? `/games/${gameIdUrl}`
-              : `skills/${gameIdUrl}`
-          }
-          className="m-auto mb-8 rounded-xl px-4 py-2 transition"
+          href={linkHref}
+          onClick={handleClick}
+          aria-disabled={disabled}
+          tabIndex={disabled ? -1 : 0}
+          className={`m-auto mb-8 rounded-xl px-4 py-2 transition ${disabled ? "pointer-events-auto cursor-not-allowed opacity-60" : ""}`}
         >
-          {variant === "future" ? "Em breve" : "Jogar"}
+          {disabled === true ? "Em breve" : "Jogar"}
         </a>
       </main>
     </div>

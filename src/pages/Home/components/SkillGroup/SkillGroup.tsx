@@ -14,9 +14,9 @@ export function SkillGroup({ className = "" }: SkillGroupProps) {
         </h2>
       </div>
       <div className="flex px-8 py-16">
-        <Card title="Em Breve" variant="skill" />
-        <Card title="Em Breve" variant="skill" />
-        <Card title="Em Breve" variant="skill" />
+        <Card title="Em Breve" variant="skill" disabled />
+        <Card title="Em Breve" variant="skill" disabled />
+        <Card title="Em Breve" variant="skill" disabled />
       </div>
     </section>
   );

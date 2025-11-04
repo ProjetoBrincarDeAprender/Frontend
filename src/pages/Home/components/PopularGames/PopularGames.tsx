@@ -13,9 +13,9 @@ export function PopularGames({ className = "" }: PopularGamesProps) {
         DESTAQUES
       </h2>
       <div className="flex gap-8 px-8 py-16">
-        <Card title="Em Breve" variant="future" />
-        <Card title="Em Breve" variant="future" />
-        <Card title="Em Breve" variant="future" />
+        <Card title="Em Breve" variant="future" disabled />
+        <Card title="Em Breve" variant="future" disabled />
+        <Card title="Em Breve" variant="future" disabled />
       </div>
     </section>
   );
