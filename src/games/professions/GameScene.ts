@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { AnimationManager } from '@/games/sum/components/animations/AnimationManager';
 import EffectManager from '@/games/common/managers/EffectManager';
+import { AudioManager } from '@/games/common/managers/AudioManager';
 import { LevelCompletedScene } from '@/games/common/scenes/LevelCompletedScene';
 import { EndScene } from '@/games/common/scenes/EndScene';
 import { StartScene } from '@/games/common/scenes/StartScene';
@@ -39,6 +40,8 @@ export class GameScene extends Phaser.Scene {
     }
 
     init(data?: { currentLevel?: number; score?: number }) {
+        new AudioManager(this, 0.7);
+        
         if (!data || (data.currentLevel === undefined && data.score === undefined)) {
             this.currentLevel = 0;
             this.score = 0;
@@ -56,6 +59,9 @@ export class GameScene extends Phaser.Scene {
         this.load.image('duda-thinking', '/assets/common/duda/duda-pensando.png');
         this.load.image('professionsDuda', '/assets/common/duda/girlmainpage.svg');
         this.load.image('professionsTrophy', '/assets/common/trophy.png');
+
+        this.load.image("audioOn", "/assets/common/buttons/audioOn.svg");
+        this.load.image("audioOff", "/assets/common/buttons/audioOff.svg");
 
         this.load.image('medico', '/assets/professions/medica.svg');
         this.load.image('professor', '/assets/professions/professor.svg');

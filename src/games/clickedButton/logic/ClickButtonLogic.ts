@@ -106,7 +106,7 @@ export default class ClickButtonLogic {
           clicked: "clickedButton",
         },
         text: options[i],
-        fontSize: 40,
+        fontSize: 32,
         scale: 1.4,
       });
       newOptions.push(option);
@@ -153,6 +153,11 @@ export default class ClickButtonLogic {
       });
       this.effectManager.starEffect(selectedOption.x, selectedOption.y);
       this.soundManager.play("correct");
+      try {
+        this.soundManager.play(
+          this.levelManager.getActualLevel().getEntityKey(),
+        );
+      } catch (err) {}
       this.updateContentToComplete();
       this.scene.time.delayedCall(3000, () => {
         this.nextLevel();
@@ -207,13 +212,28 @@ export default class ClickButtonLogic {
    */
   private nextLevel(): void {
     this.clearLevelElements();
-    if (!this.levelManager.nextLevel()) {
+    this.levelManager.nextLevel();
+    this.scene.registry.set("actualIndex", this.levelManager.getActualIndex());
+
+    if (this.levelManager.isFinished()) {
+      this.scene.registry.set("actualIndex", 0);
       this.scene.scene.start("EndScene");
+    } else if (this.isMileStone()) {
+      this.scene.scene.start("LevelCompleteScene");
     } else {
       this.showQuestion();
       this.showContent();
       this.showOptions();
     }
+  }
+
+  private isMileStone(): boolean {
+    const actualIndex = this.scene.registry.get("actualIndex");
+    const allLevels = this.levelManager.getLevels();
+    if (actualIndex < allLevels.length - 1 && actualIndex % 5 === 0) {
+      return true;
+    }
+    return false;
   }
 
   /**

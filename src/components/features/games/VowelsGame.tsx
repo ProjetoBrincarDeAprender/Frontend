@@ -7,6 +7,7 @@ import Phaser from "phaser";
 import { StartScene } from "@/games/common/scenes/StartScene";
 import { EndScene } from "@/games/common/scenes/EndScene";
 import ClickButtonGameScene from "@/games/clickedButton/scenes/ClickButtonGame";
+import { LevelCompletedScene } from "@/games/common/scenes/LevelCompletedScene";
 
 const VowelsGame: React.FC = () => {
   const gameRef = useRef<Phaser.Game | null>(null);
@@ -26,6 +27,16 @@ const VowelsGame: React.FC = () => {
       "/assets/vowelsGame/gameData/mainData.JSON",
     );
 
+    const levelCompleted = new LevelCompletedScene({
+      nextLevelScene: "clickButtonGameScene",
+      menuScene: "StartScene",
+      backgroundPath: "/assets/vowelsGame/images/backgroundMain.png",
+      backgroundKey: "levelCompletedBg",
+      onMenuReturn: () => {
+        ClickButtonGameScene.resetRegistry(gameScene);
+      },
+    });
+
     const endScene = new EndScene({
       restartScene: "clickButtonGameScene",
       backgroundPath: "/assets/vowelsGame/images/backgroundMain.png",
@@ -36,7 +47,7 @@ const VowelsGame: React.FC = () => {
       type: Phaser.AUTO,
       width: 800,
       height: 600,
-      scene: [startScene, gameScene, endScene],
+      scene: [startScene, levelCompleted, gameScene, endScene],
       parent: containerRef.current,
       backgroundColor: "#ffffff",
     };

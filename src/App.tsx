@@ -9,7 +9,7 @@ import ProfessionsGame from "./components/features/games/ProfessionsGame";
 import SimpleSyllableGame from "./components/features/games/SimpleSyllableGame";
 import { SpaceGame } from "./components/features/games/SpaceGame";
 import SumGame from "./components/features/games/SumGame";
-import SyllableGame from "./components/features/games/SyllableGame";
+import UseSyllableGame from "./components/features/games/UseSyllableGame";
 import VowelsGame from "./components/features/games/VowelsGame";
 import { AuthGuard } from "./guards/AuthGuard";
 import { Calm } from "./pages/Calm/Calm";
@@ -91,7 +91,7 @@ function App() {
         <Route path="maze" element={<MazeGame />} />
         <Route path="space" element={<SpaceGame />} />
         <Route path="professions" element={<ProfessionsGame />} />
-        <Route path="syllable" element={<SyllableGame />} />
+        <Route path="use-syllable" element={<UseSyllableGame />} />
         <Route path="simple-syllable" element={<SimpleSyllableGame />} />
         <Route path="plants" element={<PlantsGame />} />
       </Route>

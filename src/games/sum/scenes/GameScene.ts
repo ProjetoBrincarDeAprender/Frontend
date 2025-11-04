@@ -34,6 +34,8 @@ export class GameScene extends Phaser.Scene {
   }
 
   init() {
+    new GlobalAudioManager(this, 0.7);
+    
     this.inputText = "";
     this.correctAnswer = 0;
     this.currentLevel = null;
@@ -48,7 +50,6 @@ export class GameScene extends Phaser.Scene {
     this.userId = this.registry.get('sumUserId') || '10130001';
     this.activityId = this.registry.get('sumActivityId') || 1;
     
-    new GlobalAudioManager(this);
     this.registerStandardScenes();
   }
 
@@ -110,6 +111,9 @@ export class GameScene extends Phaser.Scene {
     this.load.image("defaultButton", "/assets/common/buttons/squareBlueDefault.svg");
     this.load.image("hoverButton", "/assets/common/buttons/squareBlueHover.svg");
     this.load.image("clickedButton", "/assets/common/buttons/squareBlueClicked.svg");
+    
+    this.load.image("audioOn", "/assets/common/buttons/audioOn.svg");
+    this.load.image("audioOff", "/assets/common/buttons/audioOff.svg");
   }
 
   create() {
@@ -126,6 +130,7 @@ export class GameScene extends Phaser.Scene {
     if (this.audioManager) {
       this.audioManager.createSounds();
     }
+    
     this.animationManager = new AnimationManager(this);
     this.numberDisplay = new NumberDisplay(this);
   }

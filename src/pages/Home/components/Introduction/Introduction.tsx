@@ -1,5 +1,3 @@
-import { BiJoystick } from "react-icons/bi";
-import { Link } from "../../../../components/utils/Link/Link";
 import girl from "../../../../assets/girlmainpage.svg";
 
 import "./Introduction.css";
@@ -20,13 +18,6 @@ export function Introduction({ className = "" }: IntroductionProps) {
           Educacionais
         </h1>
         <p>Porque o amor não conta cromossomos!</p>
-        <Link
-          href="/games"
-          variant="dark"
-          className="play-button bg-yellow self-start rounded-2xl px-16 py-3 text-center text-4xl font-bold hover:bg-yellow-600"
-        >
-          <BiJoystick className="text-purplish-blue inline-block" /> Jogar
-        </Link>
       </div>
       <div className="self-center">
         <img src={girl} alt="" className="block max-h-[31.25rem]" />
