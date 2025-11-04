@@ -65,26 +65,6 @@ export function Games() {
     setFilteredGames(gamesData);
   }, []);
 
-  const _mapCompetenciaToArea = (competenciaId: number): KnowledgeArea => {
-    switch (competenciaId) {
-      case 1:
-      case 2:
-        return "PORTUGUES";
-      case 3:
-      case 4:
-        return "MATEMATICA";
-      case 5:
-        return "CIENCIAS";
-      case 6:
-        return "GEOGRAFIA";
-      case 7:
-      case 8:
-        return "COORDENAÇÃO";
-      default:
-        return "COORDENAÇÃO";
-    }
-  };
-
   const filterGames = (term: string, area: KnowledgeArea) => {
     let filtered = [...games];
 
