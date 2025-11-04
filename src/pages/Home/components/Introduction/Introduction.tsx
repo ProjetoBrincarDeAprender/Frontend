@@ -1,5 +1,3 @@
-import { BiJoystick } from "react-icons/bi";
-import { Link } from "../../../../components/utils/Link/Link";
 import girl from "../../../../assets/girlmainpage.svg";
 
 import "./Introduction.css";
