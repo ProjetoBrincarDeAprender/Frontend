@@ -28,7 +28,7 @@ export class ImageContentRenderer implements IContentRenderer {
       this.entity = scene.add
         .image(400, 240, entityKey)
         .setOrigin(0.5, 0.5)
-        .setScale(0.5);
+        .setScale(0.3);
     }
 
     // Renderiza o conteúdo textual
@@ -36,7 +36,7 @@ export class ImageContentRenderer implements IContentRenderer {
     if (!content) return null;
 
     const newPositionY = 380;
-    const scale = 0.8;
+    const scale = 1.2;
 
     return this.createContentButtons(
       content,
@@ -60,7 +60,7 @@ export class ImageContentRenderer implements IContentRenderer {
     if (!completeContent) return null;
 
     const newPositionY = 380;
-    const scale = 0.8;
+    const scale = 1.2;
 
     return this.createContentButtons(
       completeContent,
@@ -89,10 +89,13 @@ export class ImageContentRenderer implements IContentRenderer {
     const spaceBetweenContent = 60;
     const buttonWidth = 20 * scale;
     const totalWidthOccupied =
-      (content.length - 1) * spaceBetweenContent + buttonWidth * content.length;
+      (content.length - 1) * spaceBetweenContent +
+      buttonWidth * content.length -
+      20;
     const startX = (scene.cameras.main.width - totalWidthOccupied) / 2;
 
     for (let i = 0; i < content.length; i++) {
+      const dynamicFontSize = this.calculateFontSize(content[i], scale);
       const newPositionX = startX + i * (buttonWidth + spaceBetweenContent);
       const contentItem = buttonManager.createButton({
         positions: { x: newPositionX, y: positionY },
@@ -100,7 +103,7 @@ export class ImageContentRenderer implements IContentRenderer {
           default: "whiteButton",
         },
         text: content[i],
-        fontSize: 40,
+        fontSize: dynamicFontSize,
         scale: scale,
         color: "#000000",
       });
@@ -109,5 +112,37 @@ export class ImageContentRenderer implements IContentRenderer {
 
     this.content = newContent;
     return newContent;
+  }
+
+  private calculateFontSize(
+    text: string,
+    buttonScale: number = 1.0,
+    baseSize: number = 30,
+    minSize: number = 16,
+    maxSize: number = 40,
+  ): number {
+    if (!text || text.trim().length === 0) {
+      return baseSize;
+    }
+
+    const textLength = text.trim().length;
+    let fontSize = baseSize;
+
+    // Ajusta fontSize baseado no comprimento do texto
+    if (textLength <= 1) {
+      fontSize = maxSize;
+    } else if (textLength <= 2) {
+      fontSize = baseSize * 0.9;
+    } else if (textLength <= 3) {
+      fontSize = baseSize * 0.65;
+    } else {
+      fontSize = baseSize * 0.5;
+    }
+
+    // Ajusta para a escala do botão
+    fontSize *= buttonScale;
+
+    // Garante que está dentro dos limites
+    return Math.max(minSize, Math.min(maxSize, Math.round(fontSize)));
   }
 }

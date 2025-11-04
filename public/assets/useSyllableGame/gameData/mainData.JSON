@@ -1,0 +1,292 @@
+{
+  "config": {
+    "background": {
+      "image": "/assets/useSyllableGame/images/backgroundMain.png",
+      "overlayOpacity": 0.3
+    }
+  },
+
+  "textures": {
+    "buttons": {
+      "blue": {
+        "default": "/assets/common/buttons/squareBlueDefault.svg",
+        "hover": "/assets/common/buttons/squareBlueHover.svg",
+        "clicked": "/assets/common/buttons/squareBlueClicked.svg"
+      },
+      "red": {
+        "default": "/assets/common/buttons/squareRedDefault.svg",
+        "hover": "/assets/common/buttons/squareRedHover.svg",
+        "clicked": "/assets/common/buttons/squareRedClicked.svg"
+      },
+      "white": {
+        "default": "/assets/common/buttons/squareWhite.svg"
+      }
+    },
+    "entities": [
+      {
+        "key": "bola",
+        "path": "/assets/useSyllableGame/images/entities/bola.png"
+      },
+      {
+        "key": "casa",
+        "path": "/assets/useSyllableGame/images/entities/casa.png"
+      },
+      {
+        "key": "sofa",
+        "path": "/assets/useSyllableGame/images/entities/sofa.png"
+      },
+      {
+        "key": "pato",
+        "path": "/assets/useSyllableGame/images/entities/pato.png"
+      },
+      {
+        "key": "mala",
+        "path": "/assets/useSyllableGame/images/entities/mala.png"
+      },
+      {
+        "key": "cavalo",
+        "path": "/assets/useSyllableGame/images/entities/cavalo.png"
+      },
+      {
+        "key": "banana",
+        "path": "/assets/useSyllableGame/images/entities/banana.png"
+      },
+      {
+        "key": "pipoca",
+        "path": "/assets/useSyllableGame/images/entities/pipoca.png"
+      },
+      {
+        "key": "camisa",
+        "path": "/assets/useSyllableGame/images/entities/camisa.png"
+      },
+      {
+        "key": "boneca",
+        "path": "/assets/useSyllableGame/images/entities/boneca.png"
+      },
+      {
+        "key": "abacaxi",
+        "path": "/assets/useSyllableGame/images/entities/abacaxi.png"
+      },
+      {
+        "key": "elefante",
+        "path": "/assets/useSyllableGame/images/entities/elefante.png"
+      },
+      {
+        "key": "bicicleta",
+        "path": "/assets/useSyllableGame/images/entities/bicicleta.png"
+      },
+      {
+        "key": "parafuso",
+        "path": "/assets/useSyllableGame/images/entities/parafuso.png"
+      },
+      {
+        "key": "borboleta",
+        "path": "/assets/useSyllableGame/images/entities/borboleta.png"
+      }
+    ],
+    "effects": [
+      {
+        "key": "star",
+        "texture": "/assets/common/star.svg"
+      }
+    ]
+  },
+
+  "audios": [
+    {
+      "key": "correct",
+      "path": "/assets/common/sounds/correct.mp3"
+    },
+    {
+      "key": "incorrect",
+      "path": "/assets/common/sounds/incorrect.mp3"
+    },
+    {
+      "key": "bola",
+      "path": "/assets/useSyllableGame/sounds/bola.mp3"
+    },
+    {
+      "key": "casa",
+      "path": "/assets/useSyllableGame/sounds/casa.mp3"
+    },
+    {
+      "key": "sofa",
+      "path": "/assets/useSyllableGame/sounds/sofa.mp3"
+    },
+    {
+      "key": "pato",
+      "path": "/assets/useSyllableGame/sounds/pato.mp3"
+    },
+    {
+      "key": "mala",
+      "path": "/assets/useSyllableGame/sounds/mala.mp3"
+    },
+    {
+      "key": "cavalo",
+      "path": "/assets/useSyllableGame/sounds/cavalo.mp3"
+    },
+    {
+      "key": "banana",
+      "path": "/assets/useSyllableGame/sounds/banana.mp3"
+    },
+    {
+      "key": "pipoca",
+      "path": "/assets/useSyllableGame/sounds/pipoca.mp3"
+    },
+    {
+      "key": "camisa",
+      "path": "/assets/useSyllableGame/sounds/camisa.mp3"
+    },
+    {
+      "key": "boneca",
+      "path": "/assets/useSyllableGame/sounds/boneca.mp3"
+    },
+    {
+      "key": "abacaxi",
+      "path": "/assets/useSyllableGame/sounds/abacaxi.mp3"
+    },
+    {
+      "key": "elefante",
+      "path": "/assets/useSyllableGame/sounds/elefante.mp3"
+    },
+    {
+      "key": "bicicleta",
+      "path": "/assets/useSyllableGame/sounds/bicicleta.mp3"
+    },
+    {
+      "key": "parafuso",
+      "path": "/assets/useSyllableGame/sounds/parafuso.mp3"
+    },
+    {
+      "key": "borboleta",
+      "path": "/assets/useSyllableGame/sounds/borboleta.mp3"
+    }
+  ],
+
+  "info": {
+    "activityId": 2
+  },
+
+  "levels": [
+    {
+      "question": "COMPLETE AS SÍLABAS",
+      "entityKey": "bola",
+      "content": ["BO", " "],
+      "completeContent": ["BO", "LA"],
+      "answer": "LA",
+      "options": ["LA", "LU"]
+    },
+    {
+      "question": "COMPLETE AS SÍLABAS",
+      "entityKey": "casa",
+      "content": ["CA", " "],
+      "completeContent": ["CA", "SA"],
+      "answer": "SA",
+      "options": ["SE", "SA"]
+    },
+    {
+      "question": "COMPLETE AS SÍLABAS",
+      "entityKey": "sofa",
+      "content": ["SO", " "],
+      "completeContent": ["SO", "FÁ"],
+      "answer": "FÁ",
+      "options": ["FÁ", "FI"]
+    },
+    {
+      "question": "COMPLETE AS SÍLABAS",
+      "entityKey": "pato",
+      "content": [" ", "TO"],
+      "completeContent": ["PA", "TO"],
+      "answer": "PA",
+      "options": ["PE", "PA"]
+    },
+    {
+      "question": "COMPLETE AS SÍLABAS",
+      "entityKey": "mala",
+      "content": [" ", "LA"],
+      "completeContent": ["MA", "LA"],
+      "answer": "MA",
+      "options": ["MA", "ME"]
+    },
+    {
+      "question": "COMPLETE AS SÍLABAS",
+      "entityKey": "cavalo",
+      "content": ["CA", "VA", " "],
+      "completeContent": ["CA", "VA", "LO"],
+      "answer": "LO",
+      "options": ["LE", "LU", "LO"]
+    },
+    {
+      "question": "COMPLETE AS SÍLABAS",
+      "entityKey": "banana",
+      "content": ["BA", "NA", " "],
+      "completeContent": ["BA", "NA", "NA"],
+      "answer": "NA",
+      "options": ["NO", "NA", "NE"]
+    },
+    {
+      "question": "COMPLETE AS SÍLABAS",
+      "entityKey": "pipoca",
+      "content": ["PI", " ", "CA"],
+      "completeContent": ["PI", "PO", "CA"],
+      "answer": "PO",
+      "options": ["PA", "PE", "PO"]
+    },
+    {
+      "question": "COMPLETE AS SÍLABAS",
+      "entityKey": "camisa",
+      "content": ["CA", "MI", " "],
+      "completeContent": ["CA", "MI", "SA"],
+      "answer": "SA",
+      "options": ["SO", "SU", "SA"]
+    },
+    {
+      "question": "COMPLETE AS SÍLABAS",
+      "entityKey": "boneca",
+      "content": ["BO", " ", "CA"],
+      "completeContent": ["BO", "NE", "CA"],
+      "answer": "NE",
+      "options": ["NA", "NO", "NE"]
+    },
+    {
+      "question": "COMPLETE AS SÍLABAS",
+      "entityKey": "abacaxi",
+      "content": ["A", "BA", "CA", " "],
+      "completeContent": ["A", "BA", "CA", "XI"],
+      "answer": "XI",
+      "options": ["XO", "XA", "XE", "XI"]
+    },
+    {
+      "question": "COMPLETE AS SÍLABAS",
+      "entityKey": "elefante",
+      "content": ["E", " ", "FAN", "TE"],
+      "completeContent": ["E", "LE", "FAN", "TE"],
+      "answer": "LE",
+      "options": ["LA", "LI", "LE", "LU"]
+    },
+    {
+      "question": "COMPLETE AS SÍLABAS",
+      "entityKey": "bicicleta",
+      "content": [" ", "CI", "CLE", "TA"],
+      "completeContent": ["BI", "CI", "CLE", "TA"],
+      "answer": "BI",
+      "options": ["BA", "BE", "BI", "BO"]
+    },
+    {
+      "question": "COMPLETE AS SÍLABAS",
+      "entityKey": "parafuso",
+      "content": ["PA", "RA", " ", "SO"],
+      "completeContent": ["PA", "RA", "FU", "SO"],
+      "answer": "FU",
+      "options": ["FA", "FE", "FI", "FU"]
+    },
+    {
+      "question": "COMPLETE AS SÍLABAS",
+      "entityKey": "borboleta",
+      "content": ["BOR", "BO", "LE", " "],
+      "completeContent": ["BOR", "BO", "LE", "TA"],
+      "answer": "TA",
+      "options": ["TE", "TI", "TO", "TA"]
+    }
+  ]
+}

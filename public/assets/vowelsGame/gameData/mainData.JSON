@@ -169,6 +169,14 @@
     },
     {
       "question": "ENCONTRE A VOGAL CORRETA",
+      "entityKey": "abelha",
+      "content": [" ", "B", "E", "L", "H", "A"],
+      "completeContent": ["A", "B", "E", "L", "H", "A"],
+      "options": ["F", "I", "A", "E"],
+      "answer": "A"
+    },
+    {
+      "question": "ENCONTRE A VOGAL CORRETA",
       "entityKey": "onca",
       "content": [" ", "N", "Ç", "A"],
       "completeContent": ["O", "N", "Ç", "A"],

@@ -31,7 +31,7 @@ import Logout from "./pages/Logout/Logout";
 import { Profile } from "./pages/Profile/Profile";
 import { RecoverPassword } from "./pages/RecoverPassword/RecoverPassword";
 import { SendPasswordToken } from "./pages/SendPasswordToken/SendPasswordToken";
-import SyllableGame from "./components/features/games/SyllableGame";
+import UseSyllableGame from "./components/features/games/UseSyllableGame";
 import SimpleSyllableGame from "./components/features/games/SimpleSyllableGame";
 import VowelsGame from "./components/features/games/VowelsGame";
 
@@ -90,7 +90,7 @@ function App() {
         <Route path="maze" element={<MazeGame />} />
         <Route path="space" element={<SpaceGame />} />
         <Route path="professions" element={<ProfessionsGame />} />
-        <Route path="syllable" element={<SyllableGame />} />
+        <Route path="use-syllable" element={<UseSyllableGame />} />
         <Route path="simple-syllable" element={<SimpleSyllableGame />} />
       </Route>
 

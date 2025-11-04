@@ -5,10 +5,11 @@ import { Header } from "@/components/Header/Header";
 import { BackButton } from "@/components/utils/BackButton";
 import { StartScene } from "@/games/common/scenes/StartScene";
 import { EndScene } from "@/games/common/scenes/EndScene";
+import { LevelCompletedScene } from "@/games/common/scenes/LevelCompletedScene";
 import Phaser from "phaser";
 import ClickButtonGameScene from "@/games/clickedButton/scenes/ClickButtonGame";
 
-const SyllableGame: React.FC = () => {
+const UseSyllableGame: React.FC = () => {
   const gameRef = useRef<Phaser.Game | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
 
@@ -17,19 +18,24 @@ const SyllableGame: React.FC = () => {
 
     const startScene = new StartScene({
       nextSceneName: "clickButtonGameScene",
-      backgroundPath: "/assets/syllableGame/images/backgroundStart.png",
+      backgroundPath: "/assets/useSyllableGame/images/backgroundStart.png",
       backgroundKey: "startBg",
-      gameTitle: "SÍLABAS",
-      // trophyImagePath: "/assets/common/duda/dudaClap.png",
-      // trophyImageKey: "dudaClap",
+      gameTitle: "USANDO SÍLABAS",
     });
 
     const gameScene = new ClickButtonGameScene(
-      "/assets/syllableGame/gameData/mainData.JSON",
+      "/assets/useSyllableGame/gameData/mainData.JSON",
     );
 
+    const levelComplete = new LevelCompletedScene({
+      nextLevelScene: "clickButtonGameScene",
+      backgroundPath: "/assets/useSyllableGame/images/backgroundMain.png",
+      backgroundKey: "levelBg",
+    });
+
     const endScene = new EndScene({
-      backgroundPath: "/assets/syllableGame/images/backgroundMain.png",
+      restartScene: "clickButtonGameScene",
+      backgroundPath: "/assets/useSyllableGame/images/backgroundMain.png",
       backgroundKey: "endBg",
     });
 
@@ -37,7 +43,7 @@ const SyllableGame: React.FC = () => {
       type: Phaser.AUTO,
       width: 800,
       height: 600,
-      scene: [startScene, gameScene, endScene],
+      scene: [startScene, levelComplete, gameScene, endScene],
       parent: containerRef.current,
       backgroundColor: "#ffffff",
     };
@@ -71,4 +77,4 @@ const SyllableGame: React.FC = () => {
   );
 };
 
-export default SyllableGame;
+export default UseSyllableGame;
