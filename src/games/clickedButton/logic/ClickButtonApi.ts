@@ -1,7 +1,7 @@
-import api from "@/utils/api";
+import { APIDataService } from "@/games/common/services/APIData.service";
+import Cookies from "js-cookie";
 
 export interface ClickButtonApiConfig {
-  studentId: any;
   activityId: number;
   questionId: number;
   answer: string;
@@ -13,6 +13,12 @@ export interface ClickButtonApiConfig {
 }
 
 export default class ClickButtonApi {
+  private apiService: APIDataService;
+
+  constructor(scene: Phaser.Scene) {
+    this.apiService = new APIDataService(scene);
+  }
+
   getCurrentUser(): { id: number | string; name?: string } {
     try {
       const userData = localStorage.getItem("user");
@@ -24,9 +30,7 @@ export default class ClickButtonApi {
         };
       }
 
-      const authToken = document.cookie
-        .split("; ")
-        .find((row) => row.startsWith("authToken="));
+      const authToken = Cookies.get("authToken");
 
       if (authToken) {
         return { id: "usuario_logado" };
@@ -43,12 +47,11 @@ export default class ClickButtonApi {
     try {
       console.log(JSON.stringify(interaction, null, 2));
 
-      const response = await api.post(
-        "/adaptiveSystem/interaction/register",
+      this.apiService.sendGameData(
+        interaction.activityId,
+        interaction.questionId,
         interaction,
       );
-
-      console.log("✅ SUCESSO! Status:", response.status);
     } catch (error: unknown) {
       if (error && typeof error === "object" && "response" in error) {
         const axiosError = error as {

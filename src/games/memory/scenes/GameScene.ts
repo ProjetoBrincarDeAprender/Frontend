@@ -1,20 +1,15 @@
 import { AudioManager } from "@/games/common/managers/AudioManager";
 import { PreloadScene } from "@/games/common/scenes/PreloadScene";
-import api from "@/utils/api";
+import { APIDataService } from "@/games/common/services/APIData.service";
 import { MemoryGameLogic } from "../logic/MemoryGameLogic";
 
 export class MemoryGameScene extends PreloadScene {
   private logic!: MemoryGameLogic;
   private gameDataTimer?: Phaser.Time.TimerEvent;
-  private userId?: string;
   private activityId?: number;
 
   constructor() {
     super({ key: "MemoryGameScene" });
-  }
-
-  setUserId(userId: string) {
-    this.userId = userId;
   }
 
   setActivityId(activityId: number) {
@@ -22,7 +17,7 @@ export class MemoryGameScene extends PreloadScene {
   }
 
   init(data: { resetGame?: boolean } = {}) {
-    this.logic = new MemoryGameLogic(this, this.userId, this.activityId);
+    this.logic = new MemoryGameLogic(this, this.activityId);
 
     if (data.resetGame) {
       this.logic.resetGame();
@@ -75,38 +70,26 @@ export class MemoryGameScene extends PreloadScene {
   }
 
   private async sendGameData() {
-    try {
-      const attempts = this.logic.getCurrentAttempts();
-      const levelTime = this.logic.getCurrentLevelTime();
-      // const currentQuestionIndex = this.logic.getAbsoluteQuestionIndex();
+    const attempts = this.logic.getCurrentAttempts();
+    const levelTime = this.logic.getCurrentLevelTime();
+    // const currentQuestionIndex = this.logic.getAbsoluteQuestionIndex();
 
-      const gameData = {
-        studentId: Number(this.userId) || 10130001,
-        activityId: this.activityId || 4,
-        questionId: 1,
-        attempts: attempts,
-        timeSpent: levelTime,
-        responseDate: this.time.now,
-        isCorrect: false,
-        answer: "playing",
-      };
+    const gameData = {
+      questionId: this.logic.getAbsoluteQuestionIndex(),
+      attempts: attempts,
+      timeSpent: levelTime,
+      isCorrect: false,
+      answer: "playing",
+      neededHint: false,
+    };
 
-      console.log("Enviando dados do jogo:", gameData);
+    const apiService = new APIDataService(this);
 
-      const response = await api.post(
-        "/adaptiveSystem/interaction/register",
-        gameData,
-      );
-
-      if (response.status === 201) {
-        console.log("Dados enviados com sucesso");
-        console.log("Resposta do servidor:", response.data);
-      } else {
-        console.error("Erro ao enviar dados:", response.status);
-      }
-    } catch (error) {
-      console.error("Erro ao enviar dados do jogo:", error);
-    }
+    apiService.sendGameData(
+      this.activityId || 4,
+      this.logic.getAbsoluteQuestionIndex(),
+      gameData,
+    );
   }
 
   update() {

@@ -6,15 +6,10 @@ import { PreloadScene } from "@/games/common/scenes/PreloadScene";
 
 export class PlantsGameScene extends PreloadScene {
   private logic!: PlantsLogic;
-  private userId?: string;
   private activityId?: number;
 
   constructor() {
     super({ key: "PlantsGameScene" });
-  }
-
-  setUserId(userId: string) {
-    this.userId = userId;
   }
 
   setActivityId(activityId: number) {
@@ -22,7 +17,7 @@ export class PlantsGameScene extends PreloadScene {
   }
 
   private initializeLogic() {
-    this.logic = new PlantsLogic(this, this.userId, this.activityId);
+    this.logic = new PlantsLogic(this, this.activityId);
   }
 
   init(_data: { continueFromLevel?: boolean } = {}) {

@@ -24,12 +24,10 @@ export default class SpaceLogic {
     | Phaser.GameObjects.Text
   )[] = [];
   private buttonsEnabled: boolean = true;
-  private userId?: string;
   private activityId?: number;
 
-  constructor(scene: Phaser.Scene, userId?: string, activityId?: number) {
+  constructor(scene: Phaser.Scene, activityId?: number) {
     this.scene = scene;
-    this.userId = userId;
     this.activityId = activityId;
     this.gameStats = new GameStats();
     this.buttonManager = new ButtonManager(this.scene);
@@ -252,23 +250,18 @@ export default class SpaceLogic {
     this.gameStats.addHitTime(this.scene.time.now);
     this.gameStats.addMissCount();
 
-    const apiService = new APIDataService();
+    const apiService = new APIDataService(this.scene);
 
     // Usar índice único baseado em nível e questão
     const uniqueQuestionIndex = this.getUniqueQuestionIndex();
 
-    apiService.sendGameData(
-      this.userId || "10130001",
-      this.activityId || 3,
-      uniqueQuestionIndex,
-      {
-        attempts: this.gameStats.getCurrentLevelMisses(),
-        timeSpent: this.gameStats.getCurrentLevelTimeSpent(this.scene.time.now),
-        isCorrect: true,
-        answer: this.generateAnswerLog(),
-        neededHint: false, // temporario, dica não implementada
-      },
-    );
+    apiService.sendGameData(this.activityId || 3, uniqueQuestionIndex, {
+      attempts: this.gameStats.getCurrentLevelMisses(),
+      timeSpent: this.gameStats.getCurrentLevelTimeSpent(this.scene.time.now),
+      isCorrect: true,
+      answer: this.generateAnswerLog(),
+      neededHint: false, // temporario, dica não implementada
+    });
 
     this.gameStats.resetInitialLevelTime(this.scene.time.now);
     this.gameStats.resetActualLevelMisses(); // Resetar para a próxima questão
@@ -356,22 +349,17 @@ export default class SpaceLogic {
     // Adicionar estatísticas
     this.gameStats.addMiss();
 
-    const apiService = new APIDataService();
+    const apiService = new APIDataService(this.scene);
 
     const uniqueQuestionIndex = this.getUniqueQuestionIndex();
 
-    apiService.sendGameData(
-      this.userId || "10130001",
-      this.activityId || 3,
-      uniqueQuestionIndex,
-      {
-        attempts: this.gameStats.getCurrentLevelMisses(),
-        timeSpent: this.gameStats.getCurrentLevelTimeSpent(this.scene.time.now),
-        isCorrect: false,
-        answer: this.generateAnswerLog(),
-        neededHint: false, // temporario, dica não implementada
-      },
-    );
+    apiService.sendGameData(this.activityId || 3, uniqueQuestionIndex, {
+      attempts: this.gameStats.getCurrentLevelMisses(),
+      timeSpent: this.gameStats.getCurrentLevelTimeSpent(this.scene.time.now),
+      isCorrect: false,
+      answer: this.generateAnswerLog(),
+      neededHint: false, // temporario, dica não implementada
+    });
 
     // Mostrar feedback negativo
     this.showFeedback("Tente novamente! 🤔", 0xff0000, true);

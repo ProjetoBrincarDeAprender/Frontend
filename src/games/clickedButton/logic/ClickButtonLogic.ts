@@ -10,15 +10,15 @@
  * - Controlar o fluxo entre níveis
  */
 import Phaser from "phaser";
-import LevelManager from "./LevelManager";
-import ButtonManager from "./ButtonManager";
-import EffectManager from "./EffectManager";
-import SoundManager from "./SoundManager";
-import GameStats from "./GameStats";
-import ClickButtonApi from "./ClickButtonApi";
 import { ContentRendererFactory } from "../strategies/ContentRendererFactory";
 import type { IContentRenderer } from "../strategies/IContentRenderer";
 import type Button from "./Button";
+import ButtonManager from "./ButtonManager";
+import ClickButtonApi from "./ClickButtonApi";
+import EffectManager from "./EffectManager";
+import GameStats from "./GameStats";
+import LevelManager from "./LevelManager";
+import SoundManager from "./SoundManager";
 
 export default class ClickButtonLogic {
   private scene: Phaser.Scene;
@@ -51,7 +51,7 @@ export default class ClickButtonLogic {
     this.buttonManager = buttonManager;
     this.effectManager = new EffectManager(scene);
     this.soundManager = new SoundManager(scene);
-    this.api = new ClickButtonApi();
+    this.api = new ClickButtonApi(this.scene);
     this.activityId = -1;
     this.gameStats = new GameStats();
     this.gameStats.resetInitialLevelTime(Date.now());
@@ -130,7 +130,6 @@ export default class ClickButtonLogic {
 
     const answer = this.levelManager.getActualLevel().getAnswer();
     const interaction = {
-      studentId: 10130001, // Usuário de teste. Ainda não sabemos como vamos pegar o ID
       activityId: this.activityId,
       questionId: 1, // Questões questionáveis
       // questionId: this.levelManager.getActualIndex() + 1,
