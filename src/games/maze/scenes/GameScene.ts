@@ -4,6 +4,7 @@ import MazeLevel, {
   type LevelData,
   type ShapeConfig,
 } from "../logic/MazeLevel";
+import { MazeApiService } from "../services/MazeApiService";
 
 export default class MazeGameScene extends Phaser.Scene {
   private levels: MazeLevel[] = [];
@@ -17,6 +18,12 @@ export default class MazeGameScene extends Phaser.Scene {
   private isDragging = false;
   private startPos = { x: 0, y: 0 };
 
+  // Tracking de dados para envio ao backend
+  private apiService!: MazeApiService;
+  private levelStartTime: number = 0;
+  private currentAttempts: number = 0;
+  private activityId: number = 2; // ID da atividade do jogo do labirinto
+
   constructor() {
     super({ key: "MazeGameScene" });
   }
@@ -29,6 +36,15 @@ export default class MazeGameScene extends Phaser.Scene {
     // Limpa o valor para evitar reaproveitar em reinícios
     this.registry.set("mazeNextLevel", null);
     new AudioManager(this);
+
+    // Pega o activityId do registry se disponível
+    const registryActivityId = this.registry.get("activityId");
+    if (registryActivityId) {
+      this.activityId = registryActivityId;
+    }
+
+    // Inicializa o serviço de API
+    this.apiService = new MazeApiService(this, this.activityId);
   }
 
   preload() {
@@ -89,6 +105,10 @@ export default class MazeGameScene extends Phaser.Scene {
   }
 
   private startLevel() {
+    // Reseta tracking do nível
+    this.levelStartTime = Date.now();
+    this.currentAttempts = 0;
+
     // Limpar elementos anteriores
     this.walls.forEach((wall) => wall.destroy());
     this.walls = [];
@@ -471,6 +491,10 @@ export default class MazeGameScene extends Phaser.Scene {
   private onWallCollision() {
     this.sound.play("incorrect");
 
+    // Incrementa tentativas e envia dados ao errar
+    this.currentAttempts++;
+    this.sendErrorData();
+
     // Efeito visual de erro
     this.cameras.main.shake(200, 0.005);
 
@@ -517,6 +541,9 @@ export default class MazeGameScene extends Phaser.Scene {
   private onSuccess() {
     this.sound.play("correct");
     this.isDragging = false;
+
+    // Envia dados de sucesso
+    this.sendSuccessData();
 
     // Efeitos visuais de sucesso
     this.createSuccessEffect();
@@ -599,5 +626,36 @@ export default class MazeGameScene extends Phaser.Scene {
         onComplete: () => star.destroy(),
       });
     }
+  }
+
+  // 📊 Métodos de envio de dados
+  private async sendErrorData() {
+    const currentTime = Date.now();
+    const timeSpent = Math.floor((currentTime - this.levelStartTime) / 1000); // em segundos
+
+    const gameData = {
+      questionId: this.currentLevelIndex + 1, // Níveis começam em 1
+      attempts: this.currentAttempts,
+      timeSpent: timeSpent,
+      isCorrect: false, // Erro ao colidir com parede
+      neededHint: false,
+    };
+
+    await this.apiService.sendGameData(gameData);
+  }
+
+  private async sendSuccessData() {
+    const currentTime = Date.now();
+    const timeSpent = Math.floor((currentTime - this.levelStartTime) / 1000);
+
+    const gameData = {
+      questionId: this.currentLevelIndex + 1,
+      attempts: this.currentAttempts,
+      timeSpent: timeSpent,
+      isCorrect: true, // Sucesso ao chegar no alvo!
+      neededHint: false,
+    };
+
+    await this.apiService.sendGameData(gameData);
   }
 }
