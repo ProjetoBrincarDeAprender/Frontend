@@ -39,6 +39,13 @@
         { "x": 375, "y": 50, "width": 375, "height": 25 },
         { "x": 725, "y": 50, "width": 25, "height": 125 },
         { "x": 725, "y": 50, "width": 25, "height": 500 }
+      ],
+      "dangerZones": [
+        { "x": 0, "y": 0, "width": 800, "height": 75 },
+        { "x": 0, "y": 525, "width": 800, "height": 75 },
+        { "x": 0, "y": 75, "width": 75, "height": 450 },
+        { "x": 725, "y": 75, "width": 75, "height": 450 },
+        { "x": 75, "y": 75, "width": 325, "height": 350 }
       ]
     },
     {
