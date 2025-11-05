@@ -67,14 +67,10 @@ export default class ClickButtonGameScene extends PreloadScene {
   create() {
     // Verifica se há dados gerados dinamicamente no registry
     const generatedData = this.registry.get("generatedGameData");
-
     if (generatedData) {
-      // Usa os dados gerados dinamicamente
       this.mainData = generatedData;
-      // Limpa os dados do registry para evitar conflitos futuros
       this.registry.remove("generatedGameData");
     } else {
-      // Usa os dados carregados do JSON
       this.mainData = this.cache.json.get("mainData");
     }
 

@@ -35,6 +35,7 @@ const SimpleSyllableGame: React.FC = () => {
     const gameScene = new ClickButtonGameScene();
 
     const endScene = new EndScene({
+      restartScene: "ConsonantSelectionScene",
       backgroundPath: "/assets/simpleSyllableGame/images/backgroundMain.png",
       backgroundKey: "endBg",
     });

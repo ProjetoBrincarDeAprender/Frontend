@@ -1,6 +1,7 @@
 import Phaser from "phaser";
 import ButtonManager from "@/games/clickedButton/logic/ButtonManager";
 import { SyllableGameDataGenerator } from "../utils/SyllableGameDataGenerator";
+import EffectManager from "@/games/clickedButton/logic/EffectManager";
 
 export interface ConsonantSelectionConfig {
   backgroundPath: string;
@@ -22,10 +23,8 @@ export default class ConsonantSelectionScene extends Phaser.Scene {
   }
 
   preload() {
-    // Carrega o fundo
+    this.load.audio("buttonClick", "/assets/common/sounds/correct.mp3");
     this.load.image(this.config.backgroundKey, this.config.backgroundPath);
-
-    // Carrega as texturas dos botões
     this.load.image(
       "defaultButton",
       "/assets/common/buttons/squareBlueDefault.svg",
@@ -38,21 +37,18 @@ export default class ConsonantSelectionScene extends Phaser.Scene {
       "clickedButton",
       "/assets/common/buttons/squareBlueClicked.svg",
     );
-
-    // Carrega o áudio de clique
-    this.load.audio("buttonClick", "/assets/common/sounds/correct.mp3");
   }
 
   create() {
     this.createBackground();
     this.createTitle();
-    this.createBackButton();
     this.createConsonantButtons();
   }
 
   private createBackground(): void {
     const background = this.add.image(400, 300, this.config.backgroundKey);
     background.setDisplaySize(800, 600);
+    new EffectManager(this).overlay(0.6);
   }
 
   private createTitle(): void {
@@ -65,37 +61,17 @@ export default class ConsonantSelectionScene extends Phaser.Scene {
       .setOrigin(0.5, 0.5);
   }
 
-  private createBackButton(): void {
-    // Cria um botão "Voltar" no canto superior esquerdo
-    const backButton = this.buttonManager.createButton({
-      positions: { x: 80, y: 50 },
-      textures: {
-        default: "defaultButton",
-        hover: "hoverButton",
-        clicked: "clickedButton",
-      },
-      text: "VOLTAR",
-      fontSize: 24,
-      scale: 0.8,
-    });
-
-    backButton.on("released", () => {
-      try {
-        this.sound.play("buttonClick");
-      } catch (error) {
-        console.warn("Não foi possível reproduzir o som de clique:", error);
-      }
-
-      // Volta para a cena inicial (StartScene)
-      this.scene.start("StartScene");
-    });
-  }
-
   private createConsonantButtons(): void {
-    const buttonsPerRow = 7;
+    // const buttonsPerRow = 7;
+    // const buttonSpacing = 100;
+    // const startX = 120;
+    // const startY = 200;
+    // const rowSpacing = 100;
+
+    const buttonsPerRow = 1;
     const buttonSpacing = 100;
-    const startX = 120;
-    const startY = 200;
+    const startX = 400;
+    const startY = 300;
     const rowSpacing = 100;
 
     this.consonants.forEach((consonant, index) => {
@@ -124,7 +100,6 @@ export default class ConsonantSelectionScene extends Phaser.Scene {
   }
 
   private handleConsonantSelection(consonant: string): void {
-    // Toca som de clique
     try {
       this.sound.play("buttonClick");
     } catch (error) {
@@ -133,12 +108,9 @@ export default class ConsonantSelectionScene extends Phaser.Scene {
 
     // Gera os dados do jogo para a consoante selecionada usando o gerador
     const gameData = SyllableGameDataGenerator.generateGameData(consonant);
-
-    // Armazena os dados no registry para serem usados pela próxima cena
     this.registry.set("generatedGameData", gameData);
     this.registry.set("selectedConsonant", consonant);
 
-    // Adiciona um pequeno delay para feedback visual
     this.time.delayedCall(300, () => {
       this.scene.start(this.config.nextSceneName);
     });

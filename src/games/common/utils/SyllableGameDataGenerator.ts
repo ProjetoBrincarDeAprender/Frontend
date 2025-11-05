@@ -83,7 +83,6 @@ export class SyllableGameDataGenerator {
     const wrongOption =
       otherVowels[Math.floor(Math.random() * otherVowels.length)];
 
-    // Embaralha as opções (50% de chance de cada ordem)
     const options = [correctVowel, wrongOption];
     return Math.random() < 0.5 ? options : options.reverse();
   }
@@ -120,26 +119,26 @@ export class SyllableGameDataGenerator {
   static getAvailableConsonants(): string[] {
     return [
       "B",
-      "C",
-      "D",
-      "F",
-      "G",
-      "H",
-      "J",
-      "K",
-      "L",
-      "M",
-      "N",
-      "P",
-      "Q",
-      "R",
-      "S",
-      "T",
-      "V",
-      "W",
-      "X",
-      "Y",
-      "Z",
+      //   "C",
+      //   "D",
+      //   "F",
+      //   "G",
+      //   "H",
+      //   "J",
+      //   "K",
+      //   "L",
+      //   "M",
+      //   "N",
+      //   "P",
+      //   "Q",
+      //   "R",
+      //   "S",
+      //   "T",
+      //   "V",
+      //   "W",
+      //   "X",
+      //   "Y",
+      //   "Z",
     ];
   }
 
