@@ -119,7 +119,7 @@ export class SyllableGameDataGenerator {
   static getAvailableConsonants(): string[] {
     return [
       "B",
-      //   "C",
+      "C",
       //   "D",
       //   "F",
       //   "G",

@@ -68,9 +68,9 @@ export default class ConsonantSelectionScene extends Phaser.Scene {
     // const startY = 200;
     // const rowSpacing = 100;
 
-    const buttonsPerRow = 1;
+    const buttonsPerRow = 2;
     const buttonSpacing = 100;
-    const startX = 400;
+    const startX = 354;
     const startY = 300;
     const rowSpacing = 100;
 
