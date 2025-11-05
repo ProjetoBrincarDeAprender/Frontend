@@ -1,12 +1,16 @@
 import { Route, Routes } from "react-router";
 import { CoordinationGame } from "./components/features/games/CoordinationGame";
 import HousingGame from "./components/features/games/HousingGame";
+import { MazeGame } from "./components/features/games/MazeGame";
 import { MemoryGame } from "./components/features/games/MemoryGame";
 import NumbersGame from "./components/features/games/NumbersGame";
+import { PlantsGame } from "./components/features/games/PlantsGame";
+import ProfessionsGame from "./components/features/games/ProfessionsGame";
+import SimpleSyllableGame from "./components/features/games/SimpleSyllableGame";
 import { SpaceGame } from "./components/features/games/SpaceGame";
 import SumGame from "./components/features/games/SumGame";
-import ProfessionsGame from "./components/features/games/ProfessionsGame";
-import { MazeGame } from "./components/features/games/MazeGame";
+import UseSyllableGame from "./components/features/games/UseSyllableGame";
+import VowelsGame from "./components/features/games/VowelsGame";
 import { AuthGuard } from "./guards/AuthGuard";
 import { Calm } from "./pages/Calm/Calm";
 import Dashboard from "./pages/Dashboard/Admin/Dashboard";
@@ -31,9 +35,6 @@ import Logout from "./pages/Logout/Logout";
 import { Profile } from "./pages/Profile/Profile";
 import { RecoverPassword } from "./pages/RecoverPassword/RecoverPassword";
 import { SendPasswordToken } from "./pages/SendPasswordToken/SendPasswordToken";
-import UseSyllableGame from "./components/features/games/UseSyllableGame";
-import SimpleSyllableGame from "./components/features/games/SimpleSyllableGame";
-import VowelsGame from "./components/features/games/VowelsGame";
 
 function App() {
   return (
@@ -92,6 +93,7 @@ function App() {
         <Route path="professions" element={<ProfessionsGame />} />
         <Route path="use-syllable" element={<UseSyllableGame />} />
         <Route path="simple-syllable" element={<SimpleSyllableGame />} />
+        <Route path="plants" element={<PlantsGame />} />
       </Route>
 
       <Route element={<AuthGuard requireAuth />}>
