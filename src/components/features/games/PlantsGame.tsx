@@ -20,7 +20,7 @@ interface PlantsGameProps {
   activityId?: number;
 }
 
-export const PlantsGame = ({ activityId = 3 }: PlantsGameProps) => {
+export const PlantsGame = ({ activityId = 5 }: PlantsGameProps) => {
   const gameRef = useRef<Phaser.Game | null>(null);
   const { user } = useUser();
 

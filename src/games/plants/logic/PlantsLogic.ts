@@ -260,7 +260,7 @@ export default class PlantsLogic {
 
     apiService.sendGameData(
       this.userId || "10130001",
-      this.activityId || 3,
+      this.activityId || 5,
       uniqueQuestionIndex,
       {
         attempts: this.gameStats.getCurrentLevelMisses(),
