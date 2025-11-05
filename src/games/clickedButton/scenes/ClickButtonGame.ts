@@ -35,12 +35,12 @@ export default class ClickButtonGameScene extends PreloadScene {
 
   /**
    * Inicializa a cena principal do jogo, recebendo o caminho do JSON de dados.
-   * @param mainDataPath Caminho do arquivo JSON principal
+   * @param mainDataPath Caminho do arquivo JSON principal (opcional se usando dados gerados)
    * @param milestoneInterval Intervalo de níveis para mostrar a tela de próximo nível (padrão: 5)
    */
-  constructor(mainDataPath: string, milestoneInterval: number = 5) {
+  constructor(mainDataPath?: string, milestoneInterval: number = 5) {
     super("clickButtonGameScene");
-    this.mainDataPath = mainDataPath;
+    this.mainDataPath = mainDataPath || "";
     this.milestoneInterval = milestoneInterval;
     this.buttonManager = new ButtonManager(this);
     this.effectManager = new EffectManager(this);
@@ -51,7 +51,10 @@ export default class ClickButtonGameScene extends PreloadScene {
    */
   preload() {
     super.preload();
-    this.load.json("mainData", this.mainDataPath);
+    // Só carrega o JSON se o caminho foi fornecido
+    if (this.mainDataPath) {
+      this.load.json("mainData", this.mainDataPath);
+    }
   }
 
   init() {
@@ -62,7 +65,18 @@ export default class ClickButtonGameScene extends PreloadScene {
    * Cria a cena do jogo, carregando dados e assets, inicializando gerenciadores e exibindo elementos visuais.
    */
   create() {
-    this.mainData = this.cache.json.get("mainData");
+    // Verifica se há dados gerados dinamicamente no registry
+    const generatedData = this.registry.get("generatedGameData");
+
+    if (generatedData) {
+      // Usa os dados gerados dinamicamente
+      this.mainData = generatedData;
+      // Limpa os dados do registry para evitar conflitos futuros
+      this.registry.remove("generatedGameData");
+    } else {
+      // Usa os dados carregados do JSON
+      this.mainData = this.cache.json.get("mainData");
+    }
 
     this.loadAudios();
     this.loadBackground();
