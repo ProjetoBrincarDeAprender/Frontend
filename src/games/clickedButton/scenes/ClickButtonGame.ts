@@ -30,14 +30,18 @@ export default class ClickButtonGameScene extends PreloadScene {
   /** Gerenciador de botões */
   private buttonManager: ButtonManager;
   private effectManager: EffectManager;
+  /** Intervalo de níveis para mostrar a tela de milestone (padrão: 5) */
+  private milestoneInterval: number;
 
   /**
    * Inicializa a cena principal do jogo, recebendo o caminho do JSON de dados.
    * @param mainDataPath Caminho do arquivo JSON principal
+   * @param milestoneInterval Intervalo de níveis para mostrar a tela de próximo nível (padrão: 5)
    */
-  constructor(mainDataPath: string) {
+  constructor(mainDataPath: string, milestoneInterval: number = 5) {
     super("clickButtonGameScene");
     this.mainDataPath = mainDataPath;
+    this.milestoneInterval = milestoneInterval;
     this.buttonManager = new ButtonManager(this);
     this.effectManager = new EffectManager(this);
   }
@@ -178,6 +182,7 @@ export default class ClickButtonGameScene extends PreloadScene {
       this,
       this.levelManager,
       this.buttonManager,
+      this.milestoneInterval,
     );
   }
 

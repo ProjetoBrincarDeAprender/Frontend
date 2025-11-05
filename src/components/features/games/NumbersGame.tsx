@@ -26,6 +26,7 @@ const NumbersGame: React.FC = () => {
     );
     const gameScene = new ClickButtonGameScene(
       "/assets/numbersGame/gameData/mainData.JSON",
+      4,
     );
     const levelCompleted = new LevelCompletedScene({
       nextLevelScene: "clickButtonGameScene",

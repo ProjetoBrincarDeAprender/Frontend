@@ -34,21 +34,26 @@ export default class ClickButtonLogic {
   private question?: Phaser.GameObjects.Text;
   /** Botões das opções de resposta */
   private options: Button[] = [];
+  /** Intervalo de níveis para mostrar a tela de milestone */
+  private milestoneInterval: number;
 
   /**
    * Inicializa a lógica do jogo, recebendo a cena e os gerenciadores necessários.
    * @param scene Cena principal do Phaser
    * @param levelManager Gerenciador de níveis
    * @param buttonManager Gerenciador de botões
+   * @param milestoneInterval Intervalo de níveis para mostrar a tela de milestone (padrão: 5)
    */
   constructor(
     scene: Phaser.Scene,
     levelManager: LevelManager,
     buttonManager: ButtonManager,
+    milestoneInterval: number = 5,
   ) {
     this.scene = scene;
     this.levelManager = levelManager;
     this.buttonManager = buttonManager;
+    this.milestoneInterval = milestoneInterval;
     this.effectManager = new EffectManager(scene);
     this.soundManager = new SoundManager(scene);
     this.api = new ClickButtonApi(this.scene);
@@ -229,7 +234,10 @@ export default class ClickButtonLogic {
   private isMileStone(): boolean {
     const actualIndex = this.scene.registry.get("actualIndex");
     const allLevels = this.levelManager.getLevels();
-    if (actualIndex < allLevels.length - 1 && actualIndex % 5 === 0) {
+    if (
+      actualIndex < allLevels.length - 1 &&
+      actualIndex % this.milestoneInterval === 0
+    ) {
       return true;
     }
     return false;
