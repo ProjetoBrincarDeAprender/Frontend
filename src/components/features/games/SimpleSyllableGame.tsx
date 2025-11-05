@@ -4,6 +4,7 @@ import { BackButton } from "@/components/utils/BackButton";
 import ClickButtonGameScene from "@/games/clickedButton/scenes/ClickButtonGame";
 import { EndScene } from "@/games/common/scenes/EndScene";
 import { StartScene } from "@/games/common/scenes/StartScene";
+import ConsonantSelectionScene from "@/games/common/content/ConsonantSelectionScene";
 import { EventBus } from "@/games/common/utils/EventBus";
 import { useUser } from "@/hooks/User/useUser";
 import Phaser from "phaser";
@@ -18,19 +19,23 @@ const SimpleSyllableGame: React.FC = () => {
     if (!containerRef.current) return;
 
     const startScene = new StartScene({
-      nextSceneName: "clickButtonGameScene",
+      nextSceneName: "ConsonantSelectionScene",
       backgroundPath: "/assets/simpleSyllableGame/images/backgroundStart.png",
       backgroundKey: "startBg",
-      gameTitle: "SÍLABAS",
-      // trophyImagePath: "/assets/common/duda/dudaClap.png",
-      // trophyImageKey: "dudaClap",
+      gameTitle: "CRIANDO SÍLABAS",
     });
 
-    const gameScene = new ClickButtonGameScene(
-      "/assets/simpleSyllableGame/gameData/mainData.JSON",
-    );
+    const consonantSelectionScene = new ConsonantSelectionScene({
+      backgroundPath: "/assets/simpleSyllableGame/images/backgroundMain.png",
+      backgroundKey: "consonantSelectionBg",
+      nextSceneName: "clickButtonGameScene",
+      title: "ESCOLHA UMA CONSOANTE",
+    });
+
+    const gameScene = new ClickButtonGameScene();
 
     const endScene = new EndScene({
+      restartScene: "ConsonantSelectionScene",
       backgroundPath: "/assets/simpleSyllableGame/images/backgroundMain.png",
       backgroundKey: "endBg",
     });
@@ -39,7 +44,7 @@ const SimpleSyllableGame: React.FC = () => {
       type: Phaser.AUTO,
       width: 800,
       height: 600,
-      scene: [startScene, gameScene, endScene],
+      scene: [startScene, consonantSelectionScene, gameScene, endScene],
       parent: containerRef.current,
       backgroundColor: "#ffffff",
     };
