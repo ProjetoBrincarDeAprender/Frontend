@@ -37,6 +37,8 @@ export default class MazeGameScene extends Phaser.Scene {
     // Sons
     this.load.audio("correct", "/assets/common/sounds/correct.mp3");
     this.load.audio("incorrect", "/assets/common/sounds/incorrect.mp3");
+    // Som de introdução para fases relacionadas a formas
+    this.load.audio("formsIntro", "/assets/forms/sounds/intro.mp3");
     this.load.image("star-sparkle", "/assets/common/star.svg");
   }
 
@@ -99,6 +101,15 @@ export default class MazeGameScene extends Phaser.Scene {
       this.shapeBody = null as any;
     }
     if (this.target) this.target.destroy();
+
+    // Toca o som de início da fase somente se o áudio estiver ligado
+    if (!this.sound.mute && this.sound.get("formsIntro") === null) {
+      this.sound.play("formsIntro", {
+        volume: this.registry.has("soundVolume")
+          ? this.registry.get("soundVolume")
+          : 0.7,
+      });
+    }
 
     const level = this.levels[this.currentLevelIndex];
 

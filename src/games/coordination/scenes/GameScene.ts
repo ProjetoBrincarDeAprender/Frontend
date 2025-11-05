@@ -31,6 +31,8 @@ export default class CoordinationGameScene extends PreloadScene {
     // efeitos sonoros consistentes com outros jogos
     this.load.audio("correct", "/assets/common/sounds/correct.mp3");
     this.load.audio("incorrect", "/assets/common/sounds/incorrect.mp3");
+    // Som de introdução para cada fase do jogo das formas
+    this.load.audio("formsIntro", "/assets/forms/sounds/intro.mp3");
 
     // Recursos visuais para deixar o jogo mais bonito
     this.load.image("star-sparkle", "/assets/common/star.svg");
@@ -352,6 +354,16 @@ export default class CoordinationGameScene extends PreloadScene {
       this.levelContainer.destroy(true);
     }
     this.levelContainer = this.add.container(0, 0);
+
+    // Toca o som de início da fase somente se o áudio estiver ligado
+    if (!this.sound.mute && this.sound.get("formsIntro") === null) {
+      // garante que o asset foi carregado e evita sobrepor múltiplas reproduções simultâneas
+      this.sound.play("formsIntro", {
+        volume: this.registry.has("soundVolume")
+          ? this.registry.get("soundVolume")
+          : 0.7,
+      });
+    }
 
     // Criar trail para efeito de arrasto (fica dentro do container do nível)
     this.dragTrail = this.add.graphics();
