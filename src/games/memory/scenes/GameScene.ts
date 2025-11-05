@@ -1,21 +1,15 @@
 import { AudioManager } from "@/games/common/managers/AudioManager";
 import { PreloadScene } from "@/games/common/scenes/PreloadScene";
 import { APIDataService } from "@/games/common/services/APIData.service";
-import type { User } from "@/types/user";
 import { MemoryGameLogic } from "../logic/MemoryGameLogic";
 
 export class MemoryGameScene extends PreloadScene {
   private logic!: MemoryGameLogic;
   private gameDataTimer?: Phaser.Time.TimerEvent;
-  private user?: User;
   private activityId?: number;
 
   constructor() {
     super({ key: "MemoryGameScene" });
-  }
-
-  setUser(user: User) {
-    this.user = user;
   }
 
   setActivityId(activityId: number) {
@@ -23,7 +17,7 @@ export class MemoryGameScene extends PreloadScene {
   }
 
   init(data: { resetGame?: boolean } = {}) {
-    this.logic = new MemoryGameLogic(this, this.user, this.activityId);
+    this.logic = new MemoryGameLogic(this, this.activityId);
 
     if (data.resetGame) {
       this.logic.resetGame();
@@ -89,10 +83,9 @@ export class MemoryGameScene extends PreloadScene {
       neededHint: false,
     };
 
-    const apiService = new APIDataService();
+    const apiService = new APIDataService(this);
 
     apiService.sendGameData(
-      this.user,
       this.activityId || 4,
       this.logic.getAbsoluteQuestionIndex(),
       gameData,
