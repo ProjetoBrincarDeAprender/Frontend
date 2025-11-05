@@ -9,7 +9,11 @@ import { useUser } from "@/hooks/User/useUser";
 import Phaser from "phaser";
 import { useEffect, useRef } from "react";
 
-export const MazeGame = () => {
+export const MazeGame = ({
+  activityId = 5 /* id do jogo do labirinto */,
+}: {
+  activityId?: number;
+}) => {
   const gameRef = useRef<Phaser.Game | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const { user } = useUser();
@@ -66,10 +70,15 @@ export const MazeGame = () => {
       gameRef.current.registry.set("userData", user);
     }
 
+    // Define o activityId no registry para ser usado pelo jogo
+    if (activityId) {
+      gameRef.current.registry.set("activityId", activityId);
+    }
+
     return () => {
       gameRef.current?.destroy(true);
     };
-  }, [user]);
+  }, [user, activityId]);
 
   return (
     <>

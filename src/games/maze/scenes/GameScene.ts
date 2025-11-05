@@ -4,6 +4,7 @@ import MazeLevel, {
   type LevelData,
   type ShapeConfig,
 } from "../logic/MazeLevel";
+import { MazeApiService } from "../services/MazeApiService";
 
 export default class MazeGameScene extends Phaser.Scene {
   private levels: MazeLevel[] = [];
@@ -13,8 +14,15 @@ export default class MazeGameScene extends Phaser.Scene {
   private target!: Phaser.GameObjects.Graphics;
   private walls: Phaser.GameObjects.Rectangle[] = [];
   private wallBodies: any[] = [];
+  private dangerBodies: any[] = [];
   private isDragging = false;
   private startPos = { x: 0, y: 0 };
+
+  // Tracking de dados para envio ao backend
+  private apiService!: MazeApiService;
+  private levelStartTime: number = 0;
+  private currentAttempts: number = 0;
+  private activityId: number = 2; // ID da atividade do jogo do labirinto
 
   constructor() {
     super({ key: "MazeGameScene" });
@@ -28,6 +36,15 @@ export default class MazeGameScene extends Phaser.Scene {
     // Limpa o valor para evitar reaproveitar em reinícios
     this.registry.set("mazeNextLevel", null);
     new AudioManager(this);
+
+    // Pega o activityId do registry se disponível
+    const registryActivityId = this.registry.get("activityId");
+    if (registryActivityId) {
+      this.activityId = registryActivityId;
+    }
+
+    // Inicializa o serviço de API
+    this.apiService = new MazeApiService(this, this.activityId);
   }
 
   preload() {
@@ -88,17 +105,25 @@ export default class MazeGameScene extends Phaser.Scene {
   }
 
   private startLevel() {
+    // Reseta tracking do nível
+    this.levelStartTime = Date.now();
+    this.currentAttempts = 0;
+
     // Limpar elementos anteriores
     this.walls.forEach((wall) => wall.destroy());
     this.walls = [];
     this.wallBodies.forEach((body) => this.matter.world.remove(body));
     this.wallBodies = [];
+    this.dangerBodies.forEach((body) => this.matter.world.remove(body));
+    this.dangerBodies = [];
     if (this.shape) this.shape.destroy();
     if (this.shapeBody) {
       this.matter.world.remove(this.shapeBody as any);
       this.shapeBody = null as any;
     }
     if (this.target) this.target.destroy();
+
+    // (Sem som de introdução específico nesta cena)
 
     const level = this.levels[this.currentLevelIndex];
 
@@ -121,6 +146,9 @@ export default class MazeGameScene extends Phaser.Scene {
 
     // Criar paredes
     this.createWalls(level);
+
+    // Criar zonas perigosas (invisíveis)
+    this.createDangerZones(level);
 
     // Criar alvo (sombra)
     this.createTarget(level);
@@ -159,6 +187,22 @@ export default class MazeGameScene extends Phaser.Scene {
 
       this.walls.push(wall);
       this.wallBodies.push(wallBody);
+    });
+  }
+
+  // Cria zonas perigosas invisíveis, que contam como erro ao tocar
+  private createDangerZones(level: MazeLevel) {
+    const zones = level.getDangerZones();
+    zones.forEach((dz: any) => {
+      const body = this.matter.add.rectangle(
+        dz.x + dz.width / 2,
+        dz.y + dz.height / 2,
+        dz.width,
+        dz.height,
+        { isStatic: true, label: "danger" },
+      );
+      this.dangerBodies.push(body);
+      // Nenhum elemento visual é adicionado — permanecem invisíveis
     });
   }
 
@@ -296,7 +340,10 @@ export default class MazeGameScene extends Phaser.Scene {
       event.pairs.forEach((pair: any) => {
         if (
           (pair.bodyA.label === "shape" || pair.bodyB.label === "shape") &&
-          (pair.bodyA.label === "wall" || pair.bodyB.label === "wall")
+          (pair.bodyA.label === "wall" ||
+            pair.bodyB.label === "wall" ||
+            pair.bodyA.label === "danger" ||
+            pair.bodyB.label === "danger")
         ) {
           if (this.isDragging) {
             this.onWallCollision();
@@ -444,6 +491,10 @@ export default class MazeGameScene extends Phaser.Scene {
   private onWallCollision() {
     this.sound.play("incorrect");
 
+    // Incrementa tentativas e envia dados ao errar
+    this.currentAttempts++;
+    this.sendErrorData();
+
     // Efeito visual de erro
     this.cameras.main.shake(200, 0.005);
 
@@ -490,6 +541,9 @@ export default class MazeGameScene extends Phaser.Scene {
   private onSuccess() {
     this.sound.play("correct");
     this.isDragging = false;
+
+    // Envia dados de sucesso
+    this.sendSuccessData();
 
     // Efeitos visuais de sucesso
     this.createSuccessEffect();
@@ -572,5 +626,36 @@ export default class MazeGameScene extends Phaser.Scene {
         onComplete: () => star.destroy(),
       });
     }
+  }
+
+  // 📊 Métodos de envio de dados
+  private async sendErrorData() {
+    const currentTime = Date.now();
+    const timeSpent = Math.floor((currentTime - this.levelStartTime) / 1000); // em segundos
+
+    const gameData = {
+      questionId: this.currentLevelIndex + 1, // Níveis começam em 1
+      attempts: this.currentAttempts,
+      timeSpent: timeSpent,
+      isCorrect: false, // Erro ao colidir com parede
+      neededHint: false,
+    };
+
+    await this.apiService.sendGameData(gameData);
+  }
+
+  private async sendSuccessData() {
+    const currentTime = Date.now();
+    const timeSpent = Math.floor((currentTime - this.levelStartTime) / 1000);
+
+    const gameData = {
+      questionId: this.currentLevelIndex + 1,
+      attempts: this.currentAttempts,
+      timeSpent: timeSpent,
+      isCorrect: true, // Sucesso ao chegar no alvo!
+      neededHint: false,
+    };
+
+    await this.apiService.sendGameData(gameData);
   }
 }

@@ -75,13 +75,6 @@
     },
     {
       "question": "COMPLETE A SEQUÊNCIA",
-      "content": ["2", "4", "6", " "],
-      "completeContent": ["2", "4", "6", "8"],
-      "answer": "8",
-      "options": ["6", "8", "10"]
-    },
-    {
-      "question": "COMPLETE A SEQUÊNCIA",
       "content": ["15", " ", "17", "18"],
       "completeContent": ["15", "16", "17", "18"],
       "answer": "16",
@@ -110,6 +103,13 @@
     },
     {
       "question": "COMPLETE A SEQUÊNCIA",
+      "content": ["18", "20", " ", "24"],
+      "completeContent": ["18", "20", "22", "24"],
+      "answer": "22",
+      "options": ["20", "24", "22"]
+    },
+    {
+      "question": "COMPLETE A SEQUÊNCIA",
       "content": ["3", "5", "7", " "],
       "completeContent": ["3", "5", "7", "9"],
       "answer": "9",
@@ -120,7 +120,14 @@
       "content": ["11", "13", " ", "17"],
       "completeContent": ["11", "13", "15", "17"],
       "answer": "15",
-      "options": ["15", "13", "17"]
+      "options": ["15", "14", "16"]
+    },
+    {
+      "question": "COMPLETE A SEQUÊNCIA",
+      "content": ["17", "20", " ", "26"],
+      "completeContent": ["17", "20", "23", "26"],
+      "answer": "23",
+      "options": ["23", "22", "25"]
     }
   ]
 }

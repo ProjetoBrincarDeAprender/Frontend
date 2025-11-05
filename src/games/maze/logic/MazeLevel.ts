@@ -16,12 +16,21 @@ export interface Wall {
   height: number;
 }
 
+// Zonas perigosas invisíveis. Mesma estrutura das paredes.
+export interface DangerZone {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+
 export interface LevelData {
   id: number;
   shape: ShapeConfig;
   start: Position;
   target: Position;
   walls: Wall[];
+  dangerZones?: DangerZone[]; // opcional para compatibilidade com níveis antigos
 }
 
 export default class MazeLevel {
@@ -49,5 +58,9 @@ export default class MazeLevel {
 
   getWalls(): Wall[] {
     return this.data.walls;
+  }
+
+  getDangerZones(): DangerZone[] {
+    return this.data.dangerZones ?? [];
   }
 }
