@@ -108,8 +108,8 @@ export class GameScene extends PreloadScene {
 
   init(data?: { currentLevel?: number; score?: number }) {
     new AudioManager(this, 0.7);
-    
-    // Recuperar dados do registry 
+
+    // Recuperar dados do registry
     this.currentLevel =
       data?.currentLevel || this.registry.get("housingCurrentLevel") || 0;
     this.score = data?.score || this.registry.get("housingScore") || 0;
@@ -149,7 +149,7 @@ export class GameScene extends PreloadScene {
   create() {
     this.animationsManager = new AnimationManager(this);
     this.effectManager = new EffectManager(this);
-    this.housingGameService = new HousingGameService();
+    this.housingGameService = new HousingGameService(this);
 
     this.registerStandardScenes();
     this.setupBackground();
@@ -259,9 +259,9 @@ export class GameScene extends PreloadScene {
       this.scene.start("EndScene");
       return;
     }
-    
+
     this.isTransitioning = false;
-    
+
     this.optionContainers.forEach((container) => {
       if (container && container.scene) {
         container.removeAllListeners();
@@ -473,7 +473,7 @@ export class GameScene extends PreloadScene {
     this.dudaImage.setVisible(true);
 
     const { width, height } = this.cameras.main;
-    
+
     const nextButtonX = width / 2 + 100;
     const buttonY = height - 60;
 
@@ -632,7 +632,7 @@ export class GameScene extends PreloadScene {
     selectedContainer: Phaser.GameObjects.Container,
   ) {
     if (this.isTransitioning) return;
-    
+
     this.isTransitioning = true;
     const isCorrect = selectedHousing === correctHousing;
 
@@ -641,20 +641,17 @@ export class GameScene extends PreloadScene {
     const isQuestionLevel = this.currentLevel >= this.housingIntroLevels.length;
     if (isQuestionLevel) {
       try {
-        const studentId = this.housingGameService.getStudentId();
         const questionIndex =
           this.currentLevel - this.housingIntroLevels.length;
         const questionId = questionIndex + 1;
 
         if (isCorrect) {
           await this.housingGameService.registerCorrectAnswer(
-            studentId,
             questionId,
             selectedHousing,
           );
         } else {
           await this.housingGameService.registerIncorrectAnswer(
-            studentId,
             questionId,
             selectedHousing,
           );

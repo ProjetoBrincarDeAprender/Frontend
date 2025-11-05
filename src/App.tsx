@@ -80,7 +80,7 @@ function App() {
         <Route path="curriculum/questions" element={<Questions />} />
       </Route>
 
-      <Route path="/games">
+      <Route path="/games" element={<AuthGuard />}>
         <Route index element={<Games />} />
         <Route path="vowels" element={<VowelsGame />} />
         <Route path="memory" element={<MemoryGame />} />

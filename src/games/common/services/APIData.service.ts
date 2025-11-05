@@ -1,13 +1,20 @@
+import type { User } from "@/types/user";
 import api from "@/utils/api";
 import { AxiosError } from "axios";
+import Phaser from "phaser";
 
 export class APIDataService {
-  constructor() {
-    // Inicialização do serviço, se necessário
+  private scene!: Phaser.Scene;
+
+  constructor(scene: Phaser.Scene) {
+    this.scene = scene;
+  }
+
+  private getUser(): User | undefined {
+    return this.scene.registry.get("userData");
   }
 
   async sendGameData(
-    userId: string,
     activityId: number,
     questionId: number,
     gameStats: {
@@ -18,9 +25,22 @@ export class APIDataService {
       neededHint: boolean;
     },
   ) {
+    const userPayload = this.getUser();
+
+    console.log(userPayload);
+
+    if (userPayload === undefined) {
+      console.error("Dados do usuário não encontrados na cena.");
+      return;
+    }
+
+    if (userPayload?.perfil != "Aluno") {
+      return;
+    }
+
     try {
       const payload = {
-        studentId: Number(userId),
+        studentId: Number(userPayload.codigo_usuario || 10130001),
         activityId: activityId,
         questionId: questionId,
         attempts: gameStats.attempts,

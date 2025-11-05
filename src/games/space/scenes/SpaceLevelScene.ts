@@ -6,15 +6,10 @@ import { PreloadScene } from "@/games/common/scenes/PreloadScene";
 
 export class SpaceGameScene extends PreloadScene {
   private logic!: SpaceLogic;
-  private userId?: string;
   private activityId?: number;
 
   constructor() {
     super({ key: "SpaceGameScene" });
-  }
-
-  setUserId(userId: string) {
-    this.userId = userId;
   }
 
   setActivityId(activityId: number) {
@@ -22,7 +17,7 @@ export class SpaceGameScene extends PreloadScene {
   }
 
   private initializeLogic() {
-    this.logic = new SpaceLogic(this, this.userId, this.activityId);
+    this.logic = new SpaceLogic(this, this.activityId);
   }
 
   init(_data: { continueFromLevel?: boolean } = {}) {

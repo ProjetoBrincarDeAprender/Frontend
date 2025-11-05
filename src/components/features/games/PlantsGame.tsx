@@ -66,14 +66,9 @@ export const PlantsGame = ({ activityId = 5 }: PlantsGameProps) => {
 
     gameRef.current = new Phaser.Game(config);
 
-    const setupGame = () => {
-      const scene = gameRef.current?.scene.scenes[1] as PlantsGameScene; // SpaceGameScene é a segunda cena
-      if (scene && user?.codigo_usuario) {
-        scene.setUserId(user.codigo_usuario.toString());
-        scene.setActivityId(activityId);
-      }
-    };
-    setTimeout(setupGame, 100);
+    if (user) {
+      gameRef.current.registry.set("userData", user);
+    }
 
     EventBus.once("current-scene-ready", (log: string) => {
       console.log({ log });
