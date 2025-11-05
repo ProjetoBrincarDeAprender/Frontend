@@ -1,11 +1,8 @@
 import type { UserProfile } from "@/types/user";
 import api from "@/utils/api";
 import Cookies from "js-cookie";
-import { useState } from "react";
 
 const useAuth = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-
   const setToken = (token: string) => {
     Cookies.set("authToken", token);
   };
@@ -15,9 +12,8 @@ const useAuth = () => {
       const response = await api.post("/auth/login", { login, senha });
       const { access_token } = response.data;
       setToken(access_token);
-      setIsLoggedIn(true);
     } catch (error) {
-      setIsLoggedIn(false);
+      console.error("Login failed:", error);
       throw error;
     }
   };
@@ -33,8 +29,9 @@ const useAuth = () => {
 
   const logout = () => {
     Cookies.remove("authToken");
-    setIsLoggedIn(false);
   };
+
+  const isLoggedIn = !!profile();
 
   return { isLoggedIn, login, profile, logout };
 };

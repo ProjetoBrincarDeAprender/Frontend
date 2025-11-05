@@ -1,6 +1,6 @@
 import EffectManager from "@/games/common/managers/EffectManager";
 import GameStats from "@/games/common/managers/GameStats";
-import api from "@/utils/api";
+import { APIDataService } from "@/games/common/services/APIData.service";
 import type { MemoryCard } from "../utils/memoryGameLevel";
 import type { GameLevel } from "./levels";
 import { GameLevels } from "./levels";
@@ -17,7 +17,6 @@ export class MemoryGameLogic {
   private levelStartTime: number = 0;
   private isShowingInitialCards: boolean = false;
   private gameStarted: boolean = false;
-  private userId?: string;
   private activityId?: number;
 
   private textColors = [
@@ -31,12 +30,11 @@ export class MemoryGameLogic {
     "#4400CC",
   ];
 
-  constructor(scene: Phaser.Scene, userId?: string, activityId?: number) {
+  constructor(scene: Phaser.Scene, activityId?: number) {
     this.scene = scene;
     this.gameLevels = GameLevels;
     this.currentLevelIndex = 0;
     this.currentQuestionIndex = 0;
-    this.userId = userId;
     this.activityId = activityId;
 
     this.EffectManager = new EffectManager(scene);
@@ -288,6 +286,14 @@ export class MemoryGameLogic {
 
         if (cardFlipped || cardAnimating) return;
 
+        const flippedCards = this.cards.filter(
+          (c) => c.getData("flipped") && !c.getData("matched"),
+        );
+
+        if (flippedCards.length >= 2) {
+          return;
+        }
+
         this.flipCard(card, true, () => {
           const flippedCards = this.cards.filter(
             (c) => c.getData("flipped") && c !== card && !c.getData("matched"),
@@ -435,35 +441,21 @@ export class MemoryGameLogic {
 
     this.currentQuestionIndex++;
 
-    try {
-      const sendData = async () => {
-        const levelData = {
-          studentId: Number(this.userId) || 10130001,
-          activityId: this.activityId || 4,
-          questionId: this.getAbsoluteQuestionIndex(),
-          isCorrect: true,
-          answer: "ok",
-          timeSpent: levelEndTime - this.levelStartTime,
-          attempts: this.gameStats.missCounts[0],
-          responseDate: this.scene.time.now,
-        };
+    const levelData = {
+      isCorrect: true,
+      answer: "ok",
+      timeSpent: levelEndTime - this.levelStartTime,
+      attempts: this.gameStats.missCounts[0],
+      neededHint: false,
+    };
 
-        const response = await api.post(
-          "/adaptiveSystem/interaction/register",
-          levelData,
-          {},
-        );
+    const apiService = new APIDataService(this.scene);
 
-        if (response.status === 201) {
-          console.log("Data sent successfully");
-          console.log(response);
-        }
-      };
-
-      sendData();
-    } catch (error) {
-      console.log(error);
-    }
+    apiService.sendGameData(
+      this.activityId || 4,
+      this.getAbsoluteQuestionIndex(),
+      levelData,
+    );
   }
 
   public finishLevel() {

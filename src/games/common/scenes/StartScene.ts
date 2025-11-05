@@ -57,7 +57,6 @@ export class StartScene extends PreloadScene {
     super.preload();
     this.load.image(this.trophyImageKey, this.trophyImagePath);
     this.load.image(this.backgroundKey, this.backgroundPath);
-    this.load.image("bgTitle", "/assets/common/bgTitle.svg");
     this.load.image("star", "/assets/common/star.svg");
   }
   create() {

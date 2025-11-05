@@ -1,17 +1,19 @@
 import { Footer } from "@/components/Footer/Footer";
-import { EventBus } from "@/games/common/utils/EventBus";
-import { useEffect, useRef } from "react";
 import { Header } from "@/components/Header/Header";
 import { BackButton } from "@/components/utils/BackButton";
-import { StartScene } from "@/games/common/scenes/StartScene";
+import ClickButtonGameScene from "@/games/clickedButton/scenes/ClickButtonGame";
 import { EndScene } from "@/games/common/scenes/EndScene";
 import { LevelCompletedScene } from "@/games/common/scenes/LevelCompletedScene";
+import { StartScene } from "@/games/common/scenes/StartScene";
+import { EventBus } from "@/games/common/utils/EventBus";
+import { useUser } from "@/hooks/User/useUser";
 import Phaser from "phaser";
-import ClickButtonGameScene from "@/games/clickedButton/scenes/ClickButtonGame";
+import { useEffect, useRef } from "react";
 
 const UseSyllableGame: React.FC = () => {
   const gameRef = useRef<Phaser.Game | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
+  const { user } = useUser();
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -31,6 +33,9 @@ const UseSyllableGame: React.FC = () => {
       nextLevelScene: "clickButtonGameScene",
       backgroundPath: "/assets/useSyllableGame/images/backgroundMain.png",
       backgroundKey: "levelBg",
+      onMenuReturn: () => {
+        ClickButtonGameScene.resetRegistry(gameScene);
+      },
     });
 
     const endScene = new EndScene({
@@ -50,6 +55,10 @@ const UseSyllableGame: React.FC = () => {
 
     gameRef.current = new Phaser.Game(config);
 
+    if (user) {
+      gameRef.current.registry.set("userData", user);
+    }
+
     EventBus.once("current-scene-ready", (log: string) => {
       console.log({ log });
     });
@@ -59,7 +68,7 @@ const UseSyllableGame: React.FC = () => {
         gameRef.current.destroy(true);
       }
     };
-  }, []);
+  }, [user]);
 
   return (
     <>

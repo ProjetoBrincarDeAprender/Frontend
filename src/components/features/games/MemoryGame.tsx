@@ -64,14 +64,9 @@ export const MemoryGame = ({ activityId = 4 }: MemoryGameProps) => {
 
     gameRef.current = new Phaser.Game(config);
 
-    const setupGame = () => {
-      const scene = gameRef.current?.scene.scenes[1] as MemoryGameScene; // MemoryGameScene é a segunda cena
-      if (scene && user?.codigo_usuario) {
-        scene.setUserId(user.codigo_usuario.toString());
-        scene.setActivityId(activityId);
-      }
-    };
-    setTimeout(setupGame, 100);
+    if (user) {
+      gameRef.current.registry.set("userData", user);
+    }
 
     EventBus.once("current-scene-ready", (log: string) => {
       console.log({ log });

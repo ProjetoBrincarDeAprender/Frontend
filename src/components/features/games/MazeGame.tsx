@@ -1,16 +1,18 @@
 import { Footer } from "@/components/Footer/Footer";
 import { Header } from "@/components/Header/Header";
 import { BackButton } from "@/components/utils/BackButton";
-import MazeGameScene from "@/games/maze/scenes/GameScene";
-import { LevelCompletedScene } from "@/games/common/scenes/LevelCompletedScene";
 import { EndScene } from "@/games/common/scenes/EndScene";
+import { LevelCompletedScene } from "@/games/common/scenes/LevelCompletedScene";
 import { StartScene } from "@/games/common/scenes/StartScene";
+import MazeGameScene from "@/games/maze/scenes/GameScene";
+import { useUser } from "@/hooks/User/useUser";
 import Phaser from "phaser";
 import { useEffect, useRef } from "react";
 
 export const MazeGame = () => {
   const gameRef = useRef<Phaser.Game | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
+  const { user } = useUser();
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -47,7 +49,7 @@ export const MazeGame = () => {
           "StartScene",
           "/assets/maze/bg.png",
           "mazeBg",
-          "VOCÊ COMPLETOU TODOS OS LABIRINTOS!",
+          "VOCÊ VENCEU OS LABIRINTOS!",
         ),
       ],
       parent: containerRef.current,
@@ -60,10 +62,14 @@ export const MazeGame = () => {
 
     gameRef.current = new Phaser.Game(config);
 
+    if (user) {
+      gameRef.current.registry.set("userData", user);
+    }
+
     return () => {
       gameRef.current?.destroy(true);
     };
-  }, []);
+  }, [user]);
 
   return (
     <>

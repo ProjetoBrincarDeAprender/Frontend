@@ -1,5 +1,5 @@
+import useAuth from "@/hooks/Auth/useAuth";
 import { useUser } from "@/hooks/User/useUser";
-import Cookies from "js-cookie";
 import { Navigate, Outlet } from "react-router";
 import { toast } from "sonner";
 
@@ -15,7 +15,9 @@ export const AuthGuard = ({
   role,
 }: AuthGuardProps) => {
   const { user } = useUser();
-  const isLoggedIn = Cookies.get("authToken");
+  const { isLoggedIn } = useAuth();
+
+  console.log(isLoggedIn);
 
   if (requireAuth && !isLoggedIn) {
     toast.error("Você precisa estar logado para acessar esta página.");

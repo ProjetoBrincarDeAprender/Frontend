@@ -21,7 +21,6 @@ export default class GameStats {
 
   addMissCount(): void {
     this.missCounts.push(this.actualLevelMisses);
-    console.log(this.actualLevelMisses);
   }
 
   addMiss(): void {

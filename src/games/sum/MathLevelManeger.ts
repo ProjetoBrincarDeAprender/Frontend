@@ -1,4 +1,5 @@
 import api from "@/utils/api";
+import { APIDataService } from "../common/services/APIData.service";
 import MathLevel from "./MathLevel";
 import type { SumGameSession, SumLevelData } from "./SumGameData";
 
@@ -71,11 +72,13 @@ export class SumGameDataManager {
   private gameSession: SumGameSession;
   private currentLevelData: SumLevelData | null = null;
   private activityId: number = 2;
+  private apiService: APIDataService;
 
-  constructor(userId: string, activityId?: number) {
+  constructor(userId: string, scene: Phaser.Scene, activityId?: number) {
     // Garantir que sempre temos um userId válido
-    const validUserId = userId && userId !== 'default_user' ? userId : '10130001';
-    
+    const validUserId =
+      userId && userId !== "default_user" ? userId : "10130001";
+
     this.gameSession = {
       gameId: this.generateGameId(),
       userId: validUserId,
@@ -90,6 +93,8 @@ export class SumGameDataManager {
     if (activityId) {
       this.activityId = activityId;
     }
+
+    this.apiService = new APIDataService(scene);
   }
 
   private generateGameId(): string {
@@ -181,7 +186,10 @@ export class SumGameDataManager {
     };
 
     return {
-      studentId: typeof user.id === 'number' ? user.id : parseInt(user.id.toString()) || 10130001,
+      studentId:
+        typeof user.id === "number"
+          ? user.id
+          : parseInt(user.id.toString()) || 10130001,
       activityId: this.activityId,
       questionId: levelData.level,
       answer: JSON.stringify(levelResult),
@@ -229,12 +237,15 @@ export class SumGameDataManager {
 
       console.log(JSON.stringify(gameInteraction, null, 2));
 
-      const response = await api.post(
-        "/adaptiveSystem/interaction/register",
+      const response = await this.apiService.sendGameData(
+        gameInteraction.activityId,
+        gameInteraction.questionId,
         gameInteraction,
       );
 
-      console.log("✅ SUCESSO! Status:", response.status);
+      if (response?.status === 200) {
+        console.log("✅ SUCESSO! Status:", response.status);
+      }
     } catch (error: unknown) {
       if (error && typeof error === "object" && "response" in error) {
         const axiosError = error as {

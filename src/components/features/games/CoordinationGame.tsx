@@ -1,16 +1,22 @@
 import { Footer } from "@/components/Footer/Footer";
 import { Header } from "@/components/Header/Header";
 import { BackButton } from "@/components/utils/BackButton";
-import CoordinationGameScene from "@/games/coordination/scenes/GameScene";
 import { EndScene } from "@/games/common/scenes/EndScene";
-import { StartScene } from "@/games/common/scenes/StartScene";
 import { LevelCompletedScene } from "@/games/common/scenes/LevelCompletedScene";
+import { StartScene } from "@/games/common/scenes/StartScene";
+import CoordinationGameScene from "@/games/coordination/scenes/GameScene";
+import { useUser } from "@/hooks/User/useUser";
 import Phaser from "phaser";
 import { useEffect, useRef } from "react";
 
-export const CoordinationGame = () => {
+export const CoordinationGame = ({
+  activityId = 0 /* id do seu jogo */,
+}: {
+  activityId?: number;
+}) => {
   const gameRef = useRef<Phaser.Game | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
+  const { user } = useUser();
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -55,10 +61,14 @@ export const CoordinationGame = () => {
 
     gameRef.current = new Phaser.Game(config);
 
+    if (user) {
+      gameRef.current.registry.set("userData", user);
+    }
+
     return () => {
       gameRef.current?.destroy(true);
     };
-  }, []);
+  }, [user, activityId]);
 
   return (
     <>

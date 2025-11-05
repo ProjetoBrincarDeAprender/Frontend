@@ -107,11 +107,12 @@ export class GameScene extends PreloadScene {
   }
 
   init(data?: { currentLevel?: number; score?: number }) {
-    // Recuperar dados do registry ou usar dados passados ou padrões
+    new AudioManager(this, 0.7);
+
+    // Recuperar dados do registry
     this.currentLevel =
       data?.currentLevel || this.registry.get("housingCurrentLevel") || 0;
     this.score = data?.score || this.registry.get("housingScore") || 0;
-    new AudioManager(this);
   }
 
   preload() {
@@ -122,6 +123,9 @@ export class GameScene extends PreloadScene {
     this.load.image("housingDuda", "/assets/housingGame/duda-pensando.png");
     this.load.image("houseTrophy", "/assets/housingGame/casa.png");
     this.load.image("duda", "/assets/housingGame/girlmainpage.svg");
+
+    this.load.image("audioOn", "/assets/common/buttons/audioOn.svg");
+    this.load.image("audioOff", "/assets/common/buttons/audioOff.svg");
 
     this.load.image("casa", "/assets/housingGame/casa.png");
     this.load.image("castelo", "/assets/housingGame/castelo.png");
@@ -145,7 +149,7 @@ export class GameScene extends PreloadScene {
   create() {
     this.animationsManager = new AnimationManager(this);
     this.effectManager = new EffectManager(this);
-    this.housingGameService = new HousingGameService();
+    this.housingGameService = new HousingGameService(this);
 
     this.registerStandardScenes();
     this.setupBackground();
@@ -255,9 +259,9 @@ export class GameScene extends PreloadScene {
       this.scene.start("EndScene");
       return;
     }
-    
+
     this.isTransitioning = false;
-    
+
     this.optionContainers.forEach((container) => {
       if (container && container.scene) {
         container.removeAllListeners();
@@ -469,7 +473,7 @@ export class GameScene extends PreloadScene {
     this.dudaImage.setVisible(true);
 
     const { width, height } = this.cameras.main;
-    
+
     const nextButtonX = width / 2 + 100;
     const buttonY = height - 60;
 
@@ -628,7 +632,7 @@ export class GameScene extends PreloadScene {
     selectedContainer: Phaser.GameObjects.Container,
   ) {
     if (this.isTransitioning) return;
-    
+
     this.isTransitioning = true;
     const isCorrect = selectedHousing === correctHousing;
 
@@ -637,20 +641,17 @@ export class GameScene extends PreloadScene {
     const isQuestionLevel = this.currentLevel >= this.housingIntroLevels.length;
     if (isQuestionLevel) {
       try {
-        const studentId = this.housingGameService.getStudentId();
         const questionIndex =
           this.currentLevel - this.housingIntroLevels.length;
         const questionId = questionIndex + 1;
 
         if (isCorrect) {
           await this.housingGameService.registerCorrectAnswer(
-            studentId,
             questionId,
             selectedHousing,
           );
         } else {
           await this.housingGameService.registerIncorrectAnswer(
-            studentId,
             questionId,
             selectedHousing,
           );
