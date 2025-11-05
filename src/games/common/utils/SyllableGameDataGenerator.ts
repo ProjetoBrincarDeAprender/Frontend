@@ -106,7 +106,7 @@ export class SyllableGameDataGenerator {
 
     const syllableAudios = this.VOWELS.map((vowel) => ({
       key: consonant + vowel,
-      path: `/assets/simpleSyllableGame/sounds/${consonant}${vowel}.mp3`,
+      path: `/assets/simpleSyllableGame/sounds/${consonant}${vowel}.m4a`,
     }));
 
     return [...baseAudios, ...syllableAudios];
