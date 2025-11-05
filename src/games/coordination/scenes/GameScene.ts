@@ -381,16 +381,21 @@ export default class CoordinationGameScene extends PreloadScene {
     const title =
       `${level.getName()}: Arraste as formas até as sombras`.toUpperCase();
 
-    // Título com fundo colorido e animado
+    // Título com fundo colorido e animado (reduzido para 0.75x e centralizado)
+    const bannerWidth = 740 * 0.75; // 555
+    const bannerHeight = 60 * 0.75; // 45
+    const bannerX = 400 - bannerWidth / 2; // centralizado
+    const bannerY = 30; // mesmo topo
+
     const titleBg = this.add.graphics();
     titleBg.fillStyle(0x5b8fff, 0.9);
-    titleBg.fillRoundedRect(400 - 370, 30, 740, 60, 30);
-    titleBg.lineStyle(4, 0xffffff, 0.8);
-    titleBg.strokeRoundedRect(400 - 370, 30, 740, 60, 30);
+    titleBg.fillRoundedRect(bannerX, bannerY, bannerWidth, bannerHeight, 22);
+    titleBg.lineStyle(3, 0xffffff, 0.8);
+    titleBg.strokeRoundedRect(bannerX, bannerY, bannerWidth, bannerHeight, 22);
     this.levelContainer.add(titleBg);
 
     const titleText = this.add
-      .text(400, 60, title, {
+      .text(400, bannerY + bannerHeight / 2, title, {
         fontSize: "22px",
         color: "#FFFFFF",
         fontFamily: "Arial Black",
@@ -410,36 +415,45 @@ export default class CoordinationGameScene extends PreloadScene {
       ease: "Sine.easeInOut",
     });
 
-    // Estrelinhas decorativas ao redor do título
-    for (let i = 0; i < 3; i++) {
-      const starLeft = this.add.image(50 + i * 30, 60, "star-sparkle");
-      starLeft.setScale(0.25);
-      starLeft.setTint(0xffd700);
-      this.levelContainer!.add(starLeft);
+    // Estrelas nas extremidades do texto (não sobre o texto)
+    const textBounds = titleText.getBounds();
+    const edgePadding = 14;
+    const starsY = textBounds.centerY;
 
-      const starRight = this.add.image(750 - i * 30, 60, "star-sparkle");
-      starRight.setScale(0.25);
-      starRight.setTint(0xffd700);
-      this.levelContainer!.add(starRight);
+    const starLeft = this.add.image(
+      textBounds.left - edgePadding,
+      starsY,
+      "star-sparkle",
+    );
+    starLeft.setScale(0.23);
+    starLeft.setTint(0xffd700);
+    this.levelContainer!.add(starLeft);
 
-      this.tweens.add({
-        targets: [starLeft, starRight],
-        rotation: Math.PI * 2,
-        duration: 3000 + i * 500,
-        repeat: -1,
-        ease: "Linear",
-      });
+    const starRight = this.add.image(
+      textBounds.right + edgePadding,
+      starsY,
+      "star-sparkle",
+    );
+    starRight.setScale(0.23);
+    starRight.setTint(0xffd700);
+    this.levelContainer!.add(starRight);
 
-      this.tweens.add({
-        targets: [starLeft, starRight],
-        scale: { from: 0.2, to: 0.35 },
-        duration: 1000,
-        yoyo: true,
-        repeat: -1,
-        ease: "Sine.easeInOut",
-        delay: i * 200,
-      });
-    }
+    // Animações sutis para dar vida, sem atrapalhar a leitura
+    this.tweens.add({
+      targets: [starLeft, starRight],
+      rotation: Math.PI * 2,
+      duration: 3500,
+      repeat: -1,
+      ease: "Linear",
+    });
+    this.tweens.add({
+      targets: [starLeft, starRight],
+      scale: { from: 0.22, to: 0.28 },
+      duration: 1200,
+      yoyo: true,
+      repeat: -1,
+      ease: "Sine.easeInOut",
+    });
 
     const shapes = level.getShapes();
     this.placedCount = 0;
