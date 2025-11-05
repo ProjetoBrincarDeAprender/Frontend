@@ -286,6 +286,14 @@ export class MemoryGameLogic {
 
         if (cardFlipped || cardAnimating) return;
 
+        const flippedCards = this.cards.filter(
+          (c) => c.getData("flipped") && !c.getData("matched"),
+        );
+
+        if (flippedCards.length >= 2) {
+          return;
+        }
+
         this.flipCard(card, true, () => {
           const flippedCards = this.cards.filter(
             (c) => c.getData("flipped") && c !== card && !c.getData("matched"),
