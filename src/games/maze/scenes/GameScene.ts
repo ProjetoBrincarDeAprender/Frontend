@@ -13,6 +13,7 @@ export default class MazeGameScene extends Phaser.Scene {
   private target!: Phaser.GameObjects.Graphics;
   private walls: Phaser.GameObjects.Rectangle[] = [];
   private wallBodies: any[] = [];
+  private dangerBodies: any[] = [];
   private isDragging = false;
   private startPos = { x: 0, y: 0 };
 
@@ -95,6 +96,8 @@ export default class MazeGameScene extends Phaser.Scene {
     this.walls = [];
     this.wallBodies.forEach((body) => this.matter.world.remove(body));
     this.wallBodies = [];
+    this.dangerBodies.forEach((body) => this.matter.world.remove(body));
+    this.dangerBodies = [];
     if (this.shape) this.shape.destroy();
     if (this.shapeBody) {
       this.matter.world.remove(this.shapeBody as any);
@@ -133,6 +136,9 @@ export default class MazeGameScene extends Phaser.Scene {
     // Criar paredes
     this.createWalls(level);
 
+    // Criar zonas perigosas (invisíveis)
+    this.createDangerZones(level);
+
     // Criar alvo (sombra)
     this.createTarget(level);
 
@@ -170,6 +176,22 @@ export default class MazeGameScene extends Phaser.Scene {
 
       this.walls.push(wall);
       this.wallBodies.push(wallBody);
+    });
+  }
+
+  // Cria zonas perigosas invisíveis, que contam como erro ao tocar
+  private createDangerZones(level: MazeLevel) {
+    const zones = level.getDangerZones();
+    zones.forEach((dz: any) => {
+      const body = this.matter.add.rectangle(
+        dz.x + dz.width / 2,
+        dz.y + dz.height / 2,
+        dz.width,
+        dz.height,
+        { isStatic: true, label: "danger" },
+      );
+      this.dangerBodies.push(body);
+      // Nenhum elemento visual é adicionado — permanecem invisíveis
     });
   }
 
@@ -307,7 +329,10 @@ export default class MazeGameScene extends Phaser.Scene {
       event.pairs.forEach((pair: any) => {
         if (
           (pair.bodyA.label === "shape" || pair.bodyB.label === "shape") &&
-          (pair.bodyA.label === "wall" || pair.bodyB.label === "wall")
+          (pair.bodyA.label === "wall" ||
+            pair.bodyB.label === "wall" ||
+            pair.bodyA.label === "danger" ||
+            pair.bodyB.label === "danger")
         ) {
           if (this.isDragging) {
             this.onWallCollision();
