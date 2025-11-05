@@ -120,6 +120,7 @@ export class MemoryGameScene extends PreloadScene {
           this.logic.finishLevel(); // Incrementa o nível
 
           if (isLastLevel) {
+            this.registry.set("currentLevel", 0);
             // Era o último nível, jogo acabou
             this.scene.start("EndScene");
           } else {
