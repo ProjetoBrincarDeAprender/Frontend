@@ -81,25 +81,32 @@ export default function Dashboard() {
               <div className="font-1 bg-purplish-blue m-3 rounded-md p-1 text-center text-lg font-bold text-gray-100">
                 <h1>Alunos por Maestria</h1>
               </div>
-              <img src={graphic} alt="grafico" />
+              {/* <img src={graphic} alt="grafico" />
               <div className="font-1 text-md bg-purplish-blue m-3 flex items-center justify-center gap-2 rounded-md p-1 text-center font-bold text-gray-100 uppercase">
                 <span className="text-white">Não Iniciado</span>
                 <span className="text-yellow">Iniciante</span>
                 <span className="text-green-600">Avançado</span>
                 <span className="text-red-600">Mestre</span>
-              </div>
+              </div> */}
+              <p className="font-1 text-md m-3 flex items-center justify-center gap-2 rounded-md p-1 text-center font-bold text-gray-100">
+                Em breve...
+              </p>
             </div>
             <div className="bg-purplish-blue-dark rounded-2xl">
               <div className="font-1 bg-purplish-blue m-3 rounded-md p-1 text-center text-lg font-bold text-gray-100">
                 <h1>Alunos por Maestria</h1>
               </div>
-              <img src={graphic} alt="grafico" />
+              <p className="font-1 text-md m-3 flex items-center justify-center gap-2 rounded-md p-1 text-center font-bold text-gray-100">
+                Em breve...
+              </p>
+              {/* <img src={graphic} alt="grafico" />
               <div className="font-1 text-md bg-purplish-blue m-3 flex items-center justify-center gap-2 rounded-md p-1 text-center font-bold text-gray-100 uppercase">
                 <span className="text-white">Não Iniciado</span>
                 <span className="text-yellow">Iniciante</span>
                 <span className="text-green-600">Avançado</span>
                 <span className="text-red-600">Mestre</span>
-              </div>
+              </div> 
+              */}
             </div>
           </div>
           <h1 className="font-1 mt-16 mb-4 text-2xl font-bold">
@@ -107,16 +114,7 @@ export default function Dashboard() {
           </h1>
           <div className="border-purplish-blue font-1 flex w-max flex-col rounded-3xl border-2 px-8 py-4 pl-12 text-lg font-semibold text-red-900">
             <ul className="flex list-disc flex-col gap-4">
-              <li>
-                Professora ‘ana lima’ foi cadastrada no sistema. (há 3 min)
-              </li>
-              <li>
-                Aluno ‘joão silva guedes’ foi cadastrada no sistema. (há 8 min)
-              </li>
-              <li>
-                A escola ‘Sebastião Guedes da Silva’ foi cadastrada no sistema.
-                (há 15 min)
-              </li>
+              <li>Em breve...</li>
             </ul>
           </div>
         </section>
