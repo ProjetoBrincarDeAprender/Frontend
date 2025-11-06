@@ -9,7 +9,7 @@ import { LateralMenu } from "../../../components/sideBar/sideBar";
 import { InfoBadge } from "../../../components/utils/InfoBadge/InfoBadge";
 
 // imagens
-import graphic from "../../../assets/graphic.svg";
+// import graphic from "../../../assets/graphic.svg";
 import saturn from "../../../assets/saturn.svg";
 
 // estilos
@@ -34,9 +34,21 @@ export default function Dashboard() {
             </div>
           </div>
           <div className="mt-16 flex justify-center gap-8">
-            <InfoBadge label="Professores Ativos" value="0000" variant="blue" />
-            <InfoBadge label="Alunos Ativos" value="0000" variant="yellow" />
-            <InfoBadge label="Escolas Ativas" value="0000" variant="red" />
+            <InfoBadge
+              label="Prof. Ativos"
+              value="Em breve..."
+              variant="blue"
+            />
+            <InfoBadge
+              label="Alunos Ativos"
+              value="Em breve..."
+              variant="yellow"
+            />
+            <InfoBadge
+              label="Escolas Ativas"
+              value="Em breve..."
+              variant="red"
+            />
           </div>
           <h1 className="font-1 mt-16 text-2xl font-bold">Ações Rápidas</h1>
           <div className="font-1 text-purplish-blue mt-8 flex justify-center gap-8 font-bold uppercase">
