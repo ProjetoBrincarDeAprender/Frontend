@@ -76,7 +76,7 @@ export const MemoryGame = ({ activityId = 4 }: MemoryGameProps) => {
       gameRef.current?.destroy(true);
       gameRef.current = null;
     };
-  }, [user, activityId]);
+  }, [activityId]);
 
   return (
     <>

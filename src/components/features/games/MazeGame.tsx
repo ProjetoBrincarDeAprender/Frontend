@@ -78,7 +78,7 @@ export const MazeGame = ({
     return () => {
       gameRef.current?.destroy(true);
     };
-  }, [user, activityId]);
+  }, [activityId]);
 
   return (
     <>

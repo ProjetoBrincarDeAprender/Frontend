@@ -64,7 +64,7 @@ const SimpleSyllableGame: React.FC = () => {
         gameRef.current.destroy(true);
       }
     };
-  }, [user]);
+  }, []);
 
   return (
     <>

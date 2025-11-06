@@ -65,7 +65,7 @@ const SumGame: React.FC<SumGameProps> = ({ activityId = 1 }) => {
       gameRef.current?.destroy(true);
       gameRef.current = null;
     };
-  }, [user, activityId]);
+  }, [activityId]);
 
   return (
     <>

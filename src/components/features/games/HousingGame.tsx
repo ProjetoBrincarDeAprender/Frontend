@@ -47,7 +47,7 @@ const HousingGame: React.FC = () => {
       gameRef.current?.destroy(true);
       gameRef.current = null;
     };
-  }, [user]); // Housing Game não tem dependências externas
+  }, []); // Housing Game não tem dependências externas
 
   return (
     <>
