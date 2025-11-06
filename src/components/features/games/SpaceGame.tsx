@@ -78,7 +78,7 @@ export const SpaceGame = ({ activityId = 3 }: SpaceGameProps) => {
       gameRef.current?.destroy(true);
       gameRef.current = null;
     };
-  }, [user, activityId]);
+  }, [activityId]);
 
   return (
     <>

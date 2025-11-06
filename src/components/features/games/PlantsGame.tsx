@@ -78,7 +78,7 @@ export const PlantsGame = ({ activityId = 5 }: PlantsGameProps) => {
       gameRef.current?.destroy(true);
       gameRef.current = null;
     };
-  }, [user, activityId]);
+  }, [activityId]);
 
   return (
     <>

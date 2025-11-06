@@ -45,7 +45,7 @@ const ProfessionsGame: React.FC = () => {
       gameRef.current?.destroy(true);
       gameRef.current = null;
     };
-  }, [user]);
+  }, []);
 
   return (
     <>
