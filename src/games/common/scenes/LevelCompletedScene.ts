@@ -271,7 +271,7 @@ export class LevelCompletedScene extends PreloadScene {
 
     // Texto do botão
     const backText = this.add
-      .text(0, 0, "VOLTAR AO MENU", {
+      .text(0, 0, "REINICIAR", {
         fontFamily: "Arial Black",
         fontSize: "20px",
         color: "#FFFFFF",
@@ -329,7 +329,7 @@ export class LevelCompletedScene extends PreloadScene {
           if (this.onMenuReturn) {
             this.onMenuReturn();
           }
-          
+
           // Vai para o menu
           if (this.menuScene.startsWith("/")) {
             // Se começa com '/', é uma URL - redireciona
