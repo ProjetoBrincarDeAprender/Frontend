@@ -31,7 +31,31 @@ const useAuth = () => {
     Cookies.remove("authToken");
   };
 
-  const isLoggedIn = !!profile();
+  const checkLoggedIn = () => {
+    const token = Cookies.get("authToken");
+
+    if (!token) {
+      return false;
+    }
+
+    try {
+      const request = async () => {
+        const response = await api.get("/auth/profile");
+
+        if (response.status !== 201 && response.status !== 200) {
+          logout();
+          return false;
+        }
+      };
+
+      request();
+      return true;
+    } catch {
+      return false;
+    }
+  };
+
+  const isLoggedIn = checkLoggedIn();
 
   return { isLoggedIn, login, profile, logout };
 };

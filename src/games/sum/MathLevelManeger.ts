@@ -1,4 +1,3 @@
-import api from "@/utils/api";
 import { APIDataService } from "../common/services/APIData.service";
 import MathLevel from "./MathLevel";
 import type { SumGameSession, SumLevelData } from "./SumGameData";
@@ -147,12 +146,13 @@ export class SumGameDataManager {
 
       console.log(JSON.stringify(levelInteraction, null, 2));
 
-      const response = await api.post(
-        "/adaptiveSystem/interaction/register",
+      const response = await this.apiService.sendGameData(
+        levelInteraction.activityId,
+        levelInteraction.questionId,
         levelInteraction,
       );
 
-      console.log("Resposta:", response.data);
+      console.log("Resposta:", response?.data);
     } catch (error: unknown) {
       if (error && typeof error === "object" && "response" in error) {
         const axiosError = error as {

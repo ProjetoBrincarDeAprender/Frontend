@@ -17,8 +17,6 @@ export const AuthGuard = ({
   const { user } = useUser();
   const { isLoggedIn } = useAuth();
 
-  console.log(isLoggedIn);
-
   if (requireAuth && !isLoggedIn) {
     toast.error("Você precisa estar logado para acessar esta página.");
     return <Navigate to={redirectTo} replace />;
