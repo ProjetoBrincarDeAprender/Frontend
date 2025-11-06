@@ -74,7 +74,7 @@ export class StartScene extends PreloadScene {
     //    titulo do jogo
     this.add
       .text(this.scale.width / 2, 180, this.gameTitle, {
-        fontFamily: "Comic Sans MS, Arial, sans-serif",
+        fontFamily: "Arial Black",
         fontSize: "42px",
         color: "#ffffff",
         align: "center",
