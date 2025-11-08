@@ -16,7 +16,7 @@ const SumGame: React.FC<SumGameProps> = ({ activityId = 1 }) => {
   const { user } = useUser();
 
   useEffect(() => {
-    if (gameRef.current) return;
+    if (gameRef.current || !user) return;
 
     const config: Phaser.Types.Core.GameConfig = {
       type: Phaser.AUTO,
@@ -61,11 +61,11 @@ const SumGame: React.FC<SumGameProps> = ({ activityId = 1 }) => {
       gameRef.current.registry.set("userData", user);
     }
 
-    return () => {
-      gameRef.current?.destroy(true);
-      gameRef.current = null;
-    };
-  }, [activityId]);
+    // return () => {
+    //   gameRef.current?.destroy(true);
+    //   gameRef.current = null;
+    // };
+  }, [user, activityId]);
 
   return (
     <>

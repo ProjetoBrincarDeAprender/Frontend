@@ -25,7 +25,7 @@ export const SpaceGame = ({ activityId = 3 }: SpaceGameProps) => {
   const { user } = useUser();
 
   useEffect(() => {
-    if (gameRef.current) return;
+    if (gameRef.current || !user) return;
 
     const config: Phaser.Types.Core.GameConfig = {
       type: Phaser.AUTO,
@@ -74,11 +74,11 @@ export const SpaceGame = ({ activityId = 3 }: SpaceGameProps) => {
       console.log({ log });
     });
 
-    return () => {
-      gameRef.current?.destroy(true);
-      gameRef.current = null;
-    };
-  }, [activityId]);
+    // return () => {
+    //   gameRef.current?.destroy(true);
+    //   gameRef.current = null;
+    // };
+  }, [user, activityId]);
 
   return (
     <>

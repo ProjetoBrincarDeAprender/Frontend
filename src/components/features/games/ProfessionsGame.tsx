@@ -12,7 +12,7 @@ const ProfessionsGame: React.FC = () => {
   const { user } = useUser();
 
   useEffect(() => {
-    if (gameRef.current) return;
+    if (gameRef.current || !user) return;
 
     const config: Phaser.Types.Core.GameConfig = {
       type: Phaser.AUTO,
@@ -41,11 +41,11 @@ const ProfessionsGame: React.FC = () => {
       gameRef.current.registry.set("userData", user);
     }
 
-    return () => {
-      gameRef.current?.destroy(true);
-      gameRef.current = null;
-    };
-  }, []);
+    // return () => {
+    //   gameRef.current?.destroy(true);
+    //   gameRef.current = null;
+    // };
+  }, [user]);
 
   return (
     <>

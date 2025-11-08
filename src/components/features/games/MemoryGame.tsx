@@ -24,7 +24,7 @@ export const MemoryGame = ({ activityId = 4 }: MemoryGameProps) => {
   const { user } = useUser();
 
   useEffect(() => {
-    if (gameRef.current) return;
+    if (gameRef.current || !user) return;
 
     const config: Phaser.Types.Core.GameConfig = {
       type: Phaser.AUTO,
@@ -72,11 +72,11 @@ export const MemoryGame = ({ activityId = 4 }: MemoryGameProps) => {
       console.log({ log });
     });
 
-    return () => {
-      gameRef.current?.destroy(true);
-      gameRef.current = null;
-    };
-  }, [activityId]);
+    // return () => {
+    //   gameRef.current?.destroy(true);
+    //   gameRef.current = null;
+    // };
+  }, [user, activityId]);
 
   return (
     <>

@@ -16,7 +16,7 @@ const NumbersGame: React.FC = () => {
   const { user } = useUser();
 
   useEffect(() => {
-    if (!containerRef.current) return;
+    if (gameRef.current || !user) return;
 
     const startScene = StartScene.create(
       "clickButtonGameScene",
@@ -63,12 +63,12 @@ const NumbersGame: React.FC = () => {
       console.log({ log });
     });
 
-    return () => {
-      if (gameRef.current) {
-        gameRef.current.destroy(true);
-      }
-    };
-  }, []);
+    // return () => {
+    //   if (gameRef.current) {
+    //     gameRef.current.destroy(true);
+    //   }
+    // };
+  }, [user]);
 
   return (
     <>
