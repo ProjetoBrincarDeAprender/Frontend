@@ -7,7 +7,7 @@ import NumbersGame from "./components/features/games/NumbersGame";
 import { PlantsGame } from "./components/features/games/PlantsGame";
 import ProfessionsGame from "./components/features/games/ProfessionsGame";
 import SimpleSyllableGame from "./components/features/games/SimpleSyllableGame";
-import LocationsGame from "./components/features/games/Locations";
+import LocationsGame from "./components/features/games/LocationsGame";
 import { SpaceGame } from "./components/features/games/SpaceGame";
 import SumGame from "./components/features/games/SumGame";
 import UseSyllableGame from "./components/features/games/UseSyllableGame";

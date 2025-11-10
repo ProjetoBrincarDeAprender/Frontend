@@ -53,5 +53,10 @@
     "title": "Jogo das Plantas",
     "gameIdUrl": "plants",
     "image": "/assets/plantsGame/background.png"
+  },
+  {
+    "title": "Jogo das Localizações",
+    "gameIdUrl": "locations",
+    "image": "/assets/locations/frente.svg"
   }
 ]

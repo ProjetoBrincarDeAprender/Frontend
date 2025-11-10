@@ -2,9 +2,7 @@ import { Footer } from "@/components/Footer/Footer";
 import { Header } from "@/components/Header/Header";
 import { BackButton } from "@/components/utils/BackButton";
 import { StartScene } from "@/games/common/scenes/StartScene";
-import { GameScene } from "@/games/professions/GameScene";
-import { LevelCompletedScene } from "@/games/common/scenes/LevelCompletedScene";
-import { EndScene } from "@/games/common/scenes/EndScene";
+import { GameScene } from "@/games/locations/scenes/GameScene";
 import { useUser } from "@/hooks/User/useUser";
 import Phaser from "phaser";
 import React, { useEffect, useRef } from "react";
@@ -21,17 +19,17 @@ const LocationsGame: React.FC = () => {
       width: 800,
       height: 600,
       parent: "game-container",
-      backgroundColor: "#AED3E3",
+      backgroundColor: "#87CEEB",
       scene: [
         StartScene.create(
           "GameScene",
-          "/assets/professions/bg.svg",
-          "professionsBackground",
+          "/assets/locations/frente.svg",
+          "locationsBackground",
           "JOGO DAS LOCALIZAÇÕES",
+          "/assets/common/trophy.png",
+          "trophy",
         ),
         GameScene,
-        LevelCompletedScene,
-        EndScene,
       ],
       scale: {
         mode: Phaser.Scale.FIT,
@@ -45,6 +43,10 @@ const LocationsGame: React.FC = () => {
       gameRef.current.registry.set("userData", user);
     }
 
+    // return () => {
+    //   gameRef.current?.destroy(true);
+    //   gameRef.current = null;
+    // };
   }, [user]);
 
   return (
