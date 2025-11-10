@@ -1,5 +1,6 @@
 import { AudioManager } from "@/games/common/managers/AudioManager";
 import { PreloadScene } from "@/games/common/scenes/PreloadScene";
+import { APIDataService } from "@/games/common/services/APIData.service";
 import Phaser from "phaser";
 import CoordinationLevel, { type ShapeSpec } from "../logic/Level";
 
@@ -10,6 +11,16 @@ export default class CoordinationGameScene extends PreloadScene {
   private dragTrail: Phaser.GameObjects.Graphics | null = null;
   // Camada apenas para os elementos do nível atual (não inclui fundo nem botão de áudio)
   private levelContainer?: Phaser.GameObjects.Container;
+  // Serviço para envio dos dados ao backend
+  private apiService?: APIDataService;
+  // Controla tempo desde o início da cena
+  private sceneStartTime = 0;
+  // Incremental para gerar questionId único por peça
+  private globalQuestionCounter = 0;
+  // Mapa de tentativas por questionId
+  private attemptCounts: Record<number, number> = {};
+  // Id da atividade (ajuste conforme necessário no backend)
+  private readonly activityId = 5;
 
   constructor() {
     super({ key: "CoordinationGameScene" });
@@ -39,6 +50,9 @@ export default class CoordinationGameScene extends PreloadScene {
   }
 
   create() {
+    // Inicializa tempo e serviço de API
+    this.sceneStartTime = Date.now();
+    this.apiService = new APIDataService(this);
     this.createLevels();
     this.addBackground();
     this.startLevel();
@@ -505,6 +519,10 @@ export default class CoordinationGameScene extends PreloadScene {
       piece.setData("isPlaced", false);
       piece.setData("returned", false);
       piece.setData("isShaking", false);
+      // Atribui questionId único para esta peça
+      const questionId = this.globalQuestionCounter++;
+      piece.setData("questionId", questionId);
+      this.attemptCounts[questionId] = 0;
 
       // Cursor amigável
       piece.on("pointerover", () => this.input.setDefaultCursor("grab"));
@@ -578,6 +596,17 @@ export default class CoordinationGameScene extends PreloadScene {
         ) => {
           if (gameObject !== piece) return;
           const ok = this.validateDrop(piece, dropZone.name as string);
+          // Atualiza tentativas
+          const qId = piece.getData("questionId") as number;
+          this.attemptCounts[qId] = (this.attemptCounts[qId] || 0) + 1;
+          // Monta estatísticas para envio
+          const stats = {
+            attempts: this.attemptCounts[qId],
+            timeSpent: Date.now() - this.sceneStartTime,
+            isCorrect: ok,
+            answer: piece.getData("shapeType") as string,
+            neededHint: false,
+          };
           if (ok) {
             this.sound.play("correct");
             this.snapTo(piece, dropZone.x, dropZone.y);
@@ -623,6 +652,28 @@ export default class CoordinationGameScene extends PreloadScene {
               piece.setData("returned", true);
               piece.setData("isShaking", false);
             });
+          }
+          // Envia dados ao backend para cada tentativa (acerto ou erro)
+          if (this.apiService) {
+            console.log("[FORMS GAME] Enviando interação", {
+              activityId: this.activityId,
+              questionId: qId,
+              ...stats,
+            });
+            this.apiService
+              .sendGameData(this.activityId, qId, stats)
+              .then((resp) => {
+                if (resp) {
+                  console.log(
+                    `[FORMS GAME] HTTP status code recebido: ${resp.status}`,
+                  );
+                }
+              })
+              .catch((e) => console.warn("Falha ao enviar interação", e));
+          } else {
+            console.warn(
+              "APIDataService não inicializado; interação não enviada.",
+            );
           }
         },
       );
