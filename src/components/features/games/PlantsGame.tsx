@@ -25,7 +25,7 @@ export const PlantsGame = ({ activityId = 5 }: PlantsGameProps) => {
   const { user } = useUser();
 
   useEffect(() => {
-    if (gameRef.current) return;
+    if (gameRef.current || !user) return;
 
     const config: Phaser.Types.Core.GameConfig = {
       type: Phaser.AUTO,

@@ -74,7 +74,7 @@ export class StartScene extends PreloadScene {
     //    titulo do jogo
     this.add
       .text(this.scale.width / 2, 180, this.gameTitle, {
-        fontFamily: "Arial Black",
+        fontFamily: "Arial Black, Arial, sans-serif",
         fontSize: "42px",
         color: "#ffffff",
         align: "center",
@@ -165,7 +165,7 @@ export class StartScene extends PreloadScene {
     // Texto do botão
     const restartText = this.add
       .text(0, 0, "INICIAR", {
-        fontFamily: "Arial Black",
+        fontFamily: "Arial Black, Arial, sans-serif",
         fontSize: "20px",
         color: "#FFFFFF",
         fontStyle: "bold",

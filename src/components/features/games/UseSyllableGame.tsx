@@ -16,7 +16,7 @@ const UseSyllableGame: React.FC = () => {
   const { user } = useUser();
 
   useEffect(() => {
-    if (!containerRef.current) return;
+    if (gameRef.current || !user) return;
 
     const startScene = new StartScene({
       nextSceneName: "clickButtonGameScene",
@@ -63,11 +63,10 @@ const UseSyllableGame: React.FC = () => {
       console.log({ log });
     });
 
-    return () => {
-      if (gameRef.current) {
-        gameRef.current.destroy(true);
-      }
-    };
+    // return () => {
+    //   gameRef.current?.destroy(true);
+    //   gameRef.current = null;
+    // };
   }, [user]);
 
   return (

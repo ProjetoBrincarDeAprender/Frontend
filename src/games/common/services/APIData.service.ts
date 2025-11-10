@@ -55,6 +55,9 @@ export class APIDataService {
         payload,
       );
 
+      // Log do código HTTP sempre que houver resposta
+      console.log("HTTP status code:", response.status);
+
       if (response.status === 201) {
         console.log("Dados enviados com sucesso");
         console.log("Resposta do servidor:", response.data);
@@ -64,7 +67,7 @@ export class APIDataService {
     } catch (error) {
       if (error instanceof AxiosError) {
         console.error(
-          "Erro ao enviar dados:",
+          "Erro ao enviar dados | HTTP status code:",
           error.response?.status,
           error.message,
         );

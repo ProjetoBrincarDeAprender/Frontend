@@ -19,7 +19,7 @@ export const CoordinationGame = ({
   const { user } = useUser();
 
   useEffect(() => {
-    if (!containerRef.current) return;
+    if (gameRef.current || !user) return;
 
     const config: Phaser.Types.Core.GameConfig = {
       type: Phaser.AUTO,
@@ -65,9 +65,9 @@ export const CoordinationGame = ({
       gameRef.current.registry.set("userData", user);
     }
 
-    return () => {
-      gameRef.current?.destroy(true);
-    };
+    // return () => {
+    //   gameRef.current?.destroy(true);
+    // };
   }, [user, activityId]);
 
   return (

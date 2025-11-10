@@ -19,7 +19,7 @@ export const MazeGame = ({
   const { user } = useUser();
 
   useEffect(() => {
-    if (!containerRef.current) return;
+    if (gameRef.current || !user) return;
 
     const config: Phaser.Types.Core.GameConfig = {
       type: Phaser.AUTO,
@@ -75,9 +75,9 @@ export const MazeGame = ({
       gameRef.current.registry.set("activityId", activityId);
     }
 
-    return () => {
-      gameRef.current?.destroy(true);
-    };
+    // return () => {
+    //   gameRef.current?.destroy(true);
+    // };
   }, [user, activityId]);
 
   return (

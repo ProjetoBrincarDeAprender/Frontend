@@ -16,7 +16,7 @@ const SumGame: React.FC<SumGameProps> = ({ activityId = 1 }) => {
   const { user } = useUser();
 
   useEffect(() => {
-    if (gameRef.current) return;
+    if (gameRef.current || !user) return;
 
     const config: Phaser.Types.Core.GameConfig = {
       type: Phaser.AUTO,
@@ -47,10 +47,6 @@ const SumGame: React.FC<SumGameProps> = ({ activityId = 1 }) => {
         // Limpar qualquer progresso anterior quando inicia novo jogo
         scene.registry.remove("sumCurrentLevel");
 
-        if (user) {
-          scene.registry.set("userData", user);
-        }
-
         // Configurar dados do jogo
         const userId = user?.codigo_usuario
           ? user.codigo_usuario.toString()
@@ -61,10 +57,14 @@ const SumGame: React.FC<SumGameProps> = ({ activityId = 1 }) => {
     };
     setTimeout(setupGame, 100);
 
-    return () => {
-      gameRef.current?.destroy(true);
-      gameRef.current = null;
-    };
+    if (user) {
+      gameRef.current.registry.set("userData", user);
+    }
+
+    // return () => {
+    //   gameRef.current?.destroy(true);
+    //   gameRef.current = null;
+    // };
   }, [user, activityId]);
 
   return (

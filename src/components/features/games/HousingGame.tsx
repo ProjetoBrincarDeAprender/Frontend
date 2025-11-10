@@ -12,7 +12,7 @@ const HousingGame: React.FC = () => {
   const { user } = useUser();
 
   useEffect(() => {
-    if (gameRef.current) return;
+    if (gameRef.current || !user) return;
 
     const config: Phaser.Types.Core.GameConfig = {
       type: Phaser.AUTO,
@@ -43,11 +43,11 @@ const HousingGame: React.FC = () => {
       gameRef.current.registry.set("userData", user);
     }
 
-    return () => {
-      gameRef.current?.destroy(true);
-      gameRef.current = null;
-    };
-  }, [user]); // Housing Game não tem dependências externas
+    // return () => {
+    //   gameRef.current?.destroy(true);
+    //   gameRef.current = null;
+    // };
+  }, [user]);
 
   return (
     <>
