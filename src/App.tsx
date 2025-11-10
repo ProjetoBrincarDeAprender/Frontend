@@ -7,6 +7,7 @@ import NumbersGame from "./components/features/games/NumbersGame";
 import { PlantsGame } from "./components/features/games/PlantsGame";
 import ProfessionsGame from "./components/features/games/ProfessionsGame";
 import SimpleSyllableGame from "./components/features/games/SimpleSyllableGame";
+import LocationsGame from "./components/features/games/Locations";
 import { SpaceGame } from "./components/features/games/SpaceGame";
 import SumGame from "./components/features/games/SumGame";
 import UseSyllableGame from "./components/features/games/UseSyllableGame";
@@ -94,6 +95,7 @@ function App() {
         <Route path="use-syllable" element={<UseSyllableGame />} />
         <Route path="simple-syllable" element={<SimpleSyllableGame />} />
         <Route path="plants" element={<PlantsGame />} />
+        <Route path="locations" element={<LocationsGame />} />
       </Route>
 
       <Route element={<AuthGuard requireAuth />}>
