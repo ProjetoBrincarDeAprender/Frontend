@@ -42,15 +42,21 @@ const useAuth = () => {
       const request = async () => {
         const response = await api.get("/auth/profile");
 
-        if (response.status !== 201 && response.status !== 200) {
-          logout();
-          return false;
-        }
+        return response;
       };
 
-      request();
-      return true;
+      request()
+        .then(() => {
+          return true;
+        })
+        .catch((response) => {
+          if (response.status !== 201 && response.status !== 200) {
+            logout();
+            return false;
+          }
+        });
     } catch {
+      logout();
       return false;
     }
   };
