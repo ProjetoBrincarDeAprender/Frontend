@@ -17,7 +17,6 @@ export class GameScene extends Phaser.Scene {
   private optionButtons: Button[] = [];
   private nextButton: Phaser.GameObjects.Container | null = null;
   
-  // Elementos para níveis de posicionamento
   private dudaPositionImage: Phaser.GameObjects.Image | null = null;
   private catPositionImage: Phaser.GameObjects.Image | null = null;
 
@@ -33,11 +32,11 @@ export class GameScene extends Phaser.Scene {
   init(data?: { currentLevel?: number; score?: number }) {
     new AudioManager(this, 0.7);
 
-    // Verificar se deve reiniciar o jogo completamente
+
     const shouldRestart = this.registry.get("locationsRestart");
     
     if (shouldRestart || !data || (data.currentLevel === 0 && data.score === 0)) {
-      // Reiniciar completamente o jogo
+
       this.currentLevel = 0;
       this.score = 0;
       this.registry.remove("locationsCurrentLevel");
@@ -45,7 +44,7 @@ export class GameScene extends Phaser.Scene {
       this.registry.remove("locationsGameCompleted");
       this.registry.remove("locationsRestart");
     } else {
-      // Continuar o jogo normalmente
+
       const registryLevel = this.registry.get("locationsCurrentLevel") || 0;
       const registryScore = this.registry.get("locationsScore") || 0;
 
@@ -53,7 +52,7 @@ export class GameScene extends Phaser.Scene {
         data?.currentLevel !== undefined ? data.currentLevel : registryLevel;
       this.score = data?.score !== undefined ? data.score : registryScore;
 
-      // Atualiza/persiste no registry
+
       this.registry.set("locationsCurrentLevel", this.currentLevel);
       this.registry.set("locationsScore", this.score);
     }
@@ -65,27 +64,26 @@ export class GameScene extends Phaser.Scene {
   }
 
   preload() {
-    // Sons
+
     this.load.audio("correct", "/assets/common/sounds/correct.mp3");
     this.load.audio("wrong", "/assets/common/sounds/incorrect.mp3");
     
-    // Botões do AudioManager
+
     this.load.svg("audioOn", "/assets/common/buttons/audioOn.svg");
     this.load.svg("audioOff", "/assets/common/buttons/audioOff.svg");
 
-    // Botões do jogo
+
     this.load.svg("defaultButton", "/assets/common/buttons/rectangleBlueDefault.svg");
     this.load.svg("hoverButton", "/assets/common/buttons/rectangleBlueHover.svg");
     this.load.svg("clickedButton", "/assets/common/buttons/rectangleBlueClicked.svg");
 
-  // Imagens das localizações (usar loader SVG para preservar vetor)
-  this.load.svg("acima", "/assets/locations/acima.svg");
-  this.load.svg("abaixo", "/assets/locations/abaixo.svg");
-  this.load.svg("dentro", "/assets/locations/dentro.svg");
-  this.load.svg("frente", "/assets/locations/frente.svg");
-  this.load.svg("lado", "/assets/locations/lado.svg");
+    this.load.svg("acima", "/assets/locations/acima.svg");
+    this.load.svg("abaixo", "/assets/locations/abaixo.svg");
+    this.load.svg("dentro", "/assets/locations/dentro.svg");
+    this.load.svg("frente", "/assets/locations/frente.svg");
+    this.load.svg("lado", "/assets/locations/lado.svg");
 
-    // Personagens
+
     this.load.image("duda", "/assets/common/duda/girlmainpage.svg");
     this.load.image("duda-lado", "/assets/locations/duda-lado.svg");
     this.load.svg("gato", "/assets/vowelsGame/images/animals/gato.svg");
@@ -93,21 +91,9 @@ export class GameScene extends Phaser.Scene {
   }
 
   create() {
-  // Rosa mais escuro de fundo
-  this.cameras.main.setBackgroundColor("#e6f7ff");
-
-    // Adicionar overlay mais escuro sobre o fundo
-    // this.add.rectangle(
-    //   this.cameras.main.centerX,
-    //   this.cameras.main.centerY,
-    //   this.cameras.main.width,
-    //   this.cameras.main.height,
-    //   0x000000,
-    //   0.25
-    // );
+    this.cameras.main.setBackgroundColor("#e6f7ff");
 
     this.registerStandardScenes();
-    
     this.createUI();
     this.startLevel();
   }
@@ -121,7 +107,6 @@ export class GameScene extends Phaser.Scene {
           backgroundPath: "/assets/locations/frente.svg",
           backgroundKey: "locationsBackground",
           onMenuReturn: () => {
-            // Limpar todos os registries para reinício completo
             this.registry.remove("locationsCurrentLevel");
             this.registry.remove("locationsScore");
             this.registry.remove("locationsGameCompleted");
@@ -142,7 +127,6 @@ export class GameScene extends Phaser.Scene {
           backgroundKey: "locationsBackground",
           subtitleMessage: "VOCÊ APRENDEU SOBRE \nLOCALIZAÇÃO ESPACIAL!",
           onRestart: () => {
-            // Limpar todos os registries para reinício completo
             this.registry.remove("locationsCurrentLevel");
             this.registry.remove("locationsScore");
             this.registry.remove("locationsGameCompleted");
@@ -157,7 +141,7 @@ export class GameScene extends Phaser.Scene {
   }
 
   private createUI(): void {
-    // Pergunta
+
     this.questionText = this.add
       .text(this.cameras.main.centerX, 100, "", {
         fontSize: "36px",
@@ -167,9 +151,6 @@ export class GameScene extends Phaser.Scene {
         align: "center",
       })
       .setOrigin(0.5);
-
-    // Container para imagem da localização - será criado dinamicamente
-    // Criação inicial vazia - a imagem será criada no startLevel
 
     this.createNextButton();
   }
@@ -186,38 +167,31 @@ export class GameScene extends Phaser.Scene {
     this.clearOptionButtons();
     this.clearPositionElements();
 
-    // Limpar qualquer texto de resposta de nível anterior
     if (this.answerRevealText) {
       (this.answerRevealText as Phaser.GameObjects.Text).destroy();
       this.answerRevealText = null;
     }
     
-    // Limpar texto verde da resposta anterior
     if (this.greenAnswerText) {
       this.greenAnswerText.destroy();
       this.greenAnswerText = null;
     }
 
-    // Garantir que a pergunta esteja visível e atualizada
     this.questionText.setText(levelData.question).setVisible(true);
     
     if (levelData.type === 'selection') {
-      // Recria a imagem a cada nível para garantir troca de textura e estado limpo
       if (this.locationImage && this.locationImage.scene) {
         this.locationImage.destroy();
       }
       this.locationImage = this.add
         .image(this.cameras.main.centerX, 310, levelData.locationType!)
         .setOrigin(0.5)
-        .setScale(0.4) // diminuir tamanho das imagens nos níveis 1-5
+        .setScale(0.4)
         .setVisible(true);
-
-      // Texto de resposta já é limpo no início de startLevel
-      
     } else if (levelData.type === 'positioning') {
-      // Níveis com Duda e gato (6-10)
       if (this.locationImage) {
         this.locationImage.destroy();
+
         // @ts-expect-error limpar referência
         this.locationImage = undefined;
       }
@@ -263,7 +237,6 @@ export class GameScene extends Phaser.Scene {
         this.optionButtons.push(button);
       });
     } else {
-      // Para níveis de seleção, criar 3 botões como antes
       const spacing = 200;
       
       level.options.forEach((option, index) => {
@@ -298,13 +271,11 @@ export class GameScene extends Phaser.Scene {
   private handleOptionClick(selectedIndex: number, level: LocationLevel): void {
     if (this.isTransitioning || !this.buttonsEnabled) return;
 
-    // Desabilitar botões por 2 segundos
     this.buttonsEnabled = false;
     this.isTransitioning = true;
 
     const isCorrect = this.locationsGameService.isCorrectAnswer(selectedIndex, level);
 
-    // Aplicar feedback visual apenas no botão clicado
     this.optionButtons.forEach((button, index) => {
       button.disableInteractive();
       
@@ -319,13 +290,11 @@ export class GameScene extends Phaser.Scene {
       this.score += points;
       this.locationsGameService.addScore(points);
 
-      // Só esconder pergunta nos níveis de seleção (1-5)
       if (level.type === 'selection') {
         this.questionText.setVisible(false);
         this.showAnswerReveal(level);
       }
       
-      // Só avança para o próximo nível se acertou (delay 3s)
       this.time.delayedCall(3000, () => {
         this.buttonsEnabled = true;
         this.nextLevel();
@@ -333,7 +302,6 @@ export class GameScene extends Phaser.Scene {
     } else {
       this.sound.play("wrong", { volume: 0.7 });
       
-      // Se errou, apenas reabilita os botões sem avançar (delay 3s p/ leitura)
       this.time.delayedCall(3000, () => {
         this.buttonsEnabled = true;
         this.isTransitioning = false;
@@ -343,19 +311,16 @@ export class GameScene extends Phaser.Scene {
   }
 
   private showAnswerReveal(level: LocationLevel): void {
-    // Apenas para níveis de seleção: destaca a opção correta na frase
     if (level.type !== 'selection') return;
 
     const correctOption = level.options[level.correctAnswer]?.text || "";
     const fullText = level.question.replace("___", correctOption);
 
-    // Destruir antigo se existir
     if (this.answerRevealText) {
       this.answerRevealText.destroy();
       this.answerRevealText = null;
     }
 
-    // Criar texto com resposta na posição da pergunta original
     this.answerRevealText = this.add
       .text(this.cameras.main.centerX, 100, fullText, {
         fontSize: "36px",
@@ -366,13 +331,10 @@ export class GameScene extends Phaser.Scene {
       })
       .setOrigin(0.5);
 
-    // Aplicar pseudo-destaque verde somente na parte da resposta
-    // Como não há rich-text nativo aqui, adicionamos um segundo texto por cima em verde
-  const before = level.question.split("___")[0] || "";
+    const before = level.question.split("___")[0] || "";
     const baseX = this.cameras.main.centerX;
     const baseY = 100;
 
-    // Medidas do texto anterior para posicionar a resposta no meio
     const tempBefore = this.add.text(0, 0, before, { fontSize: "36px", fontFamily: "Arial" }).setVisible(false);
     const tempCorrect = this.add.text(0, 0, correctOption, { fontSize: "36px", fontFamily: "Arial" }).setVisible(false);
     const beforeWidth = tempBefore.width;
@@ -380,7 +342,6 @@ export class GameScene extends Phaser.Scene {
     tempBefore.destroy();
     tempCorrect.destroy();
 
-    // Início do texto completo centralizado
     const fullTemp = this.add.text(0, 0, fullText, { fontSize: "36px", fontFamily: "Arial" }).setVisible(false);
     const totalWidth = fullTemp.width;
     fullTemp.destroy();
@@ -388,7 +349,6 @@ export class GameScene extends Phaser.Scene {
     const startX = baseX - totalWidth / 2;
     const correctX = startX + beforeWidth + correctWidth / 2;
 
-    // Armazenar referência do texto verde para limpeza posterior
     this.greenAnswerText = this.add
       .text(correctX, baseY, correctOption, {
         fontSize: "36px",
@@ -409,22 +369,20 @@ export class GameScene extends Phaser.Scene {
     if (this.currentLevel >= total) {
       this.endGame();
     } else if (this.currentLevel === 5) {
-      // Mostrar cena de nível completado APÓS terminar nível 5 (índices 0..4). Agora currentLevel=5 aponta para próximo índice.
       this.scene.start("LevelCompleteScene", {
-        currentLevel: this.currentLevel, // manter progresso
+        currentLevel: this.currentLevel,
         totalLevels: total,
         score: this.score,
         gameType: "locations",
         nextScene: "GameScene",
       });
     } else {
-      // Para outros níveis, continuar diretamente
       this.startLevel();
     }
   }
 
   private endGame(): void {
-    // Marcar que o jogo foi completado no registry
+
     this.registry.set("locationsGameCompleted", true);
     
     this.scene.start("EndScene", {
@@ -461,19 +419,19 @@ export class GameScene extends Phaser.Scene {
     const centerX = this.cameras.main.centerX;
     const centerY = 300;
 
-    // Escolher imagem da Duda baseada no nível
+
     const dudaKey = (level.id === 8 || level.id === 9) ? "duda-lado" : "duda";
     
-    // Criar Duda sempre no centro
+
     this.dudaPositionImage = this.add
       .image(centerX, centerY, dudaKey)
       .setScale(0.3)
       .setOrigin(0.5);
 
-    // Escolher imagem do gato
+
     const gatoKey = "gato-locations";
 
-    // Posicionar gato baseado na configuração do nível
+
     let catX = centerX;
     const catY = centerY;
     
@@ -516,7 +474,7 @@ export class GameScene extends Phaser.Scene {
     this.nextButton.setVisible(false);
 
     this.nextButton.on("pointerdown", () => {
-    //   this.sound.play("click", { volume: 0.5 });
+
       this.nextLevel();
     });
   }

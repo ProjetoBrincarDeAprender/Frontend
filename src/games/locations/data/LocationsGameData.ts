@@ -2,10 +2,9 @@ export interface LocationLevel {
   id: number;
   type: 'selection' | 'positioning';
   question: string;
-  locationType?: string; // Chave da imagem carregada (acima, abaixo, etc)
+  locationType?: string;
   options: LocationOption[];
   correctAnswer: number;
-  // Para níveis de posicionamento
   catPosition?: 'left' | 'right' | 'front' | 'back';
   dudaPosition?: 'center';
 }
@@ -78,7 +77,7 @@ export class LocationsGameData {
         ],
         correctAnswer: 0
       },
-      // Níveis de posicionamento (6-10)
+
       {
         id: 6,
         type: 'positioning',

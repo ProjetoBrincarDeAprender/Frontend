@@ -43,10 +43,7 @@ const LocationsGame: React.FC = () => {
       gameRef.current.registry.set("userData", user);
     }
 
-    // return () => {
-    //   gameRef.current?.destroy(true);
-    //   gameRef.current = null;
-    // };
+
   }, [user]);
 
   return (
