@@ -2,7 +2,7 @@ export interface LocationLevel {
   id: number;
   type: 'selection' | 'positioning';
   question: string;
-  image?: string;
+  locationType?: string; // Chave da imagem carregada (acima, abaixo, etc)
   options: LocationOption[];
   correctAnswer: number;
   // Para níveis de posicionamento
@@ -22,7 +22,7 @@ export class LocationsGameData {
         id: 1,
         type: 'selection',
         question: 'O gato está ___ da cadeira',
-        image: '/assets/locations/acima.svg',
+        locationType: 'acima',
         options: [
           { text: 'ACIMA', isCorrect: true },
           { text: 'ABAIXO', isCorrect: false },
@@ -34,7 +34,7 @@ export class LocationsGameData {
         id: 2,
         type: 'selection',
         question: 'O cachorro está ___ da mesa',
-        image: '/assets/locations/abaixo.svg',
+        locationType: 'abaixo',
         options: [
           { text: 'ACIMA', isCorrect: false },
           { text: 'ABAIXO', isCorrect: true },
@@ -46,7 +46,7 @@ export class LocationsGameData {
         id: 3,
         type: 'selection',
         question: 'O cachorro está ___ da caixa',
-        image: '/assets/locations/dentro.svg',
+        locationType: 'dentro',
         options: [
           { text: 'FORA', isCorrect: false },
           { text: 'DENTRO', isCorrect: true },
@@ -58,7 +58,7 @@ export class LocationsGameData {
         id: 4,
         type: 'selection',
         question: 'A ração está na ___ do cachorro',
-        image: '/assets/locations/frente.svg',
+        locationType: 'frente',
         options: [
           { text: 'ATRÁS', isCorrect: false },
           { text: 'LADO', isCorrect: false },
@@ -70,7 +70,7 @@ export class LocationsGameData {
         id: 5,
         type: 'selection',
         question: 'O rato está ao ___ do gato',
-        image: '/assets/locations/lado.svg',
+        locationType: 'lado',
         options: [
           { text: 'LADO', isCorrect: true },
           { text: 'DENTRO', isCorrect: false },
