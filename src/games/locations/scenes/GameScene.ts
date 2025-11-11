@@ -104,7 +104,7 @@ export class GameScene extends Phaser.Scene {
         const locationsLevelComplete = new LevelCompletedScene({
           nextLevelScene: "GameScene",
           menuScene: "StartScene",
-          backgroundPath: "/assets/locations/frente.svg",
+          backgroundPath: "/assets/locations/bg.png",
           backgroundKey: "locationsBackground",
           onMenuReturn: () => {
             this.registry.remove("locationsCurrentLevel");
@@ -123,7 +123,7 @@ export class GameScene extends Phaser.Scene {
       try {
         const locationsEndScene = new EndScene({
           restartScene: "StartScene",
-          backgroundPath: "/assets/locations/frente.svg",
+          backgroundPath: "/assets/locations/bg.png",
           backgroundKey: "locationsBackground",
           subtitleMessage: "VOCÊ APRENDEU SOBRE \nLOCALIZAÇÃO ESPACIAL!",
           onRestart: () => {

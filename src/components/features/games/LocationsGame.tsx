@@ -23,7 +23,7 @@ const LocationsGame: React.FC = () => {
       scene: [
         StartScene.create(
           "GameScene",
-          "/assets/locations/frente.svg",
+          "/assets/locations/bg.png",
           "locationsBackground",
           "JOGO DAS LOCALIZAÇÕES",
           "/assets/common/trophy.png",
