@@ -53,5 +53,10 @@
     "title": "Jogo das Plantas",
     "gameIdUrl": "plants",
     "image": "/assets/plantsGame/background.png"
+  },
+  {
+    "title": "Criando Sílabas",
+    "gameIdUrl": "simple-syllable",
+    "image": "/assets/simpleSyllableGame/images/backgroundMain.png"
   }
 ]
