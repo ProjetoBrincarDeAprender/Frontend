@@ -33,17 +33,30 @@ export class GameScene extends Phaser.Scene {
   init(data?: { currentLevel?: number; score?: number }) {
     new AudioManager(this, 0.7);
 
-    // Segue o padrão do jogo de Profissões: se não receber dados, usa o que está no registry
-    const registryLevel = this.registry.get("locationsCurrentLevel") || 0;
-    const registryScore = this.registry.get("locationsScore") || 0;
+    // Verificar se deve reiniciar o jogo completamente
+    const shouldRestart = this.registry.get("locationsRestart");
+    
+    if (shouldRestart || !data || (data.currentLevel === 0 && data.score === 0)) {
+      // Reiniciar completamente o jogo
+      this.currentLevel = 0;
+      this.score = 0;
+      this.registry.remove("locationsCurrentLevel");
+      this.registry.remove("locationsScore");
+      this.registry.remove("locationsGameCompleted");
+      this.registry.remove("locationsRestart");
+    } else {
+      // Continuar o jogo normalmente
+      const registryLevel = this.registry.get("locationsCurrentLevel") || 0;
+      const registryScore = this.registry.get("locationsScore") || 0;
 
-    this.currentLevel =
-      data?.currentLevel !== undefined ? data.currentLevel : registryLevel;
-    this.score = data?.score !== undefined ? data.score : registryScore;
+      this.currentLevel =
+        data?.currentLevel !== undefined ? data.currentLevel : registryLevel;
+      this.score = data?.score !== undefined ? data.score : registryScore;
 
-    // Atualiza/persiste no registry
-    this.registry.set("locationsCurrentLevel", this.currentLevel);
-    this.registry.set("locationsScore", this.score);
+      // Atualiza/persiste no registry
+      this.registry.set("locationsCurrentLevel", this.currentLevel);
+      this.registry.set("locationsScore", this.score);
+    }
 
     this.locationsGameService = new LocationsGameService();
     this.locationsGameService.setCurrentLevel(this.currentLevel);
@@ -74,12 +87,24 @@ export class GameScene extends Phaser.Scene {
 
     // Personagens
     this.load.image("duda", "/assets/common/duda/girlmainpage.svg");
-  this.load.svg("gato", "/assets/vowelsGame/images/animals/gato.svg");
+    this.load.image("duda-lado", "/assets/locations/duda-lado.svg");
+    this.load.svg("gato", "/assets/vowelsGame/images/animals/gato.svg");
+    this.load.image("gato-locations", "/assets/locations/gato.svg");
   }
 
   create() {
   // Rosa mais escuro de fundo
-  this.cameras.main.setBackgroundColor("#F8BBD9");
+  this.cameras.main.setBackgroundColor("#e6f7ff");
+
+    // Adicionar overlay mais escuro sobre o fundo
+    // this.add.rectangle(
+    //   this.cameras.main.centerX,
+    //   this.cameras.main.centerY,
+    //   this.cameras.main.width,
+    //   this.cameras.main.height,
+    //   0x000000,
+    //   0.25
+    // );
 
     this.registerStandardScenes();
     
@@ -95,6 +120,13 @@ export class GameScene extends Phaser.Scene {
           menuScene: "StartScene",
           backgroundPath: "/assets/locations/frente.svg",
           backgroundKey: "locationsBackground",
+          onMenuReturn: () => {
+            // Limpar todos os registries para reinício completo
+            this.registry.remove("locationsCurrentLevel");
+            this.registry.remove("locationsScore");
+            this.registry.remove("locationsGameCompleted");
+            this.registry.set("locationsRestart", true);
+          },
         });
         this.scene.add("LevelCompleteScene", locationsLevelComplete);
       } catch (error) {
@@ -109,6 +141,13 @@ export class GameScene extends Phaser.Scene {
           backgroundPath: "/assets/locations/frente.svg",
           backgroundKey: "locationsBackground",
           subtitleMessage: "VOCÊ APRENDEU SOBRE \nLOCALIZAÇÃO ESPACIAL!",
+          onRestart: () => {
+            // Limpar todos os registries para reinício completo
+            this.registry.remove("locationsCurrentLevel");
+            this.registry.remove("locationsScore");
+            this.registry.remove("locationsGameCompleted");
+            this.registry.set("locationsRestart", true);
+          },
         });
         this.scene.add("EndScene", locationsEndScene);
       } catch (error) {
@@ -168,9 +207,9 @@ export class GameScene extends Phaser.Scene {
         this.locationImage.destroy();
       }
       this.locationImage = this.add
-        .image(this.cameras.main.centerX, 350, levelData.locationType!)
+        .image(this.cameras.main.centerX, 310, levelData.locationType!)
         .setOrigin(0.5)
-        .setScale(0.3) // diminuir tamanho das imagens nos níveis 1-5
+        .setScale(0.4) // diminuir tamanho das imagens nos níveis 1-5
         .setVisible(true);
 
       // Texto de resposta já é limpo no início de startLevel
@@ -280,9 +319,11 @@ export class GameScene extends Phaser.Scene {
       this.score += points;
       this.locationsGameService.addScore(points);
 
-      // Esconder pergunta original e mostrar resposta completa
-      this.questionText.setVisible(false);
-      this.showAnswerReveal(level);
+      // Só esconder pergunta nos níveis de seleção (1-5)
+      if (level.type === 'selection') {
+        this.questionText.setVisible(false);
+        this.showAnswerReveal(level);
+      }
       
       // Só avança para o próximo nível se acertou (delay 3s)
       this.time.delayedCall(3000, () => {
@@ -383,6 +424,9 @@ export class GameScene extends Phaser.Scene {
   }
 
   private endGame(): void {
+    // Marcar que o jogo foi completado no registry
+    this.registry.set("locationsGameCompleted", true);
+    
     this.scene.start("EndScene", {
       score: this.score,
       totalLevels: LocationsGameData.getTotalLevels(),
@@ -417,22 +461,34 @@ export class GameScene extends Phaser.Scene {
     const centerX = this.cameras.main.centerX;
     const centerY = 300;
 
+    // Escolher imagem da Duda baseada no nível
+    const dudaKey = (level.id === 8 || level.id === 9) ? "duda-lado" : "duda";
+    
     // Criar Duda sempre no centro
     this.dudaPositionImage = this.add
-      .image(centerX, centerY, "duda")
-      .setScale(0.4)
+      .image(centerX, centerY, dudaKey)
+      .setScale(0.3)
       .setOrigin(0.5);
 
-    // Criar gato à esquerda ou direita baseado na configuração do nível
+    // Escolher imagem do gato
+    const gatoKey = "gato-locations";
+
+    // Posicionar gato baseado na configuração do nível
     let catX = centerX;
+    const catY = centerY;
+    
     if (level.catPosition === 'left') {
       catX = centerX - 150;
     } else if (level.catPosition === 'right') {
       catX = centerX + 150;
+    } else if (level.catPosition === 'front') {
+      catX = centerX - 170;
+    } else if (level.catPosition === 'back') {
+      catX = centerX + 170;
     }
 
     this.catPositionImage = this.add
-      .image(catX, centerY, "gato")
+      .image(catX, catY, gatoKey)
       .setScale(0.3)
       .setOrigin(0.5);
   }

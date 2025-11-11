@@ -6,7 +6,7 @@ export interface LocationLevel {
   options: LocationOption[];
   correctAnswer: number;
   // Para níveis de posicionamento
-  catPosition?: 'left' | 'right';
+  catPosition?: 'left' | 'right' | 'front' | 'back';
   dudaPosition?: 'center';
 }
 
@@ -24,7 +24,7 @@ export class LocationsGameData {
         question: 'O gato está ___ da cadeira',
         locationType: 'acima',
         options: [
-          { text: 'ACIMA', isCorrect: true },
+          { text: 'EM CIMA', isCorrect: true },
           { text: 'ABAIXO', isCorrect: false },
           { text: 'LADO', isCorrect: false }
         ],
@@ -36,8 +36,8 @@ export class LocationsGameData {
         question: 'O cachorro está ___ da mesa',
         locationType: 'abaixo',
         options: [
-          { text: 'ACIMA', isCorrect: false },
-          { text: 'ABAIXO', isCorrect: true },
+          { text: 'EM CIMA', isCorrect: false },
+          { text: 'EM BAIXO', isCorrect: true },
           { text: 'DENTRO', isCorrect: false }
         ],
         correctAnswer: 1
@@ -74,7 +74,7 @@ export class LocationsGameData {
         options: [
           { text: 'LADO', isCorrect: true },
           { text: 'DENTRO', isCorrect: false },
-          { text: 'ACIMA', isCorrect: false }
+          { text: 'EM CIMA', isCorrect: false }
         ],
         correctAnswer: 0
       },
@@ -82,7 +82,7 @@ export class LocationsGameData {
       {
         id: 6,
         type: 'positioning',
-        question: 'O gato está à ESQUERDA da Duda?',
+        question: 'O gato está à ESQUERDA ou DIREITA da Duda?',
         options: [
           { text: 'ESQUERDA', isCorrect: true },
           { text: 'DIREITA', isCorrect: false }
@@ -94,7 +94,7 @@ export class LocationsGameData {
       {
         id: 7,
         type: 'positioning',
-        question: 'O gato está à DIREITA da Duda?',
+        question: 'O gato está à ESQUERDA ou DIREITA da Duda?',
         options: [
           { text: 'ESQUERDA', isCorrect: false },
           { text: 'DIREITA', isCorrect: true }
@@ -106,31 +106,31 @@ export class LocationsGameData {
       {
         id: 8,
         type: 'positioning',
-        question: 'O gato está à ESQUERDA da Duda?',
+        question: 'O gato está na FRENTE ou ATRÁS da Duda?',
         options: [
-          { text: 'ESQUERDA', isCorrect: true },
-          { text: 'DIREITA', isCorrect: false }
+          { text: 'FRENTE', isCorrect: true },
+          { text: 'ATRÁS', isCorrect: false }
         ],
         correctAnswer: 0,
-        catPosition: 'left',
+        catPosition: 'front',
         dudaPosition: 'center'
       },
       {
         id: 9,
         type: 'positioning',
-        question: 'O gato está à DIREITA da Duda?',
+        question: 'O gato está na FRENTE ou ATRÁS da Duda?',
         options: [
-          { text: 'ESQUERDA', isCorrect: false },
-          { text: 'DIREITA', isCorrect: true }
+          { text: 'FRENTE', isCorrect: false },
+          { text: 'ATRÁS', isCorrect: true }
         ],
         correctAnswer: 1,
-        catPosition: 'right',
+        catPosition: 'back',
         dudaPosition: 'center'
       },
       {
         id: 10,
         type: 'positioning',
-        question: 'O gato está à ESQUERDA da Duda?',
+        question: 'O gato está à ESQUERDA ou DIREITA da Duda?',
         options: [
           { text: 'ESQUERDA', isCorrect: false },
           { text: 'DIREITA', isCorrect: true }
