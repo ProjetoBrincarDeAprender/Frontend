@@ -14,6 +14,11 @@
     "gameIdUrl": "space",
     "image": "/assets/spaceGame/background.png"
   },
+   {
+    "title": "Jogo das Localizações",
+    "gameIdUrl": "locations",
+    "image": "/assets/locations/bg.png"
+  },
   {
     "title": "Jogo da Memoria",
     "gameIdUrl": "memory",
@@ -23,6 +28,11 @@
     "title": "Jogo das Vogais",
     "gameIdUrl": "vowels",
     "image": "/assets/vowelsGame/images/backgroundMain.png"
+  },
+  {
+    "title": "Jogo das Plantas",
+    "gameIdUrl": "plants",
+    "image": "/assets/plantsGame/background.png"
   },
   {
     "title": "Jogo das Profissões",
@@ -50,13 +60,9 @@
     "image": "/assets/useSyllableGame/images/backgroundMain.png"
   },
   {
-    "title": "Jogo das Plantas",
-    "gameIdUrl": "plants",
-    "image": "/assets/plantsGame/background.png"
-  },
-  {
     "title": "Criando Sílabas",
     "gameIdUrl": "simple-syllable",
     "image": "/assets/simpleSyllableGame/images/backgroundMain.png"
   }
+
 ]
