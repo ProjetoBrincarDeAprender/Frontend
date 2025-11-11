@@ -1,6 +1,7 @@
 import type { UserProfile } from "@/types/user";
 import api from "@/utils/api";
 import Cookies from "js-cookie";
+import { useCallback } from "react";
 
 const useAuth = () => {
   const setToken = (token: string) => {
@@ -31,7 +32,7 @@ const useAuth = () => {
     Cookies.remove("authToken");
   };
 
-  const checkLoggedIn = () => {
+  const checkLoggedIn = useCallback(async () => {
     const token = Cookies.get("authToken");
 
     if (!token) {
@@ -39,31 +40,21 @@ const useAuth = () => {
     }
 
     try {
-      const request = async () => {
-        const response = await api.get("/auth/profile");
+      const response = await api.get("/auth/profile");
 
-        return response;
-      };
+      if (response.status !== 200) {
+        logout();
+        return false;
+      }
 
-      request()
-        .then(() => {
-          return true;
-        })
-        .catch((response) => {
-          if (response.status !== 201 && response.status !== 200) {
-            logout();
-            return false;
-          }
-        });
-    } catch {
+      return true;
+    } catch (_error) {
       logout();
       return false;
     }
-  };
+  }, []);
 
-  const isLoggedIn = checkLoggedIn();
-
-  return { isLoggedIn, login, profile, logout };
+  return { checkLoggedIn, login, profile, logout };
 };
 
 export default useAuth;
