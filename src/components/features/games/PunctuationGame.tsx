@@ -20,7 +20,7 @@ const PunctuationGame: React.FC = () => {
 
     const startScene = new StartScene({
       nextSceneName: "clickButtonGameScene",
-      // backgroundPath: "/assets/vowelsGame/images/backgroundMain.png",
+      backgroundPath: "/assets/punctuationGame/images/backgroundMain.png",
       // backgroundKey: "startBg",
       gameTitle: "PONTUANDO FRASES",
     });

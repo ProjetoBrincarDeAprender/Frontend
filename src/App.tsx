@@ -35,7 +35,6 @@ import Logout from "./pages/Logout/Logout";
 import { Profile } from "./pages/Profile/Profile";
 import { RecoverPassword } from "./pages/RecoverPassword/RecoverPassword";
 import { SendPasswordToken } from "./pages/SendPasswordToken/SendPasswordToken";
-import PunctuationGame from "./components/features/games/PunctuationGame";
 
 function App() {
   return (
@@ -81,23 +80,20 @@ function App() {
         <Route path="curriculum/questions" element={<Questions />} />
       </Route>
 
-      <Route element={<AuthGuard requireAuth />}>
-        <Route path="/games" element={<AuthGuard />}>
-          <Route index element={<Games />} />
-          <Route path="vowels" element={<VowelsGame />} />
-          <Route path="memory" element={<MemoryGame />} />
-          <Route path="sum" element={<SumGame />} />
-          <Route path="numbers" element={<NumbersGame />} />
-          <Route path="housing" element={<HousingGame />} />
-          <Route path="forms" element={<CoordinationGame />} />
-          <Route path="maze" element={<MazeGame />} />
-          <Route path="space" element={<SpaceGame />} />
-          <Route path="professions" element={<ProfessionsGame />} />
-          <Route path="use-syllable" element={<UseSyllableGame />} />
-          <Route path="simple-syllable" element={<SimpleSyllableGame />} />
-          <Route path="plants" element={<PlantsGame />} />
-          <Route path="punctuation" element={<PunctuationGame />} />
-        </Route>
+      <Route path="/games" element={<AuthGuard />}>
+        <Route index element={<Games />} />
+        <Route path="vowels" element={<VowelsGame />} />
+        <Route path="memory" element={<MemoryGame />} />
+        <Route path="sum" element={<SumGame />} />
+        <Route path="numbers" element={<NumbersGame />} />
+        <Route path="housing" element={<HousingGame />} />
+        <Route path="forms" element={<CoordinationGame />} />
+        <Route path="maze" element={<MazeGame />} />
+        <Route path="space" element={<SpaceGame />} />
+        <Route path="professions" element={<ProfessionsGame />} />
+        <Route path="use-syllable" element={<UseSyllableGame />} />
+        <Route path="simple-syllable" element={<SimpleSyllableGame />} />
+        <Route path="plants" element={<PlantsGame />} />
       </Route>
 
       <Route element={<AuthGuard requireAuth />}>
