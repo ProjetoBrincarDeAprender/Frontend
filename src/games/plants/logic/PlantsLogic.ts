@@ -22,6 +22,7 @@ export default class PlantsLogic {
     | Button
     | Phaser.GameObjects.Image
     | Phaser.GameObjects.Text
+    | Phaser.GameObjects.Graphics
   )[] = [];
   private buttonsEnabled: boolean = true;
   private activityId?: number;
@@ -125,7 +126,7 @@ export default class PlantsLogic {
 
     // Configurações para layout em grid 2x2
     const centerX = this.scene.scale.width / 2;
-    const centerY = this.scene.scale.height / 2 + 50;
+    const centerY = this.scene.scale.height / 2 + 70;
     const horizontalSpacing = 350; // Espaçamento horizontal entre colunas
     const verticalSpacing = 200; // Espaçamento vertical entre linhas
 
@@ -149,7 +150,53 @@ export default class PlantsLogic {
         const planetImage = this.scene.add
           .image(x, showNames ? y - 20 : y, imageKey)
           .setScale(0.3)
-          .setInteractive();
+          .setInteractive()
+          .setDepth(10);
+
+        // Adicionar borda que segue o contorno exato da imagem (8 cópias para outline perfeito)
+        const borderThickness = 3;
+
+        // Criar múltiplas cópias da imagem com offset para criar outline perfeito
+        const borderImages: Phaser.GameObjects.Image[] = [];
+
+        // Criar 8 cópias ao redor da imagem original (método que cria outline verdadeiro)
+        const offsets = [
+          [-borderThickness, 0],
+          [borderThickness, 0],
+          [0, -borderThickness],
+          [0, borderThickness],
+          [-borderThickness, -borderThickness],
+          [borderThickness, -borderThickness],
+          [-borderThickness, borderThickness],
+          [borderThickness, borderThickness],
+        ];
+
+        offsets.forEach(([offsetX, offsetY]) => {
+          const borderImage = this.scene.add
+            .image(
+              x + offsetX,
+              showNames ? y - 20 + offsetY : y + offsetY,
+              imageKey,
+            )
+            .setScale(0.3)
+            .setDepth(planetImage.depth - 1); // Colocar atrás da imagem principal
+
+          // Aplicar ColorMatrix: primeiro tornar preto, depois negativo para branco
+          borderImage.setPostPipeline("ColorMatrixPostFX");
+          if (borderImage.postFX) {
+            const colorMatrix = borderImage.postFX.addColorMatrix();
+            // Primeiro: tornar a imagem completamente preta
+            colorMatrix.blackWhite(); // Converte para preto e branco
+            colorMatrix.brightness(-1); // Tornar completamente preto
+            // Segundo: inverter para branco
+            colorMatrix.negative(); // Inverter: preto vira branco
+          } else {
+            // Fallback: se postFX não estiver disponível, usar tint
+            borderImage.setTint(0xffffff);
+          }
+
+          borderImages.push(borderImage);
+        });
 
         let planetText: Phaser.GameObjects.Text | null = null;
 
@@ -164,7 +211,8 @@ export default class PlantsLogic {
               stroke: "#000000",
               strokeThickness: 2,
             })
-            .setOrigin(0.5);
+            .setOrigin(0.5)
+            .setDepth(11);
 
           // Fazer o texto também clicável
           planetText.setInteractive();
@@ -174,15 +222,36 @@ export default class PlantsLogic {
         // Fazer a imagem clicável
         planetImage.on("pointerdown", () => this.handleButtonClick(option));
 
+        // Função para atualizar a escala e posição das bordas
+        const updateBorderScale = (_mainScale: number, tintColor?: number) => {
+          borderImages.forEach((borderImg, index) => {
+            borderImg.setScale(_mainScale);
+            // Recalcular a posição da borda baseado na nova escala
+            const [originalOffsetX, originalOffsetY] = offsets[index];
+            const scaledOffsetX = originalOffsetX * (_mainScale / 0.3);
+            const scaledOffsetY = originalOffsetY * (_mainScale / 0.3);
+            borderImg.setPosition(
+              x + scaledOffsetX,
+              (showNames ? y - 20 : y) + scaledOffsetY,
+            );
+          });
+
+          if (tintColor !== undefined) {
+            planetImage.setTint(tintColor);
+          } else {
+            planetImage.clearTint();
+          }
+        };
+
         // Adicionar efeitos hover na imagem
         planetImage.on("pointerover", () => {
           planetImage.setScale(0.4);
-          planetImage.setTint(0xdddddd);
+          updateBorderScale(0.4, 0xdddddd);
           if (planetText) planetText.setScale(1.1);
         });
         planetImage.on("pointerout", () => {
           planetImage.setScale(0.3);
-          planetImage.clearTint();
+          updateBorderScale(0.3);
           if (planetText) planetText.setScale(1.0);
         });
 
@@ -190,12 +259,12 @@ export default class PlantsLogic {
         if (planetText) {
           planetText.on("pointerover", () => {
             planetImage.setScale(0.4);
-            planetImage.setTint(0xdddddd);
+            updateBorderScale(0.4, 0xdddddd);
             planetText.setScale(1.1);
           });
           planetText.on("pointerout", () => {
             planetImage.setScale(0.3);
-            planetImage.clearTint();
+            updateBorderScale(0.3);
             planetText.setScale(1.0);
           });
 
@@ -203,8 +272,9 @@ export default class PlantsLogic {
           this.buttons.push(planetText);
         }
 
-        // Armazenar referência da imagem para limpeza posterior
+        // Armazenar referências para limpeza posterior
         this.buttons.push(planetImage);
+        borderImages.forEach((borderImg) => this.buttons.push(borderImg));
       } else {
         // Para questões só com texto, usar botão normal
         const button = this.buttonFactory.createButton({
@@ -385,16 +455,18 @@ export default class PlantsLogic {
 
     const graphics = this.scene.add.graphics();
     graphics.fillStyle(color, 0.7);
-    graphics.fillRoundedRect(
-      feedback.x - feedback.width / 2 - 20,
-      feedback.y - feedback.height / 2 - 10,
-      feedback.width + 40,
-      feedback.height + 20,
-      15,
-    );
+    graphics
+      .fillRoundedRect(
+        feedback.x - feedback.width / 2 - 20,
+        feedback.y - feedback.height / 2 - 10,
+        feedback.width + 40,
+        feedback.height + 20,
+        15,
+      )
+      .setDepth(99);
 
     // Garantir que o texto fique na frente do background
-    feedback.setDepth(1);
+    feedback.setDepth(100);
 
     // Animar entrada do feedback
     this.scene.tweens.add({
