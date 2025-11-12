@@ -4,7 +4,11 @@ import { LevelCompletedScene } from "@/games/common/scenes/LevelCompletedScene";
 import Phaser from "phaser";
 import MathLogic from "../logic/logic";
 import SubtractionLevel from "../logic/MathLevel";
-import { createDefaultSubtractionLevels } from "../logic/levelFactory";
+import {
+  createDefaultSubtractionLevels,
+  createSubtractionLevels,
+} from "../logic/levelFactory";
+import type { SubtractionLevelDefinition } from "../logic/levelFactory";
 import { AnimationManager } from "@/games/sum/components/animations/AnimationManager";
 import { SubmitButton } from "@/games/sum/components/buttons/SubmitButton";
 import { NumberDisplay } from "../components/ui/NumberDisplay";
@@ -103,6 +107,9 @@ export class GameScene extends Phaser.Scene {
       "clickedButton",
       "/assets/common/buttons/squareBlueClicked.svg",
     );
+
+    // Níveis definidos via JSON externo (opcional)
+    this.load.json("subLevels", "/assets/subtractionGame/levels.json");
   }
 
   create(): void {
@@ -119,8 +126,14 @@ export class GameScene extends Phaser.Scene {
   }
 
   private initializeLogic() {
-    // Por padrão, usa definicoes prontas da factory (com operandos adequados aos blocos 1..5)
-    const levels: SubtractionLevel[] = createDefaultSubtractionLevels();
+    // Lê definições do JSON se existir; caso contrário, usa o padrão da factory
+    const defs = this.cache.json.get("subLevels") as
+      | SubtractionLevelDefinition[]
+      | undefined;
+    const levels: SubtractionLevel[] =
+      defs && Array.isArray(defs) && defs.length
+        ? createSubtractionLevels(defs)
+        : createDefaultSubtractionLevels();
 
     const savedLevel = this.registry.get("subCurrentLevel") || 0;
     this.logic = new MathLogic(this, levels, "subUser", undefined, savedLevel);
