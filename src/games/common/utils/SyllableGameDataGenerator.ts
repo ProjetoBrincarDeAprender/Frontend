@@ -34,7 +34,7 @@ export class SyllableGameDataGenerator {
             clicked: "/assets/common/buttons/squareRedClicked.svg",
           },
           white: {
-            default: "/assets/common/buttons/squareWhite.svg",
+            default: "/assets/common/buttons/squareWhiteDefault.svg",
           },
         },
         entities: [],

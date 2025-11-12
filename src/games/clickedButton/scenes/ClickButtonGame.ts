@@ -120,14 +120,14 @@ export default class ClickButtonGameScene extends PreloadScene {
     this.load.image("hoverButton", buttonTexturesUrl.blue.hover);
     this.load.image("clickedButton", buttonTexturesUrl.blue.clicked);
 
-    const whiteButton = buttonTexturesUrl.white;
-    if (whiteButton) {
-      this.load.image("whiteButton", whiteButton.default);
-      this.load.image("whiteRectangleButton", whiteButton.rectangle);
-    } else {
-      this.load.image("whiteButton", buttonTexturesUrl.blue.default);
-      this.load.image("whiteRectangleButton", buttonTexturesUrl.blue.default);
-    }
+    const whiteButtons = buttonTexturesUrl.white;
+    whiteButtons.default
+      ? this.load.image("whiteButton", whiteButtons.default)
+      : this.load.image("whiteButton", buttonTexturesUrl.blue.default);
+
+    whiteButtons.rectangle
+      ? this.load.image("whiteRectangleButton", whiteButtons.rectangle)
+      : this.load.image("whiteRectangleButton", buttonTexturesUrl.blue.default);
   }
 
   /**
