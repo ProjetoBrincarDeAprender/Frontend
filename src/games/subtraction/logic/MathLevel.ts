@@ -55,6 +55,29 @@ export default class SubtractionLevel {
     return choices.sort(() => Math.random() - 0.5);
   }
 
+  // Cria um nível a partir de uma definição explícita (num1, num2, answer e opções)
+  static fromDefinition(def: {
+    num1: number;
+    num2: number;
+    answer: number;
+    options?: number[];
+  }): SubtractionLevel {
+    const type: LevelType =
+      def.options && def.options.length
+        ? LevelType.MULTIPLE_CHOICE
+        : LevelType.INPUT;
+    const lvl = new SubtractionLevel(def.num1, def.num2, type);
+    // Força answer e choices conforme a definição
+    lvl.answer = def.answer;
+    if (def.options && def.options.length) {
+      const hasAnswer = def.options.includes(def.answer);
+      lvl.choices = hasAnswer ? [...def.options] : [...def.options, def.answer];
+      // Embaralhar
+      lvl.choices = lvl.choices.sort(() => Math.random() - 0.5);
+    }
+    return lvl;
+  }
+
   getNumber1(): number {
     return this.number1;
   }

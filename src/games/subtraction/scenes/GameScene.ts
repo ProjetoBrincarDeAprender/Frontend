@@ -3,7 +3,8 @@ import { EndScene } from "@/games/common/scenes/EndScene";
 import { LevelCompletedScene } from "@/games/common/scenes/LevelCompletedScene";
 import Phaser from "phaser";
 import MathLogic from "../logic/logic";
-import SubtractionLevel, { LevelType } from "../logic/MathLevel";
+import SubtractionLevel from "../logic/MathLevel";
+import { createDefaultSubtractionLevels } from "../logic/levelFactory";
 import { AnimationManager } from "@/games/sum/components/animations/AnimationManager";
 import { SubmitButton } from "@/games/sum/components/buttons/SubmitButton";
 import { NumberDisplay } from "../components/ui/NumberDisplay";
@@ -118,29 +119,8 @@ export class GameScene extends Phaser.Scene {
   }
 
   private initializeLogic() {
-    const levels: SubtractionLevel[] = [];
-
-    // 5 níveis escolha múltipla
-    for (let i = 0; i < 5; i++) {
-      const a = Phaser.Math.Between(3, 9);
-      const b = Phaser.Math.Between(1, Math.min(5, a - 1));
-      levels.push(new SubtractionLevel(a, b, LevelType.MULTIPLE_CHOICE));
-    }
-
-    // 5 níveis input
-    for (let i = 0; i < 5; i++) {
-      const a = Phaser.Math.Between(4, 9);
-      const b = Phaser.Math.Between(1, Math.min(7, a - 1));
-      levels.push(new SubtractionLevel(a, b, LevelType.INPUT));
-    }
-
-    // 5 níveis três números (permitindo negativos)
-    for (let i = 0; i < 5; i++) {
-      const a = Phaser.Math.Between(6, 12);
-      const b = Phaser.Math.Between(1, 5);
-      const c = Phaser.Math.Between(1, 4);
-      levels.push(new SubtractionLevel(a, b, LevelType.THREE_NUMBERS, c));
-    }
+    // Por padrão, usa definicoes prontas da factory (com operandos adequados aos blocos 1..5)
+    const levels: SubtractionLevel[] = createDefaultSubtractionLevels();
 
     const savedLevel = this.registry.get("subCurrentLevel") || 0;
     this.logic = new MathLogic(this, levels, "subUser", undefined, savedLevel);
