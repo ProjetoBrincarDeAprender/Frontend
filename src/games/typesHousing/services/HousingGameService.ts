@@ -36,52 +36,6 @@ export class HousingGameService {
     this.hintsUsed = true;
   }
 
-  // private validateInteractionData(data: InteractionData): boolean {
-  //   const required = [
-  //     "studentId",
-  //     "activityId",
-  //     "questionId",
-  //     "answer",
-  //     "timeSpent",
-  //     "attempts",
-  //     "neededHint",
-  //     "responseDate",
-  //     "isCorrect",
-  //   ];
-
-  //   for (const field of required) {
-  //     if (
-  //       data[field as keyof InteractionData] === undefined ||
-  //       data[field as keyof InteractionData] === null
-  //     ) {
-  //       console.error(`Campo obrigatório ausente: ${field}`);
-  //       return false;
-  //     }
-  //   }
-
-  //   if (typeof data.studentId !== "number") {
-  //     console.error("studentId deve ser um número");
-  //     return false;
-  //   }
-
-  //   if (typeof data.activityId !== "number") {
-  //     console.error("activityId deve ser um número");
-  //     return false;
-  //   }
-
-  //   if (typeof data.questionId !== "number") {
-  //     console.error("questionId deve ser um número");
-  //     return false;
-  //   }
-
-  //   if (typeof data.timeSpent !== "number") {
-  //     console.error("timeSpent deve ser um número");
-  //     return false;
-  //   }
-
-  //   return true;
-  // }
-
   async registerInteraction(
     questionId: number,
     answer: string,
@@ -98,32 +52,20 @@ export class HousingGameService {
         isCorrect,
       };
 
-      // if (!this.validateInteractionData(interactionData)) {
-      //   console.error("Dados inválidos, não enviando para API");
-      //   return;
-      // }
-
-      console.log(
-        "Registrando interação do jogo de moradias:",
-        interactionData,
-      );
-
       this.apiService.sendGameData(
         HousingGameService.ACTIVITY_ID,
         questionId,
         interactionData,
       );
     } catch (error) {
-      console.error("Erro ao registrar interação:", error);
-
       if (error && typeof error === "object" && "response" in error) {
-        const axiosError = error as {
-          response?: { status: number; data: unknown; headers: unknown };
-        };
-        console.error(" Detalhes do erro:");
-        console.error("Status:", axiosError.response?.status);
-        console.error("Data:", axiosError.response?.data);
-        console.error("Headers:", axiosError.response?.headers);
+        // const axiosError = error as {
+        //   response?: { status: number; data: unknown; headers: unknown };
+        // };
+        // console.error(" Detalhes do erro:");
+        // console.error("Status:", axiosError.response?.status);
+        // console.error("Data:", axiosError.response?.data);
+        // console.error("Headers:", axiosError.response?.headers);
       }
     }
   }
@@ -153,7 +95,6 @@ export class HousingGameService {
       return null;
     } catch (error) {
       console.error("Erro ao obter ID do estudante:", error);
-      // console.log(` Usando ID padrão devido ao erro: ${HousingGameService.DEFAULT_STUDENT_ID}`);
       return null;
     }
   }
