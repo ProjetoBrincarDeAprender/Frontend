@@ -1,0 +1,19 @@
+[
+  { "num1": 2, "num2": 1, "answer": 1, "options": [0, 1, 2] },
+  { "num1": 3, "num2": 1, "answer": 2, "options": [3, 2, 1] },
+  { "num1": 4, "num2": 2, "answer": 2, "options": [1, 2, 3] },
+  { "num1": 5, "num2": 2, "answer": 3, "options": [3, 4, 2] },
+  { "num1": 5, "num2": 1, "answer": 4, "options": [5, 4, 3] },
+
+  { "num1": 3, "num2": 2, "answer": 1 },
+  { "num1": 4, "num2": 1, "answer": 3 },
+  { "num1": 5, "num2": 3, "answer": 2 },
+  { "num1": 4, "num2": 3, "answer": 1 },
+  { "num1": 5, "num2": 4, "answer": 1 },
+
+  { "num1": 3, "num2": 4, "answer": -1, "options": [-1, 0, 1] },
+  { "num1": 2, "num2": 5, "answer": -3, "options": [-3, -2, -1] },
+  { "num1": 5, "num2": 5, "answer": 0, "options": [0, 1, -1] },
+  { "num1": 4, "num2": 5, "answer": -1, "options": [-1, -2, 0] },
+  { "num1": 1, "num2": 5, "answer": -4, "options": [-4, -3, -2] }
+]
