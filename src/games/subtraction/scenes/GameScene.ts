@@ -27,6 +27,9 @@ export class GameScene extends Phaser.Scene {
   private keyboardHandler?: (event: KeyboardEvent) => void;
   private choiceButtons: Phaser.GameObjects.Container[] = [];
   private isTransitioning: boolean = false;
+  private userId: string = "default_user";
+  private activityId?: number;
+
   constructor() {
     super({ key: "GameScene" });
   }
@@ -47,6 +50,10 @@ export class GameScene extends Phaser.Scene {
     this.keyboardHandler = undefined;
     this.answerText = undefined;
     this.isTransitioning = false;
+
+    // Recuperar userId e activityId do registry (similar ao jogo de soma)
+    this.userId = this.registry.get("subUserId") || "10130001";
+    this.activityId = this.registry.get("subActivityId") || 2;
   }
 
   private registerStandardScenes(): void {
@@ -58,6 +65,7 @@ export class GameScene extends Phaser.Scene {
         backgroundPath: "/assets/subtractionGame/background.png",
         backgroundKey: "subBackground",
         onMenuReturn: () => {
+          // Limpar todos os dados do registry quando volta ao menu
           this.registry.remove("subCurrentLevel");
           this.registry.remove("subUserId");
           this.registry.remove("subActivityId");
@@ -74,6 +82,7 @@ export class GameScene extends Phaser.Scene {
         backgroundKey: "subBackground",
         subtitleMessage: "VOCÊ CONCLUIU A SUBTRAÇÃO!",
         onRestart: () => {
+          // Limpar todos os dados do registry quando reinicia
           this.registry.remove("subCurrentLevel");
           this.registry.remove("subUserId");
           this.registry.remove("subActivityId");
@@ -141,7 +150,13 @@ export class GameScene extends Phaser.Scene {
         : createDefaultSubtractionLevels();
 
     const savedLevel = this.registry.get("subCurrentLevel") || 0;
-    this.logic = new MathLogic(this, levels, "subUser", undefined, savedLevel);
+    this.logic = new MathLogic(
+      this,
+      levels,
+      this.userId,
+      this.activityId,
+      savedLevel,
+    );
   }
 
   private startLevel() {
