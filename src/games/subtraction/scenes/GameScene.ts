@@ -19,6 +19,7 @@ export class GameScene extends Phaser.Scene {
   private numberDisplay!: NumberDisplay;
   private answerText?: Phaser.GameObjects.Text;
   private equationText!: Phaser.GameObjects.Text;
+  private equationBox?: Phaser.GameObjects.Graphics;
   private correctAnswer: number = 0;
   private currentLevel: SubtractionLevel | null = null;
   private inputText: string = "";
@@ -110,6 +111,10 @@ export class GameScene extends Phaser.Scene {
 
     // Níveis definidos via JSON externo (opcional)
     this.load.json("subLevels", "/assets/subtractionGame/levels.json");
+
+    // Sons de acerto/erro
+    this.load.audio("correct", "/assets/common/sounds/correct.mp3");
+    this.load.audio("incorrect", "/assets/common/sounds/incorrect.mp3");
   }
 
   create(): void {
@@ -185,7 +190,10 @@ export class GameScene extends Phaser.Scene {
         color: "#F67800",
         fontFamily: "Arial Black",
       })
-      .setOrigin(0.5);
+      .setOrigin(0.5)
+      .setDepth(13);
+
+    this.createOrUpdateEquationBox();
   }
 
   private updateEquationWithCorrectAnswer() {
@@ -215,6 +223,7 @@ export class GameScene extends Phaser.Scene {
       },
       onYoyo: () => {
         this.equationText.setText(equationString);
+        this.createOrUpdateEquationBox();
       },
       onComplete: () => {
         this.time.delayedCall(2000, () => this.equationText.clearTint());
@@ -263,11 +272,13 @@ export class GameScene extends Phaser.Scene {
     const result = this.logic.checkAnswer(selected);
     this.choiceButtons.forEach((b) => b.disableInteractive());
     if (result.correct) {
+      this.sound.play("correct");
       this.animationManager.correctAnswerEffect(container);
       this.animationManager.starExplosionEffect(container.x, container.y);
       this.updateEquationWithCorrectAnswer();
       this.proceedToNextLevel(idx);
     } else {
+      this.sound.play("incorrect");
       this.animationManager.incorrectAnswerEffect(container);
       this.time.delayedCall(2000, () => {
         this.isTransitioning = false;
@@ -338,6 +349,7 @@ export class GameScene extends Phaser.Scene {
     const result = this.logic.checkAnswer(userAnswer);
     if (this.submitButton) this.submitButton.disableInteractive();
     if (result.correct) {
+      this.sound.play("correct");
       this.animationManager.correctAnswerEffect(this.answerText!);
       this.animationManager.starExplosionEffect(
         this.answerText!.x,
@@ -346,6 +358,7 @@ export class GameScene extends Phaser.Scene {
       this.updateEquationWithCorrectAnswer();
       this.proceedToNextLevel(idx);
     } else {
+      this.sound.play("incorrect");
       this.animationManager.incorrectAnswerEffect(this.answerText!);
       this.time.delayedCall(2000, () => {
         this.isTransitioning = false;
@@ -393,6 +406,10 @@ export class GameScene extends Phaser.Scene {
       this.answerText.destroy();
       this.answerText = undefined;
     }
+    if (this.equationBox) {
+      this.equationBox.destroy();
+      this.equationBox = undefined;
+    }
     if (this.submitButton) {
       this.submitButton.destroy();
       this.submitButton = undefined;
@@ -404,6 +421,27 @@ export class GameScene extends Phaser.Scene {
     if (this.equationText) {
       this.equationText.destroy();
     }
+  }
+
+  // Cria/atualiza uma caixa branca arredondada atrás do enunciado para melhorar a legibilidade
+  private createOrUpdateEquationBox() {
+    if (!this.equationText) return;
+    const padding = 16;
+    const b = this.equationText.getBounds();
+    const width = b.width + padding * 2;
+    const height = b.height + padding * 2;
+    const x = b.centerX - width / 2;
+    const y = b.centerY - height / 2;
+
+    if (!this.equationBox) {
+      this.equationBox = this.add.graphics();
+    }
+    this.equationBox.clear();
+    this.equationBox.fillStyle(0xffffff, 1);
+    this.equationBox.lineStyle(2, 0x000000, 1);
+    this.equationBox.fillRoundedRect(x, y, width, height, 12);
+    this.equationBox.strokeRoundedRect(x, y, width, height, 12);
+    this.equationBox.setDepth(12);
   }
 }
 
