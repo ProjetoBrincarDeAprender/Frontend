@@ -50,6 +50,11 @@
     "image": "/assets/subtractionGame/background.png"
   },
   {
+    "title": "Jogo dos Endereços",
+    "gameIdUrl": "address",
+    "image": "/assets/addressGame/background.png"
+  },
+  {
     "title": "Sequência de Números",
     "gameIdUrl": "numbers",
     "image": "/assets/numbersGame/background.png"

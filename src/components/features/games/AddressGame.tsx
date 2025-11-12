@@ -23,7 +23,7 @@ const AddressGame: React.FC = () => {
       scene: [
         StartScene.create(
           "GameScene",
-          "/assets/locations/bg.png",
+          "/assets/addressGame/bg.svg",
           "locationsBackground",
           "RUAS E BAIRROS",
           "/assets/common/trophy.png",
