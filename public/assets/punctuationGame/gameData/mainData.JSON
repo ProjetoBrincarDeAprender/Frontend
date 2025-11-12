@@ -28,7 +28,12 @@
         "texture": "/assets/common/star.svg"
       }
     ],
-    "entities": []
+    "entities": [
+      {
+        "key": "dudaPensando",
+        "path": "/assets/common/duda/dudaPensandoRosto.png"
+      }
+    ]
   },
 
   "audios": [
@@ -59,6 +64,7 @@
     {
       "question": "QUAL É A PONTUAÇÃO CORRETA?",
       "audioKey": "bem",
+      "entityKey": "dudaPensando",
       "content": ["B", "E", "M", " "],
       "completeContent": ["B", "E", "M", "?"],
       "answer": "?",

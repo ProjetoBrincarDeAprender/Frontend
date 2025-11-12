@@ -28,13 +28,22 @@ export class AudioContentRenderer implements IContentRenderer {
     const audioKey = level.getAudioKey();
     if (!audioKey) return null;
 
+    const entityKey = level.getEntityKey();
+
+    let audioX = 400;
+    let audioY = 240;
+
+    if (entityKey) {
+      audioX = 300; // Ajusta a posição X se houver uma imagem ao lado
+    }
+
     // Toca o áudio automaticamente
     this.audioObject = scene.sound.add(audioKey);
     this.audioObject.play();
 
     // Cria um botão para repetir o áudio
     this.audioControlButton = buttonManager.createButton({
-      positions: { x: 400, y: 240 }, // Posição similar à imagem na ImageContentRenderer
+      positions: { x: audioX, y: audioY }, // Posição similar à imagem na ImageContentRenderer
       textures: {
         default: "defaultButton",
         hover: "hoverButton",
@@ -53,6 +62,16 @@ export class AudioContentRenderer implements IContentRenderer {
         this.audioObject.play();
       }
     });
+
+    // Renderiza a imagem do lado
+    if (entityKey) {
+      const entityX = audioX + 150;
+      const entityY = audioY;
+      scene.add
+        .image(entityX, entityY, entityKey)
+        .setOrigin(0.5, 0.5)
+        .setScale(0.9);
+    }
 
     // Renderiza o conteúdo textual abaixo do botão de áudio, se existir
     const contentArray = level.getContent();
