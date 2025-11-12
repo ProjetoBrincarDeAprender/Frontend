@@ -57,7 +57,7 @@ export class GameScene extends Phaser.Scene {
       this.registry.set("locationsScore", this.score);
     }
 
-    this.locationsGameService = new LocationsGameService();
+    this.locationsGameService = new LocationsGameService(this);
     this.locationsGameService.setCurrentLevel(this.currentLevel);
     this.optionButtons = [];
     this.isTransitioning = false;
@@ -162,6 +162,9 @@ export class GameScene extends Phaser.Scene {
       return;
     }
 
+    // Reiniciar o timer para nova pergunta
+    this.locationsGameService.startQuestion();
+
     this.isTransitioning = false;
     this.buttonsEnabled = true;
     this.clearOptionButtons();
@@ -228,9 +231,9 @@ export class GameScene extends Phaser.Scene {
         button.setScale(0.8);
         this.add.existing(button);
 
-        button.on("pointerdown", () => {
+        button.on("pointerdown", async () => {
           if (this.buttonsEnabled) {
-            this.handleOptionClick(index, level);
+            await this.handleOptionClick(index, level);
           }
         });
 
@@ -255,9 +258,9 @@ export class GameScene extends Phaser.Scene {
         button.setScale(0.8);
         this.add.existing(button);
 
-        button.on("pointerdown", () => {
+        button.on("pointerdown", async () => {
           if (this.buttonsEnabled) {
-            this.handleOptionClick(index, level);
+            await this.handleOptionClick(index, level);
           }
         });
 
@@ -268,13 +271,36 @@ export class GameScene extends Phaser.Scene {
 
 
 
-  private handleOptionClick(selectedIndex: number, level: LocationLevel): void {
+  private async handleOptionClick(selectedIndex: number, level: LocationLevel): Promise<void> {
     if (this.isTransitioning || !this.buttonsEnabled) return;
 
     this.buttonsEnabled = false;
     this.isTransitioning = true;
 
     const isCorrect = this.locationsGameService.isCorrectAnswer(selectedIndex, level);
+    this.locationsGameService.incrementAttempts();
+
+    try {
+      const studentId = this.locationsGameService.getStudentId();
+      const questionId = this.currentLevel + 1; 
+      const selectedAnswer = level.options[selectedIndex]?.text || `option_${selectedIndex}`;
+
+      if (isCorrect) {
+        await this.locationsGameService.registerCorrectAnswer(
+          studentId,
+          questionId,
+          selectedAnswer,
+        );
+      } else {
+        await this.locationsGameService.registerIncorrectAnswer(
+          studentId,
+          questionId,
+          selectedAnswer,
+        );
+      }
+    } catch (error) {
+      console.error("Erro ao registrar interação do jogo de localizações:", error);
+    }
 
     this.optionButtons.forEach((button, index) => {
       button.disableInteractive();

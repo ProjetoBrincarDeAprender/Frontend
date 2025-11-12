@@ -1,0 +1,135 @@
+{
+  "config": {
+    "background": {
+      "image": "/assets/punctuationGame/images/backgroundMain.png",
+      "overlayOpacity": 0.3
+    }
+  },
+
+  "textures": {
+    "buttons": {
+      "blue": {
+        "default": "/assets/common/buttons/squareBlueDefault.svg",
+        "hover": "/assets/common/buttons/squareBlueHover.svg",
+        "clicked": "/assets/common/buttons/squareBlueClicked.svg"
+      },
+      "red": {
+        "default": "/assets/common/buttons/squareRedDefault.svg",
+        "hover": "/assets/common/buttons/squareRedHover.svg",
+        "clicked": "/assets/common/buttons/squareRedClicked.svg"
+      },
+      "white": {
+        "default": "/assets/common/buttons/squareWhiteDefault.svg",
+        "rectangle": "/assets/common/buttons/rectangleWhiteDefault.svg"
+      }
+    },
+    "effects": [
+      {
+        "key": "star",
+        "texture": "/assets/common/star.svg"
+      }
+    ],
+    "entities": [
+      {
+        "key": "dudaPensando",
+        "path": "/assets/common/duda/dudaPensandoRosto.png"
+      },
+      {
+        "key": "dudaNeutra",
+        "path": "/assets/common/duda/dudaNeutraRosto.png"
+      },
+      {
+        "key": "dudaSurpresa",
+        "path": "/assets/common/duda/dudaSurpresaRosto.png"
+      }
+    ]
+  },
+
+  "audios": [
+    {
+      "key": "correct",
+      "path": "/assets/common/sounds/correct.mp3"
+    },
+    {
+      "key": "incorrect",
+      "path": "/assets/common/sounds/incorrect.mp3"
+    },
+    {
+      "key": "bem",
+      "path": "/assets/punctuationGame/sounds/bem.mp3"
+    },
+    {
+      "key": "legal",
+      "path": "/assets/punctuationGame/sounds/legal.mp3"
+    },
+    {
+      "key": "chovendo",
+      "path": "/assets/punctuationGame/sounds/chovendo.mp3"
+    },
+    {
+      "key": "onde",
+      "path": "/assets/punctuationGame/sounds/onde.mp3"
+    },
+    {
+      "key": "olha",
+      "path": "/assets/punctuationGame/sounds/olha.mp3"
+    }
+  ],
+
+  "buttonConfig": {
+    "fontSize": 50,
+    "scale": 1.5
+  },
+
+  "info": {
+    "activityId": 2
+  },
+
+  "levels": [
+    {
+      "question": "QUAL É A PONTUAÇÃO CORRETA?",
+      "audioKey": "bem",
+      "entityKey": "dudaPensando",
+      "content": ["Você está bem", " "],
+      "completeContent": ["Você está bem", "?"],
+      "answer": "?",
+      "options": ["?", ".", "!"]
+    },
+    {
+      "question": "QUAL É A PONTUAÇÃO CORRETA?",
+      "audioKey": "legal",
+      "entityKey": "dudaSurpresa",
+      "content": ["Que legal", " "],
+      "completeContent": ["Que legal", "!"],
+      "answer": "!",
+      "options": [".", "!", "?"]
+    },
+    {
+      "question": "QUAL É A PONTUAÇÃO CORRETA?",
+      "audioKey": "onde",
+      "entityKey": "dudaPensando",
+      "content": ["Onde está", " "],
+      "completeContent": ["Onde está", "?"],
+      "answer": "?",
+      "options": ["!", ".", "?"]
+    },
+    {
+      "question": "QUAL É A PONTUAÇÃO CORRETA?",
+      "audioKey": "olha",
+      "entityKey": "dudaSurpresa",
+      "content": ["Olha isso", " "],
+      "completeContent": ["Olha isso", "!"],
+      "answer": "!",
+      "options": ["!", ".", "?"]
+    },
+    {
+      "question": "QUAL É A PONTUAÇÃO CORRETA?",
+      "audioKey": "chovendo",
+      "entityKey": "dudaNeutra",
+      "content": ["Está chovendo", " "],
+      "completeContent": ["Está chovendo", "."],
+      "answer": ".",
+      "options": ["?", ".", "!"]
+    }
+  ]
+}
