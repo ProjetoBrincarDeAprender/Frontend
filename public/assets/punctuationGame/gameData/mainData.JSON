@@ -19,7 +19,8 @@
         "clicked": "/assets/common/buttons/squareRedClicked.svg"
       },
       "white": {
-        "default": "/assets/common/buttons/squareWhite.svg"
+        "default": "/assets/common/buttons/squareWhiteDefault.svg",
+        "rectangle": "/assets/common/buttons/rectangleWhiteDefault.svg"
       }
     },
     "effects": [
@@ -32,6 +33,14 @@
       {
         "key": "dudaPensando",
         "path": "/assets/common/duda/dudaPensandoRosto.png"
+      },
+      {
+        "key": "dudaNeutra",
+        "path": "/assets/common/duda/dudaNeutraRosto.png"
+      },
+      {
+        "key": "dudaSurpresa",
+        "path": "/assets/common/duda/dudaSurpresaRosto.png"
       }
     ]
   },
@@ -48,6 +57,22 @@
     {
       "key": "bem",
       "path": "/assets/punctuationGame/sounds/bem.mp3"
+    },
+    {
+      "key": "legal",
+      "path": "/assets/punctuationGame/sounds/legal.mp3"
+    },
+    {
+      "key": "chovendo",
+      "path": "/assets/punctuationGame/sounds/chovendo.mp3"
+    },
+    {
+      "key": "onde",
+      "path": "/assets/punctuationGame/sounds/onde.mp3"
+    },
+    {
+      "key": "olha",
+      "path": "/assets/punctuationGame/sounds/olha.mp3"
     }
   ],
 
@@ -65,9 +90,45 @@
       "question": "QUAL É A PONTUAÇÃO CORRETA?",
       "audioKey": "bem",
       "entityKey": "dudaPensando",
-      "content": ["B", "E", "M", " "],
-      "completeContent": ["B", "E", "M", "?"],
+      "content": ["Você está bem", " "],
+      "completeContent": ["Você está bem", "?"],
       "answer": "?",
+      "options": ["?", ".", "!"]
+    },
+    {
+      "question": "QUAL É A PONTUAÇÃO CORRETA?",
+      "audioKey": "legal",
+      "entityKey": "dudaSurpresa",
+      "content": ["Que legal", " "],
+      "completeContent": ["Que legal", "!"],
+      "answer": "!",
+      "options": [".", "!", "?"]
+    },
+    {
+      "question": "QUAL É A PONTUAÇÃO CORRETA?",
+      "audioKey": "onde",
+      "entityKey": "dudaPensando",
+      "content": ["Onde está", " "],
+      "completeContent": ["Onde está", "?"],
+      "answer": "?",
+      "options": ["!", ".", "?"]
+    },
+    {
+      "question": "QUAL É A PONTUAÇÃO CORRETA?",
+      "audioKey": "olha",
+      "entityKey": "dudaSurpresa",
+      "content": ["Olha isso", " "],
+      "completeContent": ["Olha isso", "!"],
+      "answer": "!",
+      "options": ["!", ".", "?"]
+    },
+    {
+      "question": "QUAL É A PONTUAÇÃO CORRETA?",
+      "audioKey": "chovendo",
+      "entityKey": "dudaNeutra",
+      "content": ["Está chovendo", " "],
+      "completeContent": ["Está chovendo", "."],
+      "answer": ".",
       "options": ["?", ".", "!"]
     }
   ]

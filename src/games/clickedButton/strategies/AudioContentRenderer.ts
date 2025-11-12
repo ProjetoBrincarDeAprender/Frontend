@@ -11,6 +11,7 @@ import type ButtonManager from "../logic/ButtonManager";
 export class AudioContentRenderer implements IContentRenderer {
   private audioObject?: Phaser.Sound.BaseSound;
   private audioControlButton?: Button;
+  private imageObject?: Phaser.GameObjects.Image;
   private content: Button[] = [];
 
   canRender(level: ClickedButtonLevel): boolean {
@@ -64,10 +65,11 @@ export class AudioContentRenderer implements IContentRenderer {
     });
 
     // Renderiza a imagem do lado
+    this.imageObject?.destroy();
     if (entityKey) {
       const entityX = audioX + 150;
       const entityY = audioY;
-      scene.add
+      this.imageObject = scene.add
         .image(entityX, entityY, entityKey)
         .setOrigin(0.5, 0.5)
         .setScale(0.9);
@@ -151,27 +153,68 @@ export class AudioContentRenderer implements IContentRenderer {
     scale: number,
   ): Button[] {
     const newContent: Button[] = [];
-    const spaceBetweenContent = 60;
-    const buttonWidth = 20 * scale;
-    const totalWidthOccupied =
-      (content.length - 1) * spaceBetweenContent + buttonWidth * content.length;
-    const startX = (scene.cameras.main.width - totalWidthOccupied) / 2 + 15;
+    const buttonInfos = this.calculateButtonInfos(content, scene, scale);
+    const totalWidthOccupied = this.calculateTotalWidth(buttonInfos);
+    const startX = (scene.cameras.main.width - totalWidthOccupied) / 2;
+    let currentX = startX;
 
     for (let i = 0; i < content.length; i++) {
-      const newPositionX = startX + i * (buttonWidth + spaceBetweenContent);
+      const buttonInfo = buttonInfos[i];
+      const buttonCenterX = currentX + buttonInfo.width / 2;
       const contentItem = buttonManager.createButton({
-        positions: { x: newPositionX, y: positionY },
+        positions: { x: buttonCenterX, y: positionY },
         textures: {
-          default: "whiteButton",
+          default: buttonInfo.textureKey,
         },
         color: "#000000",
         text: content[i],
-        fontSize: 40,
+        fontSize: buttonInfo.fontSize,
         scale: scale,
       });
+
       newContent.push(contentItem);
+      currentX += buttonInfo.width + buttonInfo.spacing;
     }
 
     return newContent;
+  }
+
+  /**
+   * Calcula as informações necessárias para cada botão (textura, largura, espaçamento)
+   */
+  private calculateButtonInfos(
+    content: string[],
+    scene: Phaser.Scene,
+    scale: number,
+  ) {
+    return content.map((text, index) => {
+      const textureKey =
+        text.length >= 4 ? "whiteRectangleButton" : "whiteButton";
+
+      const texture = scene.textures.get(textureKey);
+      const width = texture.source[0].width * scale;
+      const spacing =
+        index === content.length - 1 ? 0 : text.length >= 4 ? 10 : 60;
+      const fontSize = text.length >= 4 ? 32 - text.length * 0.8 : 32;
+
+      return {
+        textureKey,
+        width,
+        spacing,
+        text,
+        fontSize,
+      };
+    });
+  }
+
+  /**
+   * Calcula a largura total que será ocupada por todos os botões
+   */
+  private calculateTotalWidth(
+    buttonInfos: Array<{ width: number; spacing: number }>,
+  ) {
+    return buttonInfos.reduce((total, buttonInfo) => {
+      return total + buttonInfo.width + buttonInfo.spacing;
+    }, 0);
   }
 }
