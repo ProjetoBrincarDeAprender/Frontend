@@ -1,0 +1,68 @@
+{
+  "config": {
+    "background": {
+      "image": "/assets/punctuationGame/images/backgroundMain.png",
+      "overlayOpacity": 0.3
+    }
+  },
+
+  "textures": {
+    "buttons": {
+      "blue": {
+        "default": "/assets/common/buttons/squareBlueDefault.svg",
+        "hover": "/assets/common/buttons/squareBlueHover.svg",
+        "clicked": "/assets/common/buttons/squareBlueClicked.svg"
+      },
+      "red": {
+        "default": "/assets/common/buttons/squareRedDefault.svg",
+        "hover": "/assets/common/buttons/squareRedHover.svg",
+        "clicked": "/assets/common/buttons/squareRedClicked.svg"
+      },
+      "white": {
+        "default": "/assets/common/buttons/squareWhite.svg"
+      }
+    },
+    "effects": [
+      {
+        "key": "star",
+        "texture": "/assets/common/star.svg"
+      }
+    ],
+    "entities": []
+  },
+
+  "audios": [
+    {
+      "key": "correct",
+      "path": "/assets/common/sounds/correct.mp3"
+    },
+    {
+      "key": "incorrect",
+      "path": "/assets/common/sounds/incorrect.mp3"
+    },
+    {
+      "key": "bem",
+      "path": "/assets/punctuationGame/sounds/bem.mp3"
+    }
+  ],
+
+  "buttonConfig": {
+    "fontSize": 50,
+    "scale": 1.5
+  },
+
+  "info": {
+    "activityId": 2
+  },
+
+  "levels": [
+    {
+      "question": "QUAL É A PONTUAÇÃO CORRETA?",
+      "audioKey": "bem",
+      "content": ["B", "E", "M", " "],
+      "completeContent": ["B", "E", "M", "?"],
+      "answer": "?",
+      "options": ["?", ".", "!"]
+    }
+  ]
+}

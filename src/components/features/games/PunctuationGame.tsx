@@ -21,12 +21,13 @@ const PunctuationGame: React.FC = () => {
     const startScene = new StartScene({
       nextSceneName: "clickButtonGameScene",
       backgroundPath: "/assets/punctuationGame/images/backgroundMain.png",
-      // backgroundKey: "startBg",
+      backgroundKey: "startBg",
       gameTitle: "PONTUANDO FRASES",
     });
 
-    const gameScene = new ClickButtonGameScene();
-    // "/assets/vowelsGame/gameData/mainData.JSON",
+    const gameScene = new ClickButtonGameScene(
+      "/assets/punctuationGame/gameData/mainData.JSON",
+    );
 
     const levelCompleted = new LevelCompletedScene({
       // nextLevelScene: "clickButtonGameScene",
@@ -39,8 +40,8 @@ const PunctuationGame: React.FC = () => {
     });
 
     const endScene = new EndScene({
-      // restartScene: "clickButtonGameScene",
-      // backgroundPath: "/assets/vowelsGame/images/backgroundMain.png",
+      restartScene: "clickButtonGameScene",
+      backgroundPath: "/assets/punctuationGame/images/backgroundMain.png",
       // backgroundKey: "endBg",
     });
 
