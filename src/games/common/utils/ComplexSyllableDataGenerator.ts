@@ -91,11 +91,13 @@ export class ComplexSyllableDataGenerator extends SyllableGameDataGenerator {
       "GR",
       "PR",
       "TR",
+      "VR",
       "BL",
       "CL",
       "FL",
       "GL",
       "PL",
+      "TL",
       "VL",
     ];
   }
