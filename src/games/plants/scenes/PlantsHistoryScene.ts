@@ -197,7 +197,7 @@ export class PlantsHistoryScene extends Phaser.Scene {
     }
 
     const infoImage = this.add
-      .image(400, 300, imageKey)
+      .image(400, 330, imageKey)
       .setScale(HistoryData[currentChat].image?.scale || 1);
 
     // Adicionar ao container principal

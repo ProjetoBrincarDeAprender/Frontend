@@ -453,7 +453,7 @@ export class MemoryGameLogic {
 
     apiService.sendGameData(
       this.activityId || 4,
-      this.getAbsoluteQuestionIndex(),
+      this.getAbsoluteQuestionIndex() + 1,
       levelData,
     );
   }
