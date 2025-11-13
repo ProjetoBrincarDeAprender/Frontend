@@ -30,6 +30,7 @@ const ComplexSyllableGame: React.FC = () => {
       backgroundKey: "consonantSelectionBg",
       nextSceneName: "clickButtonGameScene",
       title: "ESCOLHA UMA CONSOANTE",
+      complex: true,
     });
 
     const gameScene = new ClickButtonGameScene();
