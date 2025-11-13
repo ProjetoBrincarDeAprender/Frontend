@@ -20,16 +20,16 @@ const ComplexSyllableGame: React.FC = () => {
 
     const startScene = new StartScene({
       nextSceneName: "ConsonantSelectionScene",
-      backgroundPath: "/assets/complexSyllableGame/images/backgroundStart.png",
+      backgroundPath: "/assets/complexSyllableGame/images/backgroundMain.png",
       backgroundKey: "startBg",
-      gameTitle: "CRIANDO SÍLABAS",
+      gameTitle: "SÍLABAS COMPLEXAS",
     });
 
     const consonantSelectionScene = new ConsonantSelectionScene({
-      backgroundPath: "/assets/simpleSyllableGame/images/backgroundMain.png",
+      backgroundPath: "/assets/complexSyllableGame/images/backgroundMain.png",
       backgroundKey: "consonantSelectionBg",
       nextSceneName: "clickButtonGameScene",
-      title: "ESCOLHA UMA CONSOANTE",
+      title: "ESCOLHA UM DÍGRAFO",
       complex: true,
     });
 
@@ -37,7 +37,7 @@ const ComplexSyllableGame: React.FC = () => {
 
     const endScene = new EndScene({
       restartScene: "ConsonantSelectionScene",
-      backgroundPath: "/assets/simpleSyllableGame/images/backgroundMain.png",
+      backgroundPath: "/assets/complexSyllableGame/images/backgroundMain.png",
       backgroundKey: "endBg",
     });
 

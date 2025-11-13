@@ -38,7 +38,7 @@ export class ComplexSyllableDataGenerator extends SyllableGameDataGenerator {
     return {
       config: {
         background: {
-          image: "/assets/complexSyllableGame/images/backgroundStart.png",
+          image: "/assets/complexSyllableGame/images/backgroundMain.png",
           overlayOpacity: 0.3,
         },
       },
