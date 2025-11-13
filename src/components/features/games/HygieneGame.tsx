@@ -20,7 +20,7 @@ interface HygieneGameProps {
   activityId?: number;
 }
 
-export const HygieneGame = ({ activityId = 5 }: HygieneGameProps) => {
+export const HygieneGame = ({ activityId = 6 }: HygieneGameProps) => {
   const gameRef = useRef<Phaser.Game | null>(null);
   const { user } = useUser();
 
