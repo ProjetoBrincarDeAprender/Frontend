@@ -2,9 +2,9 @@ import { AudioManager } from "@/games/common/managers/AudioManager";
 import { BgManager } from "@/games/common/managers/BgManager";
 import ButtonManager from "@/games/common/managers/ButtonManager";
 import Phaser from "phaser";
-import { HistoryData } from "../logic/PlantsHistoryData";
+import { HistoryData } from "../logic/HygieneHistoryData";
 
-export class PlantsHistoryScene extends Phaser.Scene {
+export class HygieneHistoryScene extends Phaser.Scene {
   private audioManager!: AudioManager;
   private buttonManager!: ButtonManager;
   private bgManager!: BgManager;
@@ -14,7 +14,7 @@ export class PlantsHistoryScene extends Phaser.Scene {
   private currentAudio?: Phaser.Sound.BaseSound;
 
   constructor() {
-    super({ key: "PlantsHistoryScene" });
+    super({ key: "HygieneHistoryScene" });
     this.buttonManager = new ButtonManager(this);
     this.bgManager = new BgManager(this);
   }
@@ -25,8 +25,8 @@ export class PlantsHistoryScene extends Phaser.Scene {
   }
 
   preload() {
-    this.load.image("background", "/assets/plantsGame/background.png");
-    this.load.image("mascot", "/assets/plantsGame/mascot.png");
+    this.load.image("background", "/assets/hygieneGame/background.png");
+    this.load.image("mascot", "/assets/hygieneGame/mascot.png");
 
     this.load.image(
       "defaultButton",
@@ -41,13 +41,15 @@ export class PlantsHistoryScene extends Phaser.Scene {
       "/assets/common/buttons/rectangleBlueClicked.svg",
     );
 
-    HistoryData.forEach(({ image }, index) => {
-      if (image != null) {
-        this.load.image("infoImage_" + index, image.path);
+    HistoryData.forEach(({ images }, index) => {
+      if (images != null) {
+        images.forEach((image, imageIndex) => {
+          this.load.image(`infoImage_${index}_${imageIndex}`, image.path);
+        });
       }
       this.load.audio(
         "infoAudio_" + index,
-        "/assets/plantsGame/history/lines/" + "line" + (index + 1) + ".m4a",
+        "/assets/hygieneGame/history/lines/" + "line" + (index + 1) + ".m4a",
       );
     });
   }
@@ -187,22 +189,71 @@ export class PlantsHistoryScene extends Phaser.Scene {
     }
   }
 
-  private createImage(): void {
+  private createImages(): void {
     const currentChat = this.registry.get("currentChat") as number;
-    const imageKey = `infoImage_${currentChat}`;
+    const chatData = HistoryData[currentChat];
 
-    if (!this.textures.exists(imageKey)) {
-      this.load.image(imageKey, HistoryData[currentChat].image?.path as string);
-      this.load.start();
+    if (!chatData.images || chatData.images.length === 0) {
+      return;
     }
 
-    const infoImage = this.add
-      .image(400, 330, imageKey)
-      .setScale(HistoryData[currentChat].image?.scale || 1);
+    // Criar container para as imagens
+    const imagesContainer = this.add.container(400, 300);
+
+    // Configuração dinâmica baseada no número de imagens
+    const imageCount = chatData.images.length;
+    let gridCols: number;
+    let imageSpacing: number;
+
+    if (imageCount === 1) {
+      // Uma imagem centralizada
+      gridCols = 1;
+      imageSpacing = 0;
+    } else if (imageCount === 2) {
+      // Duas imagens lado a lado (grid 2x1)
+      gridCols = 2;
+      imageSpacing = 180;
+    } else if (imageCount <= 4) {
+      // Grid 2x2 para até 4 imagens
+      gridCols = 2;
+      imageSpacing = 160;
+    } else {
+      // Grid 3x2 para mais imagens (máximo 6)
+      gridCols = 3;
+      imageSpacing = 120;
+    }
+
+    chatData.images.forEach((imageData, imageIndex) => {
+      const imageKey = `infoImage_${currentChat}_${imageIndex}`;
+
+      // Verificar se a textura existe
+      if (!this.textures.exists(imageKey)) {
+        this.load.image(imageKey, imageData.path);
+        this.load.start();
+      }
+
+      // Calcular posição no grid
+      const col = imageIndex % gridCols;
+      const row = Math.floor(imageIndex / gridCols);
+
+      // Centralizar o grid baseado no número de colunas
+      const totalWidth = (gridCols - 1) * imageSpacing;
+      const startX = -totalWidth / 2;
+
+      // Posicionar imagens no grid
+      const x = startX + col * imageSpacing;
+      const y = row * 120; // Espaçamento vertical entre linhas
+
+      const infoImage = this.add
+        .image(x, y, imageKey)
+        .setScale(imageData.scale || 1);
+
+      imagesContainer.add(infoImage);
+    });
 
     // Adicionar ao container principal
     if (this.contentContainer) {
-      this.contentContainer.add(infoImage);
+      this.contentContainer.add(imagesContainer);
     }
   }
 
@@ -260,8 +311,8 @@ export class PlantsHistoryScene extends Phaser.Scene {
 
     this.createChatBubble(this.scale.width - 100, 120, chatData.text);
 
-    if (chatData.image) {
-      this.createImage();
+    if (chatData.images && chatData.images.length > 0) {
+      this.createImages();
     }
 
     // Esconder os botões inicialmente
@@ -277,7 +328,7 @@ export class PlantsHistoryScene extends Phaser.Scene {
       this.setupContent(); // Recria todo o conteúdo
     } else {
       // Limpar o progresso antes de iniciar o jogo
-      this.registry.set("currentSpaceProgress", {
+      this.registry.set("currentHygieneProgress", {
         levelIndex: 0,
         questionIndex: 0,
       });
@@ -289,7 +340,7 @@ export class PlantsHistoryScene extends Phaser.Scene {
 
       this.mascot?.destroy();
       this.mascot = undefined;
-      this.scene.start("PlantsGameScene");
+      this.scene.start("HygieneGameScene");
     }
   }
 
@@ -389,7 +440,7 @@ export class PlantsHistoryScene extends Phaser.Scene {
     // Ação do botão pular - vai direto para o jogo
     skipBtn.on("pointerdown", () => {
       // Limpar o progresso antes de iniciar o jogo
-      this.registry.set("currentSpaceProgress", {
+      this.registry.set("currentHygieneProgress", {
         levelIndex: 0,
         questionIndex: 0,
       });
@@ -401,7 +452,7 @@ export class PlantsHistoryScene extends Phaser.Scene {
 
       this.mascot?.destroy();
       this.mascot = undefined;
-      this.scene.start("PlantsGameScene");
+      this.scene.start("HygieneGameScene");
     });
 
     if (this.buttonsContainer) {

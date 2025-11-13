@@ -5,10 +5,10 @@ import { APIDataService } from "@/games/common/services/APIData.service";
 import Phaser from "phaser";
 import EffectManager from "../../common/managers/EffectManager";
 import GameStats from "../../common/managers/GameStats";
-import type { GameLevel } from "./PlantsGameData";
-import SpaceLevel from "./PlantsLevel";
+import type { GameLevel } from "./HygieneGameData";
+import HygieneLevel from "./HygieneLevel";
 
-export default class PlantsLogic {
+export default class HygieneLogic {
   private scene: Phaser.Scene;
   private gameStats: GameStats;
   private buttonManager: ButtonManager;
@@ -39,7 +39,7 @@ export default class PlantsLogic {
     this.buttonsEnabled = true;
   }
 
-  getCurrentQuestion(): SpaceLevel {
+  getCurrentQuestion(): HygieneLevel {
     const currentLevel = this.gameLevels[this.currentLevelIndex];
     return currentLevel.questions[this.currentQuestionIndex];
   }
@@ -52,7 +52,7 @@ export default class PlantsLogic {
     this.gameLevels = levels;
 
     // Restaurar progresso se existir
-    const savedProgress = this.scene.registry.get("currentSpaceProgress");
+    const savedProgress = this.scene.registry.get("currentHygieneProgress");
     if (savedProgress) {
       this.currentLevelIndex = savedProgress.levelIndex || 0;
       this.currentQuestionIndex = savedProgress.questionIndex || 0;
@@ -101,7 +101,7 @@ export default class PlantsLogic {
     const currentQuestion = this.getCurrentQuestion();
     const originalOptions = currentQuestion.getOptions();
     const originalOptionsImages = currentQuestion.getOptionsImages();
-    const hasImages = currentQuestion.hasImages();
+    const difficulty = currentQuestion.getDifficulty();
 
     // Garantir que os botões estejam habilitados
     this.buttonsEnabled = true;
@@ -124,13 +124,323 @@ export default class PlantsLogic {
     });
     this.buttons = [];
 
-    // Configurações para layout em grid 2x2
-    const centerX = this.scene.scale.width / 2;
-    const centerY = this.scene.scale.height / 2 + 70;
-    const horizontalSpacing = 350; // Espaçamento horizontal entre colunas
-    const verticalSpacing = 200; // Espaçamento vertical entre linhas
+    // Layout específico baseado na dificuldade
+    if (difficulty === "easy") {
+      this.createLevel1Layout(options, optionsImages, currentQuestion);
+    } else if (difficulty === "medium") {
+      this.createLevel2Layout(options, optionsImages, currentQuestion);
+    } else {
+      this.createLevel3Layout(options, currentQuestion);
+    }
+  }
 
-    // Calcular posições em formato grid 2x2
+  /**
+   * Função auxiliar para criar caixas com bordas para conter imagens
+   */
+  private createImageBox(
+    x: number,
+    y: number,
+    borderColor: number,
+    boxSize: number = 150,
+  ): Phaser.GameObjects.Graphics {
+    const boxBackground = this.scene.add.graphics();
+    const padding = 2;
+
+    // Fundo branco com padding
+    boxBackground.fillStyle(0xffffff, 1);
+    boxBackground.fillRoundedRect(
+      x - boxSize / 2 - padding,
+      y - boxSize / 2 - padding,
+      boxSize + padding * 2,
+      boxSize + padding * 2,
+      8,
+    );
+
+    // Borda colorida
+    boxBackground.lineStyle(4, borderColor, 1);
+    boxBackground.strokeRoundedRect(
+      x - boxSize / 2 - padding,
+      y - boxSize / 2 - padding,
+      boxSize + padding * 2,
+      boxSize + padding * 2,
+      8,
+    );
+
+    // Adicionar borda extra na direção Y (16px)
+    boxBackground.lineStyle(16, borderColor, 1); // Mudado de 0.3 para 1 (sólido)
+    boxBackground.strokeRoundedRect(
+      x - boxSize / 2 - 8,
+      y - boxSize / 2 - 8,
+      boxSize + 16,
+      boxSize + 16,
+      8,
+    );
+
+    return boxBackground;
+  }
+
+  /**
+   * Função auxiliar para atualizar a aparência da caixa no hover
+   */
+  private updateImageBoxOnHover(
+    boxBackground: Phaser.GameObjects.Graphics,
+    x: number,
+    y: number,
+    borderColor: number,
+    isHover: boolean,
+    boxSize: number = 150,
+  ): void {
+    const padding = 2;
+    boxBackground.clear();
+
+    // Fundo com destaque ou normal
+    const backgroundColor = isHover ? 0xf0f0f0 : 0xffffff;
+    boxBackground.fillStyle(backgroundColor, 1);
+    boxBackground.fillRoundedRect(
+      x - boxSize / 2 - padding,
+      y - boxSize / 2 - padding,
+      boxSize + padding * 2,
+      boxSize + padding * 2,
+      8,
+    );
+
+    // Borda principal (mais espessa no hover)
+    const borderWidth = isHover ? 6 : 4;
+    boxBackground.lineStyle(borderWidth, borderColor, 1);
+    boxBackground.strokeRoundedRect(
+      x - boxSize / 2 - padding,
+      y - boxSize / 2 - padding,
+      boxSize + padding * 2,
+      boxSize + padding * 2,
+      8,
+    );
+
+    // Borda extra apenas se não for hover
+    if (!isHover) {
+      boxBackground.lineStyle(16, borderColor, 1); // Mudado de 0.3 para 1 (sólido)
+      boxBackground.strokeRoundedRect(
+        x - boxSize / 2 - 8,
+        y - boxSize / 2 - 8,
+        boxSize + 16,
+        boxSize + 16,
+        8,
+      );
+    }
+  }
+
+  /**
+   * Layout do Nível 1: Grid principal com 2 colunas - 1ª coluna: actionImage da Duda, 2ª coluna: 2 opções
+   */
+  private createLevel1Layout(
+    options: string[],
+    optionsImages: string[] | null,
+    currentQuestion: HygieneLevel,
+  ): void {
+    if (!optionsImages || !currentQuestion.hasActionImage()) return;
+
+    const centerX = this.scene.scale.width / 2;
+    const centerY = this.scene.scale.height / 2 + 50;
+
+    // Grid principal: 2 colunas com mais espaçamento
+    const mainGridSpacing = 350;
+
+    // Coluna 1: Imagem da ação/gesto da Duda (actionImage)
+    const demonstrationX = centerX - mainGridSpacing / 2;
+    const actionImageKey = currentQuestion
+      .getActionImage()!
+      .replace(".png", "");
+    const demonstrationImage = this.scene.add
+      .image(demonstrationX, centerY, actionImageKey)
+      .setScale(0.7);
+
+    // Adicionar uma borda ou efeito visual para destacar que é a imagem de referência
+    // Ajustar borda para o tamanho real da imagem
+    const imageWidth = demonstrationImage.width * demonstrationImage.scaleX;
+    const imageHeight = demonstrationImage.height * demonstrationImage.scaleY;
+
+    const demonstrationBorder = this.scene.add.graphics();
+    demonstrationBorder.lineStyle(4, 0x00ff00, 0.8);
+    demonstrationBorder.strokeRoundedRect(
+      demonstrationX - imageWidth / 2,
+      centerY - imageHeight / 2,
+      imageWidth,
+      imageHeight,
+      10,
+    );
+
+    // Coluna 2: Grid com apenas 2 opções clicáveis em caixas coloridas
+    const optionsX = centerX + mainGridSpacing / 2;
+    const optionsSpacing = 180;
+
+    // Cores alternadas para as caixas (vermelho e azul)
+    const boxColors = [0xff4444, 0x4444ff]; // Vermelho e azul
+
+    // Com apenas 2 opções, não precisamos filtrar - usamos todas
+    options.forEach((option, index) => {
+      const imageKey = optionsImages[index].replace(".png", "");
+
+      // Posições para grid 2x1 (lado a lado)
+      const col = index % 2;
+      const x = optionsX + (col - 0.5) * optionsSpacing;
+      const y = centerY;
+
+      // Cores alternadas para as caixas (vermelho e azul)
+      const borderColor = boxColors[index % 2];
+
+      // Criar caixa usando a função auxiliar
+      const boxBackground = this.createImageBox(x, y, borderColor);
+
+      const optionImage = this.scene.add
+        .image(x, y, imageKey)
+        .setScale(0.6)
+        .setInteractive();
+
+      // Fazer a imagem clicável
+      optionImage.on("pointerdown", () => this.handleButtonClick(option));
+
+      // Adicionar efeitos hover
+      optionImage.on("pointerover", () => {
+        optionImage.setScale(0.75);
+        optionImage.setTint(0xdddddd);
+        // Atualizar caixa para estado hover
+        this.updateImageBoxOnHover(boxBackground, x, y, borderColor, true);
+      });
+
+      optionImage.on("pointerout", () => {
+        optionImage.setScale(0.6);
+        optionImage.clearTint();
+        // Restaurar caixa para estado normal
+        this.updateImageBoxOnHover(boxBackground, x, y, borderColor, false);
+      });
+
+      this.buttons.push(optionImage);
+      this.buttons.push(boxBackground); // Adicionar a caixa para ser removida quando trocar questão
+    });
+
+    // Armazenar elementos não clicáveis para limpeza
+    this.buttons.push(demonstrationImage);
+    this.buttons.push(demonstrationBorder); // Adicionar a borda para ser removida quando trocar questão
+  }
+
+  /**
+   * Layout do Nível 2: Grid tradicional com imagens, SEM nomes abaixo das imagens
+   */
+  private createLevel2Layout(
+    options: string[],
+    optionsImages: string[] | null,
+    _currentQuestion: HygieneLevel,
+  ): void {
+    if (!optionsImages) return;
+
+    const centerX = this.scene.scale.width / 2;
+    const centerY = this.scene.scale.height / 2 + 50;
+    const horizontalSpacing = 350;
+    const verticalSpacing = 200;
+
+    const positions = this.calculateGridLayout(
+      options.length,
+      centerX,
+      centerY,
+      horizontalSpacing,
+      verticalSpacing,
+    );
+
+    options.forEach((option, index) => {
+      const { x, y } = positions[index];
+      const imageKey = optionsImages[index].replace(".png", "");
+
+      // Criar caixa com borda preta para o Level 2
+      const blackBorderColor = 0x000000; // Preto
+      const boxBackground = this.createImageBox(x, y, blackBorderColor, 120); // Tamanho menor para Level 2
+
+      const optionImage = this.scene.add
+        .image(x, y, imageKey)
+        .setScale(0.5)
+        .setInteractive();
+
+      // Fazer a imagem clicável
+      optionImage.on("pointerdown", () => this.handleButtonClick(option));
+
+      // Adicionar efeitos hover
+      optionImage.on("pointerover", () => {
+        optionImage.setScale(0.6);
+        optionImage.setTint(0xdddddd);
+        // Atualizar caixa para estado hover
+        this.updateImageBoxOnHover(
+          boxBackground,
+          x,
+          y,
+          blackBorderColor,
+          true,
+          120,
+        );
+      });
+
+      optionImage.on("pointerout", () => {
+        optionImage.setScale(0.5);
+        optionImage.clearTint();
+        // Restaurar caixa para estado normal
+        this.updateImageBoxOnHover(
+          boxBackground,
+          x,
+          y,
+          blackBorderColor,
+          false,
+          120,
+        );
+      });
+
+      this.buttons.push(optionImage);
+      this.buttons.push(boxBackground); // Adicionar a caixa para ser removida quando trocar questão
+    });
+  }
+
+  /**
+   * Função auxiliar para quebrar texto em múltiplas linhas
+   */
+  private wrapText(text: string, maxLineLength: number = 20): string {
+    const words = text.split(" ");
+    const lines: string[] = [];
+    let currentLine = "";
+
+    words.forEach((word) => {
+      // Se adicionar esta palavra ultrapassar o limite da linha
+      if (currentLine.length + word.length + 1 > maxLineLength) {
+        // Se a linha atual não estiver vazia, finalize-a
+        if (currentLine.length > 0) {
+          lines.push(currentLine.trim());
+          currentLine = word;
+        } else {
+          // Se a palavra é muito longa para caber em uma linha, force-a
+          lines.push(word);
+          currentLine = "";
+        }
+      } else {
+        // Adicione a palavra à linha atual
+        currentLine += (currentLine.length > 0 ? " " : "") + word;
+      }
+    });
+
+    // Adicione a última linha se houver
+    if (currentLine.length > 0) {
+      lines.push(currentLine.trim());
+    }
+
+    return lines.join("\n");
+  }
+
+  /**
+   * Layout do Nível 3: Botões de texto (sem imagens)
+   */
+  private createLevel3Layout(
+    options: string[],
+    _currentQuestion: HygieneLevel,
+  ): void {
+    const centerX = this.scene.scale.width / 2;
+    const centerY = this.scene.scale.height / 2 + 50;
+    const horizontalSpacing = 350;
+    const verticalSpacing = 200;
+
     const positions = this.calculateGridLayout(
       options.length,
       centerX,
@@ -142,156 +452,23 @@ export default class PlantsLogic {
     options.forEach((option, index) => {
       const { x, y } = positions[index];
 
-      if (hasImages && optionsImages) {
-        // Para questões com imagens, criar apenas a imagem clicável sem fundo
-        const imageKey = optionsImages[index].replace(".png", "");
-        const showNames = currentQuestion.getDifficulty() === "medium";
+      // Aplicar quebra de linha automática no texto
+      const wrappedText = this.wrapText(option);
 
-        const planetImage = this.scene.add
-          .image(x, showNames ? y - 20 : y, imageKey)
-          .setScale(0.3)
-          .setInteractive()
-          .setDepth(10);
+      const button = this.buttonFactory.createButton({
+        positions: { x, y },
+        textures: {
+          default: "defaultButton",
+          hover: "hoverButton",
+          clicked: "clickedButton",
+        },
+        text: wrappedText,
+        fontSize: 32,
+        scale: 1,
+        onClick: () => this.handleButtonClick(option),
+      });
 
-        // Adicionar borda que segue o contorno exato da imagem (8 cópias para outline perfeito)
-        const borderThickness = 3;
-
-        // Criar múltiplas cópias da imagem com offset para criar outline perfeito
-        const borderImages: Phaser.GameObjects.Image[] = [];
-
-        // Criar 8 cópias ao redor da imagem original (método que cria outline verdadeiro)
-        const offsets = [
-          [-borderThickness, 0],
-          [borderThickness, 0],
-          [0, -borderThickness],
-          [0, borderThickness],
-          [-borderThickness, -borderThickness],
-          [borderThickness, -borderThickness],
-          [-borderThickness, borderThickness],
-          [borderThickness, borderThickness],
-        ];
-
-        offsets.forEach(([offsetX, offsetY]) => {
-          const borderImage = this.scene.add
-            .image(
-              x + offsetX,
-              showNames ? y - 20 + offsetY : y + offsetY,
-              imageKey,
-            )
-            .setScale(0.3)
-            .setDepth(planetImage.depth - 1); // Colocar atrás da imagem principal
-
-          // Aplicar ColorMatrix: primeiro tornar preto, depois negativo para branco
-          borderImage.setPostPipeline("ColorMatrixPostFX");
-          if (borderImage.postFX) {
-            const colorMatrix = borderImage.postFX.addColorMatrix();
-            // Primeiro: tornar a imagem completamente preta
-            colorMatrix.blackWhite(); // Converte para preto e branco
-            colorMatrix.brightness(-1); // Tornar completamente preto
-            // Segundo: inverter para branco
-            colorMatrix.negative(); // Inverter: preto vira branco
-          } else {
-            // Fallback: se postFX não estiver disponível, usar tint
-            borderImage.setTint(0xffffff);
-          }
-
-          borderImages.push(borderImage);
-        });
-
-        let planetText: Phaser.GameObjects.Text | null = null;
-
-        // Adicionar o nome do planeta embaixo da imagem apenas para dificuldade medium
-        if (showNames) {
-          planetText = this.scene.add
-            .text(x, y + 45, option.toUpperCase(), {
-              fontFamily: "Arial Black",
-              fontSize: "24px",
-              color: "#FFFFFF",
-              fontStyle: "bold",
-              stroke: "#000000",
-              strokeThickness: 2,
-            })
-            .setOrigin(0.5)
-            .setDepth(11);
-
-          // Fazer o texto também clicável
-          planetText.setInteractive();
-          planetText.on("pointerdown", () => this.handleButtonClick(option));
-        }
-
-        // Fazer a imagem clicável
-        planetImage.on("pointerdown", () => this.handleButtonClick(option));
-
-        // Função para atualizar a escala e posição das bordas
-        const updateBorderScale = (_mainScale: number, tintColor?: number) => {
-          borderImages.forEach((borderImg, index) => {
-            borderImg.setScale(_mainScale);
-            // Recalcular a posição da borda baseado na nova escala
-            const [originalOffsetX, originalOffsetY] = offsets[index];
-            const scaledOffsetX = originalOffsetX * (_mainScale / 0.3);
-            const scaledOffsetY = originalOffsetY * (_mainScale / 0.3);
-            borderImg.setPosition(
-              x + scaledOffsetX,
-              (showNames ? y - 20 : y) + scaledOffsetY,
-            );
-          });
-
-          if (tintColor !== undefined) {
-            planetImage.setTint(tintColor);
-          } else {
-            planetImage.clearTint();
-          }
-        };
-
-        // Adicionar efeitos hover na imagem
-        planetImage.on("pointerover", () => {
-          planetImage.setScale(0.4);
-          updateBorderScale(0.4, 0xdddddd);
-          if (planetText) planetText.setScale(1.1);
-        });
-        planetImage.on("pointerout", () => {
-          planetImage.setScale(0.3);
-          updateBorderScale(0.3);
-          if (planetText) planetText.setScale(1.0);
-        });
-
-        // Adicionar efeitos hover no texto (apenas se existir)
-        if (planetText) {
-          planetText.on("pointerover", () => {
-            planetImage.setScale(0.4);
-            updateBorderScale(0.4, 0xdddddd);
-            planetText.setScale(1.1);
-          });
-          planetText.on("pointerout", () => {
-            planetImage.setScale(0.3);
-            updateBorderScale(0.3);
-            planetText.setScale(1.0);
-          });
-
-          // Armazenar referência do texto para limpeza posterior
-          this.buttons.push(planetText);
-        }
-
-        // Armazenar referências para limpeza posterior
-        this.buttons.push(planetImage);
-        borderImages.forEach((borderImg) => this.buttons.push(borderImg));
-      } else {
-        // Para questões só com texto, usar botão normal
-        const button = this.buttonFactory.createButton({
-          positions: { x, y },
-          textures: {
-            default: "defaultButton",
-            hover: "hoverButton",
-            clicked: "clickedButton",
-          },
-          text: option,
-          fontSize: 32,
-          scale: 1,
-          onClick: () => this.handleButtonClick(option),
-        });
-
-        this.buttons.push(button);
-      }
+      this.buttons.push(button);
     });
   }
 
@@ -376,7 +553,7 @@ export default class PlantsLogic {
   }
 
   private saveProgress(): void {
-    this.scene.registry.set("currentSpaceProgress", {
+    this.scene.registry.set("currentHygieneProgress", {
       levelIndex: this.currentLevelIndex,
       questionIndex: this.currentQuestionIndex,
     });
@@ -455,18 +632,16 @@ export default class PlantsLogic {
 
     const graphics = this.scene.add.graphics();
     graphics.fillStyle(color, 0.7);
-    graphics
-      .fillRoundedRect(
-        feedback.x - feedback.width / 2 - 20,
-        feedback.y - feedback.height / 2 - 10,
-        feedback.width + 40,
-        feedback.height + 20,
-        15,
-      )
-      .setDepth(99);
+    graphics.fillRoundedRect(
+      feedback.x - feedback.width / 2 - 20,
+      feedback.y - feedback.height / 2 - 10,
+      feedback.width + 40,
+      feedback.height + 20,
+      15,
+    );
 
     // Garantir que o texto fique na frente do background
-    feedback.setDepth(100);
+    feedback.setDepth(1);
 
     // Animar entrada do feedback
     this.scene.tweens.add({

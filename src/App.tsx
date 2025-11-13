@@ -1,16 +1,18 @@
 import { Route, Routes } from "react-router";
 import { CoordinationGame } from "./components/features/games/CoordinationGame";
 import HousingGame from "./components/features/games/HousingGame";
+import { HygieneGame } from "./components/features/games/HygieneGame";
+import LocationsGame from "./components/features/games/LocationsGame";
 import { MazeGame } from "./components/features/games/MazeGame";
 import { MemoryGame } from "./components/features/games/MemoryGame";
 import NumbersGame from "./components/features/games/NumbersGame";
 import { PlantsGame } from "./components/features/games/PlantsGame";
 import ProfessionsGame from "./components/features/games/ProfessionsGame";
+import PunctuationGame from "./components/features/games/PunctuationGame";
 import SimpleSyllableGame from "./components/features/games/SimpleSyllableGame";
-import LocationsGame from "./components/features/games/LocationsGame";
 import { SpaceGame } from "./components/features/games/SpaceGame";
-import SumGame from "./components/features/games/SumGame";
 import SubtractionGame from "./components/features/games/SubtractionGame";
+import SumGame from "./components/features/games/SumGame";
 import UseSyllableGame from "./components/features/games/UseSyllableGame";
 import VowelsGame from "./components/features/games/VowelsGame";
 import { AuthGuard } from "./guards/AuthGuard";
@@ -37,7 +39,6 @@ import Logout from "./pages/Logout/Logout";
 import { Profile } from "./pages/Profile/Profile";
 import { RecoverPassword } from "./pages/RecoverPassword/RecoverPassword";
 import { SendPasswordToken } from "./pages/SendPasswordToken/SendPasswordToken";
-import PunctuationGame from "./components/features/games/PunctuationGame";
 
 function App() {
   return (
@@ -100,6 +101,7 @@ function App() {
         <Route path="plants" element={<PlantsGame />} />
         <Route path="locations" element={<LocationsGame />} />
         <Route path="punctuation" element={<PunctuationGame />} />
+        <Route path="hygiene" element={<HygieneGame />} />
       </Route>
 
       <Route element={<AuthGuard requireAuth />}>
