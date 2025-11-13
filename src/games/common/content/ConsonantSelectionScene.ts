@@ -107,7 +107,9 @@ export default class ConsonantSelectionScene extends Phaser.Scene {
     }
 
     // Gera os dados do jogo para a consoante selecionada usando o gerador
-    const gameData = SyllableGameDataGenerator.generateGameData(consonant);
+    const gameData = this.config.complex
+      ? ComplexSyllableDataGenerator.generateGameData(consonant)
+      : SyllableGameDataGenerator.generateGameData(consonant);
     this.registry.set("generatedGameData", gameData);
     this.registry.set("selectedConsonant", consonant);
 
