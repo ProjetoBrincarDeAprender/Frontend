@@ -36,7 +36,7 @@ export const HygieneGame = ({ activityId = 5 }: HygieneGameProps) => {
           "HygieneHistoryScene",
           "/assets/hygieneGame/background.png",
           "background",
-          "JOGO DA HIGIENE PESSOAL",
+          "JOGO DA \nHIGIENE PESSOAL",
           "/assets/hygieneGame/mascot.png",
           "mascot",
         ),
