@@ -39,6 +39,7 @@ import Logout from "./pages/Logout/Logout";
 import { Profile } from "./pages/Profile/Profile";
 import { RecoverPassword } from "./pages/RecoverPassword/RecoverPassword";
 import { SendPasswordToken } from "./pages/SendPasswordToken/SendPasswordToken";
+import ComplexSyllableGame from "./components/features/games/ComplexSyllableGame";
 
 function App() {
   return (
@@ -98,6 +99,7 @@ function App() {
         <Route path="professions" element={<ProfessionsGame />} />
         <Route path="use-syllable" element={<UseSyllableGame />} />
         <Route path="simple-syllable" element={<SimpleSyllableGame />} />
+        <Route path="complex-syllable" element={<ComplexSyllableGame />} />
         <Route path="plants" element={<PlantsGame />} />
         <Route path="locations" element={<LocationsGame />} />
         <Route path="punctuation" element={<PunctuationGame />} />
