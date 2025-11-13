@@ -3,7 +3,7 @@
  * Cria níveis baseados na consoante selecionada pelo usuário.
  */
 export class SyllableGameDataGenerator {
-  protected static readonly VOWELS = ["A", "E", "I", "O", "U"];
+  protected static VOWELS: string[];
 
   /**
    * Gera os dados completos do jogo para uma consoante específica
@@ -63,6 +63,12 @@ export class SyllableGameDataGenerator {
    * @returns Array com os níveis do jogo
    */
   protected static generateLevels(consonant: string): any[] {
+    if (consonant === "QU" || consonant === "GU") {
+      this.VOWELS = ["A", "E", "I", "O"];
+    } else {
+      this.VOWELS = ["A", "E", "I", "O", "U"];
+    }
+
     return this.VOWELS.map((vowel) => ({
       question: "COMPLETE AS SÍLABAS",
       audioKey: consonant + vowel,
