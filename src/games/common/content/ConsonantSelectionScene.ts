@@ -2,12 +2,14 @@ import Phaser from "phaser";
 import ButtonManager from "@/games/clickedButton/logic/ButtonManager";
 import { SyllableGameDataGenerator } from "../utils/SyllableGameDataGenerator";
 import EffectManager from "@/games/clickedButton/logic/EffectManager";
+import { ComplexSyllableDataGenerator } from "../utils/ComplexSyllableDataGenerator";
 
 export interface ConsonantSelectionConfig {
   backgroundPath: string;
   backgroundKey: string;
   nextSceneName: string;
   title?: string;
+  complex?: boolean;
 }
 
 export default class ConsonantSelectionScene extends Phaser.Scene {
@@ -19,7 +21,11 @@ export default class ConsonantSelectionScene extends Phaser.Scene {
     super("ConsonantSelectionScene");
     this.config = config;
     this.buttonManager = new ButtonManager(this);
-    this.consonants = SyllableGameDataGenerator.getAvailableConsonants();
+    if (this.config.complex) {
+      this.consonants = ComplexSyllableDataGenerator.getAvailableConsonants();
+    } else {
+      this.consonants = SyllableGameDataGenerator.getAvailableConsonants();
+    }
   }
 
   preload() {
@@ -101,7 +107,9 @@ export default class ConsonantSelectionScene extends Phaser.Scene {
     }
 
     // Gera os dados do jogo para a consoante selecionada usando o gerador
-    const gameData = SyllableGameDataGenerator.generateGameData(consonant);
+    const gameData = this.config.complex
+      ? ComplexSyllableDataGenerator.generateGameData(consonant)
+      : SyllableGameDataGenerator.generateGameData(consonant);
     this.registry.set("generatedGameData", gameData);
     this.registry.set("selectedConsonant", consonant);
 

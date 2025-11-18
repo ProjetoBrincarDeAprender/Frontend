@@ -1,4 +1,5 @@
 import { Route, Routes } from "react-router";
+import ComplexSyllableGame from "./components/features/games/ComplexSyllableGame";
 import { CoordinationGame } from "./components/features/games/CoordinationGame";
 import HousingGame from "./components/features/games/HousingGame";
 import { HygieneGame } from "./components/features/games/HygieneGame";
@@ -98,6 +99,7 @@ function App() {
         <Route path="professions" element={<ProfessionsGame />} />
         <Route path="use-syllable" element={<UseSyllableGame />} />
         <Route path="simple-syllable" element={<SimpleSyllableGame />} />
+        <Route path="complex-syllable" element={<ComplexSyllableGame />} />
         <Route path="plants" element={<PlantsGame />} />
         <Route path="locations" element={<LocationsGame />} />
         <Route path="punctuation" element={<PunctuationGame />} />

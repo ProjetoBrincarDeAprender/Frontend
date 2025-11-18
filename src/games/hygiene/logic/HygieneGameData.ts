@@ -97,7 +97,7 @@ export const GameQuestions = [
   new HygieneLevel(
     "Para que utilizamos o SABÃO?",
     [
-      "Lavara as mãos",
+      "Lavar as mãos",
       "Escovar os dentes",
       "Enxugar o corpo",
       "Pentear o cabelo",
