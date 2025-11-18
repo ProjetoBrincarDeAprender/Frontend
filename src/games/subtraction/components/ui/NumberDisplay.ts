@@ -1,6 +1,7 @@
-import { ThoughtBubble } from "@/games/sum/components/ui/ThoughtBubble";
+import { ThoughtBubble } from "./ThoughtBubble";
 
 // Mesma aparência do NumberDisplay da soma, trocando o símbolo para '-'
+// O balão de pensamento tem as bolinhas à direita (coelho à esquerda)
 export class NumberDisplay {
   private scene: Phaser.Scene;
   private images: Phaser.GameObjects.GameObject[] = [];
