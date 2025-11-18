@@ -191,6 +191,7 @@ export class GameScene extends PreloadScene {
         color: "#2D5AA0",
         fontFamily: "Arial Black",
         align: "center",
+        wordWrap: { width: 700 },
       })
       .setOrigin(0.5);
 
