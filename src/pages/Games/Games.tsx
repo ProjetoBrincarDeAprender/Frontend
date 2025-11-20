@@ -126,7 +126,7 @@ export function Games() {
     ) {
       return "MATEMATICA";
     }
-    if (title.includes("moradia") || title.includes("profissões") || title.includes("endereço") || title.includes("localiza")) {
+    if (title.includes("moradia") || title.includes("profissões") || title.includes("rua") || title.includes("localiza")) {
       return "GEOGRAFIA";
     }
     if (

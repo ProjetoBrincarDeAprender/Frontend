@@ -30,28 +30,28 @@ export class GameScene extends Phaser.Scene {
   }
 
   create(): void {
-    const data = this.scene.settings.data as { restart?: boolean; currentLevel?: number; score?: number; gameType?: string } || {};
+    const data = this.scene.settings.data as { currentLevel?: number; score?: number } || {};
     
-    // Check if restart is explicitly requested (from StartScene or EndScene "Jogar Novamente")
-    const shouldRestart = data.restart === true || this.registry.get("shouldRestartAddress");
+    // Lógica simples seguindo padrão dos outros jogos:
+    // Se não há dados da cena OU não há dados no registry = início do zero
+    const hasRegistryData = this.registry.get("addressCurrentLevel") !== undefined;
     
-    if (shouldRestart) {
-      // Clear all game-related registry entries when restarting
-      this.registry.remove("addressGameCompleted");
-      this.registry.remove("shouldRestartAddress");
-      this.registry.remove("addressCurrentLevel");
-      this.registry.remove("addressScore");
+    if (!data.currentLevel && !hasRegistryData) {
+      // Início do zero (vindo da StartScene ou restart)
       this.currentLevel = 0;
       this.score = 0;
+      this.registry.remove("addressCurrentLevel");
+      this.registry.remove("addressScore");
+      this.registry.remove("addressGameCompleted");
     } else {
-      // Continue from where we left off (from LevelCompleteScene or normal progression)
+      // Continuação normal (vindo de LevelCompleteScene)
       this.currentLevel = data.currentLevel !== undefined ? data.currentLevel : this.registry.get("addressCurrentLevel") || 0;
       this.score = data.score !== undefined ? data.score : this.registry.get("addressScore") || 0;
+      
+      // Salvar no registry para manter estado
+      this.registry.set("addressCurrentLevel", this.currentLevel);
+      this.registry.set("addressScore", this.score);
     }
-    
-    // Store current state in registry
-    this.registry.set("addressCurrentLevel", this.currentLevel);
-    this.registry.set("addressScore", this.score);
 
     this.addressGameService = new AddressGameService(this);
     this.addressGameService.setCurrentLevel(this.currentLevel);
@@ -74,6 +74,9 @@ export class GameScene extends Phaser.Scene {
     this.load.svg("defaultButton", "/assets/common/buttons/rectangleBlueDefault.svg");
     this.load.svg("hoverButton", "/assets/common/buttons/rectangleBlueHover.svg");
     this.load.svg("clickedButton", "/assets/common/buttons/rectangleBlueClicked.svg");
+    
+    // Load star asset for correct answer effect
+    this.load.svg("star", "/assets/common/buttons/star.svg");
   }
 
   private registerStandardScenes(): void {
@@ -81,6 +84,12 @@ export class GameScene extends Phaser.Scene {
       const levelCompleteScene = new LevelCompletedScene({
         backgroundPath: "/assets/addressGame/bg.svg",
         backgroundKey: "addressBackground",
+        onMenuReturn: () => {
+          // Limpar registry quando clicar no botão de voltar ao menu
+          this.registry.remove("addressCurrentLevel");
+          this.registry.remove("addressScore");
+          this.registry.remove("addressGameCompleted");
+        }
       });
       this.scene.add("LevelCompleteScene", levelCompleteScene);
     }
@@ -92,11 +101,10 @@ export class GameScene extends Phaser.Scene {
         backgroundKey: "addressBackground",
         subtitleMessage: "VOCÊ APRENDEU SOBRE \nENDEREÇOS!",
         onRestart: () => {
-          // Clear all game registry when restarting from end scene
-          this.registry.remove("addressGameCompleted");
-          this.registry.remove("shouldRestartAddress");
+          // Limpar dados do registry quando reinicia (padrão dos outros jogos)
           this.registry.remove("addressCurrentLevel");
           this.registry.remove("addressScore");
+          this.registry.remove("addressGameCompleted");
         }
       });
       this.scene.add("EndScene", addressEndScene);
@@ -243,7 +251,7 @@ export class GameScene extends Phaser.Scene {
     if (!level) return;
 
     // Set question as title
-    this.questionText.setPosition(400, 110);
+    this.questionText.setPosition(400, 90);
     this.questionText.setStyle({
       fontSize: "32px",
       fontFamily: "Arial",
@@ -346,6 +354,9 @@ export class GameScene extends Phaser.Scene {
       this.score += points;
       this.addressGameService.addScore(points);
 
+      // Add star explosion effect for correct answer
+      this.createStarsEffect(400, 300);
+
       // Show explanation
       if (question.explanation) {
         this.correctAnswerText = this.add.text(400, 450, question.explanation, {
@@ -416,6 +427,9 @@ export class GameScene extends Phaser.Scene {
       this.score += points;
       this.addressGameService.addScore(points);
 
+      // Add star explosion effect for correct answer
+      this.createStarsEffect(400, 350);
+
       this.time.delayedCall(2000, () => {
         this.buttonsEnabled = true;
         this.nextLevel();
@@ -454,19 +468,19 @@ export class GameScene extends Phaser.Scene {
     if (!AddressGameData.isInTrueFalsePhase(this.currentLevel)) return;
 
     const questionMarkPositions = [
-      { x: 150, y: 180 },
-      { x: 650, y: 200 },
-      { x: 120, y: 280 },
-      { x: 680, y: 260 },
-      { x: 180, y: 320 },
-      { x: 620, y: 340 }
+      { x: 130, y: 120 },
+      { x: 680, y: 100 },
+      { x: 110, y: 320 },
+      { x: 750, y: 320 },
+      { x: 180, y: 480 },
+      { x: 620, y: 440 }
     ];
 
     questionMarkPositions.forEach((pos, index) => {
       const questionMark = this.add.text(pos.x, pos.y, "?", {
-        fontSize: "28px",
+        fontSize: "32px",
         fontFamily: "Arial",
-        color: "#3498db",
+        color: "#da5450",
         fontStyle: "bold"
       }).setOrigin(0.5);
 
@@ -548,6 +562,105 @@ export class GameScene extends Phaser.Scene {
       this.endGame();
     } else {
       this.startLevel();
+    }
+  }
+
+
+
+  private createStarsEffect(centerX: number, centerY: number): void {
+    // Create multiple stars at different positions around the center
+    const starPositions = [
+      { x: centerX, y: centerY - 80 },
+      { x: centerX - 60, y: centerY - 40 },
+      { x: centerX + 60, y: centerY - 40 },
+      { x: centerX - 80, y: centerY },
+      { x: centerX + 80, y: centerY },
+      { x: centerX - 40, y: centerY + 40 },
+      { x: centerX + 40, y: centerY + 40 },
+    ];
+
+    starPositions.forEach((pos, index) => {
+      this.time.delayedCall(index * 80, () => {
+        this.starExplosionEffect(pos.x, pos.y);
+      });
+    });
+  }
+
+  private starExplosionEffect(x: number, y: number): void {
+    const star = this.add.image(x, y, "star");
+    star.setScale(0);
+    star.setTint(0xFFD700);
+    star.setDepth(100);
+    
+    this.tweens.add({
+      targets: star,
+      scaleX: 1.2,
+      scaleY: 1.2,
+      angle: 360,
+      duration: 300,
+      ease: 'Back.easeOut',
+      onComplete: () => {
+        this.createStarParticles(x, y);
+        
+        this.tweens.add({
+          targets: star,
+          scaleX: 0,
+          scaleY: 0,
+          alpha: 0,
+          angle: 720,
+          duration: 400,
+          ease: 'Power2.easeIn',
+          onComplete: () => star.destroy()
+        });
+      }
+    });
+
+    this.tweens.add({
+      targets: star,
+      alpha: { from: 1, to: 0.7 },
+      duration: 150,
+      yoyo: true,
+      repeat: 3,
+      ease: 'Power2'
+    });
+  }
+
+  private createStarParticles(centerX: number, centerY: number): void {
+    const particleCount = 6;
+    const colors = [0xFFD700, 0xFFA500, 0xFFFF00, 0xFF6347];
+    
+    for (let i = 0; i < particleCount; i++) {
+      const angle = (i / particleCount) * Math.PI * 2;
+      const distance = 40 + Math.random() * 30;
+      
+      const particle = this.add.image(centerX, centerY, "star");
+      particle.setScale(0.2 + Math.random() * 0.2);
+      particle.setTint(colors[Math.floor(Math.random() * colors.length)]);
+      particle.setDepth(99);
+      
+      const finalX = centerX + Math.cos(angle) * distance;
+      const finalY = centerY + Math.sin(angle) * distance;
+      
+      this.tweens.add({
+        targets: particle,
+        x: finalX,
+        y: finalY,
+        scaleX: 0,
+        scaleY: 0,
+        alpha: 0,
+        angle: 360 + Math.random() * 360,
+        duration: 500 + Math.random() * 300,
+        ease: 'Power2.easeOut',
+        onComplete: () => particle.destroy()
+      });
+      
+      this.tweens.add({
+        targets: particle,
+        alpha: { from: 1, to: 0 },
+        duration: 600,
+        delay: 150,
+        ease: 'Power2.easeOut'
+      });
     }
   }
 

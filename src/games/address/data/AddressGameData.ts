@@ -57,7 +57,7 @@ export class AddressGameData {
     {
       id: 1,
       image: {
-        path: "/assets/addressGame/residential_neighborhood.jpg",
+        path: "/assets/addressGame/residential_neighborhood.svg",
         key: "residential_neighborhood",
         type: 'residential'
       },
@@ -70,7 +70,7 @@ export class AddressGameData {
     {
       id: 2,
       image: {
-        path: "/assets/addressGame/industrial_neighborhood.jpg",
+        path: "/assets/addressGame/industrial_neighborhood.svg",
         key: "industrial_neighborhood",
         type: 'industrial'
       },
@@ -83,7 +83,7 @@ export class AddressGameData {
     {
       id: 3,
       image: {
-        path: "/assets/addressGame/commercial_neighborhood.jpg",
+        path: "/assets/addressGame/commercial_neighborhood.svg",
         key: "commercial_neighborhood",
         type: 'commercial'
       },
@@ -96,7 +96,7 @@ export class AddressGameData {
     {
       id: 4,
       image: {
-        path: "/assets/addressGame/rural_neighborhood.jpg",
+        path: "/assets/addressGame/rural_neighborhood.svg",
         key: "rural_neighborhood",
         type: 'rural'
       },
@@ -109,7 +109,7 @@ export class AddressGameData {
     {
       id: 5,
       image: {
-        path: "/assets/addressGame/mixed_neighborhood.jpg",
+        path: "/assets/addressGame/mixed_neighborhood.svg",
         key: "mixed_neighborhood",
         type: 'mixed'
       },
