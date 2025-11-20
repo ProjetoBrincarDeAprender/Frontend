@@ -1,20 +1,9 @@
+import type { Student } from "@/types/student";
 import type { ColumnDef } from "@tanstack/react-table";
-import DeleteModal from "../../../../utils/DataTable/DeleteModal";
 import { ArrowUpDown } from "lucide-react";
 import { Button } from "../../../../ui/button";
+import DeleteModal from "../../../../utils/DataTable/DeleteModal";
 import { EditStudentModal } from "../edit/StudentEditModal";
-
-export type Student = {
-  codigo_usuario: string;
-  nome_completo: string;
-  email: string;
-  perfil: string;
-  escola: string | null;
-  created_ad: string;
-  data_nascimento: string | null;
-  avatar_url: string | null;
-  tema_preferido: string | null;
-};
 
 export const StudentColumns: ColumnDef<Student>[] = [
   {
@@ -119,6 +108,8 @@ export const StudentColumns: ColumnDef<Student>[] = [
         <DeleteModal
           route="/student/remove"
           id={+row.original.codigo_usuario}
+          entity="Aluno"
+          queryKey={["students-data"]}
         />
       </div>
     ),
