@@ -31,24 +31,17 @@ export class GameScene extends Phaser.Scene {
 
   create(): void {
     const data = this.scene.settings.data as { currentLevel?: number; score?: number } || {};
-    
-    // Lógica simples seguindo padrão dos outros jogos:
-    // Se não há dados da cena OU não há dados no registry = início do zero
     const hasRegistryData = this.registry.get("addressCurrentLevel") !== undefined;
     
     if (!data.currentLevel && !hasRegistryData) {
-      // Início do zero (vindo da StartScene ou restart)
       this.currentLevel = 0;
       this.score = 0;
       this.registry.remove("addressCurrentLevel");
       this.registry.remove("addressScore");
       this.registry.remove("addressGameCompleted");
     } else {
-      // Continuação normal (vindo de LevelCompleteScene)
       this.currentLevel = data.currentLevel !== undefined ? data.currentLevel : this.registry.get("addressCurrentLevel") || 0;
       this.score = data.score !== undefined ? data.score : this.registry.get("addressScore") || 0;
-      
-      // Salvar no registry para manter estado
       this.registry.set("addressCurrentLevel", this.currentLevel);
       this.registry.set("addressScore", this.score);
     }
@@ -62,20 +55,13 @@ export class GameScene extends Phaser.Scene {
   }
 
   preload(): void {
-    // Load audio files
     this.load.audio("correct", "/assets/common/sounds/correct.mp3");
     this.load.audio("wrong", "/assets/common/sounds/incorrect.mp3");
-    
-    // Load audio manager buttons
     this.load.svg("audioOn", "/assets/common/buttons/audioOn.svg");
     this.load.svg("audioOff", "/assets/common/buttons/audioOff.svg");
-
-    // Load default button assets
     this.load.svg("defaultButton", "/assets/common/buttons/rectangleBlueDefault.svg");
     this.load.svg("hoverButton", "/assets/common/buttons/rectangleBlueHover.svg");
     this.load.svg("clickedButton", "/assets/common/buttons/rectangleBlueClicked.svg");
-    
-    // Load star asset for correct answer effect
     this.load.svg("star", "/assets/common/buttons/star.svg");
   }
 
@@ -85,7 +71,6 @@ export class GameScene extends Phaser.Scene {
         backgroundPath: "/assets/addressGame/bg.svg",
         backgroundKey: "addressBackground",
         onMenuReturn: () => {
-          // Limpar registry quando clicar no botão de voltar ao menu
           this.registry.remove("addressCurrentLevel");
           this.registry.remove("addressScore");
           this.registry.remove("addressGameCompleted");
@@ -101,7 +86,6 @@ export class GameScene extends Phaser.Scene {
         backgroundKey: "addressBackground",
         subtitleMessage: "VOCÊ APRENDEU SOBRE \nENDEREÇOS!",
         onRestart: () => {
-          // Limpar dados do registry quando reinicia (padrão dos outros jogos)
           this.registry.remove("addressCurrentLevel");
           this.registry.remove("addressScore");
           this.registry.remove("addressGameCompleted");
@@ -112,14 +96,9 @@ export class GameScene extends Phaser.Scene {
   }
 
   private createUI(): void {
-    // Create audio manager instance
     const audioManager = new AudioManager(this);
     audioManager.renderMuteButton();
-
-    // Background
     this.add.rectangle(400, 300, 800, 600, 0x87CEEB, 0.3);
-
-    // Question text placeholder
     this.questionText = this.add.text(400, 230, "", {
       fontSize: "32px",
       fontFamily: "Arial",
@@ -136,14 +115,10 @@ export class GameScene extends Phaser.Scene {
       return;
     }
 
-    // Reiniciar timer para nova pergunta
     this.addressGameService.startQuestion();
-
     this.isTransitioning = false;
     this.buttonsEnabled = true;
     this.clearUI();
-
-    // Update title based on current phase
     this.updateTitle();
 
     if (AddressGameData.isInTrueFalsePhase(this.currentLevel)) {
@@ -154,7 +129,6 @@ export class GameScene extends Phaser.Scene {
   }
 
   private clearUI(): void {
-    // Clear True/False buttons
     if (this.trueButton) {
       this.trueButton.destroy();
       this.trueButton = null;
@@ -164,23 +138,17 @@ export class GameScene extends Phaser.Scene {
       this.falseButton = null;
     }
 
-    // Clear image buttons and images
     this.imageButtons.forEach(button => button.destroy());
     this.imageButtons = [];
     this.images.forEach(image => image.destroy());
     this.images = [];
-
-    // Clear question marks
     this.questionMarks.forEach(mark => mark.destroy());
     this.questionMarks = [];
 
-    // Clear answer text
     if (this.correctAnswerText) {
       this.correctAnswerText.destroy();
       this.correctAnswerText = null;
     }
-
-    // Clear next button
     if (this.nextButton) {
       this.nextButton.destroy();
       this.nextButton = null;
@@ -191,7 +159,6 @@ export class GameScene extends Phaser.Scene {
     const question = AddressGameData.getTrueFalseQuestion(this.currentLevel);
     if (!question) return;
 
-    // Reset question position and style for true/false phase
     this.questionText.setPosition(400, 230);
     this.questionText.setStyle({
       fontSize: "32px",
@@ -202,32 +169,10 @@ export class GameScene extends Phaser.Scene {
       wordWrap: { width: 700 }
     });
     this.questionText.setText(question.question);
-
-    // Add floating question marks animation around the text
     this.addFloatingQuestionMarks();
 
-    // Create True/False buttons
-    this.trueButton = new Button(
-      this,
-      300,
-      350,
-      "defaultButton",
-      "hoverButton", 
-      "clickedButton",
-      "VERDADEIRO",
-      26
-    );
-
-    this.falseButton = new Button(
-      this,
-      500,
-      350,
-      "defaultButton",
-      "hoverButton", 
-      "clickedButton",
-      "FALSO",
-      26
-    );
+    this.trueButton = new Button(this, 300, 350, "defaultButton", "hoverButton", "clickedButton", "VERDADEIRO", 26);
+    this.falseButton = new Button(this, 500, 350, "defaultButton", "hoverButton", "clickedButton", "FALSO", 26);
 
     this.add.existing(this.trueButton);
     this.add.existing(this.falseButton);
@@ -250,7 +195,6 @@ export class GameScene extends Phaser.Scene {
     const level = AddressGameData.getImageSelectionLevel(levelIndex);
     if (!level) return;
 
-    // Set question as title
     this.questionText.setPosition(400, 90);
     this.questionText.setStyle({
       fontSize: "32px",
@@ -262,35 +206,21 @@ export class GameScene extends Phaser.Scene {
     });
     this.questionText.setText("QUAL O TIPO DE BAIRRO DA IMAGEM?");
 
-    // Load and display the single image
     this.load.image(level.image.key, level.image.path);
     this.load.start();
 
     this.load.once('complete', () => {
-      // Show the big image (lowered position)
       const image = this.add.image(400, 280, level.image.key);
       image.setDisplaySize(400, 300);
       this.images.push(image);
 
-      // Create 3 option buttons
       const buttonY = 500;
       const buttonSpacing = 250;
       const startX = 400 - buttonSpacing;
 
       level.options.forEach((option, index) => {
         const x = startX + (index * buttonSpacing);
-        
-        const button = new Button(
-          this,
-          x,
-          buttonY,
-          "defaultButton",
-          "hoverButton", 
-          "clickedButton",
-          option.text,
-          25
-        );
-
+        const button = new Button(this, x, buttonY, "defaultButton", "hoverButton", "clickedButton", option.text, 25);
         this.add.existing(button);
         this.imageButtons.push(button);
 
@@ -312,7 +242,6 @@ export class GameScene extends Phaser.Scene {
     const isCorrect = this.addressGameService.isCorrectTrueFalseAnswer(answer, question);
     this.addressGameService.incrementAttempts();
 
-    // Registrar na API
     try {
       const studentId = this.addressGameService.getStudentId();
       const questionId = this.currentLevel + 1;
@@ -323,11 +252,10 @@ export class GameScene extends Phaser.Scene {
       } else {
         await this.addressGameService.registerIncorrectAnswer(studentId, questionId, answerText);
       }
-    } catch (error) {
-      console.error("Erro ao registrar interação do jogo de endereços:", error);
+    } catch (_error) {
+      // Silent fail for API errors
     }
 
-    // Visual feedback
     if (this.trueButton && this.falseButton) {
       this.trueButton.disableInteractive();
       this.falseButton.disableInteractive();
@@ -338,7 +266,6 @@ export class GameScene extends Phaser.Scene {
         this.falseButton.setTint(isCorrect ? 0x00ff00 : 0xff0000);
       }
 
-      // Only show correct answer if user got it right
       if (isCorrect) {
         if (question.isTrue && this.trueButton) {
           this.trueButton.setTint(0x00ff00);
@@ -353,11 +280,8 @@ export class GameScene extends Phaser.Scene {
       const points = this.addressGameService.calculateScore();
       this.score += points;
       this.addressGameService.addScore(points);
-
-      // Add star explosion effect for correct answer
       this.createStarsEffect(400, 300);
 
-      // Show explanation
       if (question.explanation) {
         this.correctAnswerText = this.add.text(400, 450, question.explanation, {
           fontSize: "18px",
@@ -374,7 +298,6 @@ export class GameScene extends Phaser.Scene {
       });
     } else {
       this.sound.play("wrong", { volume: 0.7 });
-      
       this.time.delayedCall(2000, () => {
         this.buttonsEnabled = true;
         this.isTransitioning = false;
@@ -392,7 +315,6 @@ export class GameScene extends Phaser.Scene {
     const isCorrect = level.options[selectedIndex]?.isCorrect || false;
     this.addressGameService.incrementAttempts();
 
-    // Registrar na API
     try {
       const studentId = this.addressGameService.getStudentId();
       const questionId = this.currentLevel + 1;
@@ -403,11 +325,10 @@ export class GameScene extends Phaser.Scene {
       } else {
         await this.addressGameService.registerIncorrectAnswer(studentId, questionId, answerText);
       }
-    } catch (error) {
-      console.error("Erro ao registrar interação do jogo de endereços:", error);
+    } catch (_error) {
+      // Silent fail for API errors
     }
 
-    // Visual feedback
     this.imageButtons.forEach((button, index) => {
       button.disableInteractive();
       
@@ -415,7 +336,6 @@ export class GameScene extends Phaser.Scene {
         button.setTint(isCorrect ? 0x00ff00 : 0xff0000);
       }
       
-      // Only highlight correct answer if the user got it right
       if (isCorrect && level.options[index]?.isCorrect) {
         button.setTint(0x00ff00);
       }
@@ -426,8 +346,6 @@ export class GameScene extends Phaser.Scene {
       const points = this.addressGameService.calculateScore();
       this.score += points;
       this.addressGameService.addScore(points);
-
-      // Add star explosion effect for correct answer
       this.createStarsEffect(400, 350);
 
       this.time.delayedCall(2000, () => {
@@ -436,7 +354,6 @@ export class GameScene extends Phaser.Scene {
       });
     } else {
       this.sound.play("wrong", { volume: 0.7 });
-      
       this.time.delayedCall(2000, () => {
         this.buttonsEnabled = true;
         this.isTransitioning = false;
@@ -464,19 +381,14 @@ export class GameScene extends Phaser.Scene {
   }
 
   private addFloatingQuestionMarks(): void {
-    // Only add question marks for true/false phase
     if (!AddressGameData.isInTrueFalsePhase(this.currentLevel)) return;
 
-    const questionMarkPositions = [
-      { x: 130, y: 120 },
-      { x: 680, y: 100 },
-      { x: 110, y: 320 },
-      { x: 750, y: 320 },
-      { x: 180, y: 480 },
-      { x: 620, y: 440 }
+    const positions = [
+      { x: 130, y: 120 }, { x: 680, y: 100 }, { x: 110, y: 320 },
+      { x: 750, y: 320 }, { x: 180, y: 480 }, { x: 620, y: 440 }
     ];
 
-    questionMarkPositions.forEach((pos, index) => {
+    positions.forEach((pos, index) => {
       const questionMark = this.add.text(pos.x, pos.y, "?", {
         fontSize: "32px",
         fontFamily: "Arial",
@@ -484,7 +396,6 @@ export class GameScene extends Phaser.Scene {
         fontStyle: "bold"
       }).setOrigin(0.5);
 
-      // Add floating animation with different delays and directions
       this.tweens.add({
         targets: questionMark,
         y: pos.y - 20,
@@ -495,7 +406,6 @@ export class GameScene extends Phaser.Scene {
         delay: index * 300
       });
 
-      // Add slight rotation animation
       this.tweens.add({
         targets: questionMark,
         rotation: index % 2 === 0 ? 0.2 : -0.2,
@@ -506,13 +416,11 @@ export class GameScene extends Phaser.Scene {
         delay: index * 200
       });
 
-      // Store reference for cleanup
       this.questionMarks.push(questionMark);
     });
   }
 
   private updateTitle(): void {
-    // Remove existing title if any
     const existingTitle = this.children.list.find(child => {
       if (child instanceof Phaser.GameObjects.Text) {
         const text = (child as Phaser.GameObjects.Text).text;
@@ -524,7 +432,6 @@ export class GameScene extends Phaser.Scene {
       existingTitle.destroy();
     }
 
-    // Only add title for true/false phase
     if (AddressGameData.isInTrueFalsePhase(this.currentLevel)) {
       this.add.text(400, 110, "VERDADEIRO OU FALSO?", {
         fontSize: "38px",
@@ -538,19 +445,12 @@ export class GameScene extends Phaser.Scene {
   private nextLevel(): void {
     this.currentLevel++;
     this.addressGameService.incrementLevel();
-    
-    // Update registry with new level
     this.registry.set("addressCurrentLevel", this.currentLevel);
     this.registry.set("addressScore", this.score);
 
     const total = AddressGameData.getTotalLevels();
 
     if (this.currentLevel === AddressGameData.getTrueFalseCount()) {
-      // Salvar estado no registry antes de ir para LevelCompleteScene
-      this.registry.set("addressCurrentLevel", this.currentLevel);
-      this.registry.set("addressScore", this.score);
-      
-      // Após terminar as perguntas V/F, mostrar tela de nível completo
       this.scene.start("LevelCompleteScene", {
         currentLevel: this.currentLevel,
         totalLevels: total,
@@ -568,18 +468,14 @@ export class GameScene extends Phaser.Scene {
 
 
   private createStarsEffect(centerX: number, centerY: number): void {
-    // Create multiple stars at different positions around the center
-    const starPositions = [
-      { x: centerX, y: centerY - 80 },
-      { x: centerX - 60, y: centerY - 40 },
-      { x: centerX + 60, y: centerY - 40 },
-      { x: centerX - 80, y: centerY },
-      { x: centerX + 80, y: centerY },
-      { x: centerX - 40, y: centerY + 40 },
-      { x: centerX + 40, y: centerY + 40 },
+    const positions = [
+      { x: centerX, y: centerY - 80 }, { x: centerX - 60, y: centerY - 40 },
+      { x: centerX + 60, y: centerY - 40 }, { x: centerX - 80, y: centerY },
+      { x: centerX + 80, y: centerY }, { x: centerX - 40, y: centerY + 40 },
+      { x: centerX + 40, y: centerY + 40 }
     ];
 
-    starPositions.forEach((pos, index) => {
+    positions.forEach((pos, index) => {
       this.time.delayedCall(index * 80, () => {
         this.starExplosionEffect(pos.x, pos.y);
       });

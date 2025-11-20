@@ -16,13 +16,11 @@ export interface InteractionData {
 
 export class AddressGameService {
   private apiService: APIDataService;
-  private static readonly ACTIVITY_ID = 8; // ID específico para o jogo de endereços
-  private static readonly DEFAULT_STUDENT_ID = 10130001; // ID padrão quando não há aluno logado
+  private static readonly ACTIVITY_ID = 8;
+  private static readonly DEFAULT_STUDENT_ID = 10130001;
   private startTime: number = 0;
   private attempts: number = 0;
   private hintsUsed: boolean = false;
-
-  // Propriedades para manter compatibilidade com a lógica do jogo
   private score: number = 0;
   private currentLevel: number = 0;
 
@@ -31,8 +29,6 @@ export class AddressGameService {
     this.reset();
     this.startQuestion();
   }
-
-  // Métodos para compatibilidade com a lógica existente do jogo
   reset(): void {
     this.score = 0;
     this.currentLevel = 0;
@@ -65,15 +61,13 @@ export class AddressGameService {
 
 
   calculateScore(): number {
-    const baseScore = 100;
-    return baseScore;
+    return 100;
   }
 
   getProgressPercentage(totalLevels: number): number {
     return Math.round((this.currentLevel / totalLevels) * 100);
   }
 
-  // Métodos para integração com API
   startQuestion(): void {
     this.startTime = Date.now();
     this.attempts = 0;
@@ -106,28 +100,14 @@ export class AddressGameService {
         data[field as keyof InteractionData] === undefined ||
         data[field as keyof InteractionData] === null
       ) {
-        console.error(`Campo obrigatório ausente: ${field}`);
         return false;
       }
     }
 
-    if (typeof data.studentId !== "number") {
-      console.error("studentId deve ser um número");
-      return false;
-    }
-
-    if (typeof data.activityId !== "number") {
-      console.error("activityId deve ser um número");
-      return false;
-    }
-
-    if (typeof data.questionId !== "number") {
-      console.error("questionId deve ser um número");
-      return false;
-    }
-
-    if (typeof data.timeSpent !== "number") {
-      console.error("timeSpent deve ser um número");
+    if (typeof data.studentId !== "number" ||
+        typeof data.activityId !== "number" ||
+        typeof data.questionId !== "number" ||
+        typeof data.timeSpent !== "number") {
       return false;
     }
 
@@ -156,29 +136,16 @@ export class AddressGameService {
       };
 
       if (!this.validateInteractionData(interactionData)) {
-        console.error("Dados inválidos, não enviando para API");
         return;
       }
-
-      console.log(
-        "Registrando interação do jogo de endereços:",
-        interactionData,
-      );
 
       this.apiService.sendGameData(
         interactionData.activityId,
         interactionData.questionId,
         interactionData,
       );
-    } catch (error) {
-      console.error("❌ Erro ao registrar interação:", error);
-
-      if (error && typeof error === "object" && "response" in error) {
-        const axiosError = error as {
-          response?: { status: number; data: unknown; headers: unknown };
-        };
-        console.error("Status:", axiosError.response?.status);
-      }
+    } catch (_error) {
+      // Silent fail for API errors
     }
   }
 

@@ -41,7 +41,6 @@ const AddressGame: React.FC = () => {
 
     if (user) {
       gameRef.current.registry.set("userData", user);
-      // Only set restart flag if no previous game state exists
       if (!gameRef.current.registry.has("addressCurrentLevel")) {
         gameRef.current.registry.set("shouldRestartAddress", true);
       }

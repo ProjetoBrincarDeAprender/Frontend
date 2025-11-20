@@ -23,33 +23,28 @@ export class AddressGameData {
   static readonly trueFalseQuestions: TrueFalseQuestion[] = [
     {
       id: 1,
-      question: "TODOS OS BAIRROS SÃO IGUAIS",
-      isTrue: false,
-    //   explanation: "Os bairros podem ser residenciais, comerciais, industriais, rurais ou mistos."
+      question: "TODOS OS BAIRROS SÃO IGUAIS.",
+      isTrue: false
     },
     {
       id: 2,
-      question: "OS BAIRROS SÃO PARTE DE UMA CIDADE",
-      isTrue: true,
-    //   explanation: "Sim! Os bairros fazem parte de uma cidade."
+      question: "OS BAIRROS SÃO PARTE DE UMA CIDADE.",
+      isTrue: true
     },
     {
       id: 3,
-      question: "AS RUAS SÃO PARTES DE UM BAIRRO",
-      isTrue: true,
-    //   explanation: "Correto! As ruas ficam dentro dos bairros."
+      question: "AS RUAS SÃO PARTES DE UM BAIRRO.",
+      isTrue: true
     },
     {
       id: 4,
-      question: "SÓ EXISTEM BAIRROS RESIDENCIAIS",
-      isTrue: false,
-    //   explanation: "Existem vários tipos de bairros: residenciais, comerciais, industriais, rurais e mistos."
+      question: "SÓ EXISTEM BAIRROS RESIDENCIAIS.",
+      isTrue: false
     },
     {
       id: 5,
-      question: "O CONJUNTO DE QUADRAS, CASAS, RUAS E PRAÇAS SÃO CHAMADOS DE BAIRROS",
-      isTrue: true,
-    //   explanation: "Exato! Quando juntamos quadras, casas, ruas e praças temos um bairro."
+      question: "O CONJUNTO DE QUADRAS, CASAS, RUAS E PRAÇAS SÃO CHAMADOS DE BAIRROS.",
+      isTrue: true
     }
   ];
 
