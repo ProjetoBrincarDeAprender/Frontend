@@ -15,6 +15,7 @@ import SubtractionGame from "./components/features/games/SubtractionGame";
 import SumGame from "./components/features/games/SumGame";
 import UseSyllableGame from "./components/features/games/UseSyllableGame";
 import VowelsGame from "./components/features/games/VowelsGame";
+import AddressGame from "./components/features/games/AddressGame";
 import { AuthGuard } from "./guards/AuthGuard";
 import { Calm } from "./pages/Calm/Calm";
 import Dashboard from "./pages/Dashboard/Admin/Dashboard";
@@ -102,6 +103,7 @@ function App() {
         <Route path="complex-syllable" element={<ComplexSyllableGame />} />
         <Route path="plants" element={<PlantsGame />} />
         <Route path="locations" element={<LocationsGame />} />
+        <Route path="address" element={<AddressGame />} />
         <Route path="punctuation" element={<PunctuationGame />} />
         <Route path="hygiene" element={<HygieneGame />} />
       </Route>
