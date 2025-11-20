@@ -130,9 +130,9 @@ export default class MazeGameScene extends Phaser.Scene {
     // Título
     const titleBg = this.add.graphics();
     titleBg.fillStyle(0x5b8fff, 0.9);
-    titleBg.fillRoundedRect(200, 10, 400, 50, 25);
+    titleBg.fillRoundedRect(150, 10, 500, 50, 25);
     titleBg.lineStyle(3, 0xffffff, 0.8);
-    titleBg.strokeRoundedRect(200, 10, 400, 50, 25);
+    titleBg.strokeRoundedRect(150, 10, 500, 50, 25);
 
     this.add
       .text(400, 35, `NÍVEL ${level.getId()}: ARRASTE ATÉ A SOMBRA`, {

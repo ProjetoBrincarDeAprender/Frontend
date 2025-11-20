@@ -395,8 +395,8 @@ export default class CoordinationGameScene extends PreloadScene {
     const title =
       `${level.getName()}: Arraste as formas até as sombras`.toUpperCase();
 
-    // Título com fundo colorido e animado (reduzido para 0.75x e centralizado)
-    const bannerWidth = 740 * 0.75; // 555
+    // Título com fundo colorido e animado (largura aumentada para caber o texto completo)
+    const bannerWidth = 650; // Aumentado de 555 para 650
     const bannerHeight = 60 * 0.75; // 45
     const bannerX = 400 - bannerWidth / 2; // centralizado
     const bannerY = 30; // mesmo topo
@@ -415,6 +415,7 @@ export default class CoordinationGameScene extends PreloadScene {
         fontFamily: "Arial Black",
         stroke: "#2D5BA8",
         strokeThickness: 4,
+        wordWrap: { width: bannerWidth - 20 },
       })
       .setOrigin(0.5);
     this.levelContainer.add(titleText);

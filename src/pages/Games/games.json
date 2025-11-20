@@ -55,6 +55,11 @@
     "image": "/assets/numbersGame/background.png"
   },
   {
+    "title": "Ruas e Bairros",
+    "gameIdUrl": "address",
+    "image": "/assets/addressGame/residential_neighborhood.svg"
+  },
+  {
     "title": "Tipos de Moradia",
     "gameIdUrl": "housing",
     "image": "/assets/housingGame/bg.svg"
