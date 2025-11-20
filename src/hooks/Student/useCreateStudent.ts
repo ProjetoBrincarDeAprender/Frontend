@@ -3,6 +3,7 @@ import api from "@/utils/api";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { toast } from "sonner";
+import { STUDENTS_QUERY_KEY } from "./useStudent";
 
 async function createStudent(data: StudentFormData): Promise<Student> {
   try {
@@ -21,9 +22,15 @@ export function useCreateStudent() {
 
   const create = useMutation({
     mutationFn: (createData: StudentFormData) => createStudent(createData),
-    onSuccess: () => {
+    onSuccess: (_, newData) => {
       toast.success("Estudante criado com sucesso!");
-      queryClient.invalidateQueries({ queryKey: ["students-data"] });
+
+      queryClient.setQueryData(STUDENTS_QUERY_KEY, (oldData: Student[]) => {
+        return [...oldData, newData];
+      });
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: STUDENTS_QUERY_KEY });
     },
     mutationKey: ["create-student"],
   });

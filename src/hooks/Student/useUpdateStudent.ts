@@ -34,21 +34,20 @@ export function useUpdateStudent() {
     onSuccess: (updatedStudent, { studentId }) => {
       toast.success("Estudante atualizado com sucesso!");
 
-      queryClient.setQueryData(
-        STUDENTS_QUERY_KEY,
-        (oldData: Student[] | undefined) => {
-          if (!oldData) return oldData;
-          const newData = oldData.map((student) =>
-            student.codigo_usuario === studentId
-              ? {
-                  ...student,
-                  ...updatedStudent,
-                }
-              : student,
-          );
-          return newData;
-        },
+      queryClient.cancelQueries({ queryKey: STUDENTS_QUERY_KEY });
+
+      const previousStudents =
+        queryClient.getQueryData<Student[]>(STUDENTS_QUERY_KEY);
+
+      const newStudents = previousStudents?.map((student) =>
+        student.codigo_usuario === studentId
+          ? { ...student, ...updatedStudent }
+          : student,
       );
+
+      queryClient.setQueryData(STUDENTS_QUERY_KEY, newStudents);
+    },
+    onSettled: () => {
       queryClient.invalidateQueries({ queryKey: STUDENTS_QUERY_KEY });
     },
     mutationKey: ["update-student"],
