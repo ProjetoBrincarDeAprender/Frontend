@@ -52,6 +52,9 @@ export function useDelete({
         );
       });
     },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey });
+    },
   });
 
   const multiDeleteMutation = useMutation({
@@ -78,6 +81,9 @@ export function useDelete({
             !variables.includes((item as { id: string | number }).id),
         );
       });
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey });
     },
   });
 
