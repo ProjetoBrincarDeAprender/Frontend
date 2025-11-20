@@ -17,6 +17,7 @@ export class GameScene extends Phaser.Scene {
   private falseButton: Button | null = null;
   private imageButtons: Button[] = [];
   private images: Phaser.GameObjects.Image[] = [];
+  private questionMarks: Phaser.GameObjects.Text[] = [];
   private nextButton: Phaser.GameObjects.Container | null = null;
 
   // Game State
@@ -29,16 +30,28 @@ export class GameScene extends Phaser.Scene {
   }
 
   create(): void {
-    const data = this.scene.settings.data as { restart?: boolean; currentLevel?: number; score?: number } || {};
+    const data = this.scene.settings.data as { restart?: boolean; currentLevel?: number; score?: number; gameType?: string } || {};
     
-    if (data.restart) {
+    // Check if restart is explicitly requested (from StartScene or EndScene "Jogar Novamente")
+    const shouldRestart = data.restart === true || this.registry.get("shouldRestartAddress");
+    
+    if (shouldRestart) {
+      // Clear all game-related registry entries when restarting
       this.registry.remove("addressGameCompleted");
+      this.registry.remove("shouldRestartAddress");
+      this.registry.remove("addressCurrentLevel");
+      this.registry.remove("addressScore");
       this.currentLevel = 0;
       this.score = 0;
     } else {
-      this.currentLevel = data.currentLevel || 0;
-      this.score = data.score || 0;
+      // Continue from where we left off (from LevelCompleteScene or normal progression)
+      this.currentLevel = data.currentLevel !== undefined ? data.currentLevel : this.registry.get("addressCurrentLevel") || 0;
+      this.score = data.score !== undefined ? data.score : this.registry.get("addressScore") || 0;
     }
+    
+    // Store current state in registry
+    this.registry.set("addressCurrentLevel", this.currentLevel);
+    this.registry.set("addressScore", this.score);
 
     this.addressGameService = new AddressGameService(this);
     this.addressGameService.setCurrentLevel(this.currentLevel);
@@ -78,6 +91,13 @@ export class GameScene extends Phaser.Scene {
         backgroundPath: "/assets/addressGame/bg.svg",
         backgroundKey: "addressBackground",
         subtitleMessage: "VOCÊ APRENDEU SOBRE \nENDEREÇOS!",
+        onRestart: () => {
+          // Clear all game registry when restarting from end scene
+          this.registry.remove("addressGameCompleted");
+          this.registry.remove("shouldRestartAddress");
+          this.registry.remove("addressCurrentLevel");
+          this.registry.remove("addressScore");
+        }
       });
       this.scene.add("EndScene", addressEndScene);
     }
@@ -91,21 +111,8 @@ export class GameScene extends Phaser.Scene {
     // Background
     this.add.rectangle(400, 300, 800, 600, 0x87CEEB, 0.3);
 
-    // Title - dynamic based on phase
-    let titleText = "VERDADEIRO OU FALSO?";
-    if (!AddressGameData.isInTrueFalsePhase(this.currentLevel)) {
-      titleText = "TIPOS DE BAIRROS";
-    }
-    
-    this.add.text(400, 50, titleText, {
-      fontSize: "32px",
-      fontFamily: "Arial",
-      color: "#2c3e50",
-      fontStyle: "bold",
-    }).setOrigin(0.5);
-
     // Question text placeholder
-    this.questionText = this.add.text(400, 150, "", {
+    this.questionText = this.add.text(400, 230, "", {
       fontSize: "32px",
       fontFamily: "Arial",
       color: "#2c3e50",
@@ -127,6 +134,9 @@ export class GameScene extends Phaser.Scene {
     this.isTransitioning = false;
     this.buttonsEnabled = true;
     this.clearUI();
+
+    // Update title based on current phase
+    this.updateTitle();
 
     if (AddressGameData.isInTrueFalsePhase(this.currentLevel)) {
       this.showTrueFalseLevel();
@@ -152,6 +162,10 @@ export class GameScene extends Phaser.Scene {
     this.images.forEach(image => image.destroy());
     this.images = [];
 
+    // Clear question marks
+    this.questionMarks.forEach(mark => mark.destroy());
+    this.questionMarks = [];
+
     // Clear answer text
     if (this.correctAnswerText) {
       this.correctAnswerText.destroy();
@@ -169,7 +183,20 @@ export class GameScene extends Phaser.Scene {
     const question = AddressGameData.getTrueFalseQuestion(this.currentLevel);
     if (!question) return;
 
+    // Reset question position and style for true/false phase
+    this.questionText.setPosition(400, 230);
+    this.questionText.setStyle({
+      fontSize: "32px",
+      fontFamily: "Arial",
+      color: "#2c3e50",
+      fontStyle: "bold",
+      align: "center",
+      wordWrap: { width: 700 }
+    });
     this.questionText.setText(question.question);
+
+    // Add floating question marks animation around the text
+    this.addFloatingQuestionMarks();
 
     // Create True/False buttons
     this.trueButton = new Button(
@@ -180,7 +207,7 @@ export class GameScene extends Phaser.Scene {
       "hoverButton", 
       "clickedButton",
       "VERDADEIRO",
-      20
+      26
     );
 
     this.falseButton = new Button(
@@ -191,7 +218,7 @@ export class GameScene extends Phaser.Scene {
       "hoverButton", 
       "clickedButton",
       "FALSO",
-      20
+      26
     );
 
     this.add.existing(this.trueButton);
@@ -215,36 +242,45 @@ export class GameScene extends Phaser.Scene {
     const level = AddressGameData.getImageSelectionLevel(levelIndex);
     if (!level) return;
 
-    this.questionText.setText(level.question);
-
-    // Load and display images
-    const startX = 150;
-    const spacing = 200;
-
-    level.images.forEach((imageData) => {
-      // Load image with SVG method like locations game
-      this.load.image(imageData.key, imageData.path);
+    // Set question as title
+    this.questionText.setPosition(400, 110);
+    this.questionText.setStyle({
+      fontSize: "32px",
+      fontFamily: "Arial",
+      color: "#2c3e50",
+      fontStyle: "bold",
+      align: "center",
+      wordWrap: { width: 700 }
     });
+    this.questionText.setText("QUAL O TIPO DE BAIRRO DA IMAGEM?");
 
+    // Load and display the single image
+    this.load.image(level.image.key, level.image.path);
     this.load.start();
 
     this.load.once('complete', () => {
-      level.images.forEach((imageData, index) => {
-        const x = startX + (index * spacing);
-        const image = this.add.image(x, 300, imageData.key);
-        image.setDisplaySize(150, 100);
-        this.images.push(image);
+      // Show the big image (lowered position)
+      const image = this.add.image(400, 280, level.image.key);
+      image.setDisplaySize(400, 300);
+      this.images.push(image);
 
-        // Create button over image
+      // Create 3 option buttons
+      const buttonY = 500;
+      const buttonSpacing = 250;
+      const startX = 400 - buttonSpacing;
+
+      level.options.forEach((option, index) => {
+        const x = startX + (index * buttonSpacing);
+        
         const button = new Button(
           this,
           x,
-          380,
+          buttonY,
           "defaultButton",
           "hoverButton", 
           "clickedButton",
-          "ESCOLHER",
-          16
+          option.text,
+          25
         );
 
         this.add.existing(button);
@@ -252,7 +288,7 @@ export class GameScene extends Phaser.Scene {
 
         button.on("pointerdown", async () => {
           if (this.buttonsEnabled) {
-            await this.handleImageSelection(index, level);
+            await this.handleOptionSelection(index, level);
           }
         });
       });
@@ -294,11 +330,13 @@ export class GameScene extends Phaser.Scene {
         this.falseButton.setTint(isCorrect ? 0x00ff00 : 0xff0000);
       }
 
-      // Show correct answer
-      if (question.isTrue && this.trueButton) {
-        this.trueButton.setTint(0x00ff00);
-      } else if (!question.isTrue && this.falseButton) {
-        this.falseButton.setTint(0x00ff00);
+      // Only show correct answer if user got it right
+      if (isCorrect) {
+        if (question.isTrue && this.trueButton) {
+          this.trueButton.setTint(0x00ff00);
+        } else if (!question.isTrue && this.falseButton) {
+          this.falseButton.setTint(0x00ff00);
+        }
       }
     }
 
@@ -334,20 +372,20 @@ export class GameScene extends Phaser.Scene {
     }
   }
 
-  private async handleImageSelection(selectedIndex: number, level: ImageSelectionLevel): Promise<void> {
+  private async handleOptionSelection(selectedIndex: number, level: ImageSelectionLevel): Promise<void> {
     if (this.isTransitioning || !this.buttonsEnabled) return;
 
     this.buttonsEnabled = false;
     this.isTransitioning = true;
 
-    const isCorrect = this.addressGameService.isCorrectImageSelection(selectedIndex, level);
+    const isCorrect = level.options[selectedIndex]?.isCorrect || false;
     this.addressGameService.incrementAttempts();
 
     // Registrar na API
     try {
       const studentId = this.addressGameService.getStudentId();
       const questionId = this.currentLevel + 1;
-      const answerText = `image_${selectedIndex}_${level.images[selectedIndex]?.type || 'unknown'}`;
+      const answerText = level.options[selectedIndex]?.text || 'unknown';
 
       if (isCorrect) {
         await this.addressGameService.registerCorrectAnswer(studentId, questionId, answerText);
@@ -366,8 +404,8 @@ export class GameScene extends Phaser.Scene {
         button.setTint(isCorrect ? 0x00ff00 : 0xff0000);
       }
       
-      // Highlight correct answer
-      if (level.images[index]?.isCorrect) {
+      // Only highlight correct answer if the user got it right
+      if (isCorrect && level.options[index]?.isCorrect) {
         button.setTint(0x00ff00);
       }
     });
@@ -411,13 +449,93 @@ export class GameScene extends Phaser.Scene {
     });
   }
 
+  private addFloatingQuestionMarks(): void {
+    // Only add question marks for true/false phase
+    if (!AddressGameData.isInTrueFalsePhase(this.currentLevel)) return;
+
+    const questionMarkPositions = [
+      { x: 150, y: 180 },
+      { x: 650, y: 200 },
+      { x: 120, y: 280 },
+      { x: 680, y: 260 },
+      { x: 180, y: 320 },
+      { x: 620, y: 340 }
+    ];
+
+    questionMarkPositions.forEach((pos, index) => {
+      const questionMark = this.add.text(pos.x, pos.y, "?", {
+        fontSize: "28px",
+        fontFamily: "Arial",
+        color: "#3498db",
+        fontStyle: "bold"
+      }).setOrigin(0.5);
+
+      // Add floating animation with different delays and directions
+      this.tweens.add({
+        targets: questionMark,
+        y: pos.y - 20,
+        duration: 2000 + (index * 200),
+        ease: 'Sine.easeInOut',
+        yoyo: true,
+        repeat: -1,
+        delay: index * 300
+      });
+
+      // Add slight rotation animation
+      this.tweens.add({
+        targets: questionMark,
+        rotation: index % 2 === 0 ? 0.2 : -0.2,
+        duration: 1500 + (index * 100),
+        ease: 'Sine.easeInOut',
+        yoyo: true,
+        repeat: -1,
+        delay: index * 200
+      });
+
+      // Store reference for cleanup
+      this.questionMarks.push(questionMark);
+    });
+  }
+
+  private updateTitle(): void {
+    // Remove existing title if any
+    const existingTitle = this.children.list.find(child => {
+      if (child instanceof Phaser.GameObjects.Text) {
+        const text = (child as Phaser.GameObjects.Text).text;
+        return text && (text.includes("VERDADEIRO") || text.includes("TIPOS"));
+      }
+      return false;
+    });
+    if (existingTitle) {
+      existingTitle.destroy();
+    }
+
+    // Only add title for true/false phase
+    if (AddressGameData.isInTrueFalsePhase(this.currentLevel)) {
+      this.add.text(400, 110, "VERDADEIRO OU FALSO?", {
+        fontSize: "38px",
+        fontFamily: "Arial",
+        color: "#2c3e50",
+        fontStyle: "bold",
+      }).setOrigin(0.5);
+    }
+  }
+
   private nextLevel(): void {
     this.currentLevel++;
     this.addressGameService.incrementLevel();
+    
+    // Update registry with new level
+    this.registry.set("addressCurrentLevel", this.currentLevel);
+    this.registry.set("addressScore", this.score);
 
     const total = AddressGameData.getTotalLevels();
 
     if (this.currentLevel === AddressGameData.getTrueFalseCount()) {
+      // Salvar estado no registry antes de ir para LevelCompleteScene
+      this.registry.set("addressCurrentLevel", this.currentLevel);
+      this.registry.set("addressScore", this.score);
+      
       // Após terminar as perguntas V/F, mostrar tela de nível completo
       this.scene.start("LevelCompleteScene", {
         currentLevel: this.currentLevel,
@@ -438,7 +556,7 @@ export class GameScene extends Phaser.Scene {
     
     this.scene.start("EndScene", {
       score: this.score,
-      totalLevels: AddressGameData.getTotalLevels(),
+      totalLevels: AddressGameData.getTotalLevels()
     });
   }
 }

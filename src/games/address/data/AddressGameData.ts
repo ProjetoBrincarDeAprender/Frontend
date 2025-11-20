@@ -7,45 +7,47 @@ export interface TrueFalseQuestion {
 
 export interface ImageSelectionLevel {
   id: number;
-  question: string;
-  images: {
+  image: {
     path: string;
     key: string;
+    type: 'residential' | 'industrial' | 'commercial' | 'rural' | 'mixed';
+  };
+  options: {
+    text: string;
     isCorrect: boolean;
     type: 'residential' | 'industrial' | 'commercial' | 'rural' | 'mixed';
   }[];
-  correctType: 'residential' | 'industrial' | 'commercial' | 'rural' | 'mixed';
 }
 
 export class AddressGameData {
   static readonly trueFalseQuestions: TrueFalseQuestion[] = [
     {
       id: 1,
-      question: "Todos os bairros são iguais",
+      question: "TODOS OS BAIRROS SÃO IGUAIS",
       isTrue: false,
     //   explanation: "Os bairros podem ser residenciais, comerciais, industriais, rurais ou mistos."
     },
     {
       id: 2,
-      question: "Os bairros são parte de uma cidade",
+      question: "OS BAIRROS SÃO PARTE DE UMA CIDADE",
       isTrue: true,
     //   explanation: "Sim! Os bairros fazem parte de uma cidade."
     },
     {
       id: 3,
-      question: "As ruas são partes de um bairro",
+      question: "AS RUAS SÃO PARTES DE UM BAIRRO",
       isTrue: true,
     //   explanation: "Correto! As ruas ficam dentro dos bairros."
     },
     {
       id: 4,
-      question: "Só existem bairros residenciais",
+      question: "SÓ EXISTEM BAIRROS RESIDENCIAIS",
       isTrue: false,
     //   explanation: "Existem vários tipos de bairros: residenciais, comerciais, industriais, rurais e mistos."
     },
     {
       id: 5,
-      question: "O conjunto de quadras, casas, ruas e praças são chamados de bairros",
+      question: "O CONJUNTO DE QUADRAS, CASAS, RUAS E PRAÇAS SÃO CHAMADOS DE BAIRROS",
       isTrue: true,
     //   explanation: "Exato! Quando juntamos quadras, casas, ruas e praças temos um bairro."
     }
@@ -54,127 +56,66 @@ export class AddressGameData {
   static readonly imageSelectionLevels: ImageSelectionLevel[] = [
     {
       id: 1,
-      question: "Qual é um bairro RESIDENCIAL?",
-      correctType: 'residential',
-      images: [
-        {
-          path: "/assets/address/residential_neighborhood.jpg",
-          key: "residential_neighborhood",
-          isCorrect: true,
-          type: 'residential'
-        },
-        {
-          path: "/assets/address/industrial_neighborhood.jpg", 
-          key: "industrial_neighborhood",
-          isCorrect: false,
-          type: 'industrial'
-        },
-        {
-          path: "/assets/address/commercial_neighborhood.jpg",
-          key: "commercial_neighborhood", 
-          isCorrect: false,
-          type: 'commercial'
-        }
+      image: {
+        path: "/assets/addressGame/residential_neighborhood.jpg",
+        key: "residential_neighborhood",
+        type: 'residential'
+      },
+      options: [
+        { text: "RESIDENCIAL", isCorrect: true, type: 'residential' },
+        { text: "INDUSTRIAL", isCorrect: false, type: 'industrial' },
+        { text: "COMERCIAL", isCorrect: false, type: 'commercial' }
       ]
     },
     {
       id: 2,
-      question: "Qual é um bairro INDUSTRIAL?",
-      correctType: 'industrial',
-      images: [
-        {
-          path: "/assets/address/commercial_neighborhood.jpg",
-          key: "commercial_neighborhood2",
-          isCorrect: false,
-          type: 'commercial'
-        },
-        {
-          path: "/assets/address/industrial_neighborhood.jpg",
-          key: "industrial_neighborhood2",
-          isCorrect: true,
-          type: 'industrial'
-        },
-        {
-          path: "/assets/address/rural_neighborhood.jpg",
-          key: "rural_neighborhood",
-          isCorrect: false,
-          type: 'rural'
-        }
+      image: {
+        path: "/assets/addressGame/industrial_neighborhood.jpg",
+        key: "industrial_neighborhood",
+        type: 'industrial'
+      },
+      options: [
+        { text: "COMERCIAL", isCorrect: false, type: 'commercial' },
+        { text: "INDUSTRIAL", isCorrect: true, type: 'industrial' },
+        { text: "RURAL", isCorrect: false, type: 'rural' }
       ]
     },
     {
       id: 3,
-      question: "Qual é um bairro COMERCIAL?",
-      correctType: 'commercial',
-      images: [
-        {
-          path: "/assets/address/rural_neighborhood.jpg",
-          key: "rural_neighborhood2",
-          isCorrect: false,
-          type: 'rural'
-        },
-        {
-          path: "/assets/address/commercial_neighborhood.jpg",
-          key: "commercial_neighborhood3",
-          isCorrect: true,
-          type: 'commercial'
-        },
-        {
-          path: "/assets/address/residential_neighborhood.jpg",
-          key: "residential_neighborhood2",
-          isCorrect: false,
-          type: 'residential'
-        }
+      image: {
+        path: "/assets/addressGame/commercial_neighborhood.jpg",
+        key: "commercial_neighborhood",
+        type: 'commercial'
+      },
+      options: [
+        { text: "RURAL", isCorrect: false, type: 'rural' },
+        { text: "RESIDENCIAL", isCorrect: false, type: 'residential' } ,
+        { text: "COMERCIAL", isCorrect: true, type: 'commercial' }
       ]
     },
     {
       id: 4,
-      question: "Qual é um bairro RURAL?",
-      correctType: 'rural',
-      images: [
-        {
-          path: "/assets/address/mixed_neighborhood.jpg",
-          key: "mixed_neighborhood",
-          isCorrect: false,
-          type: 'mixed'
-        },
-        {
-          path: "/assets/address/rural_neighborhood.jpg",
-          key: "rural_neighborhood3",
-          isCorrect: true,
-          type: 'rural'
-        },
-        {
-          path: "/assets/address/industrial_neighborhood.jpg",
-          key: "industrial_neighborhood3",
-          isCorrect: false,
-          type: 'industrial'
-        }
+      image: {
+        path: "/assets/addressGame/rural_neighborhood.jpg",
+        key: "rural_neighborhood",
+        type: 'rural'
+      },
+      options: [
+        { text: "MISTO", isCorrect: false, type: 'mixed' },
+        { text: "RURAL", isCorrect: true, type: 'rural' },
+        { text: "INDUSTRIAL", isCorrect: false, type: 'industrial' }
       ]
     },
     {
       id: 5,
-      question: "Qual é um bairro MISTO?",
-      correctType: 'mixed',
-      images: [
-        {
-          path: "/assets/address/residential_neighborhood.jpg",
-          key: "residential_neighborhood3",
-          isCorrect: false,
-          type: 'residential'
-        },
-        {
-          path: "/assets/address/mixed_neighborhood.jpg",
-          key: "mixed_neighborhood2",
-          isCorrect: true,
-          type: 'mixed'
-        },
-        {
-          path: "/assets/address/commercial_neighborhood.jpg",
-          key: "commercial_neighborhood4",
-          isCorrect: false,
-          type: 'commercial'
-        }
+      image: {
+        path: "/assets/addressGame/mixed_neighborhood.jpg",
+        key: "mixed_neighborhood",
+        type: 'mixed'
+      },
+      options: [ { text: "MISTO", isCorrect: true, type: 'mixed' },
+        { text: "RESIDENCIAL", isCorrect: false, type: 'residential' },
+        { text: "COMERCIAL", isCorrect: false, type: 'commercial' }
       ]
     }
   ];

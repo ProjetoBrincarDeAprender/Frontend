@@ -1,5 +1,5 @@
 import { APIDataService } from "@/games/common/services/APIData.service";
-import type { TrueFalseQuestion, ImageSelectionLevel } from '../data/AddressGameData';
+import type { TrueFalseQuestion } from '../data/AddressGameData';
 
 export interface InteractionData {
   studentId: number;
@@ -62,9 +62,7 @@ export class AddressGameService {
     return answer === question.isTrue;
   }
 
-  isCorrectImageSelection(selectedImageIndex: number, level: ImageSelectionLevel): boolean {
-    return level.images[selectedImageIndex]?.isCorrect || false;
-  }
+
 
   calculateScore(): number {
     const baseScore = 100;

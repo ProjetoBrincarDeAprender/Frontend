@@ -121,11 +121,12 @@ export function Games() {
     if (
       title.includes("soma") ||
       title.includes("números") ||
-      title.includes("numero")
+      title.includes("numero") ||
+      title.includes("subtração")
     ) {
       return "MATEMATICA";
     }
-    if (title.includes("moradia") || title.includes("profissões")) {
+    if (title.includes("moradia") || title.includes("profissões") || title.includes("endereço") || title.includes("localiza")) {
       return "GEOGRAFIA";
     }
     if (
@@ -138,7 +139,7 @@ export function Games() {
     if (
       title.includes("espaço") ||
       title.includes("ciclo") ||
-      title.includes("planta")
+      title.includes("planta") || title.includes("higiene")
     ) {
       return "CIENCIAS";
     }
