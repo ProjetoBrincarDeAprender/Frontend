@@ -1,16 +1,17 @@
 import { Form } from "@/components/forms/Root";
+import { PasswordInput } from "@/components/ui/password-input";
 import { Link } from "@/components/utils/Link/Link";
+import { useCreateStudent } from "@/hooks/Student/useCreateStudent";
 import { useUser } from "@/hooks/User/useUser";
 import api from "@/utils/api";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AxiosError } from "axios";
+import { Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import { IMaskInput } from "react-imask";
 import { z } from "zod";
 import type { SignUpFormProps } from "../../common/signUpFormProps";
-import { PasswordInput } from "@/components/ui/password-input";
-import { IMaskInput } from "react-imask";
-
 
 const formSchema = z
   .object({
@@ -30,37 +31,46 @@ const formSchema = z
       .refine((val) => /^\d{2}\/\d{2}\/\d{4}$/.test(val), {
         error: "Formato inválido. Use dd/mm/aaaa",
       })
-      .refine((val) => {
-        const [dia, mes, ano] = val.split("/").map(Number);
-        const date = new Date(ano, mes - 1, dia);
+      .refine(
+        (val) => {
+          const [dia, mes, ano] = val.split("/").map(Number);
+          const date = new Date(ano, mes - 1, dia);
 
-        return (
-          date.getFullYear() === ano &&
-          date.getMonth() === mes - 1 &&
-          date.getDate() === dia
-        );
-      }, { error: "Data inexistente" })
-      .refine((val) => {
-        const [_dia, _mes, ano] = val.split("/").map(Number);
-        const currentYear = new Date().getFullYear();
-        return ano >= 1940 && ano <= currentYear;
-      }, {
-        error: "Data de nascimento inválida",
-      })
-      .refine((val) => {
-        const [dia, mes, ano] = val.split("/").map(Number);
+          return (
+            date.getFullYear() === ano &&
+            date.getMonth() === mes - 1 &&
+            date.getDate() === dia
+          );
+        },
+        { error: "Data inexistente" },
+      )
+      .refine(
+        (val) => {
+          const [_dia, _mes, ano] = val.split("/").map(Number);
+          const currentYear = new Date().getFullYear();
+          return ano >= 1940 && ano <= currentYear;
+        },
+        {
+          error: "Data de nascimento inválida",
+        },
+      )
+      .refine(
+        (val) => {
+          const [dia, mes, ano] = val.split("/").map(Number);
 
-        const today = new Date();
-        let age = today.getFullYear() - ano;
-        const m = today.getMonth() -( mes -1);
+          const today = new Date();
+          let age = today.getFullYear() - ano;
+          const m = today.getMonth() - (mes - 1);
 
-        if (m < 0 || (m === 0 && today.getDate() < dia)) {
-          age--;
-        }
-        return age >= 5;
-      }, {
-        error: "O aluno deve ter pelo menos 5 anos de idade",
-      }),
+          if (m < 0 || (m === 0 && today.getDate() < dia)) {
+            age--;
+          }
+          return age >= 5;
+        },
+        {
+          error: "O aluno deve ter pelo menos 5 anos de idade",
+        },
+      ),
 
     senha: z
       .string({ error: "Senha deve ter entre 8 e 32 caracteres" })
@@ -97,6 +107,8 @@ export function StudentSignUpForm({ onSuccess }: SignUpFormProps) {
   const [schools, setSchools] = useState<{ id: number; nome: string }[] | null>(
     null,
   );
+  const { create } = useCreateStudent();
+  const { mutateAsync: createUser, isPending } = create;
 
   useEffect(() => {
     const fetchSchools = async () => {
@@ -124,11 +136,11 @@ export function StudentSignUpForm({ onSuccess }: SignUpFormProps) {
     if (!data.avatar_url) {
       delete data.avatar_url;
     }
- 
+
     const [dia, mes, ano] = data.data_nascimento.split("/").map(Number);
     const dataFormatada = `${ano.toString().padStart(4, "0")}-${mes
-    .toString()
-    .padStart(2, "0")}-${dia.toString().padStart(2, "0")}`;
+      .toString()
+      .padStart(2, "0")}-${dia.toString().padStart(2, "0")}`;
 
     const payload = {
       ...data,
@@ -138,11 +150,8 @@ export function StudentSignUpForm({ onSuccess }: SignUpFormProps) {
     };
 
     try {
-      const response = await api.post("/student/register", payload);
-
-      if (response.status === 201) {
-        onSuccess();
-      }
+      await createUser(payload);
+      onSuccess();
     } catch (error) {
       if (error instanceof AxiosError) {
         const response = error.response;
@@ -209,7 +218,9 @@ export function StudentSignUpForm({ onSuccess }: SignUpFormProps) {
                 className="border-purplish-blue hover:border-purplish-blue flex h-13 w-full rounded-lg border bg-transparent px-6 py-2 text-base text-gray-800 transition-colors duration-200 ease-in-out placeholder:text-gray-500 focus-visible:ring-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
               />
               {fieldState.error && (
-                <p className="text-sm text-red-600">{fieldState.error.message}</p>
+                <p className="text-sm text-red-600">
+                  {fieldState.error.message}
+                </p>
               )}
             </div>
           )}
@@ -262,18 +273,18 @@ export function StudentSignUpForm({ onSuccess }: SignUpFormProps) {
           name="senha"
           render={({ field, fieldState }) => (
             <>
-            <PasswordInput
-              {...field}
-              label="Senha"
-              placeholder="Senha"
-              type="password"
-            />
-            {fieldState.error && (
-              <p className="text-sm text-red-600">
-                {fieldState.error.message}
-              </p>
-            )}
-          </>
+              <PasswordInput
+                {...field}
+                label="Senha"
+                placeholder="Senha"
+                type="password"
+              />
+              {fieldState.error && (
+                <p className="text-sm text-red-600">
+                  {fieldState.error.message}
+                </p>
+              )}
+            </>
           )}
         />
         <Form.Field
@@ -295,7 +306,9 @@ export function StudentSignUpForm({ onSuccess }: SignUpFormProps) {
             </>
           )}
         />
-        <Form.Submit>Criar Conta</Form.Submit>
+        <Form.Submit>
+          {isPending ? <Loader2 className="animate-spin" /> : "Criar Conta"}
+        </Form.Submit>
       </Form.Main>
       <p className="mt-6 w-full text-center text-lg">
         O aluno já possui uma conta?{" "}

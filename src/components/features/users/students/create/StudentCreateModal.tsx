@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { useTable } from "@/hooks/Table/useTable";
 import { useState } from "react";
-import { toast } from "sonner";
 import type { RegisterModalProps } from "../../common/registerModalProps";
 
 export function RegisterStudentModal({ isOnTable = true }: RegisterModalProps) {
@@ -12,7 +11,6 @@ export function RegisterStudentModal({ isOnTable = true }: RegisterModalProps) {
 
   const handleSuccess = () => {
     setIsOpen(false);
-    toast.success("Cadastro realizado com sucesso!");
     if (isOnTable) setUpdating(true);
   };
 

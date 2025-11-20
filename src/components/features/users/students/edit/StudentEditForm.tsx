@@ -7,6 +7,10 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 //import { PasswordInput } from "@/components/ui/password-input";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useStudent } from "@/hooks/Student/useStudent";
+import { useUpdateStudent } from "@/hooks/Student/useUpdateStudent";
+import { Loader2 } from "lucide-react";
 import { IMaskInput } from "react-imask";
 
 const formSchema = z.object({
@@ -74,56 +78,29 @@ type StudentFormProps = {
 };
 
 export function StudentEditForm({ id, onSuccess }: StudentFormProps) {
+  const { studentQuery } = useStudent({ studentId: id });
+  const { data: studentData, isLoading } = studentQuery;
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
   });
+
   const { user } = useUser();
   const [schools, setSchools] = useState<{ id: number; nome: string }[] | null>(
     null,
   );
 
-  useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const response = await api.get(`/student/list/${id}`);
+  const { update } = useUpdateStudent();
+  const { mutateAsync: updateStudent, isPending } = update;
 
-        if (response.status === 200) {
-          const studentData = {
-            nome_completo: response.data.nome_completo,
-            email: response.data.email,
-            tema_preferido: response.data.tema_preferido || "",
-            avatar_url: response.data.avatar_url || "",
-            data_nascimento: response.data.data_nascimento
-              ? (() => {
-                  const match = response.data.data_nascimento.match(
-                    /^(\d{4})-(\d{2})-(\d{2})/,
-                  );
-                  if (!match) return "";
-                  const [, year, month, day] = match.map(Number);
-                  return `${String(day).padStart(2, "0")}/${String(month).padStart(2, "0")}/${year}`;
-                })()
-              : "",
-            escolaId: String(response.data.escolaId) || "",
-          };
-          form.reset(studentData);
-        }
-      } catch (error) {
-        console.log(error);
-        if (error instanceof AxiosError) {
-          console.error("Erro ao buscar dados do usuário:", error.message);
-          form.setError("root", {
-            message:
-              "Erro ao buscar dados do usuário. Tente novamente mais tarde.",
-          });
-        }
-      }
-    };
+  useEffect(() => {
     const fetchSchools = async () => {
       try {
         const response = await api.get("/school/list");
 
         if (response.status === 200) {
           setSchools(response.data);
+          form.resetField("escolaId");
         }
       } catch (error) {
         if (error instanceof AxiosError) {
@@ -137,8 +114,25 @@ export function StudentEditForm({ id, onSuccess }: StudentFormProps) {
     if (user?.perfil == "Admin") {
       fetchSchools();
     }
-    fetchUserData();
-  }, [id, form, user?.perfil]);
+    if (studentData) {
+      form.reset({
+        nome_completo: studentData.nome_completo || "",
+        email: studentData.email || "",
+        data_nascimento: studentData.data_nascimento
+          ? (() => {
+              const date = new Date(studentData.data_nascimento);
+              const dia = String(date.getDate()).padStart(2, "0");
+              const mes = String(date.getMonth() + 1).padStart(2, "0");
+              const ano = date.getFullYear();
+              return `${dia}/${mes}/${ano}`;
+            })()
+          : "",
+        avatar_url: studentData.avatar_url || "",
+        tema_preferido: studentData.tema_preferido || "",
+        escolaId: studentData.escolaId ? String(studentData.escolaId) : "",
+      });
+    }
+  }, [id, form, user?.perfil, studentData]);
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     const studentPayload = Object.fromEntries(
@@ -159,14 +153,9 @@ export function StudentEditForm({ id, onSuccess }: StudentFormProps) {
       }),
     );
     try {
-      const studentResponse = await api.put(
-        `/student/update/${id}`,
-        studentPayload,
-      );
+      await updateStudent({ studentId: id, updateData: studentPayload });
 
-      if (studentResponse.status === 200) {
-        onSuccess();
-      }
+      onSuccess();
     } catch (error) {
       if (error instanceof AxiosError) {
         const response = error.response;
@@ -188,105 +177,130 @@ export function StudentEditForm({ id, onSuccess }: StudentFormProps) {
   };
 
   return (
-    <Form.Wrapper>
-      <Form.Title text="Atualizar Dados do Aluno" />
-      <Form.Main
-        form={{ ...form }}
-        onSubmit={onSubmit}
-        className="flex flex-col gap-4"
-      >
-        <Form.Field
-          form={form}
-          name="nome_completo"
-          render={({ field }) => (
-            <Form.Input
-              {...field}
-              label="Nome Completo"
-              placeholder="Edite o nome completo"
-            />
-          )}
-        />
-        <Form.Field
-          form={form}
-          name="email"
-          render={({ field }) => (
-            <Form.Input
-              {...field}
-              label="E-Mail"
-              placeholder="exemplo@gmail.com"
-            />
-          )}
-        />
-
-        <Form.Field
-          form={form}
-          name="data_nascimento"
-          render={({ field, fieldState }) => (
-            <div className="flex flex-col gap-2">
-              <label className="text-sm font-medium">Data de Nascimento</label>
-              <IMaskInput
-                {...field}
-                mask="00/00/0000"
-                placeholder="dd/mm/aaaa"
-                value={field.value || ""}
-                onAccept={(value) => field.onChange(value)}
-                className="border-purplish-blue hover:border-purplish-blue flex h-13 w-full rounded-lg border bg-transparent px-6 py-2 text-base text-gray-800 transition-colors duration-200 ease-in-out placeholder:text-gray-500 focus-visible:ring-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
-              />
-              {fieldState.error && (
-                <p className="text-sm text-red-600">
-                  {fieldState.error.message}
-                </p>
-              )}
-            </div>
-          )}
-        />
-
-        <Form.Field
-          form={form}
-          name="avatar_url"
-          render={({ field }) => (
-            <Form.Input
-              {...field}
-              label="URL do Avatar Personalizado (Opcional)"
-              placeholder="https://urlDoAvatarPersonalizado.jpg"
-              type="text"
-            />
-          )}
-        />
-        <Form.Field
-          form={form}
-          name="tema_preferido"
-          render={({ field }) => (
-            <Form.Input
-              {...field}
-              label="Tema Preferido (Opcional)"
-              placeholder="Ex: Fundo do Mar, Espaço"
-            />
-          )}
-        />
-        {user?.perfil == "Admin" &&
-          (schools ? (
+    <>
+      {isLoading ? (
+        <Form.Wrapper>
+          <div className="flex flex-col gap-4">
+            <Skeleton className="h-8 w-64" />
+            <Skeleton className="h-13 w-full" />
+            <Skeleton className="h-13 w-full" />
+            <Skeleton className="h-13 w-full" />
+            <Skeleton className="h-13 w-full" />
+            <Skeleton className="h-13 w-full" />
+            {user?.perfil == "Admin" && <Skeleton className="h-13 w-full" />}
+            <Skeleton className="h-13 w-full" />
+          </div>
+        </Form.Wrapper>
+      ) : (
+        <Form.Wrapper>
+          <Form.Title text="Atualizar Dados do Aluno" />
+          <Form.Main
+            form={{ ...form }}
+            onSubmit={onSubmit}
+            className="flex flex-col gap-4"
+          >
             <Form.Field
               form={form}
-              name="escolaId"
+              name="nome_completo"
               render={({ field }) => (
-                <Form.Select
-                  value={String(field.value)}
-                  onChange={field.onChange}
-                  label="Escola"
-                  placeholder="Selecione a Escola"
-                  options={schools.map((school) => ({
-                    value: String(school.id),
-                    label: school.nome,
-                  }))}
+                <Form.Input
+                  {...field}
+                  label="Nome Completo"
+                  placeholder="Edite o nome completo"
                 />
               )}
             />
-          ) : (
-            <span>Carregando escolas...</span>
-          ))}
-        <Form.Submit>Atualizar Dados</Form.Submit>
-      </Form.Main>
-    </Form.Wrapper>
+            <Form.Field
+              form={form}
+              name="email"
+              render={({ field }) => (
+                <Form.Input
+                  {...field}
+                  label="E-Mail"
+                  placeholder="exemplo@gmail.com"
+                />
+              )}
+            />
+
+            <Form.Field
+              form={form}
+              name="data_nascimento"
+              render={({ field, fieldState }) => (
+                <div className="flex flex-col gap-2">
+                  <label className="text-sm font-medium">
+                    Data de Nascimento
+                  </label>
+                  <IMaskInput
+                    {...field}
+                    mask="00/00/0000"
+                    placeholder="dd/mm/aaaa"
+                    value={field.value || ""}
+                    onAccept={(value) => field.onChange(value)}
+                    className="border-purplish-blue hover:border-purplish-blue flex h-13 w-full rounded-lg border bg-transparent px-6 py-2 text-base text-gray-800 transition-colors duration-200 ease-in-out placeholder:text-gray-500 focus-visible:ring-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+                  />
+                  {fieldState.error && (
+                    <p className="text-sm text-red-600">
+                      {fieldState.error.message}
+                    </p>
+                  )}
+                </div>
+              )}
+            />
+
+            <Form.Field
+              form={form}
+              name="avatar_url"
+              render={({ field }) => (
+                <Form.Input
+                  {...field}
+                  label="URL do Avatar Personalizado (Opcional)"
+                  placeholder="https://urlDoAvatarPersonalizado.jpg"
+                  type="text"
+                />
+              )}
+            />
+            <Form.Field
+              form={form}
+              name="tema_preferido"
+              render={({ field }) => (
+                <Form.Input
+                  {...field}
+                  label="Tema Preferido (Opcional)"
+                  placeholder="Ex: Fundo do Mar, Espaço"
+                />
+              )}
+            />
+            {user?.perfil == "Admin" &&
+              (schools ? (
+                <Form.Field
+                  form={form}
+                  name="escolaId"
+                  render={({ field }) => (
+                    <Form.Select
+                      value={String(field.value)}
+                      onChange={field.onChange}
+                      label="Escola"
+                      placeholder="Selecione a Escola"
+                      options={schools.map((school) => ({
+                        value: String(school.id),
+                        label: school.nome,
+                      }))}
+                    />
+                  )}
+                />
+              ) : (
+                <span>Carregando escolas...</span>
+              ))}
+            <Form.Submit disabled={isPending}>
+              {isPending ? (
+                <Loader2 className="animate-spin" />
+              ) : (
+                "Atualizar Dados"
+              )}
+            </Form.Submit>
+          </Form.Main>
+        </Form.Wrapper>
+      )}
+    </>
   );
 }
