@@ -18,5 +18,4 @@ export type User = {
     id: number | null;
     nome: string | null;
   } | null;
-  escolaId: number | null;
 };

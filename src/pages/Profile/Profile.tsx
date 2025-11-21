@@ -1,32 +1,16 @@
 import useAuth from "@/hooks/Auth/useAuth";
-import type { UserProfile } from "@/types/user";
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router";
 
 import { Header } from "@/components/Header/Header";
-import { BackButton } from "@/components/utils/BackButton";
 import { LateralMenu } from "@/components/sideBar/sideBar";
+import { BackButton } from "@/components/utils/BackButton";
 import NuvemSVG from "../../assets/nuvem.svg";
 import StarSVG from "../../assets/star.svg";
 
 export function Profile() {
-  const navigate = useNavigate();
   const { profile } = useAuth();
-  const [user, setUser] = useState<UserProfile | null>(null);
-  const [loading, setLoading] = useState(true);
+  const { data: user, isLoading } = profile;
 
-  useEffect(() => {
-    profile()
-      .then((data) => {
-        if (data) setUser(data);
-      })
-      .catch(() => {
-        navigate("/login");
-      })
-      .finally(() => setLoading(false));
-  }, []);
-
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="flex h-screen items-center justify-center">
         <p className="animate-pulse text-xl text-white">

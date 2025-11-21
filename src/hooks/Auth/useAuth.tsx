@@ -1,14 +1,21 @@
-import type { UserProfile } from "@/types/user";
+import type { User, UserProfile } from "@/types/user";
 import api from "@/utils/api";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import type { AxiosResponse } from "axios";
 import Cookies from "js-cookie";
 import { useCallback } from "react";
+import { toast } from "sonner";
+
+export const USER_PROFILE_QUERY_KEY = ["user-profile"];
 
 const useAuth = () => {
+  const queryClient = useQueryClient();
+
   const setToken = (token: string) => {
     Cookies.set("authToken", token);
   };
 
-  const login = async (login: string, senha: string) => {
+  const loginReq = async (login: string, senha: string) => {
     try {
       const response = await api.post("/auth/login", { login, senha });
       const { access_token } = response.data;
@@ -19,17 +26,48 @@ const useAuth = () => {
     }
   };
 
-  const profile = async () => {
+  const login = useMutation({
+    mutationFn: ({ login, senha }: { login: string; senha: string }) =>
+      loginReq(login, senha),
+    onSuccess: () => {
+      toast.success("Seja bem vindo!");
+      profile.refetch();
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: USER_PROFILE_QUERY_KEY });
+    },
+  });
+
+  const profileReq = async (): Promise<User | undefined> => {
     try {
-      const response = await api.get("/auth/profile");
-      return response.data as UserProfile;
+      const response: AxiosResponse<UserProfile> =
+        await api.get("/auth/profile");
+
+      return {
+        codigo_usuario: response.data.codigo_usuario,
+        nome_completo: response.data.nome_completo,
+        email: response.data.email,
+        perfil: response.data.perfil,
+        escola: {
+          id: response.data.escolaId || null,
+          nome: response.data.escola || null,
+        },
+      };
     } catch (error) {
       console.error("Failed to fetch profile:", error);
     }
   };
 
+  const profile = useQuery({
+    queryFn: () => profileReq(),
+    queryKey: USER_PROFILE_QUERY_KEY,
+    enabled: !!Cookies.get("authToken"),
+  });
+
   const logout = () => {
     Cookies.remove("authToken");
+    queryClient.cancelQueries({ queryKey: USER_PROFILE_QUERY_KEY });
+    queryClient.removeQueries({ queryKey: USER_PROFILE_QUERY_KEY });
   };
 
   const checkLoggedIn = useCallback(async () => {
@@ -40,9 +78,7 @@ const useAuth = () => {
     }
 
     try {
-      const response = await api.get("/auth/profile");
-
-      if (response.status !== 200) {
+      if (!profile.data) {
         logout();
         return false;
       }
@@ -52,7 +88,7 @@ const useAuth = () => {
       logout();
       return false;
     }
-  }, []);
+  }, [profile.data]);
 
   return { checkLoggedIn, login, profile, logout };
 };

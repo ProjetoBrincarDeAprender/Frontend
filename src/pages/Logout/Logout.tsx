@@ -10,13 +10,17 @@ export default function Logout() {
   const { registerUser } = useUser();
 
   useEffect(() => {
-    const loggingOut = toast("Saindo...");
+    const loggingOut = toast("Saindo...", {
+      duration: Infinity,
+      onDismiss: () => {
+        toast.success("Você saiu com sucesso!");
+      },
+    });
 
     logout();
     registerUser(null);
 
     toast.dismiss(loggingOut);
-    toast.success("Desconectado com sucesso!");
   }, []);
 
   if (!Cookies.get("authToken")) {
