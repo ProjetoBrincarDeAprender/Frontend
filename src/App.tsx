@@ -1,4 +1,5 @@
 import { Route, Routes } from "react-router";
+import ComplexSyllableGame from "./components/features/games/ComplexSyllableGame";
 import { CoordinationGame } from "./components/features/games/CoordinationGame";
 import HousingGame from "./components/features/games/HousingGame";
 import { HygieneGame } from "./components/features/games/HygieneGame";
@@ -40,7 +41,6 @@ import Logout from "./pages/Logout/Logout";
 import { Profile } from "./pages/Profile/Profile";
 import { RecoverPassword } from "./pages/RecoverPassword/RecoverPassword";
 import { SendPasswordToken } from "./pages/SendPasswordToken/SendPasswordToken";
-import ComplexSyllableGame from "./components/features/games/ComplexSyllableGame";
 
 function App() {
   return (
