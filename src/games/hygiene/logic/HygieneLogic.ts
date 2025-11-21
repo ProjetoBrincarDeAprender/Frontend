@@ -398,7 +398,7 @@ export default class HygieneLogic {
   /**
    * Função auxiliar para quebrar texto em múltiplas linhas
    */
-  private wrapText(text: string, maxLineLength: number = 20): string {
+  private wrapText(text: string, maxLineLength: number = 14): string {
     const words = text.split(" ");
     const lines: string[] = [];
     let currentLine = "";
