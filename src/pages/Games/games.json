@@ -10,6 +10,11 @@
     "image": "/assets/maze/bg.png"
   },
   {
+    "title": "Jogo das Sílabas",
+    "gameIdUrl": "syllable",
+    "image": "/assets/syllableGame/bg.svg"
+  },
+  {
     "title": "Jogo do Espaço",
     "gameIdUrl": "space",
     "image": "/assets/spaceGame/background.png"
