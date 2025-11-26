@@ -134,15 +134,13 @@ export default class ClickButtonLogic {
     this.gameStats.addTimeSpent(timeSpent);
 
     let answer = this.levelManager.getActualLevel().getAnswer();
-    if (answer instanceof Array) {
-      answer = answer.toString();
-    }
+    let newAnswer = "";
 
     const interaction = {
       activityId: this.activityId,
       questionId: 1, // Questões questionáveis
       // questionId: this.levelManager.getActualIndex() + 1,
-      answer: answer,
+      answer: newAnswer,
       timeSpent: timeSpent,
       attempts: 1,
       neededHint: false,
@@ -150,11 +148,9 @@ export default class ClickButtonLogic {
       isCorrect: selectedOption.getButtonStringText() === answer,
     };
 
-    answer = this.levelManager.getActualLevel().getAnswer();
-
     if (
       selectedOption.getButtonStringText() === answer ||
-      (answer instanceof Array &&
+      (Array.isArray(answer) &&
         answer.includes(selectedOption.getButtonStringText()))
     ) {
       this.setOptionsEnabled(false);
@@ -228,19 +224,29 @@ export default class ClickButtonLogic {
    * Avança para o próximo nível do jogo ou retorna à cena inicial se não houver mais níveis.
    */
   private nextLevel(): void {
-    this.clearLevelElements();
-    this.levelManager.nextLevel();
-    this.scene.registry.set("actualIndex", this.levelManager.getActualIndex());
-
-    if (this.levelManager.isFinished()) {
-      this.scene.registry.set("actualIndex", 0);
-      this.scene.scene.start("EndScene");
-    } else if (this.isMileStone()) {
-      this.scene.scene.start("LevelCompleteScene");
+    if (
+      Array.isArray(this.levelManager.getActualLevel().getAnswer()) &&
+      this.levelManager.getActualLevel().getAnswer().length >= 1
+    ) {
+      this.setOptionsEnabled(true);
     } else {
-      this.showQuestion();
-      this.showContent();
-      this.showOptions();
+      this.clearLevelElements();
+      this.levelManager.nextLevel();
+      this.scene.registry.set(
+        "actualIndex",
+        this.levelManager.getActualIndex(),
+      );
+
+      if (this.levelManager.isFinished()) {
+        this.scene.registry.set("actualIndex", 0);
+        this.scene.scene.start("EndScene");
+      } else if (this.isMileStone()) {
+        this.scene.scene.start("LevelCompleteScene");
+      } else {
+        this.showQuestion();
+        this.showContent();
+        this.showOptions();
+      }
     }
   }
 

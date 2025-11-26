@@ -106,7 +106,7 @@ export class AudioContentRenderer implements IContentRenderer {
     buttonManager: ButtonManager,
     selectedOption?: Button,
   ): Button[] | null {
-    if (level.getAnswer() instanceof Array) {
+    if (Array.isArray(level.getAnswer()) && level.getAnswer().length >= 1) {
       // Remove apenas os botões de conteúdo, mantém o botão de áudio
       this.content.forEach((button) => button.destroy());
       this.content = [];
@@ -117,16 +117,9 @@ export class AudioContentRenderer implements IContentRenderer {
 
       completeContent.forEach((contentItem, index) => {
         if (contentItem === selectedOption?.getButtonStringText()) {
-          console.log(
-            "Encontrou o conteúdo selecionado na posição:",
-            index,
-            contentItem,
-          );
           indexOffset = index;
         }
       });
-
-      console.log("Conteúdo completo NÃO atualizado:", content);
 
       content.forEach((_item, index) => {
         if (index === indexOffset) {
@@ -134,7 +127,40 @@ export class AudioContentRenderer implements IContentRenderer {
         }
       });
 
-      console.log("Conteúdo completo atualizado:", content);
+      //Resposta
+      let answer = level.getAnswer();
+
+      if (Array.isArray(answer)) {
+        const index = answer.indexOf(
+          selectedOption?.getButtonStringText() || "",
+        );
+        if (index > -1) {
+          answer.splice(index, 1);
+        }
+      }
+
+      if (content && content.length > 0) {
+        const newPositionY = 380;
+        const scale = 1.2;
+
+        const contentButtons = this.createContentButtons(
+          content,
+          scene,
+          buttonManager,
+          newPositionY,
+          scale,
+        );
+        this.content = contentButtons;
+      }
+
+      const allButtons = this.audioControlButton
+        ? [this.audioControlButton]
+        : [];
+      if (this.content.length > 0) {
+        allButtons.push(...this.content);
+      }
+
+      return allButtons.length > 0 ? allButtons : null;
     } else {
       // Remove apenas os botões de conteúdo, mantém o botão de áudio
       this.content.forEach((button) => button.destroy());
