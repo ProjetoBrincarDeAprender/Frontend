@@ -73,6 +73,22 @@
     {
       "key": "olha",
       "path": "/assets/punctuationGame/sounds/olha.mp3"
+    },
+    {
+      "key": "emboraPonto",
+      "path": "/assets/punctuationGame/sounds/emboraPonto.mp3"
+    },
+    {
+      "key": "emboraInterrogação",
+      "path": "/assets/punctuationGame/sounds/emboraInterrogação.mp3"
+    },
+    {
+      "key": "tudoBemInterrogação",
+      "path": "/assets/punctuationGame/sounds/tudoBemInterrogação.mp3"
+    },
+    {
+      "key": "tudoBemPonto",
+      "path": "/assets/punctuationGame/sounds/tudoBemPonto.mp3"
     }
   ],
 
@@ -130,6 +146,42 @@
       "completeContent": ["Está chovendo", "."],
       "answer": ".",
       "options": ["?", ".", "!"]
+    },
+    {
+      "question": "QUAL É A PONTUAÇÃO CORRETA?",
+      "audioKey": "emboraPonto",
+      "entityKey": "dudaNeutra",
+      "content": ["Vamos embora", " "],
+      "completeContent": ["Vamos embora", "."],
+      "answer": ".",
+      "options": ["!", ".", "?", ","]
+    },
+    {
+      "question": "QUAL É A PONTUAÇÃO CORRETA?",
+      "audioKey": "emboraInterrogação",
+      "entityKey": "dudaPensando",
+      "content": ["Vamos embora", " "],
+      "completeContent": ["Vamos embora", "?"],
+      "answer": "?",
+      "options": ["?", ".", ",", "!"]
+    },
+    {
+      "question": "QUAL É A PONTUAÇÃO CORRETA?",
+      "audioKey": "tudoBemInterrogação",
+      "entityKey": "dudaPensando",
+      "content": ["Tudo bem", " "],
+      "completeContent": ["Tudo bem", "?"],
+      "answer": "?",
+      "options": [",", "?", "!", "."]
+    },
+    {
+      "question": "QUAL É A PONTUAÇÃO CORRETA?",
+      "audioKey": "tudoBemPonto",
+      "entityKey": "dudaSurpresa",
+      "content": ["Tudo bem", " "],
+      "completeContent": ["Tudo bem", "!"],
+      "answer": "!",
+      "options": [",", ".", "?", "!"]
     }
   ]
 }

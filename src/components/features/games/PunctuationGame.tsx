@@ -30,13 +30,13 @@ const PunctuationGame: React.FC = () => {
     );
 
     const levelCompleted = new LevelCompletedScene({
-      // nextLevelScene: "clickButtonGameScene",
-      // menuScene: "StartScene",
-      // backgroundPath: "/assets/vowelsGame/images/backgroundMain.png",
-      // backgroundKey: "levelCompletedBg",
-      // onMenuReturn: () => {
-      //   ClickButtonGameScene.resetRegistry(gameScene);
-      // },
+      nextLevelScene: "clickButtonGameScene",
+      menuScene: "StartScene",
+      backgroundPath: "/assets/punctuationGame/images/backgroundMain.png",
+      backgroundKey: "levelCompletedBg",
+      onMenuReturn: () => {
+        ClickButtonGameScene.resetRegistry(gameScene);
+      },
     });
 
     const endScene = new EndScene({
