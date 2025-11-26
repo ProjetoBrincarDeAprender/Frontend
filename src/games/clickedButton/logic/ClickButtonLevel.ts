@@ -9,7 +9,7 @@
  * - completeContent: conteúdo completo após resposta correta (opcional)
  */
 interface IClickButtonLevel {
-  answer: string;
+  answer: string | string[];
   question: string;
   entityKey?: string;
   audioKey?: string;
@@ -24,7 +24,7 @@ interface IClickButtonLevel {
  */
 export default class ClickButtonLevel {
   /** Resposta correta do nível */
-  private answer: string;
+  private answer: string | string[];
   /** Pergunta/comando do nível */
   private question: string;
   /** Chave da imagem auxiliar (opcional) */
@@ -55,7 +55,7 @@ export default class ClickButtonLevel {
   /**
    * Retorna a resposta correta do nível.
    */
-  public getAnswer(): string {
+  public getAnswer(): string | string[] {
     return this.answer;
   }
 

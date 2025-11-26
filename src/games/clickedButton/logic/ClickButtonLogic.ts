@@ -133,12 +133,16 @@ export default class ClickButtonLogic {
     const timeSpent = this.gameStats.getActualTimeSpent(Date.now());
     this.gameStats.addTimeSpent(timeSpent);
 
-    const answer = this.levelManager.getActualLevel().getAnswer();
+    let answer = this.levelManager.getActualLevel().getAnswer();
+    if (answer instanceof Array) {
+      answer = answer.toString();
+    }
+
     const interaction = {
       activityId: this.activityId,
       questionId: 1, // Questões questionáveis
       // questionId: this.levelManager.getActualIndex() + 1,
-      answer: this.levelManager.getActualLevel().getAnswer(),
+      answer: answer,
       timeSpent: timeSpent,
       attempts: 1,
       neededHint: false,
@@ -146,7 +150,13 @@ export default class ClickButtonLogic {
       isCorrect: selectedOption.getButtonStringText() === answer,
     };
 
-    if (selectedOption.getButtonStringText() === answer) {
+    answer = this.levelManager.getActualLevel().getAnswer();
+
+    if (
+      selectedOption.getButtonStringText() === answer ||
+      (answer instanceof Array &&
+        answer.includes(selectedOption.getButtonStringText()))
+    ) {
       this.setOptionsEnabled(false);
 
       this.effectManager.growup(selectedOption, "expo.out", 1.6, 400);
