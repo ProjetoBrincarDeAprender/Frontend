@@ -93,6 +93,22 @@
     {
       "key": "ei",
       "path": "/assets/punctuationGame/sounds/ei.mp3"
+    },
+    {
+      "key": "euNaoSabiaQueSurpresa",
+      "path": "/assets/punctuationGame/sounds/euNaoSabiaQueSurpresa.mp3"
+    },
+    {
+      "key": "ouviuIsso",
+      "path": "/assets/punctuationGame/sounds/ouviuIsso.mp3"
+    },
+    {
+      "key": "procurei",
+      "path": "/assets/punctuationGame/sounds/procurei.mp3"
+    },
+    {
+      "key": "teViChegar",
+      "path": "/assets/punctuationGame/sounds/teViChegar.mp3"
     }
   ],
 
@@ -115,16 +131,6 @@
       "answer": "?",
       "options": ["?", ".", "!"]
     },
-    {
-      "question": "COMPLETE A FRASE",
-      "audioKey": "bem",
-      "entityKey": "dudaPensando",
-      "content": ["Você", " ", "está bem", " "],
-      "completeContent": ["Você", ",", "está bem", "?"],
-      "answer": [",", "?"],
-      "options": ["?", ".", "!", ","]
-    },
-
     {
       "question": "QUAL É A PONTUAÇÃO CORRETA?",
       "audioKey": "legal",
@@ -205,6 +211,51 @@
       "completeContent": ["Ei", ",", "você!"],
       "answer": ",",
       "options": ["!", ",", "?", "."]
+    },
+    {
+      "question": "COMPLETE A FRASE!",
+      "audioKey": "euNaoSabiaQueSurpresa",
+      "entityKey": "dudaSurpresa",
+      "content": ["Eu não sabia", " ", "Que surpresa", " "],
+      "completeContent": ["Eu não sabia", ".", "Que surpresa", "!"],
+      "answer": [".", "!"],
+      "options": ["?", ".", "!", ","]
+    },
+    {
+      "question": "COMPLETE A FRASE!",
+      "audioKey": "ei",
+      "entityKey": "dudaSurpresa",
+      "content": ["Ei", " ", "você", " "],
+      "completeContent": ["Ei", ",", "você", "!"],
+      "answer": [",", "!"],
+      "options": ["!", ".", ",", "?"]
+    },
+    {
+      "question": "COMPLETE A FRASE!",
+      "audioKey": "ouviuIsso",
+      "entityKey": "dudaPensando",
+      "content": ["Ouviu isso", " ", "Que estranho", " "],
+      "completeContent": ["Ouviu isso", "?", "Que estranho", "."],
+      "answer": [".", "?"],
+      "options": [".", "?", ",", "!"]
+    },
+    {
+      "question": "COMPLETE A FRASE!",
+      "audioKey": "procurei",
+      "entityKey": "dudaNeutra",
+      "content": ["Procurei muito", " ", "mas não encontrei", " "],
+      "completeContent": ["Procurei muito", ",", "mas não encontrei", "."],
+      "answer": [".", ","],
+      "options": ["!", ",", "?", "."]
+    },
+    {
+      "question": "COMPLETE A FRASE!",
+      "audioKey": "teViChegar",
+      "entityKey": "dudaSurpresa",
+      "content": ["Te vi chegar", " ", "Que surpresa", " "],
+      "completeContent": ["Te vi chegar", ".", "Que surpresa", "!"],
+      "answer": [".", "!"],
+      "options": ["?", ".", "!", ","]
     }
   ]
 }
