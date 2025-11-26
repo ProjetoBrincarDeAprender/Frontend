@@ -101,14 +101,14 @@ function App() {
         <Route path="professions" element={<ProfessionsGame />} />
         <Route path="use-syllable" element={<UseSyllableGame />} />
         <Route path="simple-syllable" element={<SimpleSyllableGame />} />
-        <Route path="complex-syllable" element={<ComplexSyllableGame />} />
         <Route path="plants" element={<PlantsGame />} />
         <Route path="locations" element={<LocationsGame />} />
         <Route path="address" element={<AddressGame />} />
-        <Route path="punctuation" element={<PunctuationGame />} />
         <Route path="hygiene" element={<HygieneGame />} />
         <Route path="syllable" element={<SyllableGame />} />
       </Route>
+      <Route path="complex-syllable" element={<ComplexSyllableGame />} />
+      <Route path="games/punctuation" element={<PunctuationGame />} />
 
       <Route element={<AuthGuard requireAuth />}>
         <Route path="/profile">

@@ -133,12 +133,14 @@ export default class ClickButtonLogic {
     const timeSpent = this.gameStats.getActualTimeSpent(Date.now());
     this.gameStats.addTimeSpent(timeSpent);
 
-    const answer = this.levelManager.getActualLevel().getAnswer();
+    let answer = this.levelManager.getActualLevel().getAnswer();
+    let newAnswer = "";
+
     const interaction = {
       activityId: this.activityId,
       questionId: 1, // Questões questionáveis
       // questionId: this.levelManager.getActualIndex() + 1,
-      answer: this.levelManager.getActualLevel().getAnswer(),
+      answer: newAnswer,
       timeSpent: timeSpent,
       attempts: 1,
       neededHint: false,
@@ -146,7 +148,11 @@ export default class ClickButtonLogic {
       isCorrect: selectedOption.getButtonStringText() === answer,
     };
 
-    if (selectedOption.getButtonStringText() === answer) {
+    if (
+      selectedOption.getButtonStringText() === answer ||
+      (Array.isArray(answer) &&
+        answer.includes(selectedOption.getButtonStringText()))
+    ) {
       this.setOptionsEnabled(false);
 
       this.effectManager.growup(selectedOption, "expo.out", 1.6, 400);
@@ -162,7 +168,7 @@ export default class ClickButtonLogic {
           this.levelManager.getActualLevel().getEntityKey(),
         );
       } catch (err) {}
-      this.updateContentToComplete();
+      this.updateContentToComplete(selectedOption);
       this.scene.time.delayedCall(3000, () => {
         this.nextLevel();
         this.gameStats.resetInitialLevelTime(Date.now());
@@ -190,7 +196,9 @@ export default class ClickButtonLogic {
   /**
    * Atualiza o conteúdo do nível para o estado "completo" após resposta correta.
    */
-  private updateContentToComplete(): void {
+  private updateContentToComplete(
+    selectedOption: Button | undefined = undefined,
+  ): void {
     if (!this.contentRenderer) return;
 
     const currentLevel = this.levelManager.getActualLevel();
@@ -198,6 +206,7 @@ export default class ClickButtonLogic {
       currentLevel,
       this.scene,
       this.buttonManager,
+      selectedOption,
     );
   }
 
@@ -215,19 +224,29 @@ export default class ClickButtonLogic {
    * Avança para o próximo nível do jogo ou retorna à cena inicial se não houver mais níveis.
    */
   private nextLevel(): void {
-    this.clearLevelElements();
-    this.levelManager.nextLevel();
-    this.scene.registry.set("actualIndex", this.levelManager.getActualIndex());
-
-    if (this.levelManager.isFinished()) {
-      this.scene.registry.set("actualIndex", 0);
-      this.scene.scene.start("EndScene");
-    } else if (this.isMileStone()) {
-      this.scene.scene.start("LevelCompleteScene");
+    if (
+      Array.isArray(this.levelManager.getActualLevel().getAnswer()) &&
+      this.levelManager.getActualLevel().getAnswer().length >= 1
+    ) {
+      this.setOptionsEnabled(true);
     } else {
-      this.showQuestion();
-      this.showContent();
-      this.showOptions();
+      this.clearLevelElements();
+      this.levelManager.nextLevel();
+      this.scene.registry.set(
+        "actualIndex",
+        this.levelManager.getActualIndex(),
+      );
+
+      if (this.levelManager.isFinished()) {
+        this.scene.registry.set("actualIndex", 0);
+        this.scene.scene.start("EndScene");
+      } else if (this.isMileStone()) {
+        this.scene.scene.start("LevelCompleteScene");
+      } else {
+        this.showQuestion();
+        this.showContent();
+        this.showOptions();
+      }
     }
   }
 
