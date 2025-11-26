@@ -56,59 +56,59 @@
     },
     {
       "key": "bem",
-      "path": "/assets/punctuationGame/sounds/bem.mp3"
+      "path": "/assets/punctuationGame/sounds/bem.m4a"
     },
     {
       "key": "legal",
-      "path": "/assets/punctuationGame/sounds/legal.mp3"
+      "path": "/assets/punctuationGame/sounds/legal.m4a"
     },
     {
       "key": "chovendo",
-      "path": "/assets/punctuationGame/sounds/chovendo.mp3"
+      "path": "/assets/punctuationGame/sounds/chovendo.m4a"
     },
     {
       "key": "onde",
-      "path": "/assets/punctuationGame/sounds/onde.mp3"
+      "path": "/assets/punctuationGame/sounds/onde.m4a"
     },
     {
       "key": "olha",
-      "path": "/assets/punctuationGame/sounds/olha.mp3"
+      "path": "/assets/punctuationGame/sounds/olha.m4a"
     },
     {
       "key": "emboraPonto",
-      "path": "/assets/punctuationGame/sounds/emboraPonto.mp3"
+      "path": "/assets/punctuationGame/sounds/emboraPonto.m4a"
     },
     {
       "key": "emboraInterrogação",
-      "path": "/assets/punctuationGame/sounds/emboraInterrogação.mp3"
+      "path": "/assets/punctuationGame/sounds/emboraInterrogação.m4a"
     },
     {
       "key": "tudoBemInterrogação",
-      "path": "/assets/punctuationGame/sounds/tudoBemInterrogação.mp3"
+      "path": "/assets/punctuationGame/sounds/tudoBemInterrogação.m4a"
     },
     {
       "key": "tudoBemPonto",
-      "path": "/assets/punctuationGame/sounds/tudoBemPonto.mp3"
+      "path": "/assets/punctuationGame/sounds/tudoBemPonto.m4a"
     },
     {
       "key": "ei",
-      "path": "/assets/punctuationGame/sounds/ei.mp3"
+      "path": "/assets/punctuationGame/sounds/ei.m4a"
     },
     {
       "key": "euNaoSabiaQueSurpresa",
-      "path": "/assets/punctuationGame/sounds/euNaoSabiaQueSurpresa.mp3"
+      "path": "/assets/punctuationGame/sounds/euNaoSabiaQueSurpresa.m4a"
     },
     {
       "key": "ouviuIsso",
-      "path": "/assets/punctuationGame/sounds/ouviuIsso.mp3"
+      "path": "/assets/punctuationGame/sounds/ouviuIsso.m4a"
     },
     {
       "key": "procurei",
-      "path": "/assets/punctuationGame/sounds/procurei.mp3"
+      "path": "/assets/punctuationGame/sounds/procurei.m4a"
     },
     {
       "key": "teViChegar",
-      "path": "/assets/punctuationGame/sounds/teViChegar.mp3"
+      "path": "/assets/punctuationGame/sounds/teViChegar.m4a"
     }
   ],
 
