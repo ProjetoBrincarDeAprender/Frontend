@@ -104,33 +104,68 @@ export class AudioContentRenderer implements IContentRenderer {
     level: ClickedButtonLevel,
     scene: Phaser.Scene,
     buttonManager: ButtonManager,
+    selectedOption?: Button,
   ): Button[] | null {
-    // Remove apenas os botões de conteúdo, mantém o botão de áudio
-    this.content.forEach((button) => button.destroy());
-    this.content = [];
+    if (level.getAnswer() instanceof Array) {
+      // Remove apenas os botões de conteúdo, mantém o botão de áudio
+      this.content.forEach((button) => button.destroy());
+      this.content = [];
 
-    const completeContent = level.getCompleteContent();
-    if (completeContent && completeContent.length > 0) {
-      const newPositionY = 380;
-      const scale = 1.2;
+      const completeContent = level.getCompleteContent();
+      let content = level.getContent();
+      let indexOffset = 0;
 
-      const contentButtons = this.createContentButtons(
-        completeContent,
-        scene,
-        buttonManager,
-        newPositionY,
-        scale,
-      );
-      this.content = contentButtons;
+      completeContent.forEach((contentItem, index) => {
+        if (contentItem === selectedOption?.getButtonStringText()) {
+          console.log(
+            "Encontrou o conteúdo selecionado na posição:",
+            index,
+            contentItem,
+          );
+          indexOffset = index;
+        }
+      });
+
+      console.log("Conteúdo completo NÃO atualizado:", content);
+
+      content.forEach((_item, index) => {
+        if (index === indexOffset) {
+          content[index] = selectedOption!.getButtonStringText();
+        }
+      });
+
+      console.log("Conteúdo completo atualizado:", content);
+    } else {
+      // Remove apenas os botões de conteúdo, mantém o botão de áudio
+      this.content.forEach((button) => button.destroy());
+      this.content = [];
+
+      const completeContent = level.getCompleteContent();
+      if (completeContent && completeContent.length > 0) {
+        const newPositionY = 380;
+        const scale = 1.2;
+
+        const contentButtons = this.createContentButtons(
+          completeContent,
+          scene,
+          buttonManager,
+          newPositionY,
+          scale,
+        );
+        this.content = contentButtons;
+      }
+
+      // Retorna todos os botões (botão de áudio + conteúdo atualizado)
+      const allButtons = this.audioControlButton
+        ? [this.audioControlButton]
+        : [];
+      if (this.content.length > 0) {
+        allButtons.push(...this.content);
+      }
+
+      return allButtons.length > 0 ? allButtons : null;
     }
-
-    // Retorna todos os botões (botão de áudio + conteúdo atualizado)
-    const allButtons = this.audioControlButton ? [this.audioControlButton] : [];
-    if (this.content.length > 0) {
-      allButtons.push(...this.content);
-    }
-
-    return allButtons.length > 0 ? allButtons : null;
+    return null;
   }
 
   clear(): void {

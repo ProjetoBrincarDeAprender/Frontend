@@ -107,15 +107,6 @@
 
   "levels": [
     {
-      "question": "COMPLETE A FRASE",
-      "audioKey": "bem",
-      "entityKey": "dudaPensando",
-      "content": ["Você", " ", "está bem", " "],
-      "completeContent": ["Você", ",", "está bem", "?"],
-      "answer": [",", "?"],
-      "options": ["?", ".", "!", ","]
-    },
-    {
       "question": "QUAL É A PONTUAÇÃO CORRETA?",
       "audioKey": "bem",
       "entityKey": "dudaPensando",
@@ -124,6 +115,16 @@
       "answer": "?",
       "options": ["?", ".", "!"]
     },
+    {
+      "question": "COMPLETE A FRASE",
+      "audioKey": "bem",
+      "entityKey": "dudaPensando",
+      "content": ["Você", " ", "está bem", " "],
+      "completeContent": ["Você", ",", "está bem", "?"],
+      "answer": [",", "?"],
+      "options": ["?", ".", "!", ","]
+    },
+
     {
       "question": "QUAL É A PONTUAÇÃO CORRETA?",
       "audioKey": "legal",

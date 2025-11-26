@@ -172,7 +172,7 @@ export default class ClickButtonLogic {
           this.levelManager.getActualLevel().getEntityKey(),
         );
       } catch (err) {}
-      this.updateContentToComplete();
+      this.updateContentToComplete(selectedOption);
       this.scene.time.delayedCall(3000, () => {
         this.nextLevel();
         this.gameStats.resetInitialLevelTime(Date.now());
@@ -200,7 +200,9 @@ export default class ClickButtonLogic {
   /**
    * Atualiza o conteúdo do nível para o estado "completo" após resposta correta.
    */
-  private updateContentToComplete(): void {
+  private updateContentToComplete(
+    selectedOption: Button | undefined = undefined,
+  ): void {
     if (!this.contentRenderer) return;
 
     const currentLevel = this.levelManager.getActualLevel();
@@ -208,6 +210,7 @@ export default class ClickButtonLogic {
       currentLevel,
       this.scene,
       this.buttonManager,
+      selectedOption,
     );
   }
 
