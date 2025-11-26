@@ -16,7 +16,7 @@ export interface InteractionData {
 
 export class SyllableGameService {
   private apiService: APIDataService;
-  private static readonly ACTIVITY_ID = 9;
+  private static readonly ACTIVITY_ID = 1;
   private static readonly DEFAULT_STUDENT_ID = 10130001;
   private startTime: number = 0;
   private attempts: number = 0;

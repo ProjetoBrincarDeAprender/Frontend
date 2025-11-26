@@ -136,8 +136,8 @@ export class SyllableGameData {
     },
     {
       id: 5,
-      word: "PIZZA",
-      emoji: "🍕",
+      word: "BOLO",
+      emoji: "🎂",
       syllableCount: 2,
       syllableType: 'dissílaba',
       options: [
@@ -340,10 +340,9 @@ export class SyllableGameData {
   }
 
   static shouldShowLevelComplete(currentLevel: number): boolean {
-    const introEnd = this.getIntroductoryCount();
-    const level1End = introEnd + this.getLevel1Count();
+    const level1End = this.getLevel1Count();
     const level2End = level1End + this.getLevel2Count();
     
-    return currentLevel === introEnd || currentLevel === level1End || currentLevel === level2End;
+    return currentLevel === level1End || currentLevel === level2End;
   }
 }

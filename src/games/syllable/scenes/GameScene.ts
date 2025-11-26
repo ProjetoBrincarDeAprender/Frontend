@@ -16,6 +16,8 @@ export class GameScene extends Phaser.Scene {
   private emojiText!: Phaser.GameObjects.Text;
   private optionButtons: Button[] = [];
   private continueButton: Button | null = null;
+  private previousButton: Button | null = null;
+  private wordFrame: Phaser.GameObjects.Graphics | null = null;
 
   private isTransitioning: boolean = false;
   private buttonsEnabled: boolean = true;
@@ -57,6 +59,9 @@ export class GameScene extends Phaser.Scene {
     this.load.svg("defaultButton", "/assets/common/buttons/rectangleBlueDefault.svg");
     this.load.svg("hoverButton", "/assets/common/buttons/rectangleBlueHover.svg");
     this.load.svg("clickedButton", "/assets/common/buttons/rectangleBlueClicked.svg");
+    this.load.svg("squareDefaultButton", "/assets/common/buttons/squareBlueDefault.svg");
+    this.load.svg("squareHoverButton", "/assets/common/buttons/squareBlueHover.svg");
+    this.load.svg("squareClickedButton", "/assets/common/buttons/squareBlueClicked.svg");
     this.load.svg("star", "/assets/common/buttons/star.svg");
   }
 
@@ -93,7 +98,7 @@ export class GameScene extends Phaser.Scene {
   private createUI(): void {
     const audioManager = new AudioManager(this);
     audioManager.renderMuteButton();
-    this.add.rectangle(400, 300, 800, 600, 0x87CEEB, 0.3);
+    this.add.rectangle(400, 300, 800, 600, 0x98FB98, 0.4);
 
     this.titleText = this.add.text(400, 120, "", {
       fontSize: "36px",
@@ -111,13 +116,13 @@ export class GameScene extends Phaser.Scene {
       wordWrap: { width: 700 }
     }).setOrigin(0.5);
 
-    this.emojiText = this.add.text(400, 280, "", {
-      fontSize: "80px",
+    this.emojiText = this.add.text(400, 235, "", {
+      fontSize: "60px",
       fontFamily: "Arial"
     }).setOrigin(0.5);
 
-    this.wordText = this.add.text(400, 350, "", {
-      fontSize: "32px",
+    this.wordText = this.add.text(400, 285, "", {
+      fontSize: "28px",
       fontFamily: "Arial",
       color: "#2c3e50",
       fontStyle: "bold",
@@ -126,7 +131,9 @@ export class GameScene extends Phaser.Scene {
   }
 
   private startLevel(): void {
-    if (this.currentLevel >= SyllableGameData.getTotalLevels()) {
+    const totalGameLevels = SyllableGameData.getLevel1Count() + SyllableGameData.getLevel2Count() + SyllableGameData.getLevel3Count();
+    
+    if (this.currentLevel >= totalGameLevels) {
       this.endGame();
       return;
     }
@@ -136,13 +143,14 @@ export class GameScene extends Phaser.Scene {
     this.buttonsEnabled = true;
     this.clearUI();
 
-    if (SyllableGameData.isIntroductoryPhase(this.currentLevel)) {
-      this.showIntroductoryLevel();
-    } else if (SyllableGameData.isLevel1Phase(this.currentLevel)) {
+    // Começar direto nos níveis jogáveis (sem introdutórias)
+    const adjustedLevel = this.currentLevel;
+    
+    if (adjustedLevel < SyllableGameData.getLevel1Count()) {
       this.showGameLevel(1);
-    } else if (SyllableGameData.isLevel2Phase(this.currentLevel)) {
+    } else if (adjustedLevel < SyllableGameData.getLevel1Count() + SyllableGameData.getLevel2Count()) {
       this.showGameLevel(2);
-    } else if (SyllableGameData.isLevel3Phase(this.currentLevel)) {
+    } else {
       this.showGameLevel(3);
     }
   }
@@ -156,65 +164,80 @@ export class GameScene extends Phaser.Scene {
       this.continueButton = null;
     }
 
+    if (this.previousButton) {
+      this.previousButton.destroy();
+      this.previousButton = null;
+    }
+
+    if (this.wordFrame) {
+      this.wordFrame.destroy();
+      this.wordFrame = null;
+    }
+
     this.titleText.setText("");
     this.contentText.setText("");
     this.emojiText.setText("");
     this.wordText.setText("");
   }
 
-  private showIntroductoryLevel(): void {
-    const level = SyllableGameData.getIntroductoryLevel(this.currentLevel);
-    if (!level) return;
 
-    this.titleText.setText(level.title);
-    this.contentText.setText(level.content);
-
-    if (level.example) {
-      this.emojiText.setText(level.example.emoji);
-      this.wordText.setText(level.example.word);
-    }
-
-    this.continueButton = new Button(this, 400, 500, "defaultButton", "hoverButton", "clickedButton", "CONTINUAR", 28);
-    this.add.existing(this.continueButton);
-
-    this.continueButton.on("pointerdown", () => {
-      if (this.buttonsEnabled) {
-        this.nextLevel();
-      }
-    });
-  }
 
   private showGameLevel(levelType: 1 | 2 | 3): void {
     let level: GameLevel | null = null;
-    let levelIndex: number = 0;
 
     if (levelType === 1) {
-      levelIndex = this.currentLevel - SyllableGameData.getIntroductoryCount();
-      level = SyllableGameData.getLevel1Word(levelIndex);
+      level = SyllableGameData.getLevel1Word(this.currentLevel);
       this.titleText.setText("QUANTAS SÍLABAS TEM A PALAVRA?");
     } else if (levelType === 2) {
-      levelIndex = this.currentLevel - SyllableGameData.getIntroductoryCount() - SyllableGameData.getLevel1Count();
+      const levelIndex = this.currentLevel - SyllableGameData.getLevel1Count();
       level = SyllableGameData.getLevel2Word(levelIndex);
       this.titleText.setText("QUANTAS SÍLABAS TEM A PALAVRA?");
     } else if (levelType === 3) {
-      levelIndex = this.currentLevel - SyllableGameData.getIntroductoryCount() - SyllableGameData.getLevel1Count() - SyllableGameData.getLevel2Count();
+      const levelIndex = this.currentLevel - SyllableGameData.getLevel1Count() - SyllableGameData.getLevel2Count();
       level = SyllableGameData.getLevel3Word(levelIndex);
       this.titleText.setText("QUAL A CLASSIFICAÇÃO DA PALAVRA?");
     }
 
     if (!level) return;
 
-    this.emojiText.setText(level.emoji);
-    this.wordText.setText(level.word);
+    // Criar quadro branco com borda azul PRIMEIRO (atrás)
+    this.wordFrame = this.add.graphics();
+    this.wordFrame.fillStyle(0xFFFFFF, 0.9);
+    this.wordFrame.lineStyle(4, 0x1E3A8A, 1);
+    this.wordFrame.fillRoundedRect(280, 200, 240, 130, 12);
+    this.wordFrame.strokeRoundedRect(280, 200, 240, 130, 12);
+    this.wordFrame.setDepth(0); // Quadro no fundo
 
-    const buttonY = 450;
-    const buttonSpacing = levelType === 3 ? 180 : 150;
-    const startX = levelType === 3 ? 400 - (buttonSpacing * 1.5) : 400 - (buttonSpacing * 1.5);
+    // Texto e emoji POR CIMA do quadro
+    this.emojiText.setText(level.emoji);
+    this.emojiText.setDepth(2); // Emoji na frente
+    this.wordText.setText(level.word);
+    this.wordText.setDepth(2); // Palavra na frente
+
+    // Organizar botões em 2x2 com mais espaçamento do quadro
+    const buttonPositions = [
+      { x: 280, y: 420 }, // Top left
+      { x: 520, y: 420 }, // Top right  
+      { x: 280, y: 520 }, // Bottom left
+      { x: 520, y: 520 }  // Bottom right
+    ];
 
     level.options.forEach((option, index) => {
-      const x = startX + (index * buttonSpacing);
-      const fontSize = levelType === 3 ? 20 : 24;
-      const button = new Button(this, x, buttonY, "defaultButton", "hoverButton", "clickedButton", option.text, fontSize);
+      const pos = buttonPositions[index];
+      const fontSize = levelType === 3 ? 24 : 38;
+      
+      // Usar botões quadrados para níveis 1 e 2, retangulares para nível 3
+      const buttonAssets = (levelType === 1 || levelType === 2) ? {
+        default: "squareDefaultButton",
+        hover: "squareHoverButton", 
+        clicked: "squareClickedButton"
+      } : {
+        default: "defaultButton",
+        hover: "hoverButton",
+        clicked: "clickedButton"
+      };
+      
+      const button = new Button(this, pos.x, pos.y, buttonAssets.default, buttonAssets.hover, buttonAssets.clicked, option.text, fontSize);
       this.add.existing(button);
       this.optionButtons.push(button);
 
@@ -254,7 +277,7 @@ export class GameScene extends Phaser.Scene {
       
       const option = level.options[index];
       if (option.value === selectedValue) {
-        button.setTint(isCorrect ? 0x00ff00 : 0xff0000);
+        button.setTint(isCorrect ? 0x00ff00 : 0xff1700);
       }
       
       if (isCorrect && option.isCorrect) {
@@ -296,15 +319,19 @@ export class GameScene extends Phaser.Scene {
     this.registry.set("syllableCurrentLevel", this.currentLevel);
     this.registry.set("syllableScore", this.score);
 
-    if (SyllableGameData.shouldShowLevelComplete(this.currentLevel)) {
+    const totalGameLevels = SyllableGameData.getLevel1Count() + SyllableGameData.getLevel2Count() + SyllableGameData.getLevel3Count();
+    
+    // Mostrar tela de nível completo após cada fase
+    if (this.currentLevel === SyllableGameData.getLevel1Count() || 
+        this.currentLevel === SyllableGameData.getLevel1Count() + SyllableGameData.getLevel2Count()) {
       this.scene.start("LevelCompleteScene", {
         currentLevel: this.currentLevel,
-        totalLevels: SyllableGameData.getTotalLevels(),
+        totalLevels: totalGameLevels,
         score: this.score,
         gameType: "syllable",
         nextScene: "GameScene",
       });
-    } else if (this.currentLevel >= SyllableGameData.getTotalLevels()) {
+    } else if (this.currentLevel >= totalGameLevels) {
       this.endGame();
     } else {
       this.startLevel();
@@ -367,9 +394,11 @@ export class GameScene extends Phaser.Scene {
   private endGame(): void {
     this.registry.set("syllableGameCompleted", true);
     
+    const totalGameLevels = SyllableGameData.getLevel1Count() + SyllableGameData.getLevel2Count() + SyllableGameData.getLevel3Count();
+    
     this.scene.start("EndScene", {
       score: this.score,
-      totalLevels: SyllableGameData.getTotalLevels()
+      totalLevels: totalGameLevels
     });
   }
 }
