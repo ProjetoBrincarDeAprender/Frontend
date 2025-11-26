@@ -26,6 +26,8 @@ export class GameScene extends Phaser.Scene {
   private submitButton?: SubmitButton;
   private keyboardHandler?: (event: KeyboardEvent) => void;
   private choiceButtons: Phaser.GameObjects.Container[] = [];
+  private cursor?: Phaser.GameObjects.Rectangle;
+  private cursorTween?: Phaser.Tweens.Tween;
   private isTransitioning: boolean = false;
   private userId: string = "default_user";
   private activityId?: number;
@@ -48,6 +50,8 @@ export class GameScene extends Phaser.Scene {
     this.choiceButtons = [];
     this.submitButton = undefined;
     this.keyboardHandler = undefined;
+    this.cursor = undefined;
+    this.cursorTween = undefined;
     this.answerText = undefined;
     this.isTransitioning = false;
 
@@ -308,6 +312,15 @@ export class GameScene extends Phaser.Scene {
       this.submitButton.destroy();
       this.submitButton = undefined;
     }
+    if (this.cursorTween) {
+      this.cursorTween.stop();
+      this.cursorTween = undefined;
+    }
+    if (this.cursor) {
+      this.cursor.destroy();
+      this.cursor = undefined;
+    }
+
     this.add.text(60, 470, "DIGITE A RESPOSTA: ", {
       fontSize: "24px",
       color: "#000",
@@ -315,6 +328,7 @@ export class GameScene extends Phaser.Scene {
       backgroundColor: "#ffffff",
       padding: { x: 10, y: 10 },
     });
+
     this.answerText = this.add
       .text(392, 500, " ", {
         fontSize: "48px",
@@ -323,6 +337,19 @@ export class GameScene extends Phaser.Scene {
         padding: { x: 10, y: 10 },
       })
       .setOrigin(0.5);
+
+    this.cursor = this.add.rectangle(0, 0, 2, 36, 0x000000).setOrigin(0, 0.5);
+    this.cursor.setDepth(12);
+    this.updateCursorPosition();
+    this.cursorTween = this.tweens.add({
+      targets: this.cursor,
+      alpha: 0.2,
+      duration: 600,
+      yoyo: true,
+      repeat: -1,
+      ease: "Sine.easeInOut",
+    });
+
     this.submitButton = new SubmitButton(this, 550, 500, () =>
       this.handleAnswer(),
     );
@@ -339,15 +366,18 @@ export class GameScene extends Phaser.Scene {
           // permitir negativos depois
           this.inputText += event.key;
           this.answerText!.setText(this.inputText);
+          this.updateCursorPosition();
         }
       } else if (event.key === "-") {
         if (this.inputText.length === 0) {
           this.inputText = "-";
           this.answerText!.setText(this.inputText);
+          this.updateCursorPosition();
         }
       } else if (event.key === "Backspace") {
         this.inputText = this.inputText.slice(0, -1);
         this.answerText!.setText(this.inputText);
+        this.updateCursorPosition();
       } else if (event.key === "Enter") {
         this.handleAnswer();
       }
@@ -411,6 +441,9 @@ export class GameScene extends Phaser.Scene {
   private resetInput() {
     this.inputText = "";
     if (this.answerText) this.answerText.setText("");
+    if (this.cursor && this.answerText) {
+      this.updateCursorPosition();
+    }
   }
 
   private clearScene() {
@@ -432,6 +465,14 @@ export class GameScene extends Phaser.Scene {
     if (this.keyboardHandler) {
       this.input.keyboard?.off("keydown", this.keyboardHandler);
       this.keyboardHandler = undefined;
+    }
+    if (this.cursorTween) {
+      this.cursorTween.stop();
+      this.cursorTween = undefined;
+    }
+    if (this.cursor) {
+      this.cursor.destroy();
+      this.cursor = undefined;
     }
     if (this.equationText) {
       this.equationText.destroy();
@@ -457,6 +498,16 @@ export class GameScene extends Phaser.Scene {
     this.equationBox.fillRoundedRect(x, y, width, height, 12);
     this.equationBox.strokeRoundedRect(x, y, width, height, 12);
     this.equationBox.setDepth(12);
+  }
+
+  private updateCursorPosition() {
+    if (!this.answerText || !this.cursor || !this.answerText.scene) return;
+    try {
+      const bounds = this.answerText.getBounds();
+      this.cursor.setPosition(bounds.left + 8, bounds.centerY);
+    } catch (error) {
+      console.warn("Erro ao atualizar posição do cursor:", error);
+    }
   }
 }
 
