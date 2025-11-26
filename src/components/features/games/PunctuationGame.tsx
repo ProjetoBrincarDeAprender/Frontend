@@ -33,10 +33,10 @@ const PunctuationGame: React.FC = () => {
       nextLevelScene: "clickButtonGameScene",
       menuScene: "StartScene",
       backgroundPath: "/assets/punctuationGame/images/backgroundMain.png",
-      backgroundKey: "levelCompletedBg",
-      onMenuReturn: () => {
-        ClickButtonGameScene.resetRegistry(gameScene);
-      },
+       backgroundKey: "levelCompletedBg",
+       onMenuReturn: () => {
+         ClickButtonGameScene.resetRegistry(gameScene);
+       },
     });
 
     const endScene = new EndScene({

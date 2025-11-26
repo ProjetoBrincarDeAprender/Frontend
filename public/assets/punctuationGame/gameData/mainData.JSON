@@ -89,6 +89,10 @@
     {
       "key": "tudoBemPonto",
       "path": "/assets/punctuationGame/sounds/tudoBemPonto.mp3"
+    },
+    {
+      "key": "ei",
+      "path": "/assets/punctuationGame/sounds/ei.mp3"
     }
   ],
 
@@ -182,6 +186,15 @@
       "completeContent": ["Tudo bem", "!"],
       "answer": "!",
       "options": [",", ".", "?", "!"]
+    },
+    {
+      "question": "QUAL É A PONTUAÇÃO CORRETA?",
+      "audioKey": "ei",
+      "entityKey": "dudaSurpresa",
+      "content": ["Ei", " ", "você!"],
+      "completeContent": ["Ei", ",", "você!"],
+      "answer": ",",
+      "options": ["!", ",", "?", "."]
     }
   ]
 }
