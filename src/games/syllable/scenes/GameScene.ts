@@ -18,6 +18,7 @@ export class GameScene extends Phaser.Scene {
   private continueButton: Button | null = null;
   private previousButton: Button | null = null;
   private wordFrame: Phaser.GameObjects.Graphics | null = null;
+  private currentLevelType: 1 | 2 | 3 = 1;
 
   private isTransitioning: boolean = false;
   private buttonsEnabled: boolean = true;
@@ -62,13 +63,15 @@ export class GameScene extends Phaser.Scene {
     this.load.svg("squareDefaultButton", "/assets/common/buttons/squareBlueDefault.svg");
     this.load.svg("squareHoverButton", "/assets/common/buttons/squareBlueHover.svg");
     this.load.svg("squareClickedButton", "/assets/common/buttons/squareBlueClicked.svg");
+    this.load.svg("whiteButton", "/assets/common/buttons/rectangleWhiteDefault.svg");
+    this.load.svg("whiteSquareButton", "/assets/common/buttons/squareWhiteDefault.svg");
     this.load.svg("star", "/assets/common/buttons/star.svg");
   }
 
   private registerStandardScenes(): void {
     if (!this.scene.manager.getScene("LevelCompleteScene")) {
       const levelCompleteScene = new LevelCompletedScene({
-        backgroundPath: "/assets/syllableGame/bg.svg",
+        backgroundPath: "/assets/syllableGame/bg.png",
         backgroundKey: "syllableBackground",
         onMenuReturn: () => {
           this.registry.remove("syllableCurrentLevel");
@@ -82,7 +85,7 @@ export class GameScene extends Phaser.Scene {
     if (!this.scene.manager.getScene("EndScene")) {
       const syllableEndScene = new EndScene({
         restartScene: "StartScene",
-        backgroundPath: "/assets/syllableGame/bg.svg",
+        backgroundPath: "/assets/syllableGame/bg.png",
         backgroundKey: "syllableBackground",
         subtitleMessage: "VOCÊ APRENDEU SOBRE \nCLASSIFICAÇÃO SILÁBICA!",
         onRestart: () => {
@@ -117,12 +120,12 @@ export class GameScene extends Phaser.Scene {
     }).setOrigin(0.5);
 
     this.emojiText = this.add.text(400, 235, "", {
-      fontSize: "60px",
+      fontSize: "80px",
       fontFamily: "Arial"
     }).setOrigin(0.5);
 
-    this.wordText = this.add.text(400, 285, "", {
-      fontSize: "28px",
+    this.wordText = this.add.text(400, 295, "", {
+      fontSize: "36px",
       fontFamily: "Arial",
       color: "#2c3e50",
       fontStyle: "bold",
@@ -183,6 +186,7 @@ export class GameScene extends Phaser.Scene {
 
 
   private showGameLevel(levelType: 1 | 2 | 3): void {
+    this.currentLevelType = levelType;
     let level: GameLevel | null = null;
 
     if (levelType === 1) {
@@ -204,8 +208,8 @@ export class GameScene extends Phaser.Scene {
     this.wordFrame = this.add.graphics();
     this.wordFrame.fillStyle(0xFFFFFF, 0.9);
     this.wordFrame.lineStyle(4, 0x1E3A8A, 1);
-    this.wordFrame.fillRoundedRect(280, 200, 240, 130, 12);
-    this.wordFrame.strokeRoundedRect(280, 200, 240, 130, 12);
+    this.wordFrame.fillRoundedRect(240, 190, 320, 160, 12);
+    this.wordFrame.strokeRoundedRect(240, 190, 320, 160, 12);
     this.wordFrame.setDepth(0); // Quadro no fundo
 
     // Texto e emoji POR CIMA do quadro
@@ -277,7 +281,27 @@ export class GameScene extends Phaser.Scene {
       
       const option = level.options[index];
       if (option.value === selectedValue) {
-        button.setTint(isCorrect ? 0x00ff00 : 0xff1700);
+        if (isCorrect) {
+          button.setTint(0x00ff00);
+        } else {
+          // For incorrect answers, recreate button with white texture and red tint
+          const buttonX = button.x;
+          const buttonY = button.y;
+          const buttonText = option.text;
+          const fontSize = this.currentLevelType === 3 ? 24 : 38;
+          
+          // Destroy old button
+          button.destroy();
+          
+          // Create new white button with red tint
+          const isSquareButton = this.currentLevelType === 1 || this.currentLevelType === 2;
+          const whiteButtonKey = isSquareButton ? "whiteSquareButton" : "whiteButton";
+          const newButton = new Button(this, buttonX, buttonY, whiteButtonKey, whiteButtonKey, whiteButtonKey, buttonText, fontSize);
+          newButton.setTint(0xff0000);
+          newButton.disableInteractive();
+          this.add.existing(newButton);
+          this.optionButtons[index] = newButton;
+        }
       }
       
       if (isCorrect && option.isCorrect) {
@@ -307,9 +331,54 @@ export class GameScene extends Phaser.Scene {
   }
 
   private resetButtonStates(): void {
-    this.optionButtons.forEach(button => {
-      button.clearTint();
-      button.setInteractive();
+    // Get current level data to recreate buttons properly
+    let level: GameLevel | null = null;
+    
+    if (this.currentLevelType === 1) {
+      level = SyllableGameData.getLevel1Word(this.currentLevel);
+    } else if (this.currentLevelType === 2) {
+      const levelIndex = this.currentLevel - SyllableGameData.getLevel1Count();
+      level = SyllableGameData.getLevel2Word(levelIndex);
+    } else if (this.currentLevelType === 3) {
+      const levelIndex = this.currentLevel - SyllableGameData.getLevel1Count() - SyllableGameData.getLevel2Count();
+      level = SyllableGameData.getLevel3Word(levelIndex);
+    }
+    
+    if (!level) return;
+    
+    // Recreate all buttons with original textures
+    this.optionButtons.forEach((button, index) => {
+      const buttonX = button.x;
+      const buttonY = button.y;
+      const option = level!.options[index];
+      const fontSize = this.currentLevelType === 3 ? 24 : 38;
+      
+      // Destroy current button
+      button.destroy();
+      
+      // Recreate with original blue texture
+      const buttonAssets = (this.currentLevelType === 1 || this.currentLevelType === 2) ? {
+        default: "squareDefaultButton",
+        hover: "squareHoverButton", 
+        clicked: "squareClickedButton"
+      } : {
+        default: "defaultButton",
+        hover: "hoverButton",
+        clicked: "clickedButton"
+      };
+      
+      const newButton = new Button(this, buttonX, buttonY, buttonAssets.default, buttonAssets.hover, buttonAssets.clicked, option.text, fontSize);
+      newButton.clearTint();
+      newButton.setInteractive();
+      this.add.existing(newButton);
+      this.optionButtons[index] = newButton;
+      
+      // Re-add click handler
+      newButton.on("pointerdown", async () => {
+        if (this.buttonsEnabled) {
+          await this.handleAnswer(option.value, level!);
+        }
+      });
     });
   }
 

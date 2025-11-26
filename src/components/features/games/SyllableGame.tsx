@@ -23,7 +23,7 @@ const SyllableGame: React.FC = () => {
       scene: [
         StartScene.create(
           "GameScene",
-          "/assets/syllableGame/bg.svg",
+          "/assets/syllableGame/bg.png",
           "syllableBackground",
           "CLASSIFICAÇÃO SILÁBICA",
           "/assets/common/trophy.png",
