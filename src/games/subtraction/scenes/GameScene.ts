@@ -4,11 +4,6 @@ import { LevelCompletedScene } from "@/games/common/scenes/LevelCompletedScene";
 import Phaser from "phaser";
 import MathLogic from "../logic/logic";
 import SubtractionLevel, { LevelType } from "../logic/MathLevel";
-import {
-  createDefaultSubtractionLevels,
-  createSubtractionLevels,
-} from "../logic/levelFactory";
-import type { SubtractionLevelDefinition } from "../logic/levelFactory";
 import { AnimationManager } from "@/games/sum/components/animations/AnimationManager";
 import { SubmitButton } from "@/games/sum/components/buttons/SubmitButton";
 import { NumberDisplay } from "../components/ui/NumberDisplay";

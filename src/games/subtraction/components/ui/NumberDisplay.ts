@@ -31,7 +31,7 @@ export class NumberDisplay {
       // Centralizar melhor quando há números maiores (6-10)
       startX = maxNumber > 5 ? 320 : 320;
       spacing = maxNumber > 5 ? 160 : 200;
-      scale = maxNumber > 5 ? 0.4 : 0.5;
+      scale = maxNumber > 5 ? 0.35 : 0.5;
     }
 
     const startY = 110;
