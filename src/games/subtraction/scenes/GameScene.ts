@@ -3,7 +3,7 @@ import { EndScene } from "@/games/common/scenes/EndScene";
 import { LevelCompletedScene } from "@/games/common/scenes/LevelCompletedScene";
 import Phaser from "phaser";
 import MathLogic from "../logic/logic";
-import SubtractionLevel from "../logic/MathLevel";
+import SubtractionLevel, { LevelType } from "../logic/MathLevel";
 import {
   createDefaultSubtractionLevels,
   createSubtractionLevels,
@@ -108,6 +108,11 @@ export class GameScene extends Phaser.Scene {
     this.load.image("tres", "/assets/sumGame/tres.png");
     this.load.image("quatro", "/assets/sumGame/quatro.png");
     this.load.image("cinco", "/assets/sumGame/cinco.png");
+    this.load.image("seis", "/assets/sumGame/seis.png");
+    this.load.image("sete", "/assets/sumGame/sete.png");
+    this.load.image("oito", "/assets/sumGame/oito.png");
+    this.load.image("nove", "/assets/sumGame/nove.png");
+    this.load.image("dez", "/assets/sumGame/dez.png");
     this.load.image("star", "/assets/common/star.svg");
     this.load.image(
       "defaultButton",
@@ -144,14 +149,40 @@ export class GameScene extends Phaser.Scene {
   }
 
   private initializeLogic() {
-    // Lê definições do JSON se existir; caso contrário, usa o padrão da factory
-    const defs = this.cache.json.get("subLevels") as
-      | SubtractionLevelDefinition[]
-      | undefined;
-    const levels: SubtractionLevel[] =
-      defs && Array.isArray(defs) && defs.length
-        ? createSubtractionLevels(defs)
-        : createDefaultSubtractionLevels();
+    const levels: SubtractionLevel[] = [];
+
+    // Nível 1: 5 fases com múltipla escolha (números de 1 a 5, sem negativos)
+    for (let i = 0; i < 5; i++) {
+      let num1, num2;
+      do {
+        num1 = Phaser.Math.Between(1, 5);
+        num2 = Phaser.Math.Between(1, 5);
+      } while (num1 < num2); // Garantir que num1 >= num2 para evitar negativos
+
+      levels.push(new SubtractionLevel(num1, num2, LevelType.MULTIPLE_CHOICE));
+    }
+
+    // Nível 2: 5 fases com input digitado (números de 1 a 5, sem negativos)
+    for (let i = 0; i < 5; i++) {
+      let num1, num2;
+      do {
+        num1 = Phaser.Math.Between(1, 5);
+        num2 = Phaser.Math.Between(1, 5);
+      } while (num1 < num2); // Garantir que num1 >= num2 para evitar negativos
+
+      levels.push(new SubtractionLevel(num1, num2, LevelType.INPUT));
+    }
+
+    // Nível 3: 5 fases com dois números (primeiro de 1 a 10, segundo de 1 a 5, sem negativos)
+    for (let i = 0; i < 5; i++) {
+      let num1, num2;
+      do {
+        num1 = Phaser.Math.Between(1, 10);
+        num2 = Phaser.Math.Between(1, 5);
+      } while (num1 < num2); // Garantir que num1 >= num2 para evitar negativos
+
+      levels.push(new SubtractionLevel(num1, num2, LevelType.INPUT));
+    }
 
     const savedLevel = this.registry.get("subCurrentLevel") || 0;
     this.logic = new MathLogic(
