@@ -1,4 +1,6 @@
 import { Route, Routes } from "react-router";
+import AddressGame from "./components/features/games/AddressGame";
+import { ComDatesGame } from "./components/features/games/ComDatesGame";
 import ComplexSyllableGame from "./components/features/games/ComplexSyllableGame";
 import { CoordinationGame } from "./components/features/games/CoordinationGame";
 import HousingGame from "./components/features/games/HousingGame";
@@ -14,10 +16,9 @@ import SimpleSyllableGame from "./components/features/games/SimpleSyllableGame";
 import { SpaceGame } from "./components/features/games/SpaceGame";
 import SubtractionGame from "./components/features/games/SubtractionGame";
 import SumGame from "./components/features/games/SumGame";
-import UseSyllableGame from "./components/features/games/UseSyllableGame";
 import SyllableGame from "./components/features/games/SyllableGame";
+import UseSyllableGame from "./components/features/games/UseSyllableGame";
 import VowelsGame from "./components/features/games/VowelsGame";
-import AddressGame from "./components/features/games/AddressGame";
 import { AuthGuard } from "./guards/AuthGuard";
 import { Calm } from "./pages/Calm/Calm";
 import Dashboard from "./pages/Dashboard/Admin/Dashboard";
@@ -106,6 +107,7 @@ function App() {
         <Route path="address" element={<AddressGame />} />
         <Route path="hygiene" element={<HygieneGame />} />
         <Route path="syllable" element={<SyllableGame />} />
+        <Route path="com-dates" element={<ComDatesGame />} />
       </Route>
       <Route path="complex-syllable" element={<ComplexSyllableGame />} />
       <Route path="games/punctuation" element={<PunctuationGame />} />
