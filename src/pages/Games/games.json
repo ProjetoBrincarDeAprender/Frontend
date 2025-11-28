@@ -83,5 +83,15 @@
     "title": "Jogo da Higiene Pessoal",
     "gameIdUrl": "hygiene",
     "image": "/assets/hygieneGame/background.png"
+  },
+  {
+    "title": "Jogo das Datas Comemorativas",
+    "gameIdUrl": "com-dates",
+    "image": "/assets/comDatesGame/background.png"
+  },
+  {
+    "title": "Jogo Sensorial",
+    "gameIdUrl": "sensorial",
+    "image": "/assets/sensorialGame/background.png"
   }
 ]
