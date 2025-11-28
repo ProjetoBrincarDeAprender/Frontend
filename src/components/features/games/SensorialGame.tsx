@@ -19,7 +19,7 @@ interface SensorialGameProps {
   activityId?: number;
 }
 
-export const SensorialGame = ({ activityId = 6 }: SensorialGameProps) => {
+export const SensorialGame = ({ activityId = 8 }: SensorialGameProps) => {
   const gameRef = useRef<Phaser.Game | null>(null);
   const { user } = useUser();
 
