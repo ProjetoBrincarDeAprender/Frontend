@@ -88,5 +88,10 @@
     "title": "Jogo das Datas Comemorativas",
     "gameIdUrl": "com-dates",
     "image": "/assets/comDatesGame/background.png"
+  },
+  {
+    "title": "Jogo Sensorial",
+    "gameIdUrl": "sensorial",
+    "image": "/assets/sensorialGame/background.png"
   }
 ]

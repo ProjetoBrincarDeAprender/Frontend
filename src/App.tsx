@@ -12,6 +12,7 @@ import NumbersGame from "./components/features/games/NumbersGame";
 import { PlantsGame } from "./components/features/games/PlantsGame";
 import ProfessionsGame from "./components/features/games/ProfessionsGame";
 import PunctuationGame from "./components/features/games/PunctuationGame";
+import { SensorialGame } from "./components/features/games/SensorialGame";
 import SimpleSyllableGame from "./components/features/games/SimpleSyllableGame";
 import { SpaceGame } from "./components/features/games/SpaceGame";
 import SubtractionGame from "./components/features/games/SubtractionGame";
@@ -108,6 +109,7 @@ function App() {
         <Route path="hygiene" element={<HygieneGame />} />
         <Route path="syllable" element={<SyllableGame />} />
         <Route path="com-dates" element={<ComDatesGame />} />
+        <Route path="sensorial" element={<SensorialGame />} />
       </Route>
       <Route path="complex-syllable" element={<ComplexSyllableGame />} />
       <Route path="games/punctuation" element={<PunctuationGame />} />
