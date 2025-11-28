@@ -80,6 +80,11 @@
     "image": "/assets/simpleSyllableGame/images/backgroundMain.png"
   },
   {
+    "title": "Sílabas Complexas",
+    "gameIdUrl": "complex-syllable",
+    "image": "/assets/complexSyllableGame/images/backgroundMain.png"
+  },
+  {
     "title": "Jogo da Higiene Pessoal",
     "gameIdUrl": "hygiene",
     "image": "/assets/hygieneGame/background.png"
