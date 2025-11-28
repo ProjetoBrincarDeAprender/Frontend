@@ -73,5 +73,10 @@
     "title": "Jogo da Higiene Pessoal",
     "gameIdUrl": "hygiene",
     "image": "/assets/hygieneGame/background.png"
+  },
+  {
+    "title": "Jogo Sensorial",
+    "gameIdUrl": "sensorial",
+    "image": "/assets/sensorialGame/background.png"
   }
 ]

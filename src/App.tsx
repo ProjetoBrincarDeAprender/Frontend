@@ -1,4 +1,5 @@
 import { Route, Routes } from "react-router";
+import ComplexSyllableGame from "./components/features/games/ComplexSyllableGame";
 import { CoordinationGame } from "./components/features/games/CoordinationGame";
 import HousingGame from "./components/features/games/HousingGame";
 import { HygieneGame } from "./components/features/games/HygieneGame";
@@ -9,6 +10,7 @@ import NumbersGame from "./components/features/games/NumbersGame";
 import { PlantsGame } from "./components/features/games/PlantsGame";
 import ProfessionsGame from "./components/features/games/ProfessionsGame";
 import PunctuationGame from "./components/features/games/PunctuationGame";
+import { SensorialGame } from "./components/features/games/SensorialGame";
 import SimpleSyllableGame from "./components/features/games/SimpleSyllableGame";
 import { SpaceGame } from "./components/features/games/SpaceGame";
 import SubtractionGame from "./components/features/games/SubtractionGame";
@@ -39,7 +41,6 @@ import Logout from "./pages/Logout/Logout";
 import { Profile } from "./pages/Profile/Profile";
 import { RecoverPassword } from "./pages/RecoverPassword/RecoverPassword";
 import { SendPasswordToken } from "./pages/SendPasswordToken/SendPasswordToken";
-import ComplexSyllableGame from "./components/features/games/ComplexSyllableGame";
 
 function App() {
   return (
@@ -104,6 +105,7 @@ function App() {
         <Route path="locations" element={<LocationsGame />} />
         <Route path="punctuation" element={<PunctuationGame />} />
         <Route path="hygiene" element={<HygieneGame />} />
+        <Route path="sensorial" element={<SensorialGame />} />
       </Route>
 
       <Route element={<AuthGuard requireAuth />}>
