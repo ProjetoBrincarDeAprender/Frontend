@@ -396,40 +396,6 @@ export default class HygieneLogic {
   }
 
   /**
-   * Função auxiliar para quebrar texto em múltiplas linhas
-   */
-  private wrapText(text: string, maxLineLength: number = 14): string {
-    const words = text.split(" ");
-    const lines: string[] = [];
-    let currentLine = "";
-
-    words.forEach((word) => {
-      // Se adicionar esta palavra ultrapassar o limite da linha
-      if (currentLine.length + word.length + 1 > maxLineLength) {
-        // Se a linha atual não estiver vazia, finalize-a
-        if (currentLine.length > 0) {
-          lines.push(currentLine.trim());
-          currentLine = word;
-        } else {
-          // Se a palavra é muito longa para caber em uma linha, force-a
-          lines.push(word);
-          currentLine = "";
-        }
-      } else {
-        // Adicione a palavra à linha atual
-        currentLine += (currentLine.length > 0 ? " " : "") + word;
-      }
-    });
-
-    // Adicione a última linha se houver
-    if (currentLine.length > 0) {
-      lines.push(currentLine.trim());
-    }
-
-    return lines.join("\n");
-  }
-
-  /**
    * Layout do Nível 3: Botões de texto (sem imagens)
    */
   private createLevel3Layout(
@@ -452,9 +418,6 @@ export default class HygieneLogic {
     options.forEach((option, index) => {
       const { x, y } = positions[index];
 
-      // Aplicar quebra de linha automática no texto
-      const wrappedText = this.wrapText(option);
-
       const button = this.buttonFactory.createButton({
         positions: { x, y },
         textures: {
@@ -462,11 +425,18 @@ export default class HygieneLogic {
           hover: "hoverButton",
           clicked: "clickedButton",
         },
-        text: wrappedText,
+        text: option,
         fontSize: 32,
         scale: 1,
         onClick: () => this.handleButtonClick(option),
       });
+
+      // Aplicar word wrap ao texto do botão após criação
+      const buttonText = button.getButtonText();
+      if (buttonText) {
+        buttonText.setWordWrapWidth(280);
+        buttonText.setAlign("center");
+      }
 
       this.buttons.push(button);
     });
