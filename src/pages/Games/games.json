@@ -93,5 +93,10 @@
     "title": "Jogo Sensorial",
     "gameIdUrl": "sensorial",
     "image": "/assets/sensorialGame/background.png"
+  },
+  {
+    "title": "Conta Armada",
+    "gameIdUrl": "armed-sum",
+    "image": "/assets/armedSum/background.png"
   }
 ]
