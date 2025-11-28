@@ -290,6 +290,13 @@ export default class PlantsLogic {
           onClick: () => this.handleButtonClick(option),
         });
 
+        // Aplicar word wrap ao texto do botão após criação
+        const buttonText = button.getButtonText();
+        if (buttonText) {
+          buttonText.setWordWrapWidth(280);
+          buttonText.setAlign("center");
+        }
+
         this.buttons.push(button);
       }
     });

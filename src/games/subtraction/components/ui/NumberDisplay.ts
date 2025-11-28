@@ -16,9 +16,25 @@ export class NumberDisplay {
     this.clear();
 
     const imageKeys = this.getImageKeysFromNumbers(numbers);
-    const startX = numbers.length === 3 ? 250 : 320;
+    const maxNumber = Math.max(...numbers);
+
+    // Ajustar posicionamento e espaçamento baseado na quantidade e tamanho dos números
+    let startX: number;
+    let spacing: number;
+    let scale: number;
+
+    if (numbers.length === 3) {
+      startX = 250;
+      spacing = 150;
+      scale = maxNumber > 5 ? 0.35 : 0.4;
+    } else {
+      // Centralizar melhor quando há números maiores (6-10)
+      startX = maxNumber > 5 ? 320 : 320;
+      spacing = maxNumber > 5 ? 160 : 200;
+      scale = maxNumber > 5 ? 0.35 : 0.5;
+    }
+
     const startY = 110;
-    const spacing = numbers.length === 3 ? 150 : 200;
 
     const bubble = this.thoughtBubble.create(
       startX,
@@ -36,7 +52,7 @@ export class NumberDisplay {
           imageKey,
         );
 
-        image.setScale(numbers.length === 3 ? 0.4 : 0.5);
+        image.setScale(scale);
         image.setDepth(11);
         this.images.push(image);
       }
@@ -45,8 +61,9 @@ export class NumberDisplay {
     // Adicionar símbolos de "-" entre os números
     for (let i = 0; i < numbers.length - 1; i++) {
       const minusX = startX + i * spacing + spacing / 2;
+      const fontSize = numbers.length === 3 ? "36px" : "48px";
       const minusText = this.scene.add.text(minusX, startY - 10, "-", {
-        fontSize: numbers.length === 3 ? "36px" : "48px",
+        fontSize: fontSize,
         color: "#000000",
         fontFamily: "Arial Black",
       });
@@ -63,6 +80,11 @@ export class NumberDisplay {
       3: "tres",
       4: "quatro",
       5: "cinco",
+      6: "seis",
+      7: "sete",
+      8: "oito",
+      9: "nove",
+      10: "dez",
     };
 
     return numbers.map((num) => numberToImageKey[num] || null);

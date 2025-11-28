@@ -24,8 +24,9 @@ export class ThoughtBubble {
       bubbleWidth = spacing * 2 + 220;
       bubbleX = centerX + spacing;
     } else {
-      bubbleWidth = spacing + 200;
-      bubbleX = centerX + spacing / 2 - 10;
+      // Ajustar largura do balão baseado no espaçamento
+      bubbleWidth = spacing + 220;
+      bubbleX = centerX + spacing / 2;
     }
 
     const bubbleHeight = 130;

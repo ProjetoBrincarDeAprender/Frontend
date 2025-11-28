@@ -104,33 +104,94 @@ export class AudioContentRenderer implements IContentRenderer {
     level: ClickedButtonLevel,
     scene: Phaser.Scene,
     buttonManager: ButtonManager,
+    selectedOption?: Button,
   ): Button[] | null {
-    // Remove apenas os botões de conteúdo, mantém o botão de áudio
-    this.content.forEach((button) => button.destroy());
-    this.content = [];
+    if (Array.isArray(level.getAnswer()) && level.getAnswer().length >= 1) {
+      // Remove apenas os botões de conteúdo, mantém o botão de áudio
+      this.content.forEach((button) => button.destroy());
+      this.content = [];
 
-    const completeContent = level.getCompleteContent();
-    if (completeContent && completeContent.length > 0) {
-      const newPositionY = 380;
-      const scale = 1.2;
+      const completeContent = level.getCompleteContent();
+      let content = level.getContent();
+      let indexOffset = 0;
 
-      const contentButtons = this.createContentButtons(
-        completeContent,
-        scene,
-        buttonManager,
-        newPositionY,
-        scale,
-      );
-      this.content = contentButtons;
+      completeContent.forEach((contentItem, index) => {
+        if (contentItem === selectedOption?.getButtonStringText()) {
+          indexOffset = index;
+        }
+      });
+
+      content.forEach((_item, index) => {
+        if (index === indexOffset) {
+          content[index] = selectedOption!.getButtonStringText();
+        }
+      });
+
+      //Resposta
+      let answer = level.getAnswer();
+
+      if (Array.isArray(answer)) {
+        const index = answer.indexOf(
+          selectedOption?.getButtonStringText() || "",
+        );
+        if (index > -1) {
+          answer.splice(index, 1);
+        }
+      }
+
+      if (content && content.length > 0) {
+        const newPositionY = 380;
+        const scale = 1.2;
+
+        const contentButtons = this.createContentButtons(
+          content,
+          scene,
+          buttonManager,
+          newPositionY,
+          scale,
+        );
+        this.content = contentButtons;
+      }
+
+      const allButtons = this.audioControlButton
+        ? [this.audioControlButton]
+        : [];
+      if (this.content.length > 0) {
+        allButtons.push(...this.content);
+      }
+
+      return allButtons.length > 0 ? allButtons : null;
+    } else {
+      // Remove apenas os botões de conteúdo, mantém o botão de áudio
+      this.content.forEach((button) => button.destroy());
+      this.content = [];
+
+      const completeContent = level.getCompleteContent();
+      if (completeContent && completeContent.length > 0) {
+        const newPositionY = 380;
+        const scale = 1.2;
+
+        const contentButtons = this.createContentButtons(
+          completeContent,
+          scene,
+          buttonManager,
+          newPositionY,
+          scale,
+        );
+        this.content = contentButtons;
+      }
+
+      // Retorna todos os botões (botão de áudio + conteúdo atualizado)
+      const allButtons = this.audioControlButton
+        ? [this.audioControlButton]
+        : [];
+      if (this.content.length > 0) {
+        allButtons.push(...this.content);
+      }
+
+      return allButtons.length > 0 ? allButtons : null;
     }
-
-    // Retorna todos os botões (botão de áudio + conteúdo atualizado)
-    const allButtons = this.audioControlButton ? [this.audioControlButton] : [];
-    if (this.content.length > 0) {
-      allButtons.push(...this.content);
-    }
-
-    return allButtons.length > 0 ? allButtons : null;
+    return null;
   }
 
   clear(): void {

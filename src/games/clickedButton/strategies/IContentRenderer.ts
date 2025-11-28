@@ -36,6 +36,7 @@ export interface IContentRenderer {
     level: ClickedButtonLevel,
     scene: Phaser.Scene,
     buttonManager: any,
+    selectedOption?: Button,
   ): Button[] | null;
 
   /**
