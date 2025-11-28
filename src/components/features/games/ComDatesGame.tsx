@@ -20,7 +20,7 @@ interface ComDatesGameProps {
   activityId?: number;
 }
 
-export const ComDatesGame = ({ activityId = 5 }: ComDatesGameProps) => {
+export const ComDatesGame = ({ activityId = 7 }: ComDatesGameProps) => {
   const gameRef = useRef<Phaser.Game | null>(null);
   const { user } = useUser();
 
