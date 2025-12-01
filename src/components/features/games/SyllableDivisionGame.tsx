@@ -19,10 +19,10 @@ const SyllableDivisionGame: React.FC = () => {
   useEffect(() => {
     if (gameRef.current || !user) return;
 
-    const startScene = new StartScene({
-      nextSceneName: "SyllableDivision",
-      gameTitle: "DIVIDINDO SÍLABAS",
-    });
+    // const startScene = new StartScene({
+    //   nextSceneName: "SyllableDivision",
+    //   gameTitle: "DIVIDINDO SÍLABAS",
+    // });
 
     const gameScene = new SyllableDivision();
 
@@ -42,7 +42,12 @@ const SyllableDivisionGame: React.FC = () => {
       type: Phaser.AUTO,
       width: 800,
       height: 600,
-      scene: [startScene, levelCompleted, gameScene, endScene],
+      scene: [
+        // startScene,
+        gameScene,
+        levelCompleted,
+        endScene,
+      ],
       parent: containerRef.current,
       backgroundColor: "#ffffff",
     };
