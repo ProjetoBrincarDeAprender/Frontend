@@ -29,3 +29,6 @@ dist-ssr
 # pnpm lock
 pnpm-lock*
 pnpm-*
+
+#etc
+package-lock.json
