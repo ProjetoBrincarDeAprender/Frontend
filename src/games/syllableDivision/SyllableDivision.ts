@@ -21,7 +21,7 @@ export default class SyllableDivision extends Phaser.Scene {
 
   constructor(config: SyllableDivisionConfig) {
     super({ key: "SyllableDivision" });
-    this.DROPZONE_MARGIN = config.DROPZONE_MARGIN || 20;
+    this.DROPZONE_MARGIN = config.DROPZONE_MARGIN || 40;
     this.DROPZONE_SIZE = config.DROPZONE_SIZE || 80;
     this.OPTION_FONT_SIZE = config.OPTION_FONT_SIZE || 58;
     this.OPTION_SIZE = config.OPTION_SIZE || 80;
@@ -58,7 +58,8 @@ export default class SyllableDivision extends Phaser.Scene {
         0,
         this.DROPZONE_SIZE,
         this.DROPZONE_SIZE,
-        0x000000,
+        0x000a1f,
+        // #000a1fff
       );
       rectangle.setInteractive();
       rectangle.input!.dropZone = true;
@@ -90,7 +91,7 @@ export default class SyllableDivision extends Phaser.Scene {
         .text(0, 0, syllabe, {
           fontFamily: "Arial",
           fontSize: `${this.OPTION_FONT_SIZE}px`,
-          color: "#00ff55ff",
+          color: "#b2bce9ff",
         })
         .setOrigin(0.5);
       const rectangle = this.add.rectangle(
@@ -98,10 +99,11 @@ export default class SyllableDivision extends Phaser.Scene {
         0,
         this.OPTION_SIZE,
         this.OPTION_SIZE,
-        0x1b9b50ff,
+        0x007bff,
       );
       const container = this.add.container(0, 0, [rectangle, text]);
       container.setSize(this.OPTION_SIZE, this.OPTION_SIZE);
+      container.setInteractive({ draggable: true });
       options.push(container);
     });
     this.options = options;
@@ -118,18 +120,11 @@ export default class SyllableDivision extends Phaser.Scene {
     });
   }
 
-  addDrags(): void {
-    this.options.forEach((option) => {
-      option.setInteractive({ draggable: true });
-    });
-  }
-
   addInteractableComponents(): void {
     this.addDropzones();
     this.addOptions();
     this.alignDropzones();
     this.alignOptions();
-    this.addDrags();
   }
 
   addEvents(): void {
@@ -150,11 +145,11 @@ export default class SyllableDivision extends Phaser.Scene {
       "drop",
       (
         _pointer: Phaser.Input.Pointer,
-        object: Phaser.GameObjects.Container,
+        gameObject: Phaser.GameObjects.Container,
         dropZone: Phaser.GameObjects.Container,
       ) => {
-        object.setPosition(dropZone.x, dropZone.y);
-        if (object.input) object.input.enabled = false;
+        gameObject.setPosition(dropZone.x, dropZone.y);
+        if (gameObject.input) gameObject.input.enabled = false;
       },
     );
   }
