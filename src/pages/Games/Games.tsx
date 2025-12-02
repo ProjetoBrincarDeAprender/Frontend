@@ -122,7 +122,8 @@ export function Games() {
       title.includes("soma") ||
       title.includes("números") ||
       title.includes("numero") ||
-      title.includes("subtração")
+      title.includes("subtração") ||
+      title.includes("conta")
     ) {
       return "MATEMATICA";
     }
