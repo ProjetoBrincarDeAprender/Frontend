@@ -23,8 +23,8 @@ const StressSyllable: React.FC = () => {
       scene: [
         StartScene.create(
           "GameScene",
-          "/assets/syllableGame/bg.png",
-          "syllableBackground",
+          "/assets/tonicStressGame/bg.png",
+          "tonicStressBackground",
           "CLASSIFICAÇÃO TÔNICA",
           "/assets/common/trophy.png",
           "trophy",
