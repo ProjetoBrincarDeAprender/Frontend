@@ -57,10 +57,54 @@ export class TonicStressGameData {
     }
   ];
 
+  // Phase 1.5: Identify tonic syllable with shuffled options (5 levels)
+  static readonly phase15Levels: TonicStressLevel[] = [
+    {
+      id: 6,
+      word: "COMPUTADOR",
+      emoji: "💻",
+      syllables: ["COM", "PU", "TA", "DOR"],
+      tonicSyllableIndex: 3,
+      classification: 'oxítona'
+    },
+    {
+      id: 7,
+      word: "TELEFONE",
+      emoji: "📞",
+      syllables: ["TE", "LE", "FO", "NE"],
+      tonicSyllableIndex: 2,
+      classification: 'paroxítona'
+    },
+    {
+      id: 8,
+      word: "ELÉTRICO",
+      emoji: "⚡",
+      syllables: ["E", "LÉ", "TRI", "CO"],
+      tonicSyllableIndex: 1,
+      classification: 'proparoxítona'
+    },
+    {
+      id: 9,
+      word: "PROFESSOR",
+      emoji: "👨‍🏫",
+      syllables: ["PRO", "FES", "SOR"],
+      tonicSyllableIndex: 2,
+      classification: 'oxítona'
+    },
+    {
+      id: 10,
+      word: "MÁQUINA",
+      emoji: "⚙️",
+      syllables: ["MÁ", "QUI", "NA"],
+      tonicSyllableIndex: 0,
+      classification: 'proparoxítona'
+    }
+  ];
+
   // Phase 2: Classify word stress (5 levels)
   static readonly phase2Levels: TonicStressLevel[] = [
     {
-      id: 6,
+      id: 11,
       word: "AMOR",
       emoji: "❤️",
       syllables: ["A", "MOR"],
@@ -73,7 +117,7 @@ export class TonicStressGameData {
       ]
     },
     {
-      id: 7,
+      id: 12,
       word: "LIVRO",
       emoji: "📖",
       syllables: ["LI", "VRO"],
@@ -86,7 +130,7 @@ export class TonicStressGameData {
       ]
     },
     {
-      id: 8,
+      id: 13,
       word: "MÚSICA",
       emoji: "🎵",
       syllables: ["MÚ", "SI", "CA"],
@@ -99,7 +143,7 @@ export class TonicStressGameData {
       ]
     },
     {
-      id: 9,
+      id: 14,
       word: "PARABÉNS",
       emoji: "🎉",
       syllables: ["PA", "RA", "BÉNS"],
@@ -112,7 +156,7 @@ export class TonicStressGameData {
       ]
     },
     {
-      id: 10,
+      id: 15,
       word: "PÁSSARO",
       emoji: "🐦",
       syllables: ["PÁS", "SA", "RO"],
@@ -130,16 +174,24 @@ export class TonicStressGameData {
     return this.phase1Levels.length;
   }
 
+  static getPhase15Count(): number {
+    return this.phase15Levels.length;
+  }
+
   static getPhase2Count(): number {
     return this.phase2Levels.length;
   }
 
   static getTotalLevels(): number {
-    return this.phase1Levels.length + this.phase2Levels.length;
+    return this.phase1Levels.length + this.phase15Levels.length + this.phase2Levels.length;
   }
 
   static getPhase1Level(index: number): TonicStressLevel | null {
     return this.phase1Levels[index] || null;
+  }
+
+  static getPhase15Level(index: number): TonicStressLevel | null {
+    return this.phase15Levels[index] || null;
   }
 
   static getPhase2Level(index: number): TonicStressLevel | null {
@@ -147,6 +199,25 @@ export class TonicStressGameData {
   }
 
   static shouldShowLevelComplete(currentLevel: number): boolean {
-    return currentLevel === this.getPhase1Count();
+    return currentLevel === this.getPhase1Count() || currentLevel === this.getPhase1Count() + this.getPhase15Count();
+  }
+
+  static shuffleSyllables(syllables: string[], tonicIndex: number): { shuffled: string[], correctIndex: number } {
+    const syllablesCopy = [...syllables];
+    const tonicSyllable = syllables[tonicIndex];
+    
+    // Fisher-Yates shuffle
+    for (let i = syllablesCopy.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [syllablesCopy[i], syllablesCopy[j]] = [syllablesCopy[j], syllablesCopy[i]];
+    }
+    
+    // Find new index of tonic syllable
+    const newTonicIndex = syllablesCopy.findIndex(syl => syl === tonicSyllable);
+    
+    return {
+      shuffled: syllablesCopy,
+      correctIndex: newTonicIndex
+    };
   }
 }
