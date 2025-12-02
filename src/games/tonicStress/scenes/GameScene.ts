@@ -102,23 +102,23 @@ export class GameScene extends Phaser.Scene {
   private createUI(): void {
     const audioManager = new AudioManager(this);
     audioManager.renderMuteButton();
-    this.add.rectangle(400, 300, 800, 600, 0x98FB98, 0.4);
+    this.add.rectangle(400, 300, 800, 600, 0xD8BFD8, 0.4);
 
-    this.titleText = this.add.text(400, 120, "", {
-      fontSize: "36px",
+    this.titleText = this.add.text(400, 80, "", {
+      fontSize: "42px",
       fontFamily: "Arial",
       color: "#2c3e50",
       fontStyle: "bold",
       align: "center"
     }).setOrigin(0.5);
 
-    this.emojiText = this.add.text(400, 200, "", {
+    this.emojiText = this.add.text(400, 210, "", {
       fontSize: "80px",
       fontFamily: "Arial"
     }).setOrigin(0.5);
 
-    this.wordText = this.add.text(400, 260, "", {
-      fontSize: "48px",
+    this.wordText = this.add.text(400, 280, "", {
+      fontSize: "44px",
       fontFamily: "Arial",
       color: "#2c3e50",
       fontStyle: "bold",
@@ -186,8 +186,14 @@ export class GameScene extends Phaser.Scene {
     const level = TonicStressGameData.getPhase2Level(levelIndex);
     if (!level) return;
 
+    // Smaller font for phase 2 title
+    this.titleText.setFontSize(36);
     this.titleText.setText("QUAL A CLASSIFICAÇÃO DA PALAVRA?");
+    
+    // Center the emoji and word lower
+    this.emojiText.setPosition(400, 240);
     this.emojiText.setText(level.emoji);
+    this.wordText.setPosition(400, 300);
     this.wordText.setText(level.word);
 
     // Create option buttons for classification
@@ -195,13 +201,13 @@ export class GameScene extends Phaser.Scene {
   }
 
   private createSyllableFrame(syllableCount: number): void {
-    const buttonWidth = 120;
-    const buttonSpacing = 20;
+    const buttonWidth = 200;
+    const buttonSpacing = 10;
     const totalWidth = (syllableCount * buttonWidth) + ((syllableCount - 1) * buttonSpacing);
-    const frameWidth = totalWidth + 40;
-    const frameHeight = 80;
+    const frameWidth = totalWidth + 80;
+    const frameHeight = 120;
     const frameX = 400 - (frameWidth / 2);
-    const frameY = 320;
+    const frameY = 350;
 
     this.wordFrame = this.add.graphics();
     this.wordFrame.fillStyle(0xFFFFFF, 0.9);
@@ -212,13 +218,13 @@ export class GameScene extends Phaser.Scene {
   }
 
   private createSyllableButtons(level: TonicStressLevel): void {
-    const buttonWidth = 120;
-    const buttonSpacing = 20;
+    const buttonWidth = 200;
+    const buttonSpacing = 10;
     const startX = 400 - ((level.syllables.length * buttonWidth + (level.syllables.length - 1) * buttonSpacing) / 2) + (buttonWidth / 2);
 
     level.syllables.forEach((syllable, index) => {
       const buttonX = startX + index * (buttonWidth + buttonSpacing);
-      const buttonY = 360;
+      const buttonY = 410;
 
       const button = new Button(
         this, 
@@ -228,8 +234,11 @@ export class GameScene extends Phaser.Scene {
         "squareHoverButton", 
         "squareClickedButton", 
         syllable, 
-        28
+        32
       );
+      
+      // Scale the button to make it larger
+      button.setScale(1.5);
       
       this.add.existing(button);
       this.syllableButtons.push(button);
@@ -246,24 +255,23 @@ export class GameScene extends Phaser.Scene {
   private createClassificationButtons(level: TonicStressLevel): void {
     if (!level.options) return;
 
-    const buttonPositions = [
-      { x: 400, y: 350 },
-      { x: 400, y: 420 },
-      { x: 400, y: 490 }
-    ];
-
+    // Horizontal layout for classification buttons
+    const buttonSpacing = 250;
+    const startX = 400 - ((level.options.length - 1) * buttonSpacing) / 2;
+    
     level.options.forEach((option, index) => {
-      const pos = buttonPositions[index];
+      const buttonX = startX + index * buttonSpacing;
+      const buttonY = 450;
       
       const button = new Button(
         this, 
-        pos.x, 
-        pos.y, 
+        buttonX, 
+        buttonY, 
         "defaultButton", 
         "hoverButton", 
         "clickedButton", 
         option.text, 
-        24
+        20
       );
       
       this.add.existing(button);
@@ -314,18 +322,14 @@ export class GameScene extends Phaser.Scene {
           
           button.destroy();
           
-          const newButton = new Button(this, buttonX, buttonY, "whiteSquareButton", "whiteSquareButton", "whiteSquareButton", buttonText, 28);
+          const newButton = new Button(this, buttonX, buttonY, "whiteSquareButton", "whiteSquareButton", "whiteSquareButton", buttonText, 42);
+          newButton.setScale(1.2);
           newButton.setTint(0xff0000);
           newButton.disableInteractive();
           newButton.setDepth(2);
           this.add.existing(newButton);
           this.syllableButtons[index] = newButton;
         }
-      }
-      
-      // Highlight correct answer
-      if (index === level.tonicSyllableIndex && !isCorrect) {
-        button.setTint(0x00ff00);
       }
     });
 
@@ -388,7 +392,7 @@ export class GameScene extends Phaser.Scene {
           
           button.destroy();
           
-          const newButton = new Button(this, buttonX, buttonY, "whiteButton", "whiteButton", "whiteButton", buttonText, 24);
+          const newButton = new Button(this, buttonX, buttonY, "whiteButton", "whiteButton", "whiteButton", buttonText, 20);
           newButton.setTint(0xff0000);
           newButton.disableInteractive();
           this.add.existing(newButton);
@@ -430,7 +434,8 @@ export class GameScene extends Phaser.Scene {
       
       button.destroy();
       
-      const newButton = new Button(this, buttonX, buttonY, "squareDefaultButton", "squareHoverButton", "squareClickedButton", syllable, 28);
+      const newButton = new Button(this, buttonX, buttonY, "squareDefaultButton", "squareHoverButton", "squareClickedButton", syllable, 42);
+      newButton.setScale(1.2);
       newButton.clearTint();
       newButton.setInteractive();
       newButton.setDepth(2);
@@ -448,19 +453,18 @@ export class GameScene extends Phaser.Scene {
   private resetClassificationButtonStates(level: TonicStressLevel): void {
     if (!level.options) return;
 
-    const buttonPositions = [
-      { x: 400, y: 350 },
-      { x: 400, y: 420 },
-      { x: 400, y: 490 }
-    ];
+    // Horizontal layout for reset
+    const buttonSpacing = 180;
+    const startX = 400 - ((level.options.length - 1) * buttonSpacing) / 2;
 
     this.optionButtons.forEach((button, index) => {
-      const pos = buttonPositions[index];
+      const buttonX = startX + index * buttonSpacing;
+      const buttonY = 380;
       const option = level.options![index];
       
       button.destroy();
       
-      const newButton = new Button(this, pos.x, pos.y, "defaultButton", "hoverButton", "clickedButton", option.text, 24);
+      const newButton = new Button(this, buttonX, buttonY, "defaultButton", "hoverButton", "clickedButton", option.text, 20);
       newButton.clearTint();
       newButton.setInteractive();
       this.add.existing(newButton);
