@@ -1,11 +1,15 @@
 import Phaser from "phaser";
 
+export interface SyllableDivisionConfig {
+  syllabes: string[];
+}
+
 export default class SyllableDivision extends Phaser.Scene {
   private syllabes: string[];
 
-  constructor(syllabes: string[] = ["A", "B"]) {
+  constructor(config: SyllableDivisionConfig) {
     super({ key: "SyllableDivision" });
-    this.syllabes = syllabes;
+    this.syllabes = config.syllabes;
   }
 
   preload() {}
