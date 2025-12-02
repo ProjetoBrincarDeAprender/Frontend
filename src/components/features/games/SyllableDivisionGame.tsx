@@ -24,10 +24,14 @@ const SyllableDivisionGame: React.FC = () => {
     //   gameTitle: "DIVIDINDO SÍLABAS",
     // });
 
-    const gameScene = new SyllableDivision();
+    const gameScene = new SyllableDivision({
+      backgroundPath: "/assets/syllableDivisionGame/images/backgroundMain.png",
+      syllabes: ["CA", "SA"],
+    });
 
     const levelCompleted = new LevelCompletedScene({
       nextLevelScene: "SyllableDivision",
+
       menuScene: "StartScene",
       onMenuReturn: () => {
         ClickButtonGameScene.resetRegistry(gameScene);

@@ -1,20 +1,28 @@
 import Phaser from "phaser";
 
 export interface SyllableDivisionConfig {
+  backgroundPath: string;
   syllabes: string[];
 }
 
 export default class SyllableDivision extends Phaser.Scene {
+  private config: SyllableDivisionConfig;
   private syllabes: string[];
 
   constructor(config: SyllableDivisionConfig) {
     super({ key: "SyllableDivision" });
+    this.config = config;
     this.syllabes = config.syllabes;
   }
 
-  preload() {}
+  preload(): void {
+    this.load.image("background", this.config.backgroundPath);
+  }
 
-  create() {
+  create(): void {
+    // Background
+    this.addBackground();
+
     // Elementos visuais
     const targets: Phaser.GameObjects.Rectangle[] = [];
     const dropzones: Phaser.GameObjects.Zone[] = [];
@@ -79,5 +87,15 @@ export default class SyllableDivision extends Phaser.Scene {
         if (sprite.input) sprite.input.enabled = false;
       },
     );
+  }
+
+  addBackground(): void {
+    const width = this.cameras.main.width;
+    const height = this.cameras.main.height;
+    const scaleFactor = Math.max(
+      width / this.textures.get("background").getSourceImage().width,
+      height / this.textures.get("background").getSourceImage().height,
+    );
+    this.add.image(width / 2, height / 2, "background").setScale(scaleFactor);
   }
 }
