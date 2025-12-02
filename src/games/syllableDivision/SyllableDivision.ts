@@ -15,6 +15,8 @@ export default class SyllableDivision extends Phaser.Scene {
   private OPTION_SIZE: number;
   private OPTION_FONT_SIZE: number;
   private config: SyllableDivisionConfig;
+  private dropzones: Phaser.GameObjects.Rectangle[] = [];
+  private options: Phaser.GameObjects.Container[] = [];
   private syllabes: string[];
 
   constructor(config: SyllableDivisionConfig) {
@@ -32,31 +34,58 @@ export default class SyllableDivision extends Phaser.Scene {
   }
 
   create(): void {
-    // Background
     this.addBackground();
+    this.addInteractableComponents();
+    this.addEvents();
+  }
 
-    // Elementos visuais
-    const targets: Phaser.GameObjects.Rectangle[] = [];
-    const dropzones: Phaser.GameObjects.Zone[] = [];
-    const sprites: Phaser.GameObjects.Container[] = [];
+  addBackground(): void {
+    const width = this.cameras.main.width;
+    const height = this.cameras.main.height;
+    const scaleFactor = Math.max(
+      width / this.textures.get("background").getSourceImage().width,
+      height / this.textures.get("background").getSourceImage().height,
+    );
+    this.add.image(width / 2, height / 2, "background").setScale(scaleFactor);
+  }
+
+  addDropzones(): void {
+    const dropzones: Phaser.GameObjects.Rectangle[] = [];
+
+    this.syllabes.forEach(() => {
+      const rectangle = this.add.rectangle(
+        0,
+        0,
+        this.DROPZONE_SIZE,
+        this.DROPZONE_SIZE,
+        0x000000,
+      );
+      rectangle.setInteractive();
+      rectangle.input!.dropZone = true;
+      dropzones.push(rectangle);
+    });
+    this.dropzones = dropzones;
+  }
+
+  alignDropzones(): void {
+    Phaser.Actions.GridAlign(this.dropzones, {
+      width: this.dropzones.length,
+      height: 1,
+      cellWidth: this.DROPZONE_MARGIN + this.DROPZONE_SIZE,
+      cellHeight: this.DROPZONE_SIZE,
+      x:
+        this.cameras.main.centerX -
+        (this.syllabes.length * (this.DROPZONE_MARGIN + this.DROPZONE_SIZE)) /
+          2 +
+        this.DROPZONE_MARGIN / 2,
+      y: 400,
+    });
+  }
+
+  addOptions(): void {
+    const options: Phaser.GameObjects.Container[] = [];
 
     this.syllabes.forEach((syllabe) => {
-      targets.push(
-        this.add.rectangle(
-          0,
-          0,
-          this.DROPZONE_SIZE,
-          this.DROPZONE_SIZE,
-          0x000000,
-        ),
-      );
-
-      dropzones.push(
-        this.add
-          .zone(0, 0, this.DROPZONE_SIZE, this.DROPZONE_SIZE)
-          .setRectangleDropZone(this.DROPZONE_SIZE, this.DROPZONE_SIZE),
-      );
-
       const text = this.add
         .text(0, 0, syllabe, {
           fontFamily: "Arial",
@@ -73,77 +102,60 @@ export default class SyllableDivision extends Phaser.Scene {
       );
       const container = this.add.container(0, 0, [rectangle, text]);
       container.setSize(this.OPTION_SIZE, this.OPTION_SIZE);
-      sprites.push(container);
+      options.push(container);
     });
+    this.options = options;
+  }
 
-    // Alinha objetos em linha horizontal
-    Phaser.Actions.GridAlign(targets, {
-      width: this.syllabes.length,
-      height: 1,
-      cellWidth: this.DROPZONE_MARGIN + this.DROPZONE_SIZE,
-      cellHeight: 100,
-      x:
-        400 -
-        (this.syllabes.length * (this.DROPZONE_MARGIN + this.DROPZONE_SIZE)) /
-          2 +
-        this.DROPZONE_MARGIN / 2,
-      y: 400,
-    });
-
-    Phaser.Actions.GridAlign(dropzones, {
-      width: this.syllabes.length,
-      height: 1,
-      cellWidth: this.DROPZONE_MARGIN + this.DROPZONE_SIZE,
-      cellHeight: 100,
-      x:
-        400 -
-        (this.syllabes.length * (this.DROPZONE_MARGIN + this.DROPZONE_SIZE)) /
-          2 +
-        this.DROPZONE_MARGIN / 2,
-      y: 400,
-    });
-
-    Phaser.Actions.GridAlign(sprites, {
-      width: this.syllabes.length,
+  alignOptions(): void {
+    Phaser.Actions.GridAlign(this.options, {
+      width: this.options.length,
       height: 1,
       cellWidth: this.OPTION_SIZE,
       cellHeight: this.OPTION_SIZE,
-      x: 400 - (this.syllabes.length * this.OPTION_SIZE) / 2,
+      x: 400 - (this.options.length * this.OPTION_SIZE) / 2,
       y: 300,
     });
+  }
 
-    // Habilitar interatividade
-    sprites.forEach((sprite) => {
-      sprite.setInteractive({ draggable: true });
-      sprite.on(
-        "drag",
-        (_pointer: Phaser.Input.Pointer, spriteX: number, spriteY: number) => {
-          sprite.setPosition(spriteX, spriteY);
-        },
-      );
+  addDrags(): void {
+    this.options.forEach((option) => {
+      option.setInteractive({ draggable: true });
     });
+  }
 
-    // Eventos
+  addInteractableComponents(): void {
+    this.addDropzones();
+    this.addOptions();
+    this.alignDropzones();
+    this.alignOptions();
+    this.addDrags();
+  }
+
+  addEvents(): void {
+    this.input.on(
+      "drag",
+      (
+        _pointer: Phaser.Input.Pointer,
+        gameObject: Phaser.GameObjects.Container,
+        dragX: number,
+        dragY: number,
+      ) => {
+        gameObject.x = dragX;
+        gameObject.y = dragY;
+      },
+    );
+
     this.input.on(
       "drop",
       (
         _pointer: Phaser.Input.Pointer,
-        sprite: Phaser.GameObjects.Rectangle,
-        dropZone: Phaser.GameObjects.Zone,
+        object: Phaser.GameObjects.Container,
+        dropZone: Phaser.GameObjects.Container,
       ) => {
-        sprite.setPosition(dropZone.x, dropZone.y);
-        if (sprite.input) sprite.input.enabled = false;
+        object.setPosition(dropZone.x, dropZone.y);
+        if (object.input) object.input.enabled = false;
       },
     );
-  }
-
-  addBackground(): void {
-    const width = this.cameras.main.width;
-    const height = this.cameras.main.height;
-    const scaleFactor = Math.max(
-      width / this.textures.get("background").getSourceImage().width,
-      height / this.textures.get("background").getSourceImage().height,
-    );
-    this.add.image(width / 2, height / 2, "background").setScale(scaleFactor);
   }
 }
