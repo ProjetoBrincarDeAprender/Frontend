@@ -115,7 +115,7 @@ export function Games() {
   const getGameArea = (gameTitle: string): KnowledgeArea => {
     const title = gameTitle.toLowerCase();
 
-    if (title.includes("vogais") || title.includes("sílaba")) {
+    if (title.includes("vogais") || title.includes("sílaba") || title.includes("silábica")) {
       return "PORTUGUES";
     }
     if (
