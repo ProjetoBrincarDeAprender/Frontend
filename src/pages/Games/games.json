@@ -15,6 +15,11 @@
     "image": "/assets/syllableGame/bg.png"
   },
   {
+    "title": "Classificação Tônica",
+    "gameIdUrl": "stresssyllable",
+    "image": "/assets/syllableGame/bg.svg"
+  },
+  {
     "title": "Jogo do Espaço",
     "gameIdUrl": "space",
     "image": "/assets/spaceGame/background.png"
