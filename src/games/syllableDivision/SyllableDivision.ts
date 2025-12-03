@@ -1,4 +1,5 @@
 import { AudioManager } from "../common/managers/AudioManager";
+import { LevelCompletedScene } from "../common/scenes/LevelCompletedScene";
 import Phaser from "phaser";
 import EffectManager from "../clickedButton/logic/EffectManager";
 
@@ -68,7 +69,10 @@ export default class SyllableDivision extends Phaser.Scene {
   }
 
   create(): void {
-    this.registry.set("actualLevel", this.config.actualLevel || 0);
+    if (this.registry.get("actualLevel") === undefined) {
+      this.registry.set("actualLevel", 0);
+    }
+    this.registerStandardScenes();
     this.addBackground();
     this.setupLevel();
     this.addInstructions();
@@ -77,6 +81,18 @@ export default class SyllableDivision extends Phaser.Scene {
 
   init() {
     new AudioManager(this);
+  }
+
+  private registerStandardScenes(): void {
+    if (!this.scene.manager.getScene("LevelCompleteScene")) {
+      const levelCompleteScene = new LevelCompletedScene({
+        backgroundPath: this.config.backgroundPath,
+        backgroundKey: "background",
+        nextLevelScene: "SyllableDivision",
+        menuScene: "StartScene",
+      });
+      this.scene.add("LevelCompleteScene", levelCompleteScene);
+    }
   }
 
   addBackground(): void {
@@ -304,8 +320,6 @@ export default class SyllableDivision extends Phaser.Scene {
     this.syllabes = this.config.levels[this.registry.get("actualLevel")] || [];
     if (this.syllabes.length === 0) {
       this.scene.start("EndScene");
-    } else if (this.syllabes.length % 5 === 0) {
-      this.scene.start("LevelCompleteScene");
     } else {
       this.addImage();
       this.addInteractableComponents();
@@ -318,7 +332,16 @@ export default class SyllableDivision extends Phaser.Scene {
       this.destroyImage();
       this.destroyDropzones();
       this.destroyOptions();
-      this.setupLevel();
+
+      if (
+        this.registry.get("actualLevel") % 5 === 0 &&
+        this.registry.get("actualLevel") !== 0 &&
+        this.registry.get("actualLevel") < this.config.levels.length
+      ) {
+        this.scene.start("LevelCompleteScene");
+      } else {
+        this.setupLevel();
+      }
     });
   }
 }
