@@ -26,6 +26,7 @@ const SyllableDivisionGame: React.FC = () => {
 
     const gameScene = new SyllableDivision({
       backgroundPath: "/assets/syllableDivisionGame/images/backgroundMain.png",
+      imagesPath: "/assets/useSyllableGame/images/entities/",
       instruction: "SEPARE A PALAVRA",
       levels: [
         ["CA", "SA"],

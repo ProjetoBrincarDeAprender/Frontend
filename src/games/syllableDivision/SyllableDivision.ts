@@ -3,11 +3,13 @@ import Phaser from "phaser";
 export interface SyllableDivisionConfig {
   DROPZONE_MARGIN?: number;
   DROPZONE_SIZE?: number;
+  IMAGE_POSITION?: { x: number; y: number };
   OPTION_FONT_SIZE?: number;
   OPTION_SIZE?: number;
   actualLevel?: number;
   instruction?: string;
   backgroundPath: string;
+  imagesPath: string;
   levels: string[][];
 }
 
@@ -18,6 +20,7 @@ export default class SyllableDivision extends Phaser.Scene {
   private OPTION_FONT_SIZE: number;
   private config: SyllableDivisionConfig;
   private dropzones: Phaser.GameObjects.Rectangle[] = [];
+  private image: Phaser.GameObjects.Image | null;
   private options: Phaser.GameObjects.Container[] = [];
   private syllabes: string[];
 
@@ -28,18 +31,29 @@ export default class SyllableDivision extends Phaser.Scene {
     this.OPTION_FONT_SIZE = config.OPTION_FONT_SIZE || 58;
     this.OPTION_SIZE = config.OPTION_SIZE || 80;
     this.config = config;
+    this.image = null;
     this.syllabes = config.levels[config.actualLevel || 0];
   }
 
   preload(): void {
     this.load.image("background", this.config.backgroundPath);
+    this.config.levels.forEach((level) => {
+      let word = "";
+      level.forEach((syllabe) => {
+        word += syllabe.toLowerCase();
+      });
+      if (word.includes("sofá")) {
+        word = "sofa";
+      }
+      this.load.image(word, this.config.imagesPath + word + ".png");
+    });
   }
 
   create(): void {
     this.registry.set("actualLevel", this.config.actualLevel || 0);
     this.addBackground();
-    this.addInstructions();
     this.setupLevel();
+    this.addInstructions();
     this.addEvents();
   }
 
@@ -51,7 +65,7 @@ export default class SyllableDivision extends Phaser.Scene {
       height / this.textures.get("background").getSourceImage().height,
     );
     this.add.image(width / 2, height / 2, "background").setScale(scaleFactor);
-    this.add.rectangle(width / 2, height / 2, width, height, 0x000000, 0.4);
+    this.add.rectangle(width / 2, height / 2, width, height, 0x000000, 0.6);
   }
 
   addInstructions(): void {
@@ -64,6 +78,28 @@ export default class SyllableDivision extends Phaser.Scene {
         color: "#ffffff",
       })
       .setOrigin(0.5);
+  }
+
+  addImage() {
+    const x = this.config.IMAGE_POSITION?.x || this.cameras.main.centerX;
+    const y = this.config.IMAGE_POSITION?.y || this.cameras.main.centerY - 60;
+    const actualLevel = this.registry.get("actualLevel");
+    let word = "";
+    this.config.levels[actualLevel].forEach((syllabe) => {
+      word += syllabe.toLowerCase();
+    });
+    if (word.includes("sofá")) {
+      word = "sofa";
+    }
+
+    this.image = this.add.image(x, y, word).setScale(0.35);
+  }
+
+  destroyImage() {
+    if (this.image) {
+      this.image.destroy();
+      this.image = null;
+    }
   }
 
   addDropzones(): void {
@@ -95,7 +131,7 @@ export default class SyllableDivision extends Phaser.Scene {
         (this.syllabes.length * (this.DROPZONE_MARGIN + this.DROPZONE_SIZE)) /
           2 +
         this.DROPZONE_MARGIN / 2,
-      y: 400,
+      y: 480,
     });
   }
 
@@ -137,7 +173,7 @@ export default class SyllableDivision extends Phaser.Scene {
       cellWidth: this.OPTION_SIZE,
       cellHeight: this.OPTION_SIZE,
       x: 400 - (this.options.length * this.OPTION_SIZE) / 2,
-      y: 300,
+      y: 380,
     });
   }
 
@@ -210,6 +246,7 @@ export default class SyllableDivision extends Phaser.Scene {
     } else if (this.syllabes.length % 5 === 0) {
       this.scene.start("LevelCompleteScene");
     } else {
+      this.addImage();
       this.addInteractableComponents();
     }
   }
@@ -217,6 +254,7 @@ export default class SyllableDivision extends Phaser.Scene {
   endLevel(): void {
     this.registry.inc("actualLevel", 1);
     this.time.delayedCall(1000, () => {
+      this.destroyImage();
       this.destroyDropzones();
       this.destroyOptions();
       this.setupLevel();
