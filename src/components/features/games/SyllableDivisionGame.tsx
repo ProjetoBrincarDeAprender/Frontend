@@ -36,12 +36,17 @@ const SyllableDivisionGame: React.FC = () => {
         ["SO", "FÁ"],
         ["PA", "TO"],
         ["MA", "LA"],
+        ["BO", "NE", "CA"],
+        ["BA", "NA", "NA"],
+        ["CA", "MI", "SA"],
+        ["CA", "VA", "LO"],
+        ["PI", "PO", "CA"],
+        ["PA", "RA", "FU", "SO"],
       ],
     });
 
     const levelCompleted = new LevelCompletedScene({
       nextLevelScene: "SyllableDivision",
-
       menuScene: "StartScene",
       onMenuReturn: () => {
         ClickButtonGameScene.resetRegistry(gameScene);

@@ -114,9 +114,9 @@ function App() {
         <Route path="sensorial" element={<SensorialGame />} />
         <Route path="armed-sum" element={<ArmedSumGame />} />
         <Route path="syllable-division" element={<SyllableDivisionGame />} />
+        <Route path="complex-syllable" element={<ComplexSyllableGame />} />
+        <Route path="punctuation" element={<PunctuationGame />} />
       </Route>
-      <Route path="complex-syllable" element={<ComplexSyllableGame />} />
-      <Route path="games/punctuation" element={<PunctuationGame />} />
 
       <Route element={<AuthGuard requireAuth />}>
         <Route path="/profile">
