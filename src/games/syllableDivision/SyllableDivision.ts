@@ -36,6 +36,9 @@ export default class SyllableDivision extends Phaser.Scene {
   }
 
   preload(): void {
+    this.load.audio("correct", "/assets/common/sounds/correct.mp3");
+    this.load.audio("incorrect", "/assets/common/sounds/incorrect.mp3");
+
     this.load.image("background", this.config.backgroundPath);
     this.config.levels.forEach((level) => {
       let word = "";
@@ -204,6 +207,21 @@ export default class SyllableDivision extends Phaser.Scene {
     );
 
     this.input.on(
+      "dragend",
+      (
+        _pointer: Phaser.Input.Pointer,
+        gameObject: Phaser.GameObjects.Container,
+        dropped: boolean,
+      ) => {
+        if (!dropped) {
+          gameObject.x = gameObject.input!.dragStartX;
+          gameObject.y = gameObject.input!.dragStartY;
+          this.sound.play("incorrect");
+        }
+      },
+    );
+
+    this.input.on(
       "dragstart",
       (
         _pointer: Phaser.Input.Pointer,
@@ -233,6 +251,7 @@ export default class SyllableDivision extends Phaser.Scene {
     if (gameObject.input) gameObject.input.enabled = false;
     dropZone.destroy();
     this.dropzones = this.dropzones.filter((zone) => zone !== dropZone);
+    this.sound.play("correct");
 
     if (this.dropzones.length === 0) {
       this.endLevel();
