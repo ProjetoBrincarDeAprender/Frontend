@@ -46,17 +46,7 @@ export class GameScene extends Phaser.Scene {
     this.tonicStressGameService = new TonicStressGameService(this);
     this.tonicStressGameService.setCurrentLevel(this.currentLevel);
 
-    // Determine current phase
-    const phase1Count = TonicStressGameData.getPhase1Count();
-    const phase15Count = TonicStressGameData.getPhase15Count();
-    
-    if (this.currentLevel < phase1Count) {
-      this.currentPhase = 1;
-    } else if (this.currentLevel < phase1Count + phase15Count) {
-      this.currentPhase = 1.5;
-    } else {
-      this.currentPhase = 2;
-    }
+    this.updateCurrentPhase();
 
     this.registerStandardScenes();
     this.createUI();
@@ -64,48 +54,38 @@ export class GameScene extends Phaser.Scene {
   }
 
   preload(): void {
-    this.load.audio("correct", "/assets/common/sounds/correct.mp3");
-    this.load.audio("wrong", "/assets/common/sounds/incorrect.mp3");
-    this.load.svg("audioOn", "/assets/common/buttons/audioOn.svg");
-    this.load.svg("audioOff", "/assets/common/buttons/audioOff.svg");
-    this.load.svg("defaultButton", "/assets/common/buttons/rectangleBlueDefault.svg");
-    this.load.svg("hoverButton", "/assets/common/buttons/rectangleBlueHover.svg");
-    this.load.svg("clickedButton", "/assets/common/buttons/rectangleBlueClicked.svg");
-    this.load.svg("squareDefaultButton", "/assets/common/buttons/squareBlueDefault.svg");
-    this.load.svg("squareHoverButton", "/assets/common/buttons/squareBlueHover.svg");
-    this.load.svg("squareClickedButton", "/assets/common/buttons/squareBlueClicked.svg");
-    this.load.svg("whiteButton", "/assets/common/buttons/rectangleWhiteDefault.svg");
-    this.load.svg("whiteSquareButton", "/assets/common/buttons/squareWhiteDefault.svg");
-    this.load.svg("star", "/assets/common/buttons/star.svg");
+    const assets = {
+      audio: [["correct", "correct.mp3"], ["wrong", "incorrect.mp3"]],
+      svg: [["audioOn", "audioOn.svg"], ["audioOff", "audioOff.svg"], ["defaultButton", "rectangleBlueDefault.svg"], 
+            ["hoverButton", "rectangleBlueHover.svg"], ["clickedButton", "rectangleBlueClicked.svg"], 
+            ["squareDefaultButton", "squareBlueDefault.svg"], ["squareHoverButton", "squareBlueHover.svg"], 
+            ["squareClickedButton", "squareBlueClicked.svg"], ["whiteButton", "rectangleWhiteDefault.svg"], 
+            ["whiteSquareButton", "squareWhiteDefault.svg"], ["star", "star.svg"]]
+    };
+    
+    assets.audio.forEach(([key, file]) => this.load.audio(key, `/assets/common/sounds/${file}`));
+    assets.svg.forEach(([key, file]) => this.load.svg(key, `/assets/common/buttons/${file}`));
   }
 
   private registerStandardScenes(): void {
+    const clearRegistry = () => {
+      this.registry.remove("tonicStressCurrentLevel");
+      this.registry.remove("tonicStressScore");
+      this.registry.remove("tonicStressGameCompleted");
+    };
+
+    const sceneConfig = {
+      backgroundPath: "/assets/syllableGame/bg.svg",
+      backgroundKey: "tonicStressBackground"
+    };
+
     if (!this.scene.manager.getScene("LevelCompleteScene")) {
-      const levelCompleteScene = new LevelCompletedScene({
-        backgroundPath: "/assets/syllableGame/bg.svg",
-        backgroundKey: "tonicStressBackground",
-        onMenuReturn: () => {
-          this.registry.remove("tonicStressCurrentLevel");
-          this.registry.remove("tonicStressScore");
-          this.registry.remove("tonicStressGameCompleted");
-        }
-      });
-      this.scene.add("LevelCompleteScene", levelCompleteScene);
+      this.scene.add("LevelCompleteScene", new LevelCompletedScene({...sceneConfig, onMenuReturn: clearRegistry}));
     }
 
     if (!this.scene.manager.getScene("EndScene")) {
-      const tonicStressEndScene = new EndScene({
-        restartScene: "StartScene",
-        backgroundPath: "/assets/syllableGame/bg.svg",
-        backgroundKey: "tonicStressBackground",
-        subtitleMessage: "VOCÊ APRENDEU SOBRE \nCLASSIFICAÇÃO TÔNICA!",
-        onRestart: () => {
-          this.registry.remove("tonicStressCurrentLevel");
-          this.registry.remove("tonicStressScore");
-          this.registry.remove("tonicStressGameCompleted");
-        }
-      });
-      this.scene.add("EndScene", tonicStressEndScene);
+      this.scene.add("EndScene", new EndScene({...sceneConfig, restartScene: "StartScene", 
+        subtitleMessage: "VOCÊ APRENDEU SOBRE \nCLASSIFICAÇÃO TÔNICA!", onRestart: clearRegistry}));
     }
   }
 
@@ -143,6 +123,14 @@ export class GameScene extends Phaser.Scene {
     this.createTwinklingStars();
   }
 
+  private updateCurrentPhase(): void {
+    const phase1Count = TonicStressGameData.getPhase1Count();
+    const phase15Count = TonicStressGameData.getPhase15Count();
+    
+    this.currentPhase = this.currentLevel < phase1Count ? 1 : 
+                       this.currentLevel < phase1Count + phase15Count ? 1.5 : 2;
+  }
+
   private createTwinklingStars(): void {
     // Create stars near the borders
     const starPositions = [
@@ -178,9 +166,7 @@ export class GameScene extends Phaser.Scene {
   }
 
   private startLevel(): void {
-    const totalLevels = TonicStressGameData.getTotalLevels();
-    
-    if (this.currentLevel >= totalLevels) {
+    if (this.currentLevel >= TonicStressGameData.getTotalLevels()) {
       this.endGame();
       return;
     }
@@ -189,99 +175,56 @@ export class GameScene extends Phaser.Scene {
     this.isTransitioning = false;
     this.buttonsEnabled = true;
     this.clearUI();
+    this.updateCurrentPhase();
 
-    // Update current phase
-    const phase1Count = TonicStressGameData.getPhase1Count();
-    const phase15Count = TonicStressGameData.getPhase15Count();
-    
-    if (this.currentLevel < phase1Count) {
-      this.currentPhase = 1;
-    } else if (this.currentLevel < phase1Count + phase15Count) {
-      this.currentPhase = 1.5;
-    } else {
-      this.currentPhase = 2;
-    }
-
-    if (this.currentPhase === 1) {
-      this.showPhase1Level();
-    } else if (this.currentPhase === 1.5) {
-      this.showPhase15Level();
-    } else {
-      this.showPhase2Level();
-    }
+    const showMethods = { 1: this.showPhase1Level, 1.5: this.showPhase15Level, 2: this.showPhase2Level };
+    showMethods[this.currentPhase]?.call(this);
   }
 
   private clearUI(): void {
-    this.syllableButtons.forEach(button => button.destroy());
-    this.syllableButtons = [];
-
-    this.optionButtons.forEach(button => button.destroy());
-    this.optionButtons = [];
+    [this.syllableButtons, this.optionButtons].forEach(buttons => {
+      buttons.forEach(button => button.destroy());
+      buttons.length = 0;
+    });
 
     if (this.wordFrame) {
       this.wordFrame.destroy();
       this.wordFrame = null;
     }
 
-    this.titleText.setText("");
-    this.emojiText.setText("");
-    this.wordText.setText("");
+    [this.titleText, this.emojiText, this.wordText].forEach(text => text.setText(""));
     this.emojiText.setDepth(10);
     this.wordText.setDepth(10);
-    
-    // Clear shuffle result when starting new level
     this.currentShuffleResult = null;
   }
 
   private showPhase1Level(): void {
     const level = TonicStressGameData.getPhase1Level(this.currentLevel);
     if (!level) return;
-
-    this.titleText.setText("CLIQUE NA SÍLABA TÔNICA");
-    this.emojiText.setText(level.emoji);
-    this.wordText.setText(level.word);
-
-    // Create white frame around image and word
-    this.createImageWordFrame();
-
-    // Create syllable buttons
-    this.createSyllableButtons(level);
+    this.showLevel(level, "CLIQUE NA SÍLABA TÔNICA", () => this.createSyllableButtons(level));
   }
 
   private showPhase15Level(): void {
     const levelIndex = this.currentLevel - TonicStressGameData.getPhase1Count();
     const level = TonicStressGameData.getPhase15Level(levelIndex);
     if (!level) return;
-
-    this.titleText.setText("CLIQUE NA SÍLABA TÔNICA");
-    this.emojiText.setText(level.emoji);
-    this.wordText.setText(level.word);
-
-    // Create white frame around image and word
-    this.createImageWordFrame();
-
-    // Create shuffled syllable buttons
-    this.createShuffledSyllableButtons(level);
+    this.showLevel(level, "CLIQUE NA SÍLABA TÔNICA", () => this.createShuffledSyllableButtons(level));
   }
 
   private showPhase2Level(): void {
     const levelIndex = this.currentLevel - TonicStressGameData.getPhase1Count() - TonicStressGameData.getPhase15Count();
     const level = TonicStressGameData.getPhase2Level(levelIndex);
     if (!level) return;
-
-    // Smaller font for phase 2 title
     this.titleText.setFontSize(36);
-    this.titleText.setText("QUAL A CLASSIFICAÇÃO DA PALAVRA?");
-    
-    // Keep emoji and word at original positions
+    this.showLevel(level, "QUAL A CLASSIFICAÇÃO DA PALAVRA?", () => this.createClassificationButtons(level));
+  }
+
+  private showLevel(level: TonicStressLevel, title: string, buttonCreator: () => void): void {
+    this.titleText.setText(title);
     this.emojiText.setText(level.emoji);
     this.wordText.setText(level.word);
-
-    // Create white frame around image and word
     this.createImageWordFrame();
-
-    // Create option buttons for classification
-    this.createClassificationButtons(level);
+    buttonCreator();
   }
 
   private createImageWordFrame(): void {
@@ -299,232 +242,78 @@ export class GameScene extends Phaser.Scene {
   }
 
   private createSyllableButtons(level: TonicStressLevel): void {
-    const buttonWidth = 200;
-    const buttonSpacing = 10;
-    const startX = 400 - ((level.syllables.length * buttonWidth + (level.syllables.length - 1) * buttonSpacing) / 2) + (buttonWidth / 2);
-
-    level.syllables.forEach((syllable, index) => {
-      const buttonX = startX + index * (buttonWidth + buttonSpacing);
-      const buttonY = 440;
-
-      const button = new Button(
-        this, 
-        buttonX, 
-        buttonY, 
-        "squareDefaultButton", 
-        "squareHoverButton", 
-        "squareClickedButton", 
-        syllable, 
-        32
-      );
-      
-      // Scale the button to make it larger
-      button.setScale(1.5);
-      
-      this.add.existing(button);
-      this.syllableButtons.push(button);
-      button.setDepth(10);
-
-      button.on("pointerdown", async () => {
-        if (this.buttonsEnabled) {
-          await this.handleTonicSyllableAnswer(index, level);
-        }
-      });
-    });
+    this.createButtons(level.syllables, 32, (index) => this.handleTonicSyllableAnswer(index, level));
   }
 
   private createShuffledSyllableButtons(level: TonicStressLevel): void {
-    // Shuffle the syllables only once per level
     if (!this.currentShuffleResult) {
       this.currentShuffleResult = TonicStressGameData.shuffleSyllables(level.syllables, level.tonicSyllableIndex);
     }
-    const shuffledSyllables = this.currentShuffleResult.shuffled;
-    const correctIndex = this.currentShuffleResult.correctIndex;
+    const { shuffled, correctIndex } = this.currentShuffleResult;
+    this.createButtons(shuffled, 24, (index) => this.handleShuffledSyllableAnswer(index, correctIndex, level, shuffled));
+  }
 
+  private createButtons(items: string[], fontSize: number, clickHandler: (index: number) => Promise<void>): void {
     const buttonWidth = 200;
     const buttonSpacing = 10;
-    const startX = 400 - ((shuffledSyllables.length * buttonWidth + (shuffledSyllables.length - 1) * buttonSpacing) / 2) + (buttonWidth / 2);
+    const startX = 400 - ((items.length * buttonWidth + (items.length - 1) * buttonSpacing) / 2) + (buttonWidth / 2);
 
-    shuffledSyllables.forEach((syllable, index) => {
-      const buttonX = startX + index * (buttonWidth + buttonSpacing);
-      const buttonY = 440;
-
-      const button = new Button(
-        this, 
-        buttonX, 
-        buttonY, 
-        "squareDefaultButton", 
-        "squareHoverButton", 
-        "squareClickedButton", 
-        syllable, 
-        24
-      );
-      
-      // Scale the button to make it larger
-      button.setScale(1.5);
-      
+    items.forEach((item, index) => {
+      const button = new Button(this, startX + index * (buttonWidth + buttonSpacing), 440, 
+        "squareDefaultButton", "squareHoverButton", "squareClickedButton", item, fontSize);
+      button.setScale(1.5).setDepth(10);
       this.add.existing(button);
       this.syllableButtons.push(button);
-      button.setDepth(10);
-
-      button.on("pointerdown", async () => {
-        if (this.buttonsEnabled) {
-          // Pass the correct index for the shuffled array
-          await this.handleShuffledSyllableAnswer(index, correctIndex, level, shuffledSyllables);
-        }
-      });
+      button.on("pointerdown", async () => this.buttonsEnabled && await clickHandler(index));
     });
   }
 
   private createClassificationButtons(level: TonicStressLevel): void {
     if (!level.options) return;
-
-    // Horizontal layout for classification buttons
     const buttonSpacing = 250;
     const startX = 400 - ((level.options.length - 1) * buttonSpacing) / 2;
     
     level.options.forEach((option, index) => {
-      const buttonX = startX + index * buttonSpacing;
-      const buttonY = 450;
-      
-      const button = new Button(
-        this, 
-        buttonX, 
-        buttonY, 
-        "defaultButton", 
-        "hoverButton", 
-        "clickedButton", 
-        option.text, 
-        20
-      );
-      
+      const button = new Button(this, startX + index * buttonSpacing, 450, 
+        "defaultButton", "hoverButton", "clickedButton", option.text, 20);
       this.add.existing(button);
       this.optionButtons.push(button);
-
-      button.on("pointerdown", async () => {
-        if (this.buttonsEnabled) {
-          await this.handleClassificationAnswer(option.value as string, level);
-        }
-      });
+      button.on("pointerdown", async () => this.buttonsEnabled && 
+        await this.handleClassificationAnswer(option.value as string, level));
     });
   }
 
   private async handleTonicSyllableAnswer(selectedIndex: number, level: TonicStressLevel): Promise<void> {
-    if (this.isTransitioning || !this.buttonsEnabled) return;
-
-    this.buttonsEnabled = false;
-    this.isTransitioning = true;
-
     const isCorrect = this.tonicStressGameService.isCorrectTonicSyllable(selectedIndex, level.tonicSyllableIndex);
-    this.tonicStressGameService.incrementAttempts();
-
-    try {
-      const studentId = this.tonicStressGameService.getStudentId();
-      const questionId = this.currentLevel + 1;
-      const answerText = level.syllables[selectedIndex];
-
-      if (isCorrect) {
-        await this.tonicStressGameService.registerCorrectAnswer(studentId, questionId, answerText);
-      } else {
-        await this.tonicStressGameService.registerIncorrectAnswer(studentId, questionId, answerText);
-      }
-    } catch (_error) {
-      // Silent fail for API errors
-    }
-
-    this.syllableButtons.forEach((button, index) => {
-      button.disableInteractive();
-      
-      if (index === selectedIndex) {
-        if (isCorrect) {
-          button.setTint(0x00ff00);
-        } else {
-          // Recreate button with white texture and red tint
-          const buttonX = button.x;
-          const buttonY = button.y;
-          const buttonText = level.syllables[index];
-          
-          button.destroy();
-          
-          const newButton = new Button(this, buttonX, buttonY, "whiteSquareButton", "whiteSquareButton", "whiteSquareButton", buttonText, 32);
-          newButton.setScale(1.5);
-          newButton.setTint(0xff0000);
-          newButton.disableInteractive();
-          newButton.setDepth(2);
-          this.add.existing(newButton);
-          this.syllableButtons[index] = newButton;
-        }
-      }
-    });
-
-    if (isCorrect) {
-      this.sound.play("correct", { volume: 0.7 });
-      const points = this.tonicStressGameService.calculateScore();
-      this.score += points;
-      this.tonicStressGameService.addScore(points);
-      this.createStarsEffect(400, 360);
-
-      this.time.delayedCall(2000, () => {
-        this.buttonsEnabled = true;
-        this.nextLevel();
-      });
-    } else {
-      this.sound.play("wrong", { volume: 0.7 });
-      this.time.delayedCall(2000, () => {
-        this.buttonsEnabled = true;
-        this.isTransitioning = false;
-        this.resetSyllableButtonStates(level);
-      });
-    }
+    const answerText = level.syllables[selectedIndex];
+    await this.processAnswer(isCorrect, answerText, selectedIndex, level.syllables, () => this.resetSyllableButtonStates(level));
   }
 
   private async handleShuffledSyllableAnswer(selectedIndex: number, correctIndex: number, level: TonicStressLevel, shuffledSyllables: string[]): Promise<void> {
+    const isCorrect = selectedIndex === correctIndex;
+    const answerText = shuffledSyllables[selectedIndex];
+    await this.processAnswer(isCorrect, answerText, selectedIndex, shuffledSyllables, () => this.resetShuffledSyllableButtonStates(level));
+  }
+
+  private async processAnswer(isCorrect: boolean, answerText: string, selectedIndex: number, items: string[], resetCallback: () => void): Promise<void> {
     if (this.isTransitioning || !this.buttonsEnabled) return;
 
     this.buttonsEnabled = false;
     this.isTransitioning = true;
-
-    const isCorrect = selectedIndex === correctIndex;
     this.tonicStressGameService.incrementAttempts();
 
     try {
       const studentId = this.tonicStressGameService.getStudentId();
       const questionId = this.currentLevel + 1;
-      const answerText = shuffledSyllables[selectedIndex];
-
+      
       if (isCorrect) {
         await this.tonicStressGameService.registerCorrectAnswer(studentId, questionId, answerText);
       } else {
         await this.tonicStressGameService.registerIncorrectAnswer(studentId, questionId, answerText);
       }
-    } catch (_error) {
-      // Silent fail for API errors
-    }
+    } catch { /* Silent fail */ }
 
-    this.syllableButtons.forEach((button, index) => {
-      button.disableInteractive();
-      
-      if (index === selectedIndex) {
-        if (isCorrect) {
-          button.setTint(0x00ff00);
-        } else {
-          // Recreate button with white texture and red tint
-          const buttonX = button.x;
-          const buttonY = button.y;
-          const buttonText = shuffledSyllables[index];
-          
-          button.destroy();
-          
-          const newButton = new Button(this, buttonX, buttonY, "whiteSquareButton", "whiteSquareButton", "whiteSquareButton", buttonText, 32);
-          newButton.setScale(1.5);
-          newButton.setTint(0xff0000);
-          newButton.disableInteractive();
-          newButton.setDepth(2);
-          this.add.existing(newButton);
-          this.syllableButtons[index] = newButton;
-        }
-      }
-    });
+    this.updateButtonVisuals(selectedIndex, isCorrect, items);
 
     if (isCorrect) {
       this.sound.play("correct", { volume: 0.7 });
@@ -532,7 +321,6 @@ export class GameScene extends Phaser.Scene {
       this.score += points;
       this.tonicStressGameService.addScore(points);
       this.createStarsEffect(400, 360);
-
       this.time.delayedCall(2000, () => {
         this.buttonsEnabled = true;
         this.nextLevel();
@@ -542,72 +330,59 @@ export class GameScene extends Phaser.Scene {
       this.time.delayedCall(2000, () => {
         this.buttonsEnabled = true;
         this.isTransitioning = false;
-        // For phase 1.5, we need a different reset method since syllables are shuffled
-        this.resetShuffledSyllableButtonStates(level);
+        resetCallback();
       });
     }
   }
 
   private async handleClassificationAnswer(selectedValue: string, level: TonicStressLevel): Promise<void> {
+    const isCorrect = this.tonicStressGameService.isCorrectClassification(selectedValue, level.classification);
+    
     if (this.isTransitioning || !this.buttonsEnabled) return;
-
     this.buttonsEnabled = false;
     this.isTransitioning = true;
-
-    const isCorrect = this.tonicStressGameService.isCorrectClassification(selectedValue, level.classification);
     this.tonicStressGameService.incrementAttempts();
 
     try {
       const studentId = this.tonicStressGameService.getStudentId();
       const questionId = this.currentLevel + 1;
-      const answerText = selectedValue;
-
+      
       if (isCorrect) {
-        await this.tonicStressGameService.registerCorrectAnswer(studentId, questionId, answerText);
+        await this.tonicStressGameService.registerCorrectAnswer(studentId, questionId, selectedValue);
       } else {
-        await this.tonicStressGameService.registerIncorrectAnswer(studentId, questionId, answerText);
+        await this.tonicStressGameService.registerIncorrectAnswer(studentId, questionId, selectedValue);
       }
-    } catch (_error) {
-      // Silent fail for API errors
-    }
+    } catch { /* Silent fail */ }
 
     this.optionButtons.forEach((button, index) => {
       button.disableInteractive();
-      
       const option = level.options![index];
       if (option.value === selectedValue) {
         if (isCorrect) {
           button.setTint(0x00ff00);
         } else {
-          // Recreate button with white texture and red tint
-          const buttonX = button.x;
-          const buttonY = button.y;
-          const buttonText = option.text;
-          
-          button.destroy();
-          
-          const newButton = new Button(this, buttonX, buttonY, "whiteButton", "whiteButton", "whiteButton", buttonText, 20);
+          const newButton = new Button(this, button.x, button.y, "whiteButton", "whiteButton", "whiteButton", option.text, 20);
           newButton.setTint(0xff0000);
           newButton.disableInteractive();
           this.add.existing(newButton);
+          button.destroy();
           this.optionButtons[index] = newButton;
         }
       }
     });
 
+    this.sound.play(isCorrect ? "correct" : "wrong", { volume: 0.7 });
+    
     if (isCorrect) {
-      this.sound.play("correct", { volume: 0.7 });
       const points = this.tonicStressGameService.calculateScore();
       this.score += points;
       this.tonicStressGameService.addScore(points);
       this.createStarsEffect(400, 420);
-
       this.time.delayedCall(2000, () => {
         this.buttonsEnabled = true;
         this.nextLevel();
       });
     } else {
-      this.sound.play("wrong", { volume: 0.7 });
       this.time.delayedCall(2000, () => {
         this.buttonsEnabled = true;
         this.isTransitioning = false;
@@ -616,62 +391,54 @@ export class GameScene extends Phaser.Scene {
     }
   }
 
-  private resetSyllableButtonStates(level: TonicStressLevel): void {
+  private updateButtonVisuals(selectedIndex: number, isCorrect: boolean, items: string[]): void {
     this.syllableButtons.forEach((button, index) => {
-      const buttonX = button.x;
-      const buttonY = button.y;
-      const syllable = level.syllables[index];
-      
-      button.destroy();
-      
-      const newButton = new Button(this, buttonX, buttonY, "squareDefaultButton", "squareHoverButton", "squareClickedButton", syllable, 32);
-      newButton.setScale(1.5);
-      newButton.clearTint();
-      newButton.setInteractive();
-      newButton.setDepth(2);
-      this.add.existing(newButton);
-      this.syllableButtons[index] = newButton;
-      
-      newButton.on("pointerdown", async () => {
-        if (this.buttonsEnabled) {
-          await this.handleTonicSyllableAnswer(index, level);
+      button.disableInteractive();
+      if (index === selectedIndex) {
+        if (isCorrect) {
+          button.setTint(0x00ff00);
+        } else {
+          const newButton = new Button(this, button.x, button.y, "whiteSquareButton", "whiteSquareButton", "whiteSquareButton", items[index], 32);
+          newButton.setScale(1.5);
+          newButton.setTint(0xff0000);
+          newButton.disableInteractive();
+          newButton.setDepth(2);
+          this.add.existing(newButton);
+          button.destroy();
+          this.syllableButtons[index] = newButton;
         }
-      });
+      }
     });
   }
 
+  private resetSyllableButtonStates(level: TonicStressLevel): void {
+    this.resetButtons(level.syllables, 32, (index) => this.handleTonicSyllableAnswer(index, level));
+  }
+
   private resetShuffledSyllableButtonStates(level: TonicStressLevel): void {
-    // Use the same shuffle result, don't re-shuffle
     if (!this.currentShuffleResult) {
       this.currentShuffleResult = TonicStressGameData.shuffleSyllables(level.syllables, level.tonicSyllableIndex);
     }
-    const shuffledSyllables = this.currentShuffleResult.shuffled;
-    const correctIndex = this.currentShuffleResult.correctIndex;
+    const { shuffled, correctIndex } = this.currentShuffleResult;
+    this.resetButtons(shuffled, 24, (index) => this.handleShuffledSyllableAnswer(index, correctIndex, level, shuffled));
+  }
 
+  private resetButtons(items: string[], fontSize: number, clickHandler: (index: number) => Promise<void>): void {
     const buttonWidth = 200;
     const buttonSpacing = 10;
-    const startX = 400 - ((shuffledSyllables.length * buttonWidth + (shuffledSyllables.length - 1) * buttonSpacing) / 2) + (buttonWidth / 2);
+    const startX = 400 - ((items.length * buttonWidth + (items.length - 1) * buttonSpacing) / 2) + (buttonWidth / 2);
 
     this.syllableButtons.forEach((button, index) => {
-      const buttonX = startX + index * (buttonWidth + buttonSpacing);
-      const buttonY = 440;
-      const syllable = shuffledSyllables[index];
-      
-      button.destroy();
-      
-      const newButton = new Button(this, buttonX, buttonY, "squareDefaultButton", "squareHoverButton", "squareClickedButton", syllable, 24);
+      const newButton = new Button(this, startX + index * (buttonWidth + buttonSpacing), 440, 
+        "squareDefaultButton", "squareHoverButton", "squareClickedButton", items[index], fontSize);
       newButton.setScale(1.5);
       newButton.clearTint();
       newButton.setInteractive();
       newButton.setDepth(2);
       this.add.existing(newButton);
+      button.destroy();
       this.syllableButtons[index] = newButton;
-      
-      newButton.on("pointerdown", async () => {
-        if (this.buttonsEnabled) {
-          await this.handleShuffledSyllableAnswer(index, correctIndex, level, shuffledSyllables);
-        }
-      });
+      newButton.on("pointerdown", async () => this.buttonsEnabled && await clickHandler(index));
     });
   }
 
@@ -710,14 +477,10 @@ export class GameScene extends Phaser.Scene {
 
     const totalLevels = TonicStressGameData.getTotalLevels();
     
-    // Show level complete screen after phase 1
     if (TonicStressGameData.shouldShowLevelComplete(this.currentLevel)) {
       this.scene.start("LevelCompleteScene", {
-        currentLevel: this.currentLevel,
-        totalLevels: totalLevels,
-        score: this.score,
-        gameType: "tonicStress",
-        nextScene: "GameScene",
+        currentLevel: this.currentLevel, totalLevels, score: this.score,
+        gameType: "tonicStress", nextScene: "GameScene"
       });
     } else if (this.currentLevel >= totalLevels) {
       this.endGame();
@@ -733,12 +496,7 @@ export class GameScene extends Phaser.Scene {
       { x: centerX + 80, y: centerY }, { x: centerX - 40, y: centerY + 40 },
       { x: centerX + 40, y: centerY + 40 }
     ];
-
-    positions.forEach((pos, index) => {
-      this.time.delayedCall(index * 80, () => {
-        this.starExplosionEffect(pos.x, pos.y);
-      });
-    });
+    positions.forEach((pos, index) => this.time.delayedCall(index * 80, () => this.starExplosionEffect(pos.x, pos.y)));
   }
 
   private starExplosionEffect(x: number, y: number): void {
@@ -781,12 +539,6 @@ export class GameScene extends Phaser.Scene {
 
   private endGame(): void {
     this.registry.set("tonicStressGameCompleted", true);
-    
-    const totalLevels = TonicStressGameData.getTotalLevels();
-    
-    this.scene.start("EndScene", {
-      score: this.score,
-      totalLevels: totalLevels
-    });
+    this.scene.start("EndScene", { score: this.score, totalLevels: TonicStressGameData.getTotalLevels() });
   }
 }

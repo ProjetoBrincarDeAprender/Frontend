@@ -13,7 +13,6 @@ export interface TonicStressLevel {
 }
 
 export class TonicStressGameData {
-  // Phase 1: Identify tonic syllable (5 levels)
   static readonly phase1Levels: TonicStressLevel[] = [
     {
       id: 1,
@@ -57,7 +56,6 @@ export class TonicStressGameData {
     }
   ];
 
-  // Phase 1.5: Identify tonic syllable with shuffled options (5 levels)
   static readonly phase15Levels: TonicStressLevel[] = [
     {
       id: 6,
@@ -101,7 +99,6 @@ export class TonicStressGameData {
     }
   ];
 
-  // Phase 2: Classify word stress (5 levels)
   static readonly phase2Levels: TonicStressLevel[] = [
     {
       id: 11,
@@ -203,21 +200,17 @@ export class TonicStressGameData {
   }
 
   static shuffleSyllables(syllables: string[], tonicIndex: number): { shuffled: string[], correctIndex: number } {
-    const syllablesCopy = [...syllables];
+    const shuffled = [...syllables];
     const tonicSyllable = syllables[tonicIndex];
     
-    // Fisher-Yates shuffle
-    for (let i = syllablesCopy.length - 1; i > 0; i--) {
+    for (let i = shuffled.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
-      [syllablesCopy[i], syllablesCopy[j]] = [syllablesCopy[j], syllablesCopy[i]];
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
     }
     
-    // Find new index of tonic syllable
-    const newTonicIndex = syllablesCopy.findIndex(syl => syl === tonicSyllable);
-    
     return {
-      shuffled: syllablesCopy,
-      correctIndex: newTonicIndex
+      shuffled,
+      correctIndex: shuffled.findIndex(syl => syl === tonicSyllable)
     };
   }
 }
