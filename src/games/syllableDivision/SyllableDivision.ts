@@ -114,7 +114,8 @@ export default class SyllableDivision extends Phaser.Scene {
       word = "sofa";
     }
 
-    this.image = this.add.image(x, y, word).setScale(0.35).setInteractive();
+    this.image = this.add.image(x, y, word).setInteractive();
+    this.image.setScale(400 / this.image.width);
 
     this.sound.play(word);
     this.image.on("pointerup", (_pointer: Phaser.Input.Pointer) => {
