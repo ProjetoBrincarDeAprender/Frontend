@@ -37,7 +37,7 @@ export default class SyllableDivision extends Phaser.Scene {
   create(): void {
     this.registry.set("actualLevel", this.config.actualLevel || 0);
     this.addBackground();
-    this.addInteractableComponents();
+    this.setupLevel();
     this.addEvents();
   }
 
@@ -160,25 +160,42 @@ export default class SyllableDivision extends Phaser.Scene {
         gameObject: Phaser.GameObjects.Container,
         dropZone: Phaser.GameObjects.Rectangle,
       ) => {
-        gameObject.setPosition(dropZone.x, dropZone.y);
-        if (gameObject.input) gameObject.input.enabled = false;
-        dropZone.destroy();
-        this.dropzones = this.dropzones.filter((zone) => zone !== dropZone);
-
-        if (this.dropzones.length === 0) {
-          this.registry.inc("actualLevel", 1);
-
-          this.time.delayedCall(1000, () => {
-            this.destroyDropzones();
-            this.destroyOptions();
-            this.syllabes =
-              this.config.levels[this.registry.get("actualLevel")] || [];
-            if (this.syllabes.length !== 0) {
-              this.addInteractableComponents();
-            }
-          });
-        }
+        this.handleDrop(gameObject, dropZone);
       },
     );
+  }
+
+  handleDrop(
+    gameObject: Phaser.GameObjects.Container,
+    dropZone: Phaser.GameObjects.Rectangle,
+  ): void {
+    gameObject.setPosition(dropZone.x, dropZone.y);
+    if (gameObject.input) gameObject.input.enabled = false;
+    dropZone.destroy();
+    this.dropzones = this.dropzones.filter((zone) => zone !== dropZone);
+
+    if (this.dropzones.length === 0) {
+      this.endLevel();
+    }
+  }
+
+  setupLevel() {
+    this.syllabes = this.config.levels[this.registry.get("actualLevel")] || [];
+    if (this.syllabes.length === 0) {
+      this.scene.start("EndScene");
+    } else if (this.syllabes.length % 5 === 0) {
+      this.scene.start("LevelCompleteScene");
+    } else {
+      this.addInteractableComponents();
+    }
+  }
+
+  endLevel(): void {
+    this.registry.inc("actualLevel", 1);
+    this.time.delayedCall(1000, () => {
+      this.destroyDropzones();
+      this.destroyOptions();
+      this.setupLevel();
+    });
   }
 }
