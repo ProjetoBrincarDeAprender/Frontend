@@ -230,6 +230,10 @@ export default class SyllableDivision extends Phaser.Scene {
             color: 0xff0000,
             duration: 400,
           });
+          gameObject.disableInteractive();
+          this.time.delayedCall(501, () => {
+            gameObject.setInteractive();
+          });
         }
       },
     );
