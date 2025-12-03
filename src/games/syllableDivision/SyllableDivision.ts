@@ -1,5 +1,6 @@
-import Phaser from "phaser";
 import { AudioManager } from "../common/managers/AudioManager";
+import Phaser from "phaser";
+import EffectManager from "../clickedButton/logic/EffectManager";
 
 export interface SyllableDivisionConfig {
   DROPZONE_MARGIN?: number;
@@ -21,6 +22,7 @@ export default class SyllableDivision extends Phaser.Scene {
   private OPTION_FONT_SIZE: number;
   private config: SyllableDivisionConfig;
   private dropzones: Phaser.GameObjects.Rectangle[] = [];
+  private effectManager: EffectManager;
   private image: Phaser.GameObjects.Image | null;
   private options: Phaser.GameObjects.Container[] = [];
   private syllabes: string[];
@@ -32,6 +34,7 @@ export default class SyllableDivision extends Phaser.Scene {
     this.OPTION_FONT_SIZE = config.OPTION_FONT_SIZE || 58;
     this.OPTION_SIZE = config.OPTION_SIZE || 80;
     this.config = config;
+    this.effectManager = new EffectManager(this);
     this.image = null;
     this.syllabes = config.levels[config.actualLevel || 0];
   }
@@ -158,14 +161,13 @@ export default class SyllableDivision extends Phaser.Scene {
           fontSize: `${this.OPTION_FONT_SIZE}px`,
           color: "#b2bce9ff",
         })
-        .setOrigin(0.5);
-      const rectangle = this.add.rectangle(
-        0,
-        0,
-        this.OPTION_SIZE,
-        this.OPTION_SIZE,
-        0x007bff,
-      );
+        .setOrigin(0.5)
+        .setName("text");
+
+      const rectangle = this.add
+        .rectangle(0, 0, this.OPTION_SIZE, this.OPTION_SIZE, 0x007bff)
+        .setName("rectangle");
+
       const container = this.add.container(0, 0, [rectangle, text]);
       container.setSize(this.OPTION_SIZE, this.OPTION_SIZE);
       container.setInteractive({ draggable: true });
@@ -222,6 +224,12 @@ export default class SyllableDivision extends Phaser.Scene {
           gameObject.x = gameObject.input!.dragStartX;
           gameObject.y = gameObject.input!.dragStartY;
           this.sound.play("incorrect");
+          this.effectManager.growup(gameObject, "bounce.out", 1.2, 200);
+          this.effectManager.changeColor({
+            gameObject: gameObject.getByName("text"),
+            color: 0xff0000,
+            duration: 400,
+          });
         }
       },
     );
@@ -257,6 +265,13 @@ export default class SyllableDivision extends Phaser.Scene {
     dropZone.destroy();
     this.dropzones = this.dropzones.filter((zone) => zone !== dropZone);
     this.sound.play("correct");
+
+    this.effectManager.growup(gameObject, "expo.out", 1.6, 400);
+    this.effectManager.changeColor({
+      gameObject: gameObject.getByName("text"),
+      color: 0x00ff00,
+      duration: 800,
+    });
 
     if (this.dropzones.length === 0) {
       this.endLevel();
