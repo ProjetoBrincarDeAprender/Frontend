@@ -303,13 +303,12 @@ export class GameScene extends Phaser.Scene {
     this.tonicStressGameService.incrementAttempts();
 
     try {
-      const studentId = this.tonicStressGameService.getStudentId();
       const questionId = this.currentLevel + 1;
       
       if (isCorrect) {
-        await this.tonicStressGameService.registerCorrectAnswer(studentId, questionId, answerText);
+        await this.tonicStressGameService.registerCorrectAnswer(questionId, answerText);
       } else {
-        await this.tonicStressGameService.registerIncorrectAnswer(studentId, questionId, answerText);
+        await this.tonicStressGameService.registerIncorrectAnswer(questionId, answerText);
       }
     } catch { /* Silent fail */ }
 
@@ -344,13 +343,12 @@ export class GameScene extends Phaser.Scene {
     this.tonicStressGameService.incrementAttempts();
 
     try {
-      const studentId = this.tonicStressGameService.getStudentId();
       const questionId = this.currentLevel + 1;
       
       if (isCorrect) {
-        await this.tonicStressGameService.registerCorrectAnswer(studentId, questionId, selectedValue);
+        await this.tonicStressGameService.registerCorrectAnswer(questionId, selectedValue);
       } else {
-        await this.tonicStressGameService.registerIncorrectAnswer(studentId, questionId, selectedValue);
+        await this.tonicStressGameService.registerIncorrectAnswer(questionId, selectedValue);
       }
     } catch { /* Silent fail */ }
 

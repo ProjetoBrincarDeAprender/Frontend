@@ -1,14 +1,24 @@
-import api  from "@/utils/api";
+import { APIDataService } from "@/games/common/services/APIData.service";
+
+export interface InteractionData {
+  answer: string;
+  timeSpent: number;
+  attempts: number;
+  neededHint: boolean;
+  isCorrect: boolean;
+}
 
 export class TonicStressGameService {
-  private scene: Phaser.Scene;
+  private static readonly ACTIVITY_ID = 5;
+  private startTime: number = 0;
+  private attempts: number = 0;
+  private hintsUsed: boolean = false;
+  private apiService: APIDataService;
   private currentLevel: number = 0;
   private score: number = 0;
-  private attempts: number = 0;
-  private static readonly ACTIVITY_ID = 10;
 
   constructor(scene: Phaser.Scene) {
-    this.scene = scene;
+    this.apiService = new APIDataService(scene);
   }
 
   setCurrentLevel(level: number): void {
@@ -35,12 +45,18 @@ export class TonicStressGameService {
     this.attempts++;
   }
 
+  useHint(): void {
+    this.hintsUsed = true;
+  }
+
   getAttempts(): number {
     return this.attempts;
   }
 
   startQuestion(): void {
+    this.startTime = Date.now();
     this.attempts = 0;
+    this.hintsUsed = false;
   }
 
   calculateScore(): number {
@@ -48,29 +64,49 @@ export class TonicStressGameService {
   }
 
   getStudentId(): number {
-    const user = this.scene.registry.get("user");
-    return user?.id || 0;
+    try {
+      const userData = localStorage.getItem("userData");
+      if (userData) {
+        const user = JSON.parse(userData);
+        return user?.codigo_usuario || 10130001;
+      }
+      return 10130001;
+    } catch (error) {
+      console.error("Erro ao obter ID do estudante:", error);
+      return 10130001;
+    }
   }
 
   isCorrectTonicSyllable = (selectedIndex: number, correctIndex: number): boolean => selectedIndex === correctIndex;
   isCorrectClassification = (selectedValue: string, correctValue: string): boolean => selectedValue === correctValue;
 
-  private async registerAnswer(studentId: number, questionId: number, answerText: string, isCorrect: boolean): Promise<void> {
-    const payload = {
-      student_id: studentId,
-      activity_id: TonicStressGameService.ACTIVITY_ID,
-      question_id: questionId,
-      answer_text: answerText,
-      is_correct: isCorrect,
-      score: isCorrect ? this.calculateScore() : 0,
-      attempts: this.attempts
-    };
-    await api.post("/adaptiveSystem/interaction/register", payload);
+  async registerInteraction(questionId: number, answer: string, isCorrect: boolean): Promise<void> {
+    try {
+      const timeSpent = Date.now() - this.startTime;
+
+      const interactionData: InteractionData = {
+        answer,
+        timeSpent,
+        attempts: this.attempts,
+        neededHint: this.hintsUsed,
+        isCorrect,
+      };
+
+      this.apiService.sendGameData(
+        TonicStressGameService.ACTIVITY_ID,
+        questionId,
+        interactionData,
+      );
+    } catch (error) {
+      console.error("Erro ao registrar interação:", error);
+    }
   }
 
-  registerCorrectAnswer = (studentId: number, questionId: number, answerText: string): Promise<void> => 
-    this.registerAnswer(studentId, questionId, answerText, true);
+  async registerCorrectAnswer(questionId: number, answerText: string): Promise<void> {
+    await this.registerInteraction(questionId, answerText, true);
+  }
 
-  registerIncorrectAnswer = (studentId: number, questionId: number, answerText: string): Promise<void> => 
-    this.registerAnswer(studentId, questionId, answerText, false);
+  async registerIncorrectAnswer(questionId: number, answerText: string): Promise<void> {
+    await this.registerInteraction(questionId, answerText, false);
+  }
 }
