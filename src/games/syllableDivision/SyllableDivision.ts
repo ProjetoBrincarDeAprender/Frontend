@@ -5,8 +5,9 @@ export interface SyllableDivisionConfig {
   DROPZONE_SIZE?: number;
   OPTION_FONT_SIZE?: number;
   OPTION_SIZE?: number;
+  actualLevel?: number;
   backgroundPath: string;
-  syllabes: string[];
+  levels: string[][];
 }
 
 export default class SyllableDivision extends Phaser.Scene {
@@ -26,7 +27,7 @@ export default class SyllableDivision extends Phaser.Scene {
     this.OPTION_FONT_SIZE = config.OPTION_FONT_SIZE || 58;
     this.OPTION_SIZE = config.OPTION_SIZE || 80;
     this.config = config;
-    this.syllabes = config.syllabes;
+    this.syllabes = config.levels[config.actualLevel || 0];
   }
 
   preload(): void {
@@ -34,6 +35,7 @@ export default class SyllableDivision extends Phaser.Scene {
   }
 
   create(): void {
+    this.registry.set("actualLevel", this.config.actualLevel || 0);
     this.addBackground();
     this.addInteractableComponents();
     this.addEvents();
@@ -83,6 +85,11 @@ export default class SyllableDivision extends Phaser.Scene {
     });
   }
 
+  destroyDropzones(): void {
+    this.dropzones.forEach((zone) => zone.destroy());
+    this.dropzones = [];
+  }
+
   addOptions(): void {
     const options: Phaser.GameObjects.Container[] = [];
 
@@ -120,6 +127,11 @@ export default class SyllableDivision extends Phaser.Scene {
     });
   }
 
+  destroyOptions(): void {
+    this.options.forEach((option) => option.destroy());
+    this.options = [];
+  }
+
   addInteractableComponents(): void {
     this.addDropzones();
     this.addOptions();
@@ -146,10 +158,26 @@ export default class SyllableDivision extends Phaser.Scene {
       (
         _pointer: Phaser.Input.Pointer,
         gameObject: Phaser.GameObjects.Container,
-        dropZone: Phaser.GameObjects.Container,
+        dropZone: Phaser.GameObjects.Rectangle,
       ) => {
         gameObject.setPosition(dropZone.x, dropZone.y);
         if (gameObject.input) gameObject.input.enabled = false;
+        dropZone.destroy();
+        this.dropzones = this.dropzones.filter((zone) => zone !== dropZone);
+
+        if (this.dropzones.length === 0) {
+          this.registry.inc("actualLevel", 1);
+
+          this.time.delayedCall(1000, () => {
+            this.destroyDropzones();
+            this.destroyOptions();
+            this.syllabes =
+              this.config.levels[this.registry.get("actualLevel")] || [];
+            if (this.syllabes.length !== 0) {
+              this.addInteractableComponents();
+            }
+          });
+        }
       },
     );
   }

@@ -4,7 +4,7 @@ import { BackButton } from "@/components/utils/BackButton";
 import { EventBus } from "@/games/common/utils/EventBus";
 import { useEffect, useRef } from "react";
 import { useUser } from "@/hooks/User/useUser";
-// import { StartScene } from "@/games/common/scenes/StartScene";
+import { StartScene } from "@/games/common/scenes/StartScene";
 import { LevelCompletedScene } from "@/games/common/scenes/LevelCompletedScene";
 import { EndScene } from "@/games/common/scenes/EndScene";
 import ClickButtonGameScene from "@/games/clickedButton/scenes/ClickButtonGame";
@@ -19,14 +19,20 @@ const SyllableDivisionGame: React.FC = () => {
   useEffect(() => {
     if (gameRef.current || !user) return;
 
-    // const startScene = new StartScene({
-    //   nextSceneName: "SyllableDivision",
-    //   gameTitle: "DIVIDINDO SÍLABAS",
-    // });
+    const startScene = new StartScene({
+      nextSceneName: "SyllableDivision",
+      gameTitle: "DIVIDINDO SÍLABAS",
+    });
 
     const gameScene = new SyllableDivision({
       backgroundPath: "/assets/syllableDivisionGame/images/backgroundMain.png",
-      syllabes: ["CA", "SA"],
+      levels: [
+        ["CA", "SA"],
+        ["BO", "LA"],
+        ["SO", "FÁ"],
+        ["PA", "TO"],
+        ["MA", "LA"],
+      ],
     });
 
     const levelCompleted = new LevelCompletedScene({
@@ -46,12 +52,7 @@ const SyllableDivisionGame: React.FC = () => {
       type: Phaser.AUTO,
       width: 800,
       height: 600,
-      scene: [
-        // startScene,
-        gameScene,
-        levelCompleted,
-        endScene,
-      ],
+      scene: [gameScene, startScene, levelCompleted, endScene],
       parent: containerRef.current,
       backgroundColor: "#ffffff",
     };
