@@ -154,6 +154,16 @@ export default class SyllableDivision extends Phaser.Scene {
     );
 
     this.input.on(
+      "dragstart",
+      (
+        _pointer: Phaser.Input.Pointer,
+        gameObject: Phaser.GameObjects.Container,
+      ) => {
+        this.children.bringToTop(gameObject);
+      },
+    );
+
+    this.input.on(
       "drop",
       (
         _pointer: Phaser.Input.Pointer,
