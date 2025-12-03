@@ -42,6 +42,10 @@ const SyllableDivisionGame: React.FC = () => {
         ["CA", "VA", "LO"],
         ["PI", "PO", "CA"],
         ["PA", "RA", "FU", "SO"],
+        ["TE", "LE", "FO", "NE"],
+        ["CA", "RA", "ME", "LO"],
+        ["A", "LI", "CA", "TE"],
+        ["EN", "VE", "LO", "PE"],
       ],
     });
 
