@@ -6,6 +6,7 @@ export interface SyllableDivisionConfig {
   OPTION_FONT_SIZE?: number;
   OPTION_SIZE?: number;
   actualLevel?: number;
+  instruction?: string;
   backgroundPath: string;
   levels: string[][];
 }
@@ -37,6 +38,7 @@ export default class SyllableDivision extends Phaser.Scene {
   create(): void {
     this.registry.set("actualLevel", this.config.actualLevel || 0);
     this.addBackground();
+    this.addInstructions();
     this.setupLevel();
     this.addEvents();
   }
@@ -49,6 +51,19 @@ export default class SyllableDivision extends Phaser.Scene {
       height / this.textures.get("background").getSourceImage().height,
     );
     this.add.image(width / 2, height / 2, "background").setScale(scaleFactor);
+    this.add.rectangle(width / 2, height / 2, width, height, 0x000000, 0.4);
+  }
+
+  addInstructions(): void {
+    if (!this.config.instruction) return;
+
+    this.add
+      .text(this.cameras.main.centerX, 50, this.config.instruction, {
+        fontFamily: "Arial Black , Arial",
+        fontSize: "32px",
+        color: "#ffffff",
+      })
+      .setOrigin(0.5);
   }
 
   addDropzones(): void {
@@ -61,7 +76,6 @@ export default class SyllableDivision extends Phaser.Scene {
         this.DROPZONE_SIZE,
         this.DROPZONE_SIZE,
         0x000a1f,
-        // #000a1fff
       );
       rectangle.setInteractive();
       rectangle.input!.dropZone = true;
