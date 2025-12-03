@@ -10,6 +10,7 @@ export interface SyllableDivisionConfig {
   OPTION_SIZE?: number;
   actualLevel?: number;
   instruction?: string;
+  audiosPath: string;
   backgroundPath: string;
   imagesPath: string;
   levels: string[][];
@@ -42,6 +43,16 @@ export default class SyllableDivision extends Phaser.Scene {
   preload(): void {
     this.load.audio("correct", "/assets/common/sounds/correct.mp3");
     this.load.audio("incorrect", "/assets/common/sounds/incorrect.mp3");
+    this.config.levels.forEach((level) => {
+      let word = "";
+      level.forEach((syllabe) => {
+        word += syllabe.toLowerCase();
+      });
+      if (word.includes("sofá")) {
+        word = "sofa";
+      }
+      this.load.audio(word, this.config.audiosPath + word + ".mp3");
+    });
 
     this.load.image("background", this.config.backgroundPath);
     this.config.levels.forEach((level) => {
@@ -103,7 +114,13 @@ export default class SyllableDivision extends Phaser.Scene {
       word = "sofa";
     }
 
-    this.image = this.add.image(x, y, word).setScale(0.35);
+    this.image = this.add.image(x, y, word).setScale(0.35).setInteractive();
+
+    this.sound.play(word);
+    this.image.on("pointerup", (_pointer: Phaser.Input.Pointer) => {
+      this.sound.stopAll();
+      this.sound.play(word);
+    });
   }
 
   destroyImage() {

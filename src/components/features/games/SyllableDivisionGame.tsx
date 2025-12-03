@@ -26,6 +26,7 @@ const SyllableDivisionGame: React.FC = () => {
     });
 
     const gameScene = new SyllableDivision({
+      audiosPath: "/assets/useSyllableGame/sounds/",
       backgroundPath: "/assets/syllableDivisionGame/images/backgroundMain.png",
       imagesPath: "/assets/useSyllableGame/images/entities/",
       instruction: "SEPARE A PALAVRA",
