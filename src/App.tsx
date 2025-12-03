@@ -46,6 +46,7 @@ import Logout from "./pages/Logout/Logout";
 import { Profile } from "./pages/Profile/Profile";
 import { RecoverPassword } from "./pages/RecoverPassword/RecoverPassword";
 import { SendPasswordToken } from "./pages/SendPasswordToken/SendPasswordToken";
+import SyllableDivisionGame from "./components/features/games/SyllableDivisionGame";
 
 function App() {
   return (
@@ -114,9 +115,10 @@ function App() {
         <Route path="com-dates" element={<ComDatesGame />} />
         <Route path="sensorial" element={<SensorialGame />} />
         <Route path="armed-sum" element={<ArmedSumGame />} />
+        <Route path="syllable-division" element={<SyllableDivisionGame />} />
+        <Route path="complex-syllable" element={<ComplexSyllableGame />} />
+        <Route path="punctuation" element={<PunctuationGame />} />
       </Route>
-      <Route path="complex-syllable" element={<ComplexSyllableGame />} />
-      <Route path="games/punctuation" element={<PunctuationGame />} />
 
       <Route element={<AuthGuard requireAuth />}>
         <Route path="/profile">
