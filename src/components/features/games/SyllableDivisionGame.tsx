@@ -20,8 +20,9 @@ const SyllableDivisionGame: React.FC = () => {
     if (gameRef.current || !user) return;
 
     const startScene = new StartScene({
-      nextSceneName: "SyllableDivision",
+      backgroundPath: "/assets/syllableDivisionGame/images/backgroundMain.png",
       gameTitle: "DIVIDINDO SÍLABAS",
+      nextSceneName: "SyllableDivision",
     });
 
     const gameScene = new SyllableDivision({
@@ -54,7 +55,7 @@ const SyllableDivisionGame: React.FC = () => {
       type: Phaser.AUTO,
       width: 800,
       height: 600,
-      scene: [gameScene, startScene, levelCompleted, endScene],
+      scene: [startScene, gameScene, levelCompleted, endScene],
       parent: containerRef.current,
       backgroundColor: "#ffffff",
     };

@@ -1,4 +1,5 @@
 import Phaser from "phaser";
+import { AudioManager } from "../common/managers/AudioManager";
 
 export interface SyllableDivisionConfig {
   DROPZONE_MARGIN?: number;
@@ -58,6 +59,10 @@ export default class SyllableDivision extends Phaser.Scene {
     this.setupLevel();
     this.addInstructions();
     this.addEvents();
+  }
+
+  init() {
+    new AudioManager(this);
   }
 
   addBackground(): void {
