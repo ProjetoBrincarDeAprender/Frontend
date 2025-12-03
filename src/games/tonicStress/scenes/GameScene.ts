@@ -112,14 +112,16 @@ export class GameScene extends Phaser.Scene {
   private createUI(): void {
     const audioManager = new AudioManager(this);
     audioManager.renderMuteButton();
-    this.add.rectangle(400, 300, 800, 600, 0xFFB6C1, 0.4);
+    this.add.rectangle(400, 300, 800, 600, 0x1a237e, 1);
 
     this.titleText = this.add.text(400, 80, "", {
       fontSize: "42px",
       fontFamily: "Arial",
-      color: "#2c3e50",
+      color: "#ffffff",
       fontStyle: "bold",
-      align: "center"
+      align: "center",
+      stroke: "#FFA500",
+      strokeThickness: 2
     }).setOrigin(0.5);
 
     this.emojiText = this.add.text(400, 210, "", {
@@ -132,8 +134,47 @@ export class GameScene extends Phaser.Scene {
       fontFamily: "Arial",
       color: "#2c3e50",
       fontStyle: "bold",
-      align: "center"
+      align: "center",
+    //   stroke: "#FFA500",
+    //   strokeThickness: 1
     }).setOrigin(0.5);
+    
+    // Create twinkling stars
+    this.createTwinklingStars();
+  }
+
+  private createTwinklingStars(): void {
+    // Create stars near the borders
+    const starPositions = [
+      // Top border
+      { x: 100, y: 50 }, { x: 250, y: 40 }, { x: 550, y: 35 }, { x: 700, y: 45 },
+      // Right border
+      { x: 750, y: 150 }, { x: 770, y: 250 }, { x: 760, y: 400 }, { x: 745, y: 500 },
+      // Bottom border
+      { x: 650, y: 560 }, { x: 450, y: 570 }, { x: 250, y: 565 }, { x: 100, y: 555 },
+      // Left border
+      { x: 30, y: 450 }, { x: 25, y: 350 }, { x: 35, y: 200 }, { x: 45, y: 100 }
+    ];
+
+    starPositions.forEach((pos, index) => {
+      const star = this.add.text(pos.x, pos.y, "★", {
+        fontSize: "16px",
+        color: "#FFD700"
+      }).setOrigin(0.5);
+      star.setDepth(1);
+      
+      // Create twinkling animation with different delays
+      this.tweens.add({
+        targets: star,
+        alpha: { from: 1, to: 0.3 },
+        scale: { from: 1, to: 0.7 },
+        duration: 1000 + (index * 100),
+        yoyo: true,
+        repeat: -1,
+        ease: 'Sine.easeInOut',
+        delay: index * 200
+      });
+    });
   }
 
   private startLevel(): void {
