@@ -115,18 +115,19 @@ export function Games() {
   const getGameArea = (gameTitle: string): KnowledgeArea => {
     const title = gameTitle.toLowerCase();
 
-    if (title.includes("vogais") || title.includes("sílaba")) {
+    if (title.includes("vogais") || title.includes("sílaba") || title.includes("silábica") ||title.includes("tônica")) {
       return "PORTUGUES";
     }
     if (
       title.includes("soma") ||
       title.includes("números") ||
       title.includes("numero") ||
-      title.includes("subtração")
+      title.includes("subtração") ||
+      title.includes("conta")
     ) {
       return "MATEMATICA";
     }
-    if (title.includes("moradia") || title.includes("profissões") || title.includes("rua") || title.includes("localiza")) {
+    if (title.includes("moradia") || title.includes("profissões") || title.includes("rua") || title.includes("localiza")|| title.includes("data") ) {
       return "GEOGRAFIA";
     }
     if (

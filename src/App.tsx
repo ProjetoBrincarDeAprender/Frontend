@@ -19,6 +19,7 @@ import { SpaceGame } from "./components/features/games/SpaceGame";
 import SubtractionGame from "./components/features/games/SubtractionGame";
 import SumGame from "./components/features/games/SumGame";
 import SyllableGame from "./components/features/games/SyllableGame";
+import StressSyllable from "./components/features/games/StressSyllable";
 import UseSyllableGame from "./components/features/games/UseSyllableGame";
 import VowelsGame from "./components/features/games/VowelsGame";
 import { AuthGuard } from "./guards/AuthGuard";
@@ -109,6 +110,7 @@ function App() {
         <Route path="address" element={<AddressGame />} />
         <Route path="hygiene" element={<HygieneGame />} />
         <Route path="syllable" element={<SyllableGame />} />
+        <Route path="stresssyllable" element={<StressSyllable />} />
         <Route path="com-dates" element={<ComDatesGame />} />
         <Route path="sensorial" element={<SensorialGame />} />
         <Route path="armed-sum" element={<ArmedSumGame />} />

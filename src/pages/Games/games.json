@@ -10,9 +10,14 @@
     "image": "/assets/maze/bg.png"
   },
   {
-    "title": "Jogo das Sílabas",
+    "title": "Classificação Silábica",
     "gameIdUrl": "syllable",
     "image": "/assets/syllableGame/bg.png"
+  },
+  {
+    "title": "Classificação Tônica",
+    "gameIdUrl": "stresssyllable",
+    "image": "/assets/tonicStressGame/bg.png"
   },
   {
     "title": "Jogo do Espaço",
