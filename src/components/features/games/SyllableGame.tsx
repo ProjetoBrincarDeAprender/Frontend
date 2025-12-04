@@ -25,7 +25,7 @@ const SyllableGame: React.FC = () => {
           "GameScene",
           "/assets/syllableGame/bg.png",
           "syllableBackground",
-          "CLASSIFICAÇÃO SILÁBICA",
+          "CLASSIFICAÇÃO\nSILÁBICA",
           "/assets/common/trophy.png",
           "trophy",
         ),
