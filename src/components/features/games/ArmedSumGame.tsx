@@ -11,7 +11,7 @@ interface ArmedSumGameProps {
   activityId?: number;
 }
 
-const ArmedSumGame: React.FC<ArmedSumGameProps> = ({ activityId = 30 }) => {
+const ArmedSumGame: React.FC<ArmedSumGameProps> = ({ activityId = 4 }) => {
   const gameRef = useRef<Phaser.Game | null>(null);
   const { user } = useUser();
 

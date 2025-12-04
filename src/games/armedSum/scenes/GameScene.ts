@@ -93,7 +93,7 @@ export class GameScene extends Phaser.Scene {
 
     const savedLevel = this.registry.get("armedSumCurrentLevel") || 0;
     const userId = this.registry.get("armedSumUserId") || "10130001";
-    const activityId = this.registry.get("armedSumActivityId") || 30;
+    const activityId = this.registry.get("armedSumActivityId") || 4;
 
     this.logic = new ArmedSumLogic(
       this,
@@ -423,7 +423,14 @@ export class GameScene extends Phaser.Scene {
 
     // Verificar se completou todos os dígitos
     if (this.currentDigitIndex >= answerDigits.length) {
-      // Completou - verificar resposta completa
+      // Completou - montar resposta completa (inverter porque userAnswer foi preenchido da direita pra esquerda)
+      const fullAnswer = this.userAnswer.reverse().join("");
+
+      console.log("🎮 RESPOSTA COMPLETA:", fullAnswer);
+
+      // Enviar resposta para o logic
+      this.logic.checkAnswer(fullAnswer);
+
       this.isTransitioning = true;
       this.cameras.main.flash(300, 0, 255, 0);
 

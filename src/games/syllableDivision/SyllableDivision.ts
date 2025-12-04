@@ -1,4 +1,5 @@
 import { AudioManager } from "../common/managers/AudioManager";
+import { LevelCompletedScene } from "../common/scenes/LevelCompletedScene";
 import Phaser from "phaser";
 import EffectManager from "../clickedButton/logic/EffectManager";
 
@@ -22,7 +23,7 @@ export default class SyllableDivision extends Phaser.Scene {
   private OPTION_SIZE: number;
   private OPTION_FONT_SIZE: number;
   private config: SyllableDivisionConfig;
-  private dropzones: Phaser.GameObjects.Rectangle[] = [];
+  private dropzones: Phaser.GameObjects.Container[] = [];
   private effectManager: EffectManager;
   private image: Phaser.GameObjects.Image | null;
   private options: Phaser.GameObjects.Container[] = [];
@@ -68,7 +69,10 @@ export default class SyllableDivision extends Phaser.Scene {
   }
 
   create(): void {
-    this.registry.set("actualLevel", this.config.actualLevel || 0);
+    if (this.registry.get("actualLevel") === undefined) {
+      this.registry.set("actualLevel", 0);
+    }
+    this.registerStandardScenes();
     this.addBackground();
     this.setupLevel();
     this.addInstructions();
@@ -77,6 +81,18 @@ export default class SyllableDivision extends Phaser.Scene {
 
   init() {
     new AudioManager(this);
+  }
+
+  private registerStandardScenes(): void {
+    if (!this.scene.manager.getScene("LevelCompleteScene")) {
+      const levelCompleteScene = new LevelCompletedScene({
+        backgroundPath: this.config.backgroundPath,
+        backgroundKey: "background",
+        nextLevelScene: "SyllableDivision",
+        menuScene: "StartScene",
+      });
+      this.scene.add("LevelCompleteScene", levelCompleteScene);
+    }
   }
 
   addBackground(): void {
@@ -114,7 +130,8 @@ export default class SyllableDivision extends Phaser.Scene {
       word = "sofa";
     }
 
-    this.image = this.add.image(x, y, word).setScale(0.35).setInteractive();
+    this.image = this.add.image(x, y, word).setInteractive();
+    this.image.setScale(400 / this.image.width);
 
     this.sound.play(word);
     this.image.on("pointerup", (_pointer: Phaser.Input.Pointer) => {
@@ -131,7 +148,7 @@ export default class SyllableDivision extends Phaser.Scene {
   }
 
   addDropzones(): void {
-    const dropzones: Phaser.GameObjects.Rectangle[] = [];
+    const dropzones: Phaser.GameObjects.Container[] = [];
 
     this.syllabes.forEach(() => {
       const rectangle = this.add.rectangle(
@@ -141,9 +158,23 @@ export default class SyllableDivision extends Phaser.Scene {
         this.DROPZONE_SIZE,
         0x000a1f,
       );
-      rectangle.setInteractive();
-      rectangle.input!.dropZone = true;
-      dropzones.push(rectangle);
+
+      const stroke = rectangle.setStrokeStyle(4, 0xffffff);
+
+      this.tweens.add({
+        targets: stroke,
+        alpha: 0.6, 
+        ease: 'Sine.InOut', 
+        duration: 500, 
+        repeat: -1,
+        yoyo: true
+      });
+
+      const container = this.add.container(0, 0, [rectangle]);
+      container.setSize(this.DROPZONE_SIZE, this.DROPZONE_SIZE);
+      container.setInteractive();
+      container.input!.dropZone = true;
+      dropzones.push(container);
     });
     this.dropzones = dropzones;
   }
@@ -270,7 +301,7 @@ export default class SyllableDivision extends Phaser.Scene {
       (
         _pointer: Phaser.Input.Pointer,
         gameObject: Phaser.GameObjects.Container,
-        dropZone: Phaser.GameObjects.Rectangle,
+        dropZone: Phaser.GameObjects.Container,
       ) => {
         this.handleDrop(gameObject, dropZone);
       },
@@ -279,7 +310,7 @@ export default class SyllableDivision extends Phaser.Scene {
 
   handleDrop(
     gameObject: Phaser.GameObjects.Container,
-    dropZone: Phaser.GameObjects.Rectangle,
+    dropZone: Phaser.GameObjects.Container,
   ): void {
     gameObject.setPosition(dropZone.x, dropZone.y);
     if (gameObject.input) gameObject.input.enabled = false;
@@ -303,8 +334,6 @@ export default class SyllableDivision extends Phaser.Scene {
     this.syllabes = this.config.levels[this.registry.get("actualLevel")] || [];
     if (this.syllabes.length === 0) {
       this.scene.start("EndScene");
-    } else if (this.syllabes.length % 5 === 0) {
-      this.scene.start("LevelCompleteScene");
     } else {
       this.addImage();
       this.addInteractableComponents();
@@ -317,7 +346,16 @@ export default class SyllableDivision extends Phaser.Scene {
       this.destroyImage();
       this.destroyDropzones();
       this.destroyOptions();
-      this.setupLevel();
+
+      if (
+        this.registry.get("actualLevel") % 5 === 0 &&
+        this.registry.get("actualLevel") !== 0 &&
+        this.registry.get("actualLevel") < this.config.levels.length
+      ) {
+        this.scene.start("LevelCompleteScene");
+      } else {
+        this.setupLevel();
+      }
     });
   }
 }
