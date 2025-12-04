@@ -93,7 +93,7 @@ export class GameScene extends Phaser.Scene {
 
     const savedLevel = this.registry.get("armedSumCurrentLevel") || 0;
     const userId = this.registry.get("armedSumUserId") || "10130001";
-    const activityId = this.registry.get("armedSumActivityId") || 30;
+    const activityId = this.registry.get("armedSumActivityId") || 4;
 
     this.logic = new ArmedSumLogic(
       this,

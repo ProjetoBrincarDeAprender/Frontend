@@ -31,7 +31,7 @@ function getCurrentUser(): { id: number | string; name?: string } {
 
 export class ArmedSumDataManager {
   private currentLevelData: ArmedSumLevelData | null = null;
-  private activityId: number = 30;
+  private activityId: number = 4;
   private apiService: APIDataService;
   private levelsCompleted: number = 0;
 
