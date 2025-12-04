@@ -22,7 +22,23 @@ export class ArmedSumLogic {
   }
 
   getCurrentLevel(): ArmedSumLevel | null {
-    return this.levels[this.currentLevelIndex] || null;
+    const level = this.levels[this.currentLevelIndex] || null;
+
+    // Garantir que o nível seja iniciado no data manager
+    if (level && !this.dataManager.getCurrentLevelData()) {
+      this.dataManager.startLevel(
+        this.currentLevelIndex + 1,
+        level.getNumberA(),
+        level.getNumberB(),
+      );
+      console.log(`📊 Nível ${this.currentLevelIndex + 1} iniciado:`, {
+        numberA: level.getNumberA(),
+        numberB: level.getNumberB(),
+        answer: level.getAnswer(),
+      });
+    }
+
+    return level;
   }
 
   getCurrentLevelNumber(): number {
@@ -37,22 +53,23 @@ export class ArmedSumLogic {
     const currentLevel = this.getCurrentLevel();
     if (!currentLevel) return false;
 
-    // Se não iniciou o nível no data manager, iniciar agora
-    if (!this.dataManager.getCurrentLevelData()) {
-      this.dataManager.startLevel(
-        this.currentLevelIndex + 1,
-        currentLevel.getNumberA(),
-        currentLevel.getNumberB(),
-      );
-    }
-
     this.currentAttempts++;
     const isCorrect = parseInt(userAnswer) === currentLevel.getAnswer();
 
+    // Registrar a resposta
     this.dataManager.addAnswer(userAnswer);
+
+    console.log(`🎯 Resposta registrada:`, {
+      level: this.currentLevelIndex + 1,
+      userAnswer,
+      correctAnswer: currentLevel.getAnswer(),
+      isCorrect,
+      attempts: this.currentAttempts,
+    });
 
     if (isCorrect) {
       this.dataManager.completeLevel();
+      console.log(`✅ Nível ${this.currentLevelIndex + 1} completado!`);
       this.currentAttempts = 0;
     }
 

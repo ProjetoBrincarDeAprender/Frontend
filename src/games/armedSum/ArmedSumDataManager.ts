@@ -5,11 +5,24 @@ interface ArmedSumLevelData {
   numberA: number;
   numberB: number;
   correctAnswer: number;
-  userAnswer: string;
+  userAnswers: string[];
   wrongAnswers: number;
   timeSpent: number;
   completed: boolean;
   startTime: number;
+  endTime?: number;
+}
+
+interface UserInteraction {
+  studentId: number;
+  activityId: number;
+  questionId: number;
+  answer: string;
+  timeSpent: number;
+  attempts: number;
+  neededHint: boolean;
+  responseDate: string;
+  isCorrect: boolean;
 }
 
 function getCurrentUser(): { id: number | string; name?: string } {
@@ -48,7 +61,7 @@ export class ArmedSumDataManager {
       numberA,
       numberB,
       correctAnswer: numberA + numberB,
-      userAnswer: "",
+      userAnswers: [],
       wrongAnswers: 0,
       timeSpent: 0,
       completed: false,
@@ -59,7 +72,7 @@ export class ArmedSumDataManager {
   addAnswer(answer: string): void {
     if (!this.currentLevelData) return;
 
-    this.currentLevelData.userAnswer = answer;
+    this.currentLevelData.userAnswers.push(answer);
 
     if (parseInt(answer) !== this.currentLevelData.correctAnswer) {
       this.currentLevelData.wrongAnswers++;
@@ -69,8 +82,9 @@ export class ArmedSumDataManager {
   completeLevel(): void {
     if (!this.currentLevelData) return;
 
+    this.currentLevelData.endTime = Date.now();
     this.currentLevelData.timeSpent =
-      (Date.now() - this.currentLevelData.startTime) / 1000;
+      (this.currentLevelData.endTime - this.currentLevelData.startTime) / 1000;
     this.currentLevelData.completed = true;
     this.levelsCompleted++;
 
@@ -78,30 +92,70 @@ export class ArmedSumDataManager {
     this.currentLevelData = null;
   }
 
-  private async sendLevelData(levelData: ArmedSumLevelData): Promise<void> {
+  async sendLevelData(levelData: ArmedSumLevelData): Promise<void> {
     try {
       const user = getCurrentUser();
+      const levelInteraction = this.createLevelInteraction(levelData, user);
 
-      const gameData = {
-        studentId: parseInt(user.id.toString()),
-        activityId: this.activityId,
-        questionId: levelData.level,
-        answer: levelData.userAnswer,
-        timeSpent: Math.round(levelData.timeSpent),
-        attempts: levelData.wrongAnswers + 1,
-        neededHint: false,
-        responseDate: new Date().toISOString(),
-        isCorrect: parseInt(levelData.userAnswer) === levelData.correctAnswer,
-      };
+      console.log("🎮 DADOS DO NÍVEL - CONTA ARMADA:");
+      console.log(JSON.stringify(levelInteraction, null, 2));
 
-      await this.apiService.sendGameData(
-        this.activityId,
-        levelData.level,
-        gameData,
+      const response = await this.apiService.sendGameData(
+        levelInteraction.activityId,
+        levelInteraction.questionId,
+        levelInteraction,
       );
-    } catch (error) {
-      console.error("Erro ao enviar dados:", error);
+
+      console.log("✅ Resposta do servidor:", response?.data);
+    } catch (error: unknown) {
+      if (error && typeof error === "object" && "response" in error) {
+        const axiosError = error as {
+          response?: { status?: number; data?: unknown };
+        };
+        console.error("❌ Status do erro:", axiosError.response?.status);
+        console.error("❌ Dados do erro:", axiosError.response?.data);
+      }
+      console.error("❌ Erro completo:", error);
     }
+  }
+
+  private createLevelInteraction(
+    levelData: ArmedSumLevelData,
+    user: { id: number | string; name?: string },
+  ): UserInteraction {
+    const isCorrect =
+      levelData.userAnswers.length > 0 &&
+      parseInt(levelData.userAnswers[levelData.userAnswers.length - 1]) ===
+        levelData.correctAnswer;
+
+    const operation = `${levelData.numberA} + ${levelData.numberB}`;
+
+    const levelResult = {
+      levelNumber: levelData.level,
+      operation,
+      correctAnswer: levelData.correctAnswer,
+      userAnswers: levelData.userAnswers,
+      isCorrect: isCorrect,
+      wrongAnswers: levelData.wrongAnswers,
+      timeSpent: Math.round(levelData.timeSpent),
+      userId: user.id || 10130001,
+      userName: user.name || "Usuário Anônimo",
+    };
+
+    return {
+      studentId:
+        typeof user.id === "number"
+          ? user.id
+          : parseInt(user.id.toString()) || 10130001,
+      activityId: this.activityId,
+      questionId: levelData.level,
+      answer: JSON.stringify(levelResult),
+      timeSpent: Math.round(levelData.timeSpent * 1000),
+      attempts: levelData.userAnswers.length,
+      neededHint: false,
+      responseDate: new Date().toISOString(),
+      isCorrect: isCorrect,
+    };
   }
 
   getCurrentLevelData(): ArmedSumLevelData | null {
