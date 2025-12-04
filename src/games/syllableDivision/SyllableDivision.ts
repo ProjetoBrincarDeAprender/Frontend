@@ -23,7 +23,7 @@ export default class SyllableDivision extends Phaser.Scene {
   private OPTION_SIZE: number;
   private OPTION_FONT_SIZE: number;
   private config: SyllableDivisionConfig;
-  private dropzones: Phaser.GameObjects.Rectangle[] = [];
+  private dropzones: Phaser.GameObjects.Container[] = [];
   private effectManager: EffectManager;
   private image: Phaser.GameObjects.Image | null;
   private options: Phaser.GameObjects.Container[] = [];
@@ -148,7 +148,7 @@ export default class SyllableDivision extends Phaser.Scene {
   }
 
   addDropzones(): void {
-    const dropzones: Phaser.GameObjects.Rectangle[] = [];
+    const dropzones: Phaser.GameObjects.Container[] = [];
 
     this.syllabes.forEach(() => {
       const rectangle = this.add.rectangle(
@@ -158,9 +158,23 @@ export default class SyllableDivision extends Phaser.Scene {
         this.DROPZONE_SIZE,
         0x000a1f,
       );
-      rectangle.setInteractive();
-      rectangle.input!.dropZone = true;
-      dropzones.push(rectangle);
+
+      const stroke = rectangle.setStrokeStyle(4, 0xffffff);
+
+      this.tweens.add({
+        targets: stroke,
+        alpha: 0.6, 
+        ease: 'Sine.InOut', 
+        duration: 500, 
+        repeat: -1,
+        yoyo: true
+      });
+
+      const container = this.add.container(0, 0, [rectangle]);
+      container.setSize(this.DROPZONE_SIZE, this.DROPZONE_SIZE);
+      container.setInteractive();
+      container.input!.dropZone = true;
+      dropzones.push(container);
     });
     this.dropzones = dropzones;
   }
@@ -287,7 +301,7 @@ export default class SyllableDivision extends Phaser.Scene {
       (
         _pointer: Phaser.Input.Pointer,
         gameObject: Phaser.GameObjects.Container,
-        dropZone: Phaser.GameObjects.Rectangle,
+        dropZone: Phaser.GameObjects.Container,
       ) => {
         this.handleDrop(gameObject, dropZone);
       },
@@ -296,7 +310,7 @@ export default class SyllableDivision extends Phaser.Scene {
 
   handleDrop(
     gameObject: Phaser.GameObjects.Container,
-    dropZone: Phaser.GameObjects.Rectangle,
+    dropZone: Phaser.GameObjects.Container,
   ): void {
     gameObject.setPosition(dropZone.x, dropZone.y);
     if (gameObject.input) gameObject.input.enabled = false;
