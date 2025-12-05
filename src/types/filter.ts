@@ -26,3 +26,5 @@ export type FilterResponsibleOption = FilterOption & {
 };
 
 export type FilterSchoolOption = FilterOption & {};
+
+export type FilterSchoolAdminOption = FilterOption & {};
