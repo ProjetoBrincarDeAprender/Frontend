@@ -236,7 +236,7 @@
       "entityKey": "dudaPensando",
       "content": ["Ouviu isso", " ", "Que estranho", " "],
       "completeContent": ["Ouviu isso", "?", "Que estranho", "."],
-      "answer": [".", "?"],
+      "answer": ["?", "."],
       "options": [".", "?", ",", "!"]
     },
     {
@@ -245,7 +245,7 @@
       "entityKey": "dudaNeutra",
       "content": ["Procurei muito", " ", "mas não encontrei", " "],
       "completeContent": ["Procurei muito", ",", "mas não encontrei", "."],
-      "answer": [".", ","],
+      "answer": [",", "."],
       "options": ["!", ",", "?", "."]
     },
     {

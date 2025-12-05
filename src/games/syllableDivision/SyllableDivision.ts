@@ -1,5 +1,4 @@
 import { AudioManager } from "../common/managers/AudioManager";
-import { LevelCompletedScene } from "../common/scenes/LevelCompletedScene";
 import Phaser from "phaser";
 import EffectManager from "../clickedButton/logic/EffectManager";
 
@@ -41,6 +40,11 @@ export default class SyllableDivision extends Phaser.Scene {
     this.syllabes = config.levels[config.actualLevel || 0];
   }
 
+  static resetGame(scene: Phaser.Scene): void {
+    scene.registry.set("actualLevel", 0);
+    scene.registry.set("gameStarted", false);
+  }
+
   preload(): void {
     this.load.audio("correct", "/assets/common/sounds/correct.mp3");
     this.load.audio("incorrect", "/assets/common/sounds/incorrect.mp3");
@@ -69,10 +73,15 @@ export default class SyllableDivision extends Phaser.Scene {
   }
 
   create(): void {
+    // Verificar se o jogo já foi iniciado antes, se não, garantir que começa do nível 0
+    if (!this.registry.get("gameStarted")) {
+      this.registry.set("actualLevel", 0);
+      this.registry.set("gameStarted", true);
+    }
+
     if (this.registry.get("actualLevel") === undefined) {
       this.registry.set("actualLevel", 0);
     }
-    this.registerStandardScenes();
     this.addBackground();
     this.setupLevel();
     this.addInstructions();
@@ -81,18 +90,6 @@ export default class SyllableDivision extends Phaser.Scene {
 
   init() {
     new AudioManager(this);
-  }
-
-  private registerStandardScenes(): void {
-    if (!this.scene.manager.getScene("LevelCompleteScene")) {
-      const levelCompleteScene = new LevelCompletedScene({
-        backgroundPath: this.config.backgroundPath,
-        backgroundKey: "background",
-        nextLevelScene: "SyllableDivision",
-        menuScene: "StartScene",
-      });
-      this.scene.add("LevelCompleteScene", levelCompleteScene);
-    }
   }
 
   addBackground(): void {
@@ -163,11 +160,11 @@ export default class SyllableDivision extends Phaser.Scene {
 
       this.tweens.add({
         targets: stroke,
-        alpha: 0.6, 
-        ease: 'Sine.InOut', 
-        duration: 500, 
+        alpha: 0.6,
+        ease: "Sine.InOut",
+        duration: 500,
         repeat: -1,
-        yoyo: true
+        yoyo: true,
       });
 
       const container = this.add.container(0, 0, [rectangle]);

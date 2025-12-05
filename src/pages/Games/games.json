@@ -108,5 +108,15 @@
     "title": "Conta Armada",
     "gameIdUrl": "armed-sum",
     "image": "/assets/armedSum/background.png"
+  },
+  {
+    "title": "Pontuando Frases",
+    "gameIdUrl": "punctuation",
+    "image": "/assets/punctuationGame/images/backgroundMain.png"
+  },
+  {
+    "title": "Dividindo Sílabas",
+    "gameIdUrl": "syllable-division",
+    "image": "/assets/syllableDivisionGame/images/backgroundMain.png"
   }
 ]
