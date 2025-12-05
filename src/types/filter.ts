@@ -16,3 +16,13 @@ export type FilterStudentOption = FilterOption & {
   temaPreferido?: string;
   responsibleId?: number | null;
 };
+
+export type FilterTeacherOption = FilterOption & {
+  escolaId?: number;
+};
+
+export type FilterResponsibleOption = FilterOption & {
+  escolaId?: number;
+};
+
+export type FilterSchoolOption = FilterOption & {};

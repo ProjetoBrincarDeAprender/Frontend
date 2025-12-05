@@ -65,7 +65,7 @@ export function useStudent({
   });
 
   const studentsQuery = useQuery({
-    queryKey: STUDENTS_QUERY_KEY,
+    queryKey: [...STUDENTS_QUERY_KEY, filters],
     queryFn: () => fetchStudentsData(filters),
   });
 

@@ -1,4 +1,4 @@
-import type { User } from "./user";
+import type { User, UserFormData } from "./user";
 
 export type Student = {
   data_nascimento: string | Date;
@@ -13,9 +13,4 @@ export type StudentFormData = {
   avatar_url?: string;
   tema_preferido?: string;
   senha_visual_sequencia?: string;
-  nome_completo: string;
-  email: string;
-  senha: string;
-  confirmar_senha: string;
-  escolaId?: number | string;
-};
+} & UserFormData;

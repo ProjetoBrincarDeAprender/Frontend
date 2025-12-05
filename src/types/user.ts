@@ -19,3 +19,11 @@ export type User = {
     nome: string | null;
   } | null;
 };
+
+export type UserFormData = {
+  nome_completo: string;
+  email: string;
+  senha: string;
+  confirmar_senha: string;
+  escolaId?: number | string;
+};
