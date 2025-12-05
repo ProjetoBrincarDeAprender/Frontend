@@ -7,7 +7,6 @@ import { useUser } from "@/hooks/User/useUser";
 import { StartScene } from "@/games/common/scenes/StartScene";
 import { LevelCompletedScene } from "@/games/common/scenes/LevelCompletedScene";
 import { EndScene } from "@/games/common/scenes/EndScene";
-import ClickButtonGameScene from "@/games/clickedButton/scenes/ClickButtonGame";
 import SyllableDivision from "@/games/syllableDivision/SyllableDivision";
 import Phaser from "phaser";
 
@@ -53,12 +52,21 @@ const SyllableDivisionGame: React.FC = () => {
       nextLevelScene: "SyllableDivision",
       menuScene: "StartScene",
       onMenuReturn: () => {
-        ClickButtonGameScene.resetRegistry(gameScene);
+        // Reset do nível atual quando voltar ao menu
+        if (gameRef.current) {
+          SyllableDivision.resetGame(gameRef.current.scene.getScenes()[0]);
+        }
       },
     });
 
     const endScene = new EndScene({
       restartScene: "StartScene",
+      onRestart: () => {
+        // Reset do nível atual quando reiniciar o jogo
+        if (gameRef.current) {
+          SyllableDivision.resetGame(gameRef.current.scene.getScenes()[0]);
+        }
+      },
     });
 
     const config: Phaser.Types.Core.GameConfig = {

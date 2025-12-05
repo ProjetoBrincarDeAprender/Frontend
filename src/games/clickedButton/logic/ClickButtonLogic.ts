@@ -151,7 +151,7 @@ export default class ClickButtonLogic {
     if (
       selectedOption.getButtonStringText() === answer ||
       (Array.isArray(answer) &&
-        answer.includes(selectedOption.getButtonStringText()))
+        answer[0] === selectedOption.getButtonStringText())
     ) {
       this.setOptionsEnabled(false);
 

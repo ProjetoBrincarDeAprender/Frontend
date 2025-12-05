@@ -20,7 +20,7 @@ const formSchema = z.object({
 
 export default function SignInForm() {
   const [showPassword, setShowPassword] = useState(false);
-
+  const [isLoading, setIsLoading] = useState(false);
   const { login, profile } = useAuth();
   const { registerUser } = useUser();
   const form = useForm<z.infer<typeof formSchema>>({
@@ -32,6 +32,9 @@ export default function SignInForm() {
   });
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
+    if (isLoading) return;
+    setIsLoading(true);
+
     try {
       await login(data.login, data.senha);
       const profileData = await profile();
@@ -47,7 +50,6 @@ export default function SignInForm() {
             nome: profileData.escola || "",
           },
         });
-
         toast.success("Login realizado com sucesso!");
       }
     } catch (error) {
