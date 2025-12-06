@@ -1,4 +1,5 @@
 import { Route, Routes } from "react-router";
+import AddressGame from "./components/features/games/AddressGame";
 import ComplexSyllableGame from "./components/features/games/ComplexSyllableGame";
 import { CoordinationGame } from "./components/features/games/CoordinationGame";
 import HousingGame from "./components/features/games/HousingGame";
@@ -16,7 +17,6 @@ import SubtractionGame from "./components/features/games/SubtractionGame";
 import SumGame from "./components/features/games/SumGame";
 import UseSyllableGame from "./components/features/games/UseSyllableGame";
 import VowelsGame from "./components/features/games/VowelsGame";
-import AddressGame from "./components/features/games/AddressGame";
 import { AuthGuard } from "./guards/AuthGuard";
 import { Calm } from "./pages/Calm/Calm";
 import Dashboard from "./pages/Dashboard/Admin/Dashboard";
@@ -41,6 +41,7 @@ import Logout from "./pages/Logout/Logout";
 import { Profile } from "./pages/Profile/Profile";
 import { RecoverPassword } from "./pages/RecoverPassword/RecoverPassword";
 import { SendPasswordToken } from "./pages/SendPasswordToken/SendPasswordToken";
+import { UserPerfilEnum } from "./types/user";
 
 function App() {
   return (
@@ -57,11 +58,18 @@ function App() {
 
       <Route
         path="/dashboard"
-        element={<AuthGuard requireAuth role={["Admin", "Escola"]} />}
+        element={
+          <AuthGuard
+            requireAuth
+            role={[UserPerfilEnum.ADMIN, UserPerfilEnum.SCHOOL_ADMIN]}
+          />
+        }
       >
         <Route index element={<Dashboard />} />
         <Route path="students" element={<Students />} />
-        <Route element={<AuthGuard requireAuth role={["Admin"]} />}>
+        <Route
+          element={<AuthGuard requireAuth role={[UserPerfilEnum.ADMIN]} />}
+        >
           <Route path="schools" element={<Schools />} />
           <Route path="schoolusers" element={<SchoolUsers />} />
         </Route>
@@ -73,7 +81,7 @@ function App() {
       {/* Rotas específicas do Professor */}
       <Route
         path="/dashboard/teacher"
-        element={<AuthGuard requireAuth role={["Professor"]} />}
+        element={<AuthGuard requireAuth role={[UserPerfilEnum.TEACHER]} />}
       >
         <Route index element={<TeacherDashboard />} />
         <Route path="curriculum/knowledge-areas" element={<KnowledgeAreas />} />
