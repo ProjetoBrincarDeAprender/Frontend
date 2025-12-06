@@ -3,12 +3,7 @@ import { EndScene } from "@/games/common/scenes/EndScene";
 import { LevelCompletedScene } from "@/games/common/scenes/LevelCompletedScene";
 import Phaser from "phaser";
 import MathLogic from "../logic/logic";
-import SubtractionLevel from "../logic/MathLevel";
-import {
-  createDefaultSubtractionLevels,
-  createSubtractionLevels,
-} from "../logic/levelFactory";
-import type { SubtractionLevelDefinition } from "../logic/levelFactory";
+import SubtractionLevel, { LevelType } from "../logic/MathLevel";
 import { AnimationManager } from "@/games/sum/components/animations/AnimationManager";
 import { SubmitButton } from "@/games/sum/components/buttons/SubmitButton";
 import { NumberDisplay } from "../components/ui/NumberDisplay";
@@ -26,6 +21,8 @@ export class GameScene extends Phaser.Scene {
   private submitButton?: SubmitButton;
   private keyboardHandler?: (event: KeyboardEvent) => void;
   private choiceButtons: Phaser.GameObjects.Container[] = [];
+  private cursor?: Phaser.GameObjects.Rectangle;
+  private cursorTween?: Phaser.Tweens.Tween;
   private isTransitioning: boolean = false;
   private userId: string = "default_user";
   private activityId?: number;
@@ -48,6 +45,8 @@ export class GameScene extends Phaser.Scene {
     this.choiceButtons = [];
     this.submitButton = undefined;
     this.keyboardHandler = undefined;
+    this.cursor = undefined;
+    this.cursorTween = undefined;
     this.answerText = undefined;
     this.isTransitioning = false;
 
@@ -104,6 +103,11 @@ export class GameScene extends Phaser.Scene {
     this.load.image("tres", "/assets/sumGame/tres.png");
     this.load.image("quatro", "/assets/sumGame/quatro.png");
     this.load.image("cinco", "/assets/sumGame/cinco.png");
+    this.load.image("seis", "/assets/sumGame/seis.png");
+    this.load.image("sete", "/assets/sumGame/sete.png");
+    this.load.image("oito", "/assets/sumGame/oito.png");
+    this.load.image("nove", "/assets/sumGame/nove.png");
+    this.load.image("dez", "/assets/sumGame/dez.png");
     this.load.image("star", "/assets/common/star.svg");
     this.load.image(
       "defaultButton",
@@ -140,14 +144,40 @@ export class GameScene extends Phaser.Scene {
   }
 
   private initializeLogic() {
-    // Lê definições do JSON se existir; caso contrário, usa o padrão da factory
-    const defs = this.cache.json.get("subLevels") as
-      | SubtractionLevelDefinition[]
-      | undefined;
-    const levels: SubtractionLevel[] =
-      defs && Array.isArray(defs) && defs.length
-        ? createSubtractionLevels(defs)
-        : createDefaultSubtractionLevels();
+    const levels: SubtractionLevel[] = [];
+
+    // Nível 1: 5 fases com múltipla escolha (números de 1 a 5, sem negativos)
+    for (let i = 0; i < 5; i++) {
+      let num1, num2;
+      do {
+        num1 = Phaser.Math.Between(1, 5);
+        num2 = Phaser.Math.Between(1, 5);
+      } while (num1 < num2); // Garantir que num1 >= num2 para evitar negativos
+
+      levels.push(new SubtractionLevel(num1, num2, LevelType.MULTIPLE_CHOICE));
+    }
+
+    // Nível 2: 5 fases com input digitado (números de 1 a 5, sem negativos)
+    for (let i = 0; i < 5; i++) {
+      let num1, num2;
+      do {
+        num1 = Phaser.Math.Between(1, 5);
+        num2 = Phaser.Math.Between(1, 5);
+      } while (num1 < num2); // Garantir que num1 >= num2 para evitar negativos
+
+      levels.push(new SubtractionLevel(num1, num2, LevelType.INPUT));
+    }
+
+    // Nível 3: 5 fases com dois números (primeiro de 1 a 10, segundo de 1 a 5, sem negativos)
+    for (let i = 0; i < 5; i++) {
+      let num1, num2;
+      do {
+        num1 = Phaser.Math.Between(1, 10);
+        num2 = Phaser.Math.Between(1, 5);
+      } while (num1 < num2); // Garantir que num1 >= num2 para evitar negativos
+
+      levels.push(new SubtractionLevel(num1, num2, LevelType.INPUT));
+    }
 
     const savedLevel = this.registry.get("subCurrentLevel") || 0;
     this.logic = new MathLogic(
@@ -308,6 +338,15 @@ export class GameScene extends Phaser.Scene {
       this.submitButton.destroy();
       this.submitButton = undefined;
     }
+    if (this.cursorTween) {
+      this.cursorTween.stop();
+      this.cursorTween = undefined;
+    }
+    if (this.cursor) {
+      this.cursor.destroy();
+      this.cursor = undefined;
+    }
+
     this.add.text(60, 470, "DIGITE A RESPOSTA: ", {
       fontSize: "24px",
       color: "#000",
@@ -315,6 +354,7 @@ export class GameScene extends Phaser.Scene {
       backgroundColor: "#ffffff",
       padding: { x: 10, y: 10 },
     });
+
     this.answerText = this.add
       .text(392, 500, " ", {
         fontSize: "48px",
@@ -323,6 +363,19 @@ export class GameScene extends Phaser.Scene {
         padding: { x: 10, y: 10 },
       })
       .setOrigin(0.5);
+
+    this.cursor = this.add.rectangle(0, 0, 2, 36, 0x000000).setOrigin(0, 0.5);
+    this.cursor.setDepth(12);
+    this.updateCursorPosition();
+    this.cursorTween = this.tweens.add({
+      targets: this.cursor,
+      alpha: 0.2,
+      duration: 600,
+      yoyo: true,
+      repeat: -1,
+      ease: "Sine.easeInOut",
+    });
+
     this.submitButton = new SubmitButton(this, 550, 500, () =>
       this.handleAnswer(),
     );
@@ -339,15 +392,18 @@ export class GameScene extends Phaser.Scene {
           // permitir negativos depois
           this.inputText += event.key;
           this.answerText!.setText(this.inputText);
+          this.updateCursorPosition();
         }
       } else if (event.key === "-") {
         if (this.inputText.length === 0) {
           this.inputText = "-";
           this.answerText!.setText(this.inputText);
+          this.updateCursorPosition();
         }
       } else if (event.key === "Backspace") {
         this.inputText = this.inputText.slice(0, -1);
         this.answerText!.setText(this.inputText);
+        this.updateCursorPosition();
       } else if (event.key === "Enter") {
         this.handleAnswer();
       }
@@ -411,6 +467,9 @@ export class GameScene extends Phaser.Scene {
   private resetInput() {
     this.inputText = "";
     if (this.answerText) this.answerText.setText("");
+    if (this.cursor && this.answerText) {
+      this.updateCursorPosition();
+    }
   }
 
   private clearScene() {
@@ -432,6 +491,14 @@ export class GameScene extends Phaser.Scene {
     if (this.keyboardHandler) {
       this.input.keyboard?.off("keydown", this.keyboardHandler);
       this.keyboardHandler = undefined;
+    }
+    if (this.cursorTween) {
+      this.cursorTween.stop();
+      this.cursorTween = undefined;
+    }
+    if (this.cursor) {
+      this.cursor.destroy();
+      this.cursor = undefined;
     }
     if (this.equationText) {
       this.equationText.destroy();
@@ -457,6 +524,16 @@ export class GameScene extends Phaser.Scene {
     this.equationBox.fillRoundedRect(x, y, width, height, 12);
     this.equationBox.strokeRoundedRect(x, y, width, height, 12);
     this.equationBox.setDepth(12);
+  }
+
+  private updateCursorPosition() {
+    if (!this.answerText || !this.cursor || !this.answerText.scene) return;
+    try {
+      const bounds = this.answerText.getBounds();
+      this.cursor.setPosition(bounds.left + 8, bounds.centerY);
+    } catch (error) {
+      console.warn("Erro ao atualizar posição do cursor:", error);
+    }
   }
 }
 

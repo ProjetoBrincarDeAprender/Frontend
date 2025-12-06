@@ -81,9 +81,9 @@ export default function Dashboard() {
                 </Link>
                 <Link
                   to="/dashboard/schoolusers"
-                  className="blue bg-yellow hover:bg-purplish-blue hover:text-yellow flex min-h-[60px] justify-center gap-8 rounded-2xl px-8 py-4 text-center font-bold uppercase shadow-xl transition duration-200"
+                  className="blue bg-yellow hover:bg-purplish-blue hover:text-yellow flex min-h-[60px] justify-center gap-8 rounded-2xl px-8 py-4 text-center font-bold uppercase shadow-xl transition duration-200 min-w-40"
                 >
-                  Cadastrar Adm Escol.
+                  Cadastrar Adm Escola
                 </Link>
               </>
             )}

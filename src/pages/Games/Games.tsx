@@ -115,18 +115,19 @@ export function Games() {
   const getGameArea = (gameTitle: string): KnowledgeArea => {
     const title = gameTitle.toLowerCase();
 
-    if (title.includes("vogais") || title.includes("sílaba")) {
+    if (title.includes("vogais") || title.includes("sílaba") || title.includes("silábica") ||title.includes("tônica")) {
       return "PORTUGUES";
     }
     if (
       title.includes("soma") ||
       title.includes("números") ||
       title.includes("numero") ||
-      title.includes("subtração")
+      title.includes("subtração") ||
+      title.includes("conta")
     ) {
       return "MATEMATICA";
     }
-    if (title.includes("moradia") || title.includes("profissões") || title.includes("rua") || title.includes("localiza")) {
+    if (title.includes("moradia") || title.includes("profissões") || title.includes("rua") || title.includes("localiza")|| title.includes("data") ) {
       return "GEOGRAFIA";
     }
     if (
@@ -220,7 +221,7 @@ export function Games() {
                 onClick={() => handleAreaFilter(area.id)}
                 className={` ${area.color} ${
                   selectedArea === area.id
-                    ? "ring-purplish-blue ring-opacity-80 scale-105 transform-gpu shadow-xl ring-6"
+                    ? "outline-4 outline-offset-1 outline-solid outline-purplish-blue ring-opacity-80 scale-105 transform-gpu shadow-xl"
                     : "hover:scale-105 hover:shadow-lg"
                 } font-1 border-purplish-blue border-opacity-60 hover:border-opacity-100 flex min-h-[60px] transform items-center justify-center rounded-2xl border-2 px-6 py-4 text-2xl text-white backdrop-blur-sm transition-all duration-300 ease-in-out hover:cursor-pointer hover:shadow-blue-800/25 active:scale-95 sm:text-base lg:text-lg`}
               >

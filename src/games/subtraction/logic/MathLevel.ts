@@ -40,14 +40,14 @@ export default class SubtractionLevel {
   private generateChoices(): number[] {
     const correctAnswer = this.answer;
     const choices = [correctAnswer];
-    // Faixa de variação considerando que resultados podem ser negativos
-    const minRange = -10;
-    const maxRange = 10;
+    // Gerar opções próximas da resposta correta (todas não-negativas)
+    const range = 5;
 
     while (choices.length < 3) {
-      const incorrectOption =
-        Math.floor(Math.random() * (maxRange - minRange + 1)) + minRange;
-      if (!choices.includes(incorrectOption)) {
+      const offset = Math.floor(Math.random() * range * 2) - range;
+      const incorrectOption = correctAnswer + offset;
+      // Garantir que a opção não seja negativa e não esteja duplicada
+      if (incorrectOption >= 0 && !choices.includes(incorrectOption)) {
         choices.push(incorrectOption);
       }
     }

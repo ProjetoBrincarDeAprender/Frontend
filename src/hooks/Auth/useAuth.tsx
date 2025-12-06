@@ -47,7 +47,7 @@ const useAuth = () => {
         codigo_usuario: response.data.codigo_usuario,
         nome_completo: response.data.nome_completo,
         email: response.data.email,
-        perfil: response.data.perfil,
+        perfil: response.data.perfil as User["perfil"],
         escola: response.data.escola || null,
         escolaId: response.data.escolaId || null,
       };
