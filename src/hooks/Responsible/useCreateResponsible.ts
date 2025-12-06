@@ -7,7 +7,9 @@ import {
   RESPONSIBLE_STUDENTS_QUERY_KEY,
 } from "./useResponsible";
 
-async function createResponsible(data: ResponsibleFormData): Promise<void> {
+async function createResponsible(
+  data: ResponsibleFormData,
+): Promise<Responsible> {
   try {
     const response = await api.post("/responsible/register", data);
     return response.data;
@@ -25,12 +27,12 @@ async function createResponsibleRelations({
   responsibleId: number;
   studentsIds: number[];
   parentesco: string;
-}): Promise<void> {
+}): Promise<string> {
   try {
     const response = await api.post("/responsible/register/relation", {
       parentesco,
-      usersIds: studentsIds,
       userId: responsibleId,
+      educandosIds: studentsIds,
     });
     return response.data;
   } catch (error) {

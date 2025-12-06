@@ -86,6 +86,7 @@ export function useResponsible({
     queryKey: [...RESPONSIBLE_STUDENTS_QUERY_KEY, responsibleId],
     queryFn: () => fetchResponsibleStudents(responsibleId!),
     staleTime: 5 * 60 * 1000, // 5 minutes
+    enabled: !!responsibleId,
   });
 
   return { responsibleQuery, responsiblesQuery, responsibleStudentsQuery };

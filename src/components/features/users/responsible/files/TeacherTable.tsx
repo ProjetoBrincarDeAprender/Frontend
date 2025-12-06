@@ -1,50 +1,36 @@
-import { useTable } from "@/hooks/Table/useTable";
 import { useUser } from "@/hooks/User/useUser";
-import api from "@/utils/api";
 //import { Loader2 } from "lucide-react";
 import { DataTable } from "@/components/utils/DataTable/DataTable";
-import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router";
 import { ResponsibleColumns, type Responsible } from "./TableData";
 
 import { SkeletonTable } from "@/components/ui/skeleton-table";
+import { useResponsible } from "@/hooks/Responsible/useResponsible";
+import type { FilterResponsibleOption } from "@/types/filter";
+import { UserPerfilEnum } from "@/types/user";
 
 export default function ResponsibleTable() {
-  const [data, setData] = useState<Responsible[] | null>(null);
-  const [loading, setLoading] = useState(true);
   const [searchParams, _] = useSearchParams();
-  const { updating, setUpdating } = useTable();
   const { user } = useUser();
 
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      try {
-        const response = await api.get(
-          `/responsible/list${user?.perfil != "Admin" ? "?escolaId=" + user?.escola?.id : ""}`,
-          {},
-        );
-        if (response.status === 200) {
-          setData(response.data);
-        }
-      } catch (error) {
-        console.log(error);
-      } finally {
-        setLoading(false);
-        setUpdating(false);
-      }
-    };
-    fetchData();
-  }, [updating, setUpdating, user]);
+  const filters: FilterResponsibleOption = {};
+
+  if (user?.perfil !== UserPerfilEnum.ADMIN) {
+    filters.escolaId = Number(user?.escolaId);
+  }
+
+  const { responsiblesQuery } = useResponsible({ filters });
+  const { data: responsiblesData, isLoading: isResponsiblesLoading } =
+    responsiblesQuery;
 
   return (
     <>
-      {loading ? (
+      {isResponsiblesLoading ? (
         <SkeletonTable rows={6} cols={ResponsibleColumns.length} />
       ) : (
         <DataTable
           columns={ResponsibleColumns}
-          data={data ?? []}
+          data={(responsiblesData as Responsible[] | undefined) ?? []}
           {...{
             page: searchParams.get("page")
               ? parseInt(searchParams.get("page")!)

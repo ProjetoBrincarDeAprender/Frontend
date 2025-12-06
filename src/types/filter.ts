@@ -17,6 +17,11 @@ export type FilterStudentOption = FilterOption & {
   responsibleId?: number | null;
 };
 
+export type FilterStudentRelationsOption = FilterOption & {
+  isNull?: boolean;
+  escolaId?: number;
+};
+
 export type FilterTeacherOption = FilterOption & {
   escolaId?: number;
 };
