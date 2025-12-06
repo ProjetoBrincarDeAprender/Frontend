@@ -22,12 +22,8 @@ export function useCreateStudent() {
 
   const create = useMutation({
     mutationFn: (createData: StudentFormData) => createStudent(createData),
-    onSuccess: (_, newData) => {
+    onSuccess: () => {
       toast.success("Estudante criado com sucesso!");
-
-      queryClient.setQueryData(STUDENTS_QUERY_KEY, (oldData: Student[]) => {
-        return [...oldData, newData];
-      });
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: STUDENTS_QUERY_KEY });

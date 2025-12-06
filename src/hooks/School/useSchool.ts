@@ -58,7 +58,7 @@ async function fetchSchoolUsers(
   }
 }
 
-export const SCHOOL_QUERY_KEY = ["school-data"];
+export const SCHOOL_QUERY_KEY = ["schools-data"];
 export const SCHOOL_USERS_QUERY_KEY = ["school-users-data"];
 
 export function useSchool({
@@ -71,10 +71,10 @@ export function useSchool({
   const queryClient = useQueryClient();
 
   const schoolQuery = useQuery({
-    queryKey: [SCHOOL_QUERY_KEY, schoolId],
+    queryKey: [...SCHOOL_QUERY_KEY, schoolId],
     queryFn: () => fetchSchoolData(queryClient, schoolId!),
-    enabled: !!schoolId,
     staleTime: 5 * 60 * 1000, // 5 minutes
+    enabled: !!schoolId,
   });
 
   const schoolsQuery = useQuery({
@@ -87,6 +87,7 @@ export function useSchool({
     queryKey: [...SCHOOL_USERS_QUERY_KEY, schoolId, filters],
     queryFn: () => fetchSchoolUsers(schoolId!, filters),
     staleTime: 5 * 60 * 1000, // 5 minutes
+    enabled: !!schoolId,
   });
 
   return { schoolQuery, schoolsQuery, schoolUsersQuery };

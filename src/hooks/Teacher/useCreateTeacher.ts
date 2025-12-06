@@ -31,25 +31,7 @@ export function useCreateTeacher() {
 
   const create = useMutation({
     mutationFn: async (data: TeacherFormData) => createTeacher(data),
-    onMutate: async (newTeacher) => {
-      await queryClient.cancelQueries({ queryKey: TEACHER_QUERY_KEY });
-
-      const previousTeachers =
-        queryClient.getQueryData<TeacherFormData[]>(TEACHER_QUERY_KEY);
-
-      queryClient.setQueryData(
-        TEACHER_QUERY_KEY,
-        (old: TeacherFormData[] | undefined) => [...(old ?? []), newTeacher],
-      );
-
-      return { previousTeachers };
-    },
-    onError: (_err, _newTeacher, context) => {
-      if (context?.previousTeachers) {
-        queryClient.setQueryData(TEACHER_QUERY_KEY, context.previousTeachers);
-      }
-    },
-    onSettled: () => {
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: TEACHER_QUERY_KEY });
     },
   });

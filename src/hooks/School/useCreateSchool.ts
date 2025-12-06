@@ -18,25 +18,20 @@ export function useCreateSchool() {
 
   const create = useMutation({
     mutationFn: ({ ...data }: SchoolFormData) => createSchool(data),
-    onMutate: async (newSchool) => {
+    onMutate: async () => {
       await queryClient.cancelQueries({ queryKey: SCHOOL_QUERY_KEY });
 
-      const previousSchools =
-        queryClient.getQueryData<School[]>(SCHOOL_QUERY_KEY);
+      const previousQueries = queryClient.getQueriesData<School[]>({
+        queryKey: SCHOOL_QUERY_KEY,
+      });
 
-      queryClient.setQueryData(
-        SCHOOL_QUERY_KEY,
-        (oldSchools: School[] | undefined) => [
-          ...(oldSchools ?? []),
-          newSchool,
-        ],
-      );
-
-      return { previousSchools };
+      return { previousQueries };
     },
     onError: (_err, _newSchool, context) => {
-      if (context?.previousSchools) {
-        queryClient.setQueryData(SCHOOL_QUERY_KEY, context.previousSchools);
+      if (context?.previousQueries) {
+        context.previousQueries.forEach(([queryKey, data]) => {
+          queryClient.setQueryData(queryKey, data);
+        });
       }
     },
     onSettled: () => {

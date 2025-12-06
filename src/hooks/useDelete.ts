@@ -33,10 +33,17 @@ export function useDelete({
 
   const deleteMutation = useMutation({
     mutationFn: (id: string | number) => deleteStudent(id, route, entity),
-    onSuccess: (_, id) => {
-      queryClient.setQueryData(queryKey, (data: unknown[]) => {
+    onMutate: async (id) => {
+      await queryClient.cancelQueries({ queryKey });
+
+      const previousQueries = queryClient.getQueriesData<unknown[]>({
+        queryKey,
+      });
+
+      queryClient.setQueriesData<unknown[]>({ queryKey }, (data) => {
+        if (!data || !Array.isArray(data)) return data;
+
         if (
-          Array.isArray(data) &&
           data.length > 0 &&
           typeof data[0] === "object" &&
           data[0] !== null &&
@@ -48,9 +55,19 @@ export function useDelete({
         }
 
         return data.filter(
-          (item: unknown) => (item as { id: string | number }).id !== id,
+          (item: unknown) =>
+            String((item as { id: string | number }).id) !== String(id),
         );
       });
+
+      return { previousQueries };
+    },
+    onError: (_err, _id, context) => {
+      if (context?.previousQueries) {
+        context.previousQueries.forEach(([key, data]) => {
+          queryClient.setQueryData(key, data);
+        });
+      }
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey });
@@ -62,8 +79,16 @@ export function useDelete({
       Promise.all(
         ids.map((singleId) => deleteStudent(singleId, route, entity)),
       ),
-    onSuccess: (_, variables) => {
-      queryClient.setQueryData(queryKey, (data: unknown[]) => {
+    onMutate: async (ids) => {
+      await queryClient.cancelQueries({ queryKey });
+
+      const previousQueries = queryClient.getQueriesData<unknown[]>({
+        queryKey,
+      });
+
+      queryClient.setQueriesData<unknown[]>({ queryKey }, (data) => {
+        if (!data) return data;
+
         if (
           Array.isArray(data) &&
           data.length > 0 &&
@@ -72,15 +97,24 @@ export function useDelete({
           "codigo_usuario" in data[0]
         ) {
           return (data as User[]).filter(
-            (user: User) => !variables.includes(user.codigo_usuario),
+            (user: User) => !ids.includes(user.codigo_usuario),
           );
         }
 
         return data.filter(
           (item: unknown) =>
-            !variables.includes((item as { id: string | number }).id),
+            !ids.includes((item as { id: string | number }).id),
         );
       });
+
+      return { previousQueries };
+    },
+    onError: (_err, _ids, context) => {
+      if (context?.previousQueries) {
+        context.previousQueries.forEach(([key, data]) => {
+          queryClient.setQueryData(key, data);
+        });
+      }
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey });

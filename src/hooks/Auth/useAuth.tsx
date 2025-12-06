@@ -48,10 +48,8 @@ const useAuth = () => {
         nome_completo: response.data.nome_completo,
         email: response.data.email,
         perfil: response.data.perfil,
-        escola: {
-          id: response.data.escolaId || null,
-          nome: response.data.escola || null,
-        },
+        escola: response.data.escola || null,
+        escolaId: response.data.escolaId || null,
       };
     } catch (error) {
       console.error("Failed to fetch profile:", error);

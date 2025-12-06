@@ -45,22 +45,29 @@ export function useUpdateTeacher() {
     onMutate: async (updatedTeacher) => {
       await queryClient.cancelQueries({ queryKey: TEACHER_QUERY_KEY });
 
-      const previousTeachers =
-        queryClient.getQueryData<Teacher[]>(TEACHER_QUERY_KEY);
-
-      queryClient.setQueryData(TEACHER_QUERY_KEY, (old: Teacher[]) => {
-        return old.map((teacher) =>
-          teacher.codigo_usuario === updatedTeacher.teacherId
-            ? { ...teacher, ...updatedTeacher.data }
-            : teacher,
-        );
+      const previousQueries = queryClient.getQueriesData<Teacher[]>({
+        queryKey: TEACHER_QUERY_KEY,
       });
 
-      return { previousTeachers };
+      queryClient.setQueriesData<Teacher[]>(
+        { queryKey: TEACHER_QUERY_KEY },
+        (old) => {
+          if (!old || !Array.isArray(old)) return old;
+          return old.map((teacher) =>
+            teacher.codigo_usuario === updatedTeacher.teacherId
+              ? { ...teacher, ...updatedTeacher.data }
+              : teacher,
+          );
+        },
+      );
+
+      return { previousQueries };
     },
     onError: (_err, _updatedTeacher, context) => {
-      if (context?.previousTeachers) {
-        queryClient.setQueryData(TEACHER_QUERY_KEY, context.previousTeachers);
+      if (context?.previousQueries) {
+        context.previousQueries.forEach(([queryKey, data]) => {
+          queryClient.setQueryData(queryKey, data);
+        });
       }
     },
     onSettled: () => {

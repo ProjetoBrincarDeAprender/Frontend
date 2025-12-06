@@ -44,26 +44,20 @@ export function useCreateResponsible() {
 
   const create = useMutation({
     mutationFn: async (data: ResponsibleFormData) => createResponsible(data),
-    onMutate: async (newResponsible) => {
+    onMutate: async () => {
       await queryClient.cancelQueries({ queryKey: RESPONSIBLE_QUERY_KEY });
 
-      const previousResponsibles = queryClient.getQueryData<Responsible[]>(
-        RESPONSIBLE_QUERY_KEY,
-      );
+      const previousQueries = queryClient.getQueriesData<Responsible[]>({
+        queryKey: RESPONSIBLE_QUERY_KEY,
+      });
 
-      queryClient.setQueryData(
-        RESPONSIBLE_QUERY_KEY,
-        (old: Responsible[] | undefined) => [...(old ?? []), newResponsible],
-      );
-
-      return { previousResponsibles };
+      return { previousQueries };
     },
     onError: (_err, _newResponsible, context) => {
-      if (context?.previousResponsibles) {
-        queryClient.setQueryData(
-          RESPONSIBLE_QUERY_KEY,
-          context.previousResponsibles,
-        );
+      if (context?.previousQueries) {
+        context.previousQueries.forEach(([queryKey, data]) => {
+          queryClient.setQueryData(queryKey, data);
+        });
       }
     },
     onSettled: () => {

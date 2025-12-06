@@ -30,11 +30,13 @@ export function useUpdateSchool() {
     onMutate: async ({ schoolId, data }) => {
       await queryClient.cancelQueries({ queryKey: SCHOOL_QUERY_KEY });
 
-      const previousData = queryClient.getQueryData(SCHOOL_QUERY_KEY);
+      const previousQueries = queryClient.getQueriesData<School[]>({
+        queryKey: SCHOOL_QUERY_KEY,
+      });
 
-      queryClient.setQueryData(
-        SCHOOL_QUERY_KEY,
-        (oldData: School[] | undefined) => {
+      queryClient.setQueriesData<School[]>(
+        { queryKey: SCHOOL_QUERY_KEY },
+        (oldData) => {
           if (!oldData) return oldData;
           return oldData.map((school) =>
             school.id === schoolId ? { ...school, ...data } : school,
@@ -42,11 +44,13 @@ export function useUpdateSchool() {
         },
       );
 
-      return { previousData };
+      return { previousQueries };
     },
     onError: (_err, _variables, context) => {
-      if (context?.previousData) {
-        queryClient.setQueryData(SCHOOL_QUERY_KEY, context.previousData);
+      if (context?.previousQueries) {
+        context.previousQueries.forEach(([queryKey, data]) => {
+          queryClient.setQueryData(queryKey, data);
+        });
       }
     },
     onSettled: () => {

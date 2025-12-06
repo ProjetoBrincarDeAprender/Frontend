@@ -31,21 +31,36 @@ export function useUpdateStudent() {
       studentId: string | number;
       updateData: Partial<StudentFormData & { disabled?: boolean }>;
     }) => updateStudent(studentId, updateData),
-    onSuccess: (updatedStudent, { studentId }) => {
-      toast.success("Estudante atualizado com sucesso!");
+    onMutate: async ({ studentId, updateData }) => {
+      await queryClient.cancelQueries({ queryKey: STUDENTS_QUERY_KEY });
 
-      queryClient.cancelQueries({ queryKey: STUDENTS_QUERY_KEY });
+      const previousQueries = queryClient.getQueriesData<Student[]>({
+        queryKey: STUDENTS_QUERY_KEY,
+      });
 
-      const previousStudents =
-        queryClient.getQueryData<Student[]>(STUDENTS_QUERY_KEY);
-
-      const newStudents = previousStudents?.map((student) =>
-        student.codigo_usuario === studentId
-          ? { ...student, ...updatedStudent }
-          : student,
+      queryClient.setQueriesData<Student[]>(
+        { queryKey: STUDENTS_QUERY_KEY },
+        (old) => {
+          if (!old || !Array.isArray(old)) return old;
+          return old.map((student) =>
+            student.codigo_usuario === studentId
+              ? ({ ...student, ...updateData } as Student)
+              : student,
+          );
+        },
       );
 
-      queryClient.setQueryData(STUDENTS_QUERY_KEY, newStudents);
+      return { previousQueries };
+    },
+    onSuccess: () => {
+      toast.success("Estudante atualizado com sucesso!");
+    },
+    onError: (_err, _variables, context) => {
+      if (context?.previousQueries) {
+        context.previousQueries.forEach(([queryKey, data]) => {
+          queryClient.setQueryData(queryKey, data);
+        });
+      }
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: STUDENTS_QUERY_KEY });

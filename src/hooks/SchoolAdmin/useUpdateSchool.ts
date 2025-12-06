@@ -33,12 +33,12 @@ export function useUpdateSchoolAdmin() {
     onMutate: async ({ schoolAdminId, updateData }) => {
       await queryClient.cancelQueries({ queryKey: SCHOOL_ADMIN_QUERY_KEY });
 
-      const previousData = queryClient.getQueryData<SchoolAdmin[]>(
-        SCHOOL_ADMIN_QUERY_KEY,
-      );
+      const previousQueries = queryClient.getQueriesData<SchoolAdmin[]>({
+        queryKey: SCHOOL_ADMIN_QUERY_KEY,
+      });
 
-      queryClient.setQueryData<SchoolAdmin[] | undefined>(
-        SCHOOL_ADMIN_QUERY_KEY,
+      queryClient.setQueriesData<SchoolAdmin[]>(
+        { queryKey: SCHOOL_ADMIN_QUERY_KEY },
         (oldData) => {
           if (!oldData) return oldData;
           return oldData.map((admin) =>
@@ -49,14 +49,13 @@ export function useUpdateSchoolAdmin() {
         },
       );
 
-      return { previousData };
+      return { previousQueries };
     },
     onError: (_err, _variables, context) => {
-      if (context?.previousData) {
-        queryClient.setQueryData<SchoolAdmin[]>(
-          SCHOOL_ADMIN_QUERY_KEY,
-          context.previousData,
-        );
+      if (context?.previousQueries) {
+        context.previousQueries.forEach(([queryKey, data]) => {
+          queryClient.setQueryData(queryKey, data);
+        });
       }
     },
     onSettled: () => {

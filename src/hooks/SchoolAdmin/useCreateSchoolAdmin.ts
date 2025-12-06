@@ -18,26 +18,20 @@ export function useCreateSchoolAdmin() {
 
   const create = useMutation({
     mutationFn: ({ ...data }: SchoolAdminFormData) => createSchoolAdmin(data),
-    onMutate: async (newSchoolAdmin) => {
+    onMutate: async () => {
       await queryClient.cancelQueries({ queryKey: SCHOOL_ADMIN_QUERY_KEY });
 
-      const previousSchoolAdmins = queryClient.getQueryData<SchoolAdmin[]>(
-        SCHOOL_ADMIN_QUERY_KEY,
-      );
+      const previousQueries = queryClient.getQueriesData<SchoolAdmin[]>({
+        queryKey: SCHOOL_ADMIN_QUERY_KEY,
+      });
 
-      queryClient.setQueryData(
-        SCHOOL_ADMIN_QUERY_KEY,
-        (oldData: SchoolAdmin[]) => [...oldData, newSchoolAdmin],
-      );
-
-      return { previousSchoolAdmins };
+      return { previousQueries };
     },
     onError: (_err, _newSchoolAdmin, context) => {
-      if (context?.previousSchoolAdmins) {
-        queryClient.setQueryData(
-          SCHOOL_ADMIN_QUERY_KEY,
-          context.previousSchoolAdmins,
-        );
+      if (context?.previousQueries) {
+        context.previousQueries.forEach(([queryKey, data]) => {
+          queryClient.setQueryData(queryKey, data);
+        });
       }
     },
     onSettled: () => {

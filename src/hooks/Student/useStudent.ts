@@ -47,6 +47,25 @@ async function fetchStudentsData(
   }
 }
 
+async function fetchStudentsByRelation(
+  type: string,
+  filter?: FilterStudentOption,
+): Promise<Student[]> {
+  try {
+    const params = new URLSearchParams(
+      filter as Record<string, string>,
+    ).toString();
+
+    const response = await api.get(`/student/list/relations/${type}?${params}`);
+    return response.data as Student[];
+  } catch (error) {
+    if (error instanceof AxiosError) {
+      toast.error("Erro ao buscar dados dos estudantes por relação!");
+    }
+    throw error;
+  }
+}
+
 export const STUDENTS_QUERY_KEY = ["students-data"];
 
 export function useStudent({
@@ -70,4 +89,16 @@ export function useStudent({
   });
 
   return { studentQuery, studentsQuery };
+}
+
+export function useStudentsRelations(
+  type: string,
+  filters?: FilterStudentOption,
+) {
+  const studentsByRelationQuery = useQuery<Student[]>({
+    queryKey: [...STUDENTS_QUERY_KEY, "relations", type, filters],
+    queryFn: () => fetchStudentsByRelation(type, filters),
+  });
+
+  return { studentsByRelationQuery };
 }

@@ -57,26 +57,29 @@ export function useUpdateResponsible() {
     onMutate: async (updatedResponsible) => {
       await queryClient.cancelQueries({ queryKey: RESPONSIBLE_QUERY_KEY });
 
-      const previousResponsibles = queryClient.getQueryData<Responsible[]>(
-        RESPONSIBLE_QUERY_KEY,
-      );
-
-      queryClient.setQueryData(RESPONSIBLE_QUERY_KEY, (old: Responsible[]) => {
-        return old.map((responsible) =>
-          responsible.codigo_usuario === updatedResponsible.responsibleId
-            ? { ...responsible, ...updatedResponsible.data }
-            : responsible,
-        );
+      const previousQueries = queryClient.getQueriesData<Responsible[]>({
+        queryKey: RESPONSIBLE_QUERY_KEY,
       });
 
-      return { previousResponsibles };
+      queryClient.setQueriesData<Responsible[]>(
+        { queryKey: RESPONSIBLE_QUERY_KEY },
+        (old) => {
+          if (!old) return old;
+          return old.map((responsible) =>
+            responsible.codigo_usuario === updatedResponsible.responsibleId
+              ? { ...responsible, ...updatedResponsible.data }
+              : responsible,
+          );
+        },
+      );
+
+      return { previousQueries };
     },
     onError: (_err, _updatedResponsible, context) => {
-      if (context?.previousResponsibles) {
-        queryClient.setQueryData(
-          RESPONSIBLE_QUERY_KEY,
-          context.previousResponsibles,
-        );
+      if (context?.previousQueries) {
+        context.previousQueries.forEach(([queryKey, data]) => {
+          queryClient.setQueryData(queryKey, data);
+        });
       }
     },
     onSettled: () => {
