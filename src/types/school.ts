@@ -5,7 +5,7 @@ export type School = {
   id: number;
   nome: string;
   descricao: string;
-  endereco: string;
+  localizacao: string;
   telefone: string;
   email: string;
   usuarios?: Student[];
@@ -13,10 +13,10 @@ export type School = {
 
 export type SchoolFormData = {
   nome: string;
-  descricao: string;
+  descricao?: string | null;
   email: string;
-  telefone: string;
-  localizacao: string;
+  telefone?: string | null;
+  localizacao: string | null;
 };
 
 export type SchoolAdmin = {

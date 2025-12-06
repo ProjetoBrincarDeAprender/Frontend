@@ -25,6 +25,10 @@ export type FilterResponsibleOption = FilterOption & {
   escolaId?: number;
 };
 
-export type FilterSchoolOption = FilterOption & {};
+export type FilterSchoolOption = FilterOption & {
+  escolaId?: number;
+};
 
-export type FilterSchoolAdminOption = FilterOption & {};
+export type FilterSchoolAdminOption = FilterOption & {
+  escolaId?: number;
+};

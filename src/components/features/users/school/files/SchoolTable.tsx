@@ -1,49 +1,35 @@
 import { SkeletonTable } from "@/components/ui/skeleton-table";
-import { useTable } from "@/hooks/Table/useTable";
+import { useSchool } from "@/hooks/School/useSchool";
 import { useUser } from "@/hooks/User/useUser";
-import api from "@/utils/api";
-import { useEffect, useState } from "react";
+import type { FilterSchoolOption } from "@/types/filter";
+import { UserPerfilEnum } from "@/types/user";
 import { useSearchParams } from "react-router";
 import { DataTable } from "../../../../utils/DataTable/DataTable";
-import { SchoolColumns, type School } from "./TableData";
+import { SchoolColumns } from "./TableData";
 
 export default function SchoolTable() {
-  const [data, setData] = useState<School[] | null>(null);
   const [searchParams, _] = useSearchParams();
-  const { updating, setUpdating } = useTable();
   const { user } = useUser();
-  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      try {
-        const response = await api.get(
-          `/school/list${user?.perfil != "Admin" ? "?escolaId=" + user?.escola?.id : ""}`,
-          {},
-        );
+  const filters: FilterSchoolOption = {};
 
-        if (response.status === 200) {
-          setData(response.data);
-        }
-      } catch (error) {
-        console.log(error);
-      } finally {
-        setLoading(false);
-      }
-    };
+  if (user?.perfil !== UserPerfilEnum.ADMIN) {
+    filters.escolaId = Number(user?.escolaId);
+  }
 
-    fetchData().then(() => setUpdating(false));
-  }, [updating, setUpdating, user]);
+  const { schoolsQuery } = useSchool({ filters });
+  const { data: schoolsData, isLoading: isSchoolLoading } = schoolsQuery;
 
   return (
     <>
-      {loading ? (
+      {isSchoolLoading ? (
         <SkeletonTable rows={6} cols={SchoolColumns.length} />
       ) : (
         <DataTable
           columns={SchoolColumns}
-          data={data?.map((item) => ({ ...item, id: String(item.id) })) ?? []}
+          data={
+            schoolsData?.map((item) => ({ ...item, id: String(item.id) })) ?? []
+          }
           {...{
             page: searchParams.get("page")
               ? parseInt(searchParams.get("page")!)

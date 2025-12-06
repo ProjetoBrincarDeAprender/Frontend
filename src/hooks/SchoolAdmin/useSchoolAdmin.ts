@@ -40,7 +40,7 @@ async function fetchSchoolAdminsData(filters: FilterSchoolAdminOption) {
   }
 }
 
-export const SCHOOL_ADMIN_QUERY_KEY = ["schoolAdmin"];
+export const SCHOOL_ADMIN_QUERY_KEY = ["schoolAdmins-data"];
 
 export function useSchoolAdmin({
   schoolAdminId,
@@ -59,7 +59,7 @@ export function useSchoolAdmin({
   });
 
   const schoolAdminsQuery = useQuery({
-    queryKey: [...SCHOOL_ADMIN_QUERY_KEY, "list", filters],
+    queryKey: [...SCHOOL_ADMIN_QUERY_KEY, filters],
     queryFn: () => fetchSchoolAdminsData(filters!),
     staleTime: 5 * 60 * 1000, // 5 minutes
   });

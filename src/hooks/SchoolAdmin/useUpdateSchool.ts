@@ -40,7 +40,7 @@ export function useUpdateSchoolAdmin() {
       queryClient.setQueriesData<SchoolAdmin[]>(
         { queryKey: SCHOOL_ADMIN_QUERY_KEY },
         (oldData) => {
-          if (!oldData) return oldData;
+          if (!oldData || !Array.isArray(oldData)) return oldData;
           return oldData.map((admin) =>
             admin.codigo_usuario === schoolAdminId
               ? { ...admin, ...updateData }

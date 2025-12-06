@@ -1,3 +1,4 @@
+import { SCHOOL_QUERY_KEY } from "@/hooks/School/useSchool";
 import type { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown } from "lucide-react";
 import { Button } from "../../../../ui/button";
@@ -92,7 +93,12 @@ export const SchoolColumns: ColumnDef<School>[] = [
     cell: ({ row }) => (
       <div className="flex items-center justify-center gap-2">
         <EditSchoolModal schoolId={+row.original.id} />
-        <DeleteModal route="/school/remove" id={+row.original.id} />
+        <DeleteModal
+          route="/school/remove"
+          id={+row.original.id}
+          entity="Escola"
+          queryKey={SCHOOL_QUERY_KEY}
+        />
       </div>
     ),
   },

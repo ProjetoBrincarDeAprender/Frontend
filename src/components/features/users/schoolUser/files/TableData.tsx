@@ -1,3 +1,4 @@
+import { SCHOOL_ADMIN_QUERY_KEY } from "@/hooks/SchoolAdmin/useSchoolAdmin";
 import type { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown } from "lucide-react";
 import { Button } from "../../../../ui/button";
@@ -70,6 +71,8 @@ export const SchoolUserColumns: ColumnDef<SchoolUser>[] = [
         <DeleteModal
           route="/school-admin/remove"
           id={+row.original.codigo_usuario}
+          entity="Admin Escola"
+          queryKey={SCHOOL_ADMIN_QUERY_KEY}
         />
       </div>
     ),

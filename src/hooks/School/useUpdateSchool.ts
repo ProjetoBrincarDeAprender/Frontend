@@ -37,9 +37,11 @@ export function useUpdateSchool() {
       queryClient.setQueriesData<School[]>(
         { queryKey: SCHOOL_QUERY_KEY },
         (oldData) => {
-          if (!oldData) return oldData;
+          if (!oldData || !Array.isArray(oldData)) return oldData;
           return oldData.map((school) =>
-            school.id === schoolId ? { ...school, ...data } : school,
+            school.id === schoolId
+              ? ({ ...school, ...data } as School)
+              : school,
           );
         },
       );
@@ -47,6 +49,8 @@ export function useUpdateSchool() {
       return { previousQueries };
     },
     onError: (_err, _variables, context) => {
+      console.log(_err);
+
       if (context?.previousQueries) {
         context.previousQueries.forEach(([queryKey, data]) => {
           queryClient.setQueryData(queryKey, data);

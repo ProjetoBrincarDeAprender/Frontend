@@ -49,7 +49,7 @@ async function fetchSchoolUsers(
     const params = new URLSearchParams(filters as Record<string, string>);
 
     const response = await api.get(
-      `/school/${schoolId}/users?${params.toString()}`,
+      `/school/list/${schoolId}/users?${params.toString()}`,
     );
     return response.data;
   } catch (error) {
