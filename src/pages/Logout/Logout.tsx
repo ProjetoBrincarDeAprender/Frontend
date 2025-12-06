@@ -10,25 +10,28 @@ export default function Logout() {
   const { registerUser } = useUser();
 
   useEffect(() => {
-    if (toast.getToasts().some((t) => t.id === "logging-out")) {
+    if (
+      toast
+        .getToasts()
+        .some((t) => t.id === "logging-out" || t.id === "logged-out")
+    ) {
       return;
     }
-    const loggingOut = toast("Saindo...", {
+    toast("Saindo...", {
       id: "logging-out",
       duration: Infinity,
     });
 
-    toast.dismiss(loggingOut);
     const performLogout = async () => {
       try {
         logout();
         registerUser(null);
 
         toast.dismiss("logging-out");
-        toast.success("Desconectado com sucesso!");
+        toast.success("Desconectado com sucesso!", { id: "logged-out" });
       } catch (_error) {
         toast.dismiss("logging-out");
-        toast.error("Erro ao fazer logout");
+        toast.error("Erro ao fazer logout", { id: "logged-out" });
       }
     };
 
