@@ -1,59 +1,51 @@
 import { useTable } from "@/hooks/Table/useTable";
 import { useUser } from "@/hooks/User/useUser";
-import api from "@/utils/api";
 //import { Loader2 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useSearchParams } from "react-router";
 import { DataTable } from "../../../../utils/DataTable/DataTable";
 import { TeacherColumns, type Teacher } from "./TableData";
 
 import { SkeletonTable } from "@/components/ui/skeleton-table";
 import DeleteModal from "@/components/utils/DataTable/DeleteModal";
+import { TEACHER_QUERY_KEY, useTeacher } from "@/hooks/Teacher/useTeacher";
+import { useDelete } from "@/hooks/useDelete";
+import type { FilterTeacherOption } from "@/types/filter";
 import { Share2 } from "lucide-react";
 import { EditTeacherModal } from "../edit/TeacherEditModal";
 
 export default function TeacherTable() {
-  const [data, setData] = useState<Teacher[] | null>(null);
-  const [loading, setLoading] = useState(true);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
-  // Função para deletar múltiplos professores
+
+  const { multiDeleteMutation } = useDelete({
+    route: "/teacher/remove",
+    entity: "Professor",
+    queryKey: TEACHER_QUERY_KEY,
+  });
+  const { mutateAsync: deleteTeachers } = multiDeleteMutation;
+
   const handleDeleteSelected = async () => {
     if (selectedIds.length === 0) return;
-    for (const id of selectedIds) {
-      try {
-        await api.delete(`/teacher/remove/${id}`);
-      } catch (error) {
-        console.error(`Erro ao deletar professor ${id}:`, error);
-      }
-    }
+
+    await deleteTeachers(selectedIds);
+
     setSelectedIds([]);
     setUpdating(true);
   };
+
   const [searchParams, _] = useSearchParams();
-  const { updating, setUpdating } = useTable();
+  const { setUpdating } = useTable();
   const { user } = useUser();
 
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      try {
-        const response = await api.get(
-          `/teacher/list${user?.perfil != "Admin" ? "?escolaId=" + user?.escola?.id : ""}`,
-          {},
-        );
+  const filters: FilterTeacherOption = {};
+  if (user?.perfil != "Admin") {
+    filters.escolaId = user?.escola?.id as number;
+  }
 
-        if (response.status === 200) {
-          setData(response.data);
-        }
-      } catch (error) {
-        console.log(error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData().then(() => setUpdating(false));
-  }, [updating, setUpdating, user]);
+  const { teachersQuery } = useTeacher({
+    filters,
+  });
+  const { data, isLoading } = teachersQuery;
 
   const columnsWithCheckbox = [
     {
@@ -115,6 +107,8 @@ export default function TeacherTable() {
                 <DeleteModal
                   route="/teacher/remove"
                   id={+row.original.codigo_usuario}
+                  entity="Professor"
+                  queryKey={TEACHER_QUERY_KEY}
                 />
               </button>
             </div>
@@ -127,17 +121,17 @@ export default function TeacherTable() {
 
   return (
     <>
-      {loading ? (
+      {isLoading ? (
         <SkeletonTable rows={6} cols={columnsWithCheckbox.length} />
       ) : (
         <DataTable
           columns={columnsWithCheckbox}
-          data={data ?? []}
+          data={(data as Teacher[] | undefined) ?? []}
           page={
             searchParams.get("page") ? parseInt(searchParams.get("page")!) : 0
           }
           renderExtra={() =>
-            selectedIds.length > 0 && !loading ? (
+            selectedIds.length > 0 && !isLoading ? (
               <button
                 onClick={handleDeleteSelected}
                 className="ml-2 flex items-center gap-2 rounded bg-red-500 px-4 py-2 font-bold text-white transition-all hover:bg-red-700"

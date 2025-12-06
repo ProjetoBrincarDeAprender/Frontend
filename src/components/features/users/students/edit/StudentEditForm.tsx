@@ -129,7 +129,7 @@ export function StudentEditForm({ id, onSuccess }: StudentFormProps) {
           : "",
         avatar_url: studentData.avatar_url || "",
         tema_preferido: studentData.tema_preferido || "",
-        escolaId: studentData.escolaId ? String(studentData.escolaId) : "",
+        escolaId: studentData.escola?.id ? String(studentData.escola.id) : "",
       });
     }
   }, [id, form, user?.perfil, studentData]);

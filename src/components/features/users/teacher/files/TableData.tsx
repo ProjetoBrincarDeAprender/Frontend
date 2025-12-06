@@ -2,6 +2,7 @@ import type { ColumnDef } from "@tanstack/react-table";
 // import { Edit } from "lucide-react";
 import DeleteModal from "../../../../utils/DataTable/DeleteModal";
 // import { Link } from "../utils/Link/Link";
+import { TEACHER_QUERY_KEY } from "@/hooks/Teacher/useTeacher";
 import { ArrowUpDown, Share2 } from "lucide-react";
 import { Button } from "../../../../ui/button";
 import { EditTeacherModal } from "../edit/TeacherEditModal";
@@ -77,6 +78,8 @@ export const TeacherColumns: ColumnDef<Teacher>[] = [
         <DeleteModal
           route="/teacher/remove"
           id={+row.original.codigo_usuario}
+          entity="Professor(a)"
+          queryKey={TEACHER_QUERY_KEY}
         />
       </div>
     ),

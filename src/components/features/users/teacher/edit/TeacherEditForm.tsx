@@ -1,9 +1,14 @@
 import { Form } from "@/components/forms/Root";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useSchool } from "@/hooks/School/useSchool";
+import { useTeacher } from "@/hooks/Teacher/useTeacher";
+import { useUpdateTeacher } from "@/hooks/Teacher/useUpdateTeacher";
 import { useUser } from "@/hooks/User/useUser";
-import api from "@/utils/api";
+import type { FilterTeacherOption } from "@/types/filter";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AxiosError } from "axios";
-import { useEffect, useState } from "react";
+import { Loader2 } from "lucide-react";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -14,7 +19,6 @@ const formSchema = z.object({
     .min(2, { error: "Nome completo deve ter pelo menos 2 caracteres" }),
   email: z.email({ error: "Digite um email válido" }),
   escolaId: z.string().optional(),
-  usersIds: z.array(z.string()).optional(),
 });
 
 type TeacherFormProps = {
@@ -29,117 +33,56 @@ export function TeacherEditForm({ id, onSuccess }: TeacherFormProps) {
       nome_completo: "",
       email: "",
       escolaId: "",
-      usersIds: [],
     },
   });
   const { user } = useUser();
 
-  const [schools, setSchools] = useState<{ id: number; nome: string }[] | null>(
-    null,
-  );
-  const escolaSelecionada = form.watch("escolaId");
+  const { update: updateTeacherMutation } = useUpdateTeacher();
+  const { mutateAsync: updateTeacher, isPending: isUpdateTeacherPending } =
+    updateTeacherMutation;
+
+  const filters: FilterTeacherOption = {};
+
+  if (user?.perfil !== "Admin") {
+    filters.escolaId = user?.escolaId as number;
+  }
+
+  const { schoolsQuery } = useSchool({ filters: filters });
+  const { data: schoolsData, isLoading: isSchoolsLoading } = schoolsQuery;
+
+  const { teacherQuery } = useTeacher({
+    teacherId: id,
+    filters,
+  });
+  const { data: teacherData, isLoading: isTeacherLoading } = teacherQuery;
 
   useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const response = await api.get(`/teacher/list/${id}`);
-
-        if (response.status === 200) {
-          const userData = {
-            nome_completo: response.data.nome_completo,
-            email: response.data.email,
-            escolaId:
-              form.getValues("escolaId") || String(response.data.escolaId),
-          };
-          form.reset(userData);
-        }
-      } catch (error) {
-        if (error instanceof AxiosError) {
-          console.error("Erro ao buscar dados do usuário:", error.message);
-        }
-      }
-    };
-
-    const fetchSchools = async () => {
-      try {
-        const response = await api.get("/school/list");
-
-        if (response.status === 200) {
-          setSchools(response.data);
-        }
-      } catch (error) {
-        if (error instanceof AxiosError) {
-          form.setError("root", {
-            message: `Erro ao carregar escolas: ${error.message}`,
-          });
-        }
-      }
-    };
-
-    const fetchRelations = async () => {
-      try {
-        const response = await api.get(`/teacher/list/${id}/students`);
-        if (response.status === 200) {
-          const users = response.data;
-
-          const originalIds = users.map((user: { codigo_usuario: number }) =>
-            String(user.codigo_usuario),
-          );
-          form.setValue("usersIds", originalIds);
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    };
-
-    const fetchAllStudents = async () => {
-      try {
-        const response = await api.get(
-          `/student/list/relations/teacher?isNull=true`,
-        );
-        if (response.status === 200) {
-          // const users = response.data;
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    };
-
-    const loadData = async () => {
-      if (user?.perfil === "Admin") {
-        await fetchSchools();
-      }
-      await fetchUserData();
-      await fetchRelations();
-      await fetchAllStudents();
-    };
-
-    loadData();
-  }, [id, user?.perfil, escolaSelecionada, form]);
+    if (teacherData && schoolsData) {
+      form.reset({
+        email: teacherData?.email || "",
+        nome_completo: teacherData?.nome_completo || "",
+        escolaId: teacherData?.escolaId ? String(teacherData.escolaId) : "",
+      });
+    }
+  }, [teacherData, schoolsData, form]);
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     const userData = {
       nome_completo: data.nome_completo,
       email: data.email,
-      escolaId: user?.perfil === "Admin" ? data.escolaId : user?.escola?.id,
+      escolaId:
+        user?.perfil === "Admin"
+          ? Number(data.escolaId)
+          : Number(user?.escolaId),
     };
 
     try {
-      const responseUser = await api.put(`/teacher/update/${id}`, userData);
-
-      const validUserIds =
-        data.usersIds
-          ?.map((id) => {
-            const numericId = Number(id);
-            return isNaN(numericId) ? null : numericId;
-          })
-          .filter((id): id is number => id !== null) || [];
-
-      await api.put(`/teacher/update/${id}/relation`, {
-        usersIds: validUserIds,
+      const responseUser = await updateTeacher({
+        teacherId: id,
+        data: userData,
       });
 
-      if (responseUser.status === 200) {
+      if (responseUser) {
         onSuccess();
       }
     } catch (error) {
@@ -176,51 +119,68 @@ export function TeacherEditForm({ id, onSuccess }: TeacherFormProps) {
         onSubmit={onSubmit}
         className="flex flex-col gap-4"
       >
-        <Form.Field
-          form={form}
-          name="nome_completo"
-          render={({ field }) => (
-            <Form.Input
-              {...field}
-              label="Nome Completo"
-              placeholder="Mudar nome do(a) professor(a)"
-            />
-          )}
-        />
-        <Form.Field
-          form={form}
-          name="email"
-          render={({ field }) => (
-            <Form.Input
-              {...field}
-              label="Email"
-              placeholder="exemplo@gmail.com"
-            />
-          )}
-        />
-        {user?.perfil == "Admin" &&
-          (schools ? (
+        {isTeacherLoading || isSchoolsLoading ? (
+          <>
+            <Skeleton className="h-10 w-full rounded-md" />
+            <Skeleton className="h-10 w-full rounded-md" />
+            {user?.perfil === "Admin" && (
+              <Skeleton className="h-10 w-full rounded-md" />
+            )}
+            <Skeleton className="h-10 w-24 rounded-md" />
+          </>
+        ) : (
+          <>
             <Form.Field
               form={form}
-              name="escolaId"
+              name="nome_completo"
               render={({ field }) => (
-                <Form.Select
-                  value={field.value || ""}
-                  onChange={field.onChange}
-                  label="Escola"
-                  placeholder="Selecione a Escola"
-                  options={schools.map((school) => ({
-                    value: String(school.id),
-                    label: school.nome,
-                  }))}
+                <Form.Input
+                  {...field}
+                  label="Nome Completo"
+                  placeholder="Mudar nome do(a) professor(a)"
                 />
               )}
             />
-          ) : (
-            <span>Carregando escolas...</span>
-          ))}
+            <Form.Field
+              form={form}
+              name="email"
+              render={({ field }) => (
+                <Form.Input
+                  {...field}
+                  label="Email"
+                  placeholder="exemplo@gmail.com"
+                />
+              )}
+            />
+            {user?.perfil === "Admin" && (
+              <Form.Field
+                form={form}
+                name="escolaId"
+                render={({ field }) => (
+                  <Form.Select
+                    key={field.value}
+                    value={field.value || ""}
+                    onChange={field.onChange}
+                    label="Escola"
+                    placeholder="Selecione a Escola"
+                    options={schoolsData!.map((school) => ({
+                      value: String(school.id),
+                      label: school.nome,
+                    }))}
+                  />
+                )}
+              />
+            )}
 
-        <Form.Submit>Atualizar Dados</Form.Submit>
+            <Form.Submit disabled={isUpdateTeacherPending}>
+              {isUpdateTeacherPending ? (
+                <Loader2 className="animate-spin" />
+              ) : (
+                "Atualizar Professor(a)"
+              )}
+            </Form.Submit>
+          </>
+        )}
       </Form.Main>
     </Form.Wrapper>
   );
