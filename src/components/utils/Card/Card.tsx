@@ -44,11 +44,11 @@ export function Card({
           className="h-full w-full object-cover transition-transform duration-300 ease-in-out hover:scale-105"
         />
       </header>
-      <main className="flex h-1/2 flex-col justify-between gap-4 py-4">
-        <h1 className="text-3xl">{title}</h1>
+      <main className="flex h-1/2 flex-col justify-start gap-2 py-4">
+        <h1 className="text-2xl font-bold">{title}</h1>
         {competency && (
-          <div className="px-2">
-            <p className="text-sm text-gray-600 font-semibold mb-1">Competência:</p>
+          <div className="px-2 text-left">
+            <p className="text-xs text-gray-600 font-semibold mb-0.5">Competência:</p>
             <p className="text-xs text-gray-700 line-clamp-2">{competency}</p>
           </div>
         )}
@@ -62,7 +62,7 @@ export function Card({
           onClick={handleClick}
           aria-disabled={disabled}
           tabIndex={disabled ? -1 : 0}
-          className={`m-auto mb-8 rounded-xl px-4 py-2 transition ${disabled ? "pointer-events-auto cursor-not-allowed opacity-60" : ""}`}
+          className={`mt-auto mb-4 mx-auto rounded-xl px-4 py-2 transition ${disabled ? "pointer-events-auto cursor-not-allowed opacity-60" : ""}`}
         >
           {disabled === true ? "Em breve" : "Jogar"}
         </a>
