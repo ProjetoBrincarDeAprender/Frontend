@@ -47,6 +47,7 @@ import { Profile } from "./pages/Profile/Profile";
 import { RecoverPassword } from "./pages/RecoverPassword/RecoverPassword";
 import { SendPasswordToken } from "./pages/SendPasswordToken/SendPasswordToken";
 import SyllableDivisionGame from "./components/features/games/SyllableDivisionGame";
+import ActivitiesPage from "./pages/ActivitiesPage/ActivitiesPage";
 
 function App() {
   return (
@@ -128,6 +129,8 @@ function App() {
       </Route>
 
       <Route path="*" element={<NotFound />} />
+
+      <Route path="/activities" element={<ActivitiesPage />}></Route>
     </Routes>
   );
 }
