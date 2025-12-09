@@ -47,7 +47,7 @@ import { Profile } from "./pages/Profile/Profile";
 import { RecoverPassword } from "./pages/RecoverPassword/RecoverPassword";
 import { SendPasswordToken } from "./pages/SendPasswordToken/SendPasswordToken";
 import SyllableDivisionGame from "./components/features/games/SyllableDivisionGame";
-import ActivitiesPage from "./pages/ActivitiesPage/ActivitiesPage";
+import CreateActivityPage from "./pages/ActivitiesPage/CreateActivityPage";
 
 function App() {
   return (
@@ -77,6 +77,8 @@ function App() {
         <Route path="responsables" element={<Responsibles />} />
       </Route>
 
+      <Route path="curriculum/activities" element={<Activities />} />
+
       {/* Rotas específicas do Professor */}
       <Route
         path="/dashboard/teacher"
@@ -85,7 +87,6 @@ function App() {
         <Route index element={<TeacherDashboard />} />
         <Route path="curriculum/knowledge-areas" element={<KnowledgeAreas />} />
         <Route path="curriculum/competences" element={<Competencies />} />
-        <Route path="curriculum/activities" element={<Activities />} />
         <Route
           path="curriculum/difficulty-levels"
           element={<DifficultyLevels />}
@@ -130,7 +131,7 @@ function App() {
 
       <Route path="*" element={<NotFound />} />
 
-      <Route path="/activities" element={<ActivitiesPage />}></Route>
+      <Route path="/activities" element={<CreateActivityPage />}></Route>
     </Routes>
   );
 }
