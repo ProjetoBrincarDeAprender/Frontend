@@ -13,15 +13,18 @@ const formSchema = z.object({
     .string({ error: "Título é obrigatório" })
     .min(3, { error: "Título deve ter pelo menos 3 caracteres" })
     .max(100, { error: "Título deve ter no máximo 100 caracteres" }),
-  type: z
-    .string({ error: "Tipo é obrigatório" })
-    .min(1, { error: "Selecione um tipo de atividade" }),
+  // type: z
+  //   .string({ error: "Tipo é obrigatório" })
+  //   .min(1, { error: "Selecione um tipo de atividade" }),
   competenceId: z
     .string({ error: "Competência é obrigatória" })
     .min(1, { error: "Selecione uma competência" }),
   content: z
     .string({ error: "Conteúdo é obrigatório" })
-    .min(1, { error: "Conteúdo é obrigatório" })
+    .min(1, { error: "Conteúdo é obrigatório" }),
+  knowledgeAreaId: z
+    .string({ error: "Área de conhecimento é obrigatória" })
+    .min(1, { error: "Selecione uma área de conhecimento" }),
 });
 
 interface CreateActivityFormProps {
@@ -57,37 +60,44 @@ interface CompetenceApiResponse {
   };
 }
 
-const activityTypes = [
-  { value: "Atividade", label: "Atividade" },
-  { value: "Jogo", label: "Jogo" },
-];
+// const activityTypes = [
+//   { value: "Atividade", label: "Atividade" },
+//   { value: "Jogo", label: "Jogo" },
+// ];
 
 export function CreateActivityForm({ onSuccess }: CreateActivityFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [allCompetences, setAllCompetences] = useState<Competence[]>([]);
   const [competenceSearch, setCompetenceSearch] = useState("");
   const [showCompetenceDropdown, setShowCompetenceDropdown] = useState(false);
-  const [selectedCompetence, setSelectedCompetence] = useState<Competence | null>(null);
+  const [selectedCompetence, setSelectedCompetence] =
+    useState<Competence | null>(null);
   const { setUpdating } = useTable();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       title: "",
-      type: "",
+      // type: "",
       competenceId: "",
-      content: ""
-    }
+      content: "",
+      knowledgeAreaId: "",
+    },
   });
 
-  const formatCompetence = (comp: CompetenceApiResponse, areaInfo?: { id: number; nome: string }): Competence => ({
+  const formatCompetence = (
+    comp: CompetenceApiResponse,
+    areaInfo?: { id: number; nome: string },
+  ): Competence => ({
     id: comp.id,
     nome: comp.name || comp.nome || "",
     descricao: comp.description || comp.descricao,
-    areaId: comp.knowledgeArea ? {
-      id: comp.knowledgeArea.id,
-      nome: comp.knowledgeArea.name || comp.knowledgeArea.nome || ""
-    } : areaInfo
+    areaId: comp.knowledgeArea
+      ? {
+          id: comp.knowledgeArea.id,
+          nome: comp.knowledgeArea.name || comp.knowledgeArea.nome || "",
+        }
+      : areaInfo,
   });
 
   useEffect(() => {
@@ -95,8 +105,12 @@ export function CreateActivityForm({ onSuccess }: CreateActivityFormProps) {
       try {
         const response = await api.get("/competence/list");
         if (response.status === 200 && response.data) {
-          const competences = Array.isArray(response.data) ? response.data : [response.data];
-          return competences.map((comp: CompetenceApiResponse) => formatCompetence(comp));
+          const competences = Array.isArray(response.data)
+            ? response.data
+            : [response.data];
+          return competences.map((comp: CompetenceApiResponse) =>
+            formatCompetence(comp),
+          );
         }
       } catch {
         // Silently fail and try next method
@@ -109,30 +123,34 @@ export function CreateActivityForm({ onSuccess }: CreateActivityFormProps) {
         const areasResponse = await api.get("/knowledge-area/list");
         if (areasResponse.status !== 200 || !areasResponse.data) return [];
 
-        const areas: KnowledgeArea[] = Array.isArray(areasResponse.data) 
-          ? areasResponse.data 
+        const areas: KnowledgeArea[] = Array.isArray(areasResponse.data)
+          ? areasResponse.data
           : [areasResponse.data];
 
         const allCompetences: Competence[] = [];
 
         for (const area of areas) {
           if (area.competences && Array.isArray(area.competences)) {
-            const areaCompetences = area.competences.map((comp: CompetenceApiResponse) =>
-              formatCompetence(comp, { id: area.id, nome: area.nome })
+            const areaCompetences = area.competences.map(
+              (comp: CompetenceApiResponse) =>
+                formatCompetence(comp, { id: area.id, nome: area.nome }),
             );
             allCompetences.push(...areaCompetences);
           } else {
             try {
-              const compResponse = await api.get(`/knowledge-area/${area.id}/competences`);
+              const compResponse = await api.get(
+                `/knowledge-area/${area.id}/competences`,
+              );
               if (compResponse.status === 200 && compResponse.data) {
-                const areaCompetences = Array.isArray(compResponse.data) 
-                  ? compResponse.data 
+                const areaCompetences = Array.isArray(compResponse.data)
+                  ? compResponse.data
                   : [compResponse.data];
-                
-                const formattedComps = areaCompetences.map((comp: CompetenceApiResponse) =>
-                  formatCompetence(comp, { id: area.id, nome: area.nome })
+
+                const formattedComps = areaCompetences.map(
+                  (comp: CompetenceApiResponse) =>
+                    formatCompetence(comp, { id: area.id, nome: area.nome }),
                 );
-                
+
                 allCompetences.push(...formattedComps);
               }
             } catch {
@@ -148,31 +166,40 @@ export function CreateActivityForm({ onSuccess }: CreateActivityFormProps) {
     };
 
     const fetchCompetencesAlternative = async (): Promise<Competence[]> => {
-      const endpoints = ["/competences", "/competence", "/competency/list", "/competencies"];
-      
+      const endpoints = [
+        "/competences",
+        "/competence",
+        "/competency/list",
+        "/competencies",
+      ];
+
       for (const endpoint of endpoints) {
         try {
           const response = await api.get(endpoint);
           if (response.status === 200 && response.data) {
-            const competences = Array.isArray(response.data) ? response.data : [response.data];
-            return competences.map((comp: CompetenceApiResponse) => formatCompetence(comp));
+            const competences = Array.isArray(response.data)
+              ? response.data
+              : [response.data];
+            return competences.map((comp: CompetenceApiResponse) =>
+              formatCompetence(comp),
+            );
           }
         } catch {
           continue;
         }
       }
-      
+
       return [];
     };
 
     const fetchAllCompetences = async () => {
       try {
         let competences = await fetchCompetencesDirect();
-        
+
         if (competences.length === 0) {
           competences = await fetchCompetencesViaAreas();
         }
-        
+
         if (competences.length === 0) {
           competences = await fetchCompetencesAlternative();
         }
@@ -189,9 +216,10 @@ export function CreateActivityForm({ onSuccess }: CreateActivityFormProps) {
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     const payload = {
       title: data.title,
-      type: data.type,
+      // type: data.type,
       competenceId: Number(data.competenceId),
-      content: JSON.stringify({ texto: data.content })
+      content: JSON.stringify({ texto: data.content }),
+      knowledgeAreaId: Number(data.knowledgeAreaId),
     };
 
     try {
@@ -215,17 +243,17 @@ export function CreateActivityForm({ onSuccess }: CreateActivityFormProps) {
             (field: { field: string; message: string[] }) => {
               if (form.control._fields[field.field]) {
                 form.setError(field.field as keyof z.infer<typeof formSchema>, {
-                  message: field.message.join(", ")
+                  message: field.message.join(", "),
                 });
               }
               form.setError("root", {
-                message: `Erro ao criar atividade: ${field.message.join(", ")}`
+                message: `Erro ao criar atividade: ${field.message.join(", ")}`,
               });
-            }
+            },
           );
         } else {
           form.setError("root", {
-            message: `${response?.data?.message}`
+            message: `${response?.data?.message}`,
           });
         }
       }
@@ -235,10 +263,17 @@ export function CreateActivityForm({ onSuccess }: CreateActivityFormProps) {
     }
   };
 
-  const filteredCompetences = allCompetences.filter(competence =>
-    competence.nome.toLowerCase().includes(competenceSearch.toLowerCase()) ||
-    (competence.descricao && competence.descricao.toLowerCase().includes(competenceSearch.toLowerCase())) ||
-    (competence.areaId && competence.areaId.nome.toLowerCase().includes(competenceSearch.toLowerCase()))
+  const filteredCompetences = allCompetences.filter(
+    (competence) =>
+      competence.nome.toLowerCase().includes(competenceSearch.toLowerCase()) ||
+      (competence.descricao &&
+        competence.descricao
+          .toLowerCase()
+          .includes(competenceSearch.toLowerCase())) ||
+      (competence.areaId &&
+        competence.areaId.nome
+          .toLowerCase()
+          .includes(competenceSearch.toLowerCase())),
   );
 
   const handleCompetenceSelect = (competence: Competence) => {
@@ -285,7 +320,7 @@ export function CreateActivityForm({ onSuccess }: CreateActivityFormProps) {
           )}
         />
 
-        <Form.Field
+        {/* <Form.Field
           form={form}
           name="type"
           render={({ field }) => (
@@ -297,13 +332,16 @@ export function CreateActivityForm({ onSuccess }: CreateActivityFormProps) {
               disabled={isSubmitting}
             />
           )}
-        />
+        /> */}
 
-        <div className="space-y-2 relative">
-          <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-            Competência 
+        <div className="relative space-y-2">
+          <label className="text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+            Competência
             {allCompetences.length > 0 ? (
-              <span className="font-1 text-green-600"> ({allCompetences.length} disponíveis)</span>
+              <span className="font-1 text-green-600">
+                {" "}
+                ({allCompetences.length} disponíveis)
+              </span>
             ) : (
               <span className="text-xs text-red-500">(Carregando...)</span>
             )}
@@ -313,16 +351,22 @@ export function CreateActivityForm({ onSuccess }: CreateActivityFormProps) {
               type="text"
               value={competenceSearch}
               onChange={(e) => handleCompetenceSearchChange(e.target.value)}
-              onFocus={() => setShowCompetenceDropdown(competenceSearch.length > 0)}
-              className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-              placeholder={allCompetences.length > 0 ? "Digite para buscar uma competência..." : "Carregando competências..."}
+              onFocus={() =>
+                setShowCompetenceDropdown(competenceSearch.length > 0)
+              }
+              className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+              placeholder={
+                allCompetences.length > 0
+                  ? "Digite para buscar uma competência..."
+                  : "Carregando competências..."
+              }
               disabled={isSubmitting || allCompetences.length === 0}
             />
             {selectedCompetence && (
               <button
                 type="button"
                 onClick={clearCompetence}
-                className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                className="absolute top-1/2 right-2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
                 disabled={isSubmitting}
               >
                 ×
@@ -331,30 +375,30 @@ export function CreateActivityForm({ onSuccess }: CreateActivityFormProps) {
           </div>
 
           {showCompetenceDropdown && filteredCompetences.length > 0 && (
-            <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-y-auto">
+            <div className="absolute z-10 mt-1 max-h-60 w-full overflow-y-auto rounded-md border border-gray-300 bg-white shadow-lg">
               {filteredCompetences.slice(0, 10).map((competence) => (
                 <button
                   key={competence.id}
                   type="button"
                   onClick={() => handleCompetenceSelect(competence)}
-                  className="w-full px-3 py-2 text-left hover:bg-gray-100 focus:bg-gray-100 focus:outline-none border-b last:border-b-0"
+                  className="w-full border-b px-3 py-2 text-left last:border-b-0 hover:bg-gray-100 focus:bg-gray-100 focus:outline-none"
                   disabled={isSubmitting}
                 >
-                  <div className="font-medium text-sm">{competence.nome}</div>
+                  <div className="text-sm font-medium">{competence.nome}</div>
                   {competence.areaId && (
                     <div className="text-xs text-gray-500">
                       Área: {competence.areaId.nome}
                     </div>
                   )}
                   {competence.descricao && (
-                    <div className="text-xs text-gray-400 truncate">
+                    <div className="truncate text-xs text-gray-400">
                       {competence.descricao}
                     </div>
                   )}
                 </button>
               ))}
               {filteredCompetences.length > 10 && (
-                <div className="px-3 py-2 text-xs text-gray-500 border-t">
+                <div className="border-t px-3 py-2 text-xs text-gray-500">
                   E mais {filteredCompetences.length - 10} competências...
                 </div>
               )}
@@ -368,8 +412,9 @@ export function CreateActivityForm({ onSuccess }: CreateActivityFormProps) {
           )}
 
           {allCompetences.length === 0 && (
-            <div className="text-sm text-amber-600 bg-amber-50 p-3 rounded border border-amber-200">
-              ⚠️ <strong>Nenhuma competência encontrada.</strong><br/>
+            <div className="rounded border border-amber-200 bg-amber-50 p-3 text-sm text-amber-600">
+              ⚠️ <strong>Nenhuma competência encontrada.</strong>
+              <br />
               Certifique-se de que existem competências cadastradas no sistema.
             </div>
           )}
@@ -380,21 +425,26 @@ export function CreateActivityForm({ onSuccess }: CreateActivityFormProps) {
           name="content"
           render={({ field }) => (
             <div className="space-y-2">
-              <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+              <label className="text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                 Conteúdo *
               </label>
               <textarea
                 {...field}
                 placeholder="Ex: Descrição da atividade ou instruções..."
                 disabled={isSubmitting}
-                className="flex min-h-32 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 resize-vertical"
+                className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring resize-vertical flex min-h-32 w-full rounded-md border px-3 py-2 text-sm focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
               />
-              <p className="text-xs text-gray-500">Este texto será convertido para JSON automaticamente.</p>
+              <p className="text-xs text-gray-500">
+                Este texto será convertido para JSON automaticamente.
+              </p>
             </div>
           )}
         />
 
-        <Form.Submit disabled={isSubmitting} className="bg-primary hover:bg-primary/90">
+        <Form.Submit
+          disabled={isSubmitting}
+          className="bg-primary hover:bg-primary/90"
+        >
           {isSubmitting ? "Criando..." : "Criar"}
         </Form.Submit>
       </Form.Main>
