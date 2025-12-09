@@ -15,6 +15,12 @@ interface ActivityData {
   tipo: string;
   competenciaId: {
     id: number;
+    nome?: string;
+    descricao?: string;
+    areaId?: {
+      id: number;
+      nome: string;
+    };
   };
   conteudo: Record<string, unknown>;
   created_At: string;
@@ -26,72 +32,186 @@ interface ActivityData {
   deleted_At: string;
 }
 
-type KnowledgeArea =
-  | "TODOS"
-  | "PORTUGUES"
-  | "MATEMATICA"
-  | "CIENCIAS"
-  | "GEOGRAFIA"
-  | "COORDENAÇÃO";
+interface KnowledgeAreaData {
+  id: number;
+  nome: string;
+  descricao?: string;
+}
 
-const KNOWLEDGE_AREAS = [
-  {
-    id: "TODOS",
-    label: "TODOS",
-    color: "bg-gradient-to-br from-gray-400 to-gray-600",
-  },
-  {
-    id: "PORTUGUES",
-    label: "PORTUGUÊS",
-    color: "bg-gradient-to-br from-red-400 to-red-600",
-  },
-  {
-    id: "MATEMATICA",
-    label: "MATEMÁTICA",
-    color: "bg-gradient-to-br from-blue-400 to-blue-600",
-  },
-  {
-    id: "CIENCIAS",
-    label: "CIÊNCIAS",
-    color: "bg-gradient-to-br from-green-400 to-green-600",
-  },
-  {
-    id: "GEOGRAFIA",
-    label: "GEOGRAFIA",
-    color: "bg-gradient-to-br from-yellow-400 to-yellow-600",
-  },
-  {
-    id: "COORDENAÇÃO",
-    label: "COGNIÇÃO",
-    color: "bg-gradient-to-br from-purple-400 to-purple-600",
-  },
-] as const;
+interface CompetenceData {
+  id: number;
+  nome: string;
+  descricao?: string;
+  areaId?: {
+    id: number;
+    nome: string;
+  };
+}
+
+type KnowledgeArea = string;
+
+interface KnowledgeAreaFilter {
+  id: string;
+  label: string;
+  color: string;
+}
+
+// Áreas padrão permitidas
+const ALLOWED_AREAS = ["PORTUGUÊS", "MATEMÁTICA", "CIÊNCIAS", "GEOGRAFIA", "COORDENAÇÃO", "COGNIÇÃO"];
+
+const AREA_COLORS: Record<string, string> = {
+  TODOS: "bg-gradient-to-br from-gray-400 to-gray-600",
+  PORTUGUÊS: "bg-gradient-to-br from-red-400 to-red-600",
+  MATEMÁTICA: "bg-gradient-to-br from-blue-400 to-blue-600",
+  CIÊNCIAS: "bg-gradient-to-br from-green-400 to-green-600",
+  GEOGRAFIA: "bg-gradient-to-br from-yellow-400 to-yellow-600",
+  COORDENAÇÃO: "bg-gradient-to-br from-purple-400 to-purple-600",
+  COGNIÇÃO: "bg-gradient-to-br from-purple-400 to-purple-600",
+};
+
+// Mapeamento de tipos de atividade para gameIdUrl
+const ACTIVITY_TYPE_TO_GAME_URL: Record<string, string> = {
+  "tonicStress": "stresssyllable",
+  "syllableClassification": "syllable",
+  "vowels": "vowels",
+  "forms": "forms",
+  "maze": "maze",
+  "space": "space",
+  "locations": "locations",
+  "memory": "memory",
+  "plants": "plants",
+  "professions": "professions",
+  "sum": "sum",
+  "subtraction": "subtraction",
+  "numbers": "numbers",
+  "address": "address",
+  "housing": "housing",
+  "useSyllable": "use-syllable",
+  "simpleSyllable": "simple-syllable",
+  "complexSyllable": "complex-syllable",
+  "hygiene": "hygiene",
+  "comDates": "com-dates",
+};
 
 export function Games() {
   const [games, setGames] = useState<CardProps[]>([]);
   const [filteredGames, setFilteredGames] = useState<CardProps[]>([]);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [selectedArea, setSelectedArea] = useState<KnowledgeArea>("TODOS");
-  const [_activities, _setActivities] = useState<ActivityData[]>([]);
-  const [_loading, _setLoading] = useState<boolean>(true);
+  const [knowledgeAreas, setKnowledgeAreas] = useState<KnowledgeAreaFilter[]>([
+    {
+      id: "TODOS",
+      label: "TODOS",
+      color: AREA_COLORS.TODOS,
+    },
+  ]);
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    const fetchActivities = async () => {
+    const fetchData = async () => {
       try {
-        const response = await api.get("/activity/list");
-        _setActivities(response.data);
+        setLoading(true);
+
+        // Buscar todas as áreas de conhecimento
+        const areasResponse = await api.get("/knowledge-area/list");
+        const areas: KnowledgeAreaData[] = areasResponse.data || [];
+
+        // Filtrar apenas as áreas permitidas e criar filtros
+        const allowedAreasFromDB = areas.filter((area) => 
+          ALLOWED_AREAS.includes(area.nome.toUpperCase())
+        );
+
+        const areaFilters: KnowledgeAreaFilter[] = [
+          {
+            id: "TODOS",
+            label: "TODOS",
+            color: AREA_COLORS.TODOS,
+          },
+          ...allowedAreasFromDB.map((area) => ({
+            id: area.nome.toUpperCase(),
+            label: area.nome.toUpperCase(),
+            color: AREA_COLORS[area.nome.toUpperCase()] || "bg-gradient-to-br from-gray-400 to-gray-600",
+          })),
+        ];
+        setKnowledgeAreas(areaFilters);
+
+        // Buscar todas as competências de todas as áreas
+        const allCompetences: CompetenceData[] = [];
+        for (const area of areas) {
+          try {
+            const competencesResponse = await api.get(`/knowledge-area/list/${area.id}/competences`);
+            if (competencesResponse.status === 200 && competencesResponse.data) {
+              const competences = competencesResponse.data.map((comp: CompetenceData) => ({
+                ...comp,
+                areaId: {
+                  id: area.id,
+                  nome: area.nome,
+                },
+              }));
+              allCompetences.push(...competences);
+            }
+          } catch (error) {
+            console.error(`Erro ao buscar competências da área ${area.id}:`, error);
+          }
+        }
+
+        // Buscar atividades do banco
+        const activitiesResponse = await api.get("/activity/list");
+        const activities: ActivityData[] = activitiesResponse.data || [];
+
+        // Mapear atividades do banco para formato de CardProps
+        const activitiesCards: CardProps[] = activities
+          .filter((activity) => !activity.deleted)
+          .map((activity) => {
+            const competence = allCompetences.find((c) => c.id === activity.competencia_id);
+            const gameUrl = ACTIVITY_TYPE_TO_GAME_URL[activity.tipo] || activity.tipo.toLowerCase();
+            
+            return {
+              title: activity.titulo,
+              gameIdUrl: gameUrl,
+              image: undefined,
+              variant: "game" as const,
+              disabled: false,
+              competency: competence?.nome,
+              knowledgeArea: competence?.areaId?.nome,
+            };
+          });
+
+        // Combinar jogos do JSON com atividades do banco (evitar duplicatas)
+        const existingGameUrls = new Set(gamesData.map((g) => g.gameIdUrl));
+        const newGamesFromDB = activitiesCards.filter(
+          (activityCard) => activityCard.gameIdUrl && !existingGameUrls.has(activityCard.gameIdUrl)
+        );
+
+        // Adicionar competências aos jogos existentes do JSON se houver match
+        const gamesWithCompetencies = gamesData.map((game) => {
+          const matchingActivity = activitiesCards.find(
+            (actCard) => actCard.gameIdUrl === game.gameIdUrl
+          );
+          if (matchingActivity) {
+            return {
+              ...game,
+              competency: matchingActivity.competency,
+              knowledgeArea: matchingActivity.knowledgeArea,
+            };
+          }
+          return game;
+        });
+
+        const allGames = [...gamesWithCompetencies, ...newGamesFromDB];
+        setGames(allGames);
+        setFilteredGames(allGames);
       } catch (error) {
-        console.error("Erro ao buscar atividades:", error);
+        console.error("Erro ao buscar dados:", error);
+        // Em caso de erro, usar apenas os dados do JSON
         setGames(gamesData);
         setFilteredGames(gamesData);
       } finally {
-        _setLoading(false);
+        setLoading(false);
       }
     };
 
-    fetchActivities();
-    setGames(gamesData);
-    setFilteredGames(gamesData);
+    fetchData();
   }, []);
 
   const filterGames = (term: string, area: KnowledgeArea) => {
@@ -99,8 +219,7 @@ export function Games() {
 
     if (area !== "TODOS") {
       filtered = filtered.filter((game) => {
-        const gameArea = getGameArea(game.title);
-        return gameArea === area;
+        return game.knowledgeArea?.toUpperCase() === area;
       });
     }
     if (term.trim()) {
@@ -110,41 +229,6 @@ export function Games() {
     }
 
     setFilteredGames(filtered);
-  };
-
-  const getGameArea = (gameTitle: string): KnowledgeArea => {
-    const title = gameTitle.toLowerCase();
-
-    if (title.includes("vogais") || title.includes("sílaba") || title.includes("silábica") ||title.includes("tônica")) {
-      return "PORTUGUES";
-    }
-    if (
-      title.includes("soma") ||
-      title.includes("números") ||
-      title.includes("numero") ||
-      title.includes("subtração") ||
-      title.includes("conta")
-    ) {
-      return "MATEMATICA";
-    }
-    if (title.includes("moradia") || title.includes("profissões") || title.includes("rua") || title.includes("localiza")|| title.includes("data") ) {
-      return "GEOGRAFIA";
-    }
-    if (
-      title.includes("formas") ||
-      title.includes("labirinto") ||
-      title.includes("memoria")
-    ) {
-      return "COORDENAÇÃO";
-    }
-    if (
-      title.includes("espaço") ||
-      title.includes("ciclo") ||
-      title.includes("planta") || title.includes("higiene")
-    ) {
-      return "CIENCIAS";
-    }
-    return "COORDENAÇÃO"; // Default
   };
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -182,7 +266,16 @@ export function Games() {
       <Header />
       <BackButton />
       <main className="bg-slate-200 pt-48">
-        <div className="border-am2 relative mx-auto mb-16 flex max-w-lg items-center rounded-xl border-4 text-gray-900 shadow-md transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-xl">
+        {loading ? (
+          <div className="flex justify-center items-center py-32">
+            <div className="text-center">
+              <div className="inline-block h-12 w-12 animate-spin rounded-full border-4 border-solid border-purple-600 border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"></div>
+              <p className="mt-4 text-xl text-gray-600">Carregando jogos...</p>
+            </div>
+          </div>
+        ) : (
+          <>
+            <div className="border-am2 relative mx-auto mb-16 flex max-w-lg items-center rounded-xl border-4 text-gray-900 shadow-md transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-xl">
           <input
             type="text"
             className="w-full rounded-l-lg px-6 py-2 focus:outline-0"
@@ -215,7 +308,7 @@ export function Games() {
         {/* Filtros por área de conhecimento */}
         <div className="mx-auto mb-8 max-w-6xl px-4">
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
-            {KNOWLEDGE_AREAS.map((area) => (
+            {knowledgeAreas.map((area) => (
               <button
                 key={area.id}
                 onClick={() => handleAreaFilter(area.id)}
@@ -252,13 +345,15 @@ export function Games() {
         )}
 
         <div className="grid grid-cols-1 gap-y-32 py-16 sm:grid-cols-2 md:grid-cols-3">
-          {filteredGames.map((game) => (
+          {filteredGames.map((game, index) => (
             <Card
-              key={game.gameIdUrl}
+              key={`${game.gameIdUrl}-${index}`}
               gameIdUrl={game.gameIdUrl}
               title={game.title}
               variant="game"
-              {...(game.image ? { image: game.image } : {})}
+              image={game.image}
+              competency={game.competency}
+              knowledgeArea={game.knowledgeArea}
             />
           ))}
         </div>
@@ -272,6 +367,8 @@ export function Games() {
               </p>
             </div>
           )}
+          </>
+        )}
       </main>
       <Footer />
     </>

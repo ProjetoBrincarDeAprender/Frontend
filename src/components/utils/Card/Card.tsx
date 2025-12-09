@@ -7,6 +7,8 @@ export interface CardProps {
   image?: string;
   variant?: "game" | "skill" | "future";
   disabled?: boolean;
+  competency?: string;
+  knowledgeArea?: string;
 }
 
 export function Card({
@@ -15,6 +17,8 @@ export function Card({
   image = defaultImage,
   variant = "game",
   disabled = false,
+  competency,
+  knowledgeArea,
 }: CardProps) {
   const linkHref = disabled
     ? undefined
@@ -42,6 +46,17 @@ export function Card({
       </header>
       <main className="flex h-1/2 flex-col justify-between gap-4 py-4">
         <h1 className="text-3xl">{title}</h1>
+        {competency && (
+          <div className="px-2">
+            <p className="text-sm text-gray-600 font-semibold mb-1">Competência:</p>
+            <p className="text-xs text-gray-700 line-clamp-2">{competency}</p>
+          </div>
+        )}
+        {knowledgeArea && !competency && (
+          <div className="px-2">
+            <p className="text-sm text-gray-600 font-semibold">Área: {knowledgeArea}</p>
+          </div>
+        )}
         <a
           href={linkHref}
           onClick={handleClick}
