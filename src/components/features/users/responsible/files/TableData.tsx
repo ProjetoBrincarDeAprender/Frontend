@@ -1,17 +1,10 @@
 import { Button } from "@/components/ui/button";
 import DeleteModal from "@/components/utils/DataTable/DeleteModal";
 import { RESPONSIBLE_QUERY_KEY } from "@/hooks/Responsible/useResponsible";
+import type { Responsible } from "@/types/responsible";
 import type { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown } from "lucide-react";
 import { EditResponsableModal } from "../edit/ResponsibleEditModal";
-
-export type Responsible = {
-  codigo_usuario: string;
-  nome_completo: string;
-  email: string;
-  escola: string;
-  parentesco: string;
-};
 
 export const ResponsibleColumns: ColumnDef<Responsible>[] = [
   {

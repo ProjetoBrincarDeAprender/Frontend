@@ -64,7 +64,7 @@ export function useUpdateResponsible() {
       queryClient.setQueriesData<Responsible[]>(
         { queryKey: RESPONSIBLE_QUERY_KEY },
         (old) => {
-          if (!old) return old;
+          if (!old || !Array.isArray(old)) return old;
           return old.map((responsible) =>
             responsible.codigo_usuario === updatedResponsible.responsibleId
               ? { ...responsible, ...updatedResponsible.data }

@@ -1,14 +1,18 @@
+import {
+  KNOWLEDGE_AREA_QUERY_KEY,
+  useKnowledgeArea,
+} from "@/hooks/KnowledgeArea/useKnowledgeArea";
 import { useTable } from "@/hooks/Table/useTable";
-import { useUser } from "@/hooks/User/useUser";
-import api from "@/utils/api";
-import { useEffect, useState } from "react";
+import { useDelete } from "@/hooks/useDelete";
+import type { ColumnDef } from "@tanstack/react-table";
+import { useState } from "react";
 import { useSearchParams } from "react-router";
 import { DataTable } from "../../../../utils/DataTable/DataTable";
-import { KnowledgeAreaColumns, type KnowledgeArea } from "./TableData";
-import type { ColumnDef } from "@tanstack/react-table";
+import { KnowledgeAreaColumns } from "./TableData";
 
 import { SkeletonTable } from "@/components/ui/skeleton-table";
 import DeleteModal from "@/components/utils/DataTable/DeleteModal";
+import type { KnowledgeArea } from "@/types/knowledgeArea";
 import { EditKnowledgeAreaModal } from "../edit/KnowledgeAreaEditModal";
 
 interface CellContext {
@@ -18,46 +22,27 @@ interface CellContext {
 }
 
 export default function KnowledgeAreaTable() {
-  const [data, setData] = useState<KnowledgeArea[] | null>(null);
-  const [loading, setLoading] = useState(true);
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
-  
+
+  const { multiDeleteMutation } = useDelete({
+    route: "/knowledge-area/remove",
+    entity: "Área de Conhecimento",
+    queryKey: KNOWLEDGE_AREA_QUERY_KEY,
+  });
+  const { mutateAsync: deleteAreas } = multiDeleteMutation;
+
   const handleDeleteSelected = async () => {
     if (selectedIds.length === 0) return;
-    for (const id of selectedIds) {
-      try {
-        await api.delete(`/knowledge-area/remove/${id}`);
-      } catch (error) {
-        console.error(`Erro ao deletar área de conhecimento ${id}:`, error);
-      }
-    }
+    await deleteAreas(selectedIds);
     setSelectedIds([]);
     setUpdating(true);
   };
 
   const [searchParams, _] = useSearchParams();
-  const { updating, setUpdating } = useTable();
-  const { user } = useUser();
+  const { setUpdating } = useTable();
 
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      try {
-        const response = await api.get("/knowledge-area/list");
-        
-        if (response.status === 200) {
-          setData(response.data);
-        }
-      } catch (error) {
-        console.error("Erro ao buscar dados:", error);
-        setData([]);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData().then(() => setUpdating(false));
-  }, [updating, setUpdating, user]);
+  const { knowledgeAreasQuery } = useKnowledgeArea({});
+  const { data, isLoading: loading } = knowledgeAreasQuery;
 
   const columnsWithCheckbox: ColumnDef<KnowledgeArea>[] = [
     {
@@ -76,9 +61,7 @@ export default function KnowledgeAreaTable() {
               );
             }}
             className="h-4 w-4 cursor-pointer accent-blue-600"
-            aria-label={
-              checked ? "Desmarcar área" : "Selecionar área"
-            }
+            aria-label={checked ? "Desmarcar área" : "Selecionar área"}
           />
         );
       },
@@ -107,6 +90,8 @@ export default function KnowledgeAreaTable() {
                 <DeleteModal
                   route="/knowledge-area/remove"
                   id={row.original.id}
+                  entity="Área de Conhecimento"
+                  queryKey={KNOWLEDGE_AREA_QUERY_KEY}
                 />
               </button>
             </div>

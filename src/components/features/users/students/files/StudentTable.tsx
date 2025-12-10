@@ -36,7 +36,7 @@ export default function StudentTable() {
   const { studentsQuery } = useStudent({
     filters:
       user?.perfil != "Admin"
-        ? { escolaId: Number(user?.escola?.id) }
+        ? { escolaId: Number(user?.escolaId) }
         : undefined,
   });
 

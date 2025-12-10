@@ -27,9 +27,7 @@ export default function SchoolTable() {
       ) : (
         <DataTable
           columns={SchoolColumns}
-          data={
-            schoolsData?.map((item) => ({ ...item, id: String(item.id) })) ?? []
-          }
+          data={schoolsData?.map((item) => ({ ...item, id: item.id })) ?? []}
           {...{
             page: searchParams.get("page")
               ? parseInt(searchParams.get("page")!)

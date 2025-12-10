@@ -1,19 +1,12 @@
 import { SCHOOL_ADMIN_QUERY_KEY } from "@/hooks/SchoolAdmin/useSchoolAdmin";
+import type { SchoolAdmin } from "@/types/school";
 import type { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown } from "lucide-react";
 import { Button } from "../../../../ui/button";
 import DeleteModal from "../../../../utils/DataTable/DeleteModal";
 import { EditSchoolUserModal } from "../edit/SchoolUserEditModal";
 
-export type SchoolUser = {
-  codigo_usuario: string;
-  nome: string;
-  email?: string;
-  escola?: string;
-  senha?: string;
-};
-
-export const SchoolUserColumns: ColumnDef<SchoolUser>[] = [
+export const SchoolUserColumns: ColumnDef<SchoolAdmin>[] = [
   {
     accessorKey: "codigo_usuario",
     header: ({ column }) => (

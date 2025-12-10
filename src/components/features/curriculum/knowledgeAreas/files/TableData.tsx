@@ -1,16 +1,10 @@
+import { KNOWLEDGE_AREA_QUERY_KEY } from "@/hooks/KnowledgeArea/useKnowledgeArea";
+import type { KnowledgeArea } from "@/types/knowledgeArea";
 import type { ColumnDef } from "@tanstack/react-table";
-import DeleteModal from "../../../../utils/DataTable/DeleteModal";
 import { ArrowUpDown } from "lucide-react";
 import { Button } from "../../../../ui/button";
+import DeleteModal from "../../../../utils/DataTable/DeleteModal";
 import { EditKnowledgeAreaModal } from "../edit/KnowledgeAreaEditModal";
-
-export type KnowledgeArea = {
-  id: number;
-  nome: string;
-  descricao?: string;
-  createdAt: string;
-  updatedAt: string;
-};
 
 export const KnowledgeAreaColumns: ColumnDef<KnowledgeArea>[] = [
   {
@@ -59,22 +53,22 @@ export const KnowledgeAreaColumns: ColumnDef<KnowledgeArea>[] = [
       );
     },
   },
-//   {
-//     accessorKey: "createdAt",
-//     header: ({ column }) => (
-//       <Button
-//         variant="ghost"
-//         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-//       >
-//         Criado em
-//         <ArrowUpDown className="ml-2 h-4 w-4" />
-//       </Button>
-//     ),
-//     cell: ({ row }) => {
-//       const date = new Date(row.original.createdAt);
-//       return <span>{date.toLocaleDateString("pt-BR")}</span>;
-//     },
-//   },
+  //   {
+  //     accessorKey: "createdAt",
+  //     header: ({ column }) => (
+  //       <Button
+  //         variant="ghost"
+  //         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+  //       >
+  //         Criado em
+  //         <ArrowUpDown className="ml-2 h-4 w-4" />
+  //       </Button>
+  //     ),
+  //     cell: ({ row }) => {
+  //       const date = new Date(row.original.createdAt);
+  //       return <span>{date.toLocaleDateString("pt-BR")}</span>;
+  //     },
+  //   },
   {
     id: "actions",
     header: "Ações",
@@ -84,6 +78,8 @@ export const KnowledgeAreaColumns: ColumnDef<KnowledgeArea>[] = [
         <DeleteModal
           route="/knowledge-area/remove"
           id={row.original.id}
+          entity="Área de Conhecimento"
+          queryKey={KNOWLEDGE_AREA_QUERY_KEY}
         />
       </div>
     ),

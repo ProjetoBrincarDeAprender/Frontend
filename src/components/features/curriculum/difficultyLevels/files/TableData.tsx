@@ -1,17 +1,10 @@
+import { DIFFICULTY_LEVEL_QUERY_KEY } from "@/hooks/DificultyLevel/useDifficultyLevel";
+import type { DifficultyLevel } from "@/types/difficultyLevels";
 import type { ColumnDef } from "@tanstack/react-table";
-import DeleteModal from "../../../../utils/DataTable/DeleteModal";
 import { ArrowUpDown } from "lucide-react";
 import { Button } from "../../../../ui/button";
+import DeleteModal from "../../../../utils/DataTable/DeleteModal";
 import { EditDifficultyLevelModal } from "../edit/DifficultyLevelEditModal";
-
-export type DifficultyLevel = {
-  id: number;
-  nome: string;
-  descricao: string;
-  nivel: number;
-  createdAt: string;
-  updatedAt: string;
-};
 
 export const DifficultyLevelColumns: ColumnDef<DifficultyLevel>[] = [
   {
@@ -47,6 +40,8 @@ export const DifficultyLevelColumns: ColumnDef<DifficultyLevel>[] = [
         <DeleteModal
           route="/difficulty-level/remove"
           id={row.original.id}
+          entity="Níveis de Dificuldade"
+          queryKey={DIFFICULTY_LEVEL_QUERY_KEY}
         />
       </div>
     ),

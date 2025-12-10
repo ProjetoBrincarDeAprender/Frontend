@@ -1,12 +1,12 @@
-import { useState, useEffect } from "react";
+import { Form } from "@/components/forms/Root";
+import useActivity from "@/hooks/Activity/useActivity";
+import { useCreateQuestion } from "@/hooks/Question/useCreateQuestion";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { AxiosError } from "axios";
+import { Loader2 } from "lucide-react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { toast } from "sonner";
-import { Form } from "@/components/forms/Root";
-import { useTable } from "@/hooks/Table/useTable";
-import api from "@/utils/api";
-import { AxiosError } from "axios";
 
 const formSchema = z.object({
   content: z
@@ -22,7 +22,7 @@ const formSchema = z.object({
     .min(1, { error: "Selecione uma atividade" }),
   difficultyId: z
     .string({ error: "Nível de dificuldade é obrigatório" })
-    .min(1, { error: "Selecione um nível de dificuldade" })
+    .min(1, { error: "Selecione um nível de dificuldade" }),
 });
 
 interface CreateQuestionFormProps {
@@ -47,13 +47,16 @@ interface ActivityApiResponse {
 }
 
 export function CreateQuestionForm({ onSuccess }: CreateQuestionFormProps) {
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [activities, setActivities] = useState<Activity[]>([]);
-  const [difficultyLevels, setDifficultyLevels] = useState<DifficultyLevel[]>([]);
+  const { create } = useCreateQuestion();
+  const { activitiesQuery } = useActivity();
+  const [difficultyLevels, setDifficultyLevels] = useState<DifficultyLevel[]>(
+    [],
+  );
   const [activitySearch, setActivitySearch] = useState("");
   const [showActivityDropdown, setShowActivityDropdown] = useState(false);
-  const [selectedActivity, setSelectedActivity] = useState<Activity | null>(null);
-  const { setUpdating } = useTable();
+  const [selectedActivity, setSelectedActivity] = useState<Activity | null>(
+    null,
+  );
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -61,31 +64,27 @@ export function CreateQuestionForm({ onSuccess }: CreateQuestionFormProps) {
       content: "",
       ordem: 1,
       activityId: "",
-      difficultyId: ""
-    }
+      difficultyId: "",
+    },
   });
 
   const formatActivity = (activity: ActivityApiResponse): Activity => ({
     id: activity.id,
     title: activity.titulo,
-    type: activity.tipo
+    type: activity.tipo,
   });
 
-  useEffect(() => {
-    const fetchActivities = async () => {
-      try {
-        const response = await api.get("/activity/list");
-        const activitiesData = Array.isArray(response.data) ? response.data : [response.data];
-        const formattedActivities = activitiesData.map(formatActivity);
-        setActivities(formattedActivities);
-      } catch (error) {
-        console.error("Erro ao buscar atividades:", error);
-        setActivities([]);
-      }
-    };
+  const activities = activitiesQuery.data
+    ? (Array.isArray(activitiesQuery.data)
+        ? activitiesQuery.data
+        : [activitiesQuery.data]
+      ).map(formatActivity)
+    : [];
 
+  useEffect(() => {
     const fetchDifficultyLevels = async () => {
       try {
+        const { default: api } = await import("@/utils/api");
         const response = await api.get("/difficulty-level/list");
         if (response.status === 200 && Array.isArray(response.data)) {
           setDifficultyLevels(response.data);
@@ -96,70 +95,76 @@ export function CreateQuestionForm({ onSuccess }: CreateQuestionFormProps) {
       }
     };
 
-    fetchActivities();
     fetchDifficultyLevels();
   }, []);
 
+  useEffect(() => {
+    if (create.isSuccess) {
+      onSuccess();
+    }
+  }, [create.isSuccess, onSuccess]);
+
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     try {
-      setIsSubmitting(true);
-      
       const payload = {
         content: JSON.stringify({ texto: data.content }),
         ordem: data.ordem,
-        difficultyId: Number(data.difficultyId)
+        difficultyId: Number(data.difficultyId),
       };
 
-      const response = await api.post(`/activity/${data.activityId}/question/register`, payload);
+      await create.mutateAsync({
+        activityId: Number(data.activityId),
+        data: payload,
+      });
 
-      if (response.status === 201) {
-        toast.success("Questão criada com sucesso!");
-        form.reset();
-        setSelectedActivity(null);
-        setActivitySearch("");
-        setUpdating(true); 
-        onSuccess();
-      }
+      form.reset();
+      setSelectedActivity(null);
+      setActivitySearch("");
     } catch (error) {
       if (error instanceof AxiosError) {
         const response = error.response;
-        let errorMessage = "Erro ao criar questão";
 
         if (response?.data?.message) {
           if (Array.isArray(response.data.message)) {
-            const fieldErrors = response.data.message.map((field: { field: string; message: string[] }) => {
-              if (field.field === 'content') {
-                form.setError('content', { message: field.message.join(", ") });
-              }
-              if (field.field === 'ordem') {
-                form.setError('ordem', { message: field.message.join(", ") });
-              }
-              if (field.field === 'difficultyId') {
-                form.setError('difficultyId', { message: field.message.join(", ") });
-              }
-              return `${field.field}: ${field.message.join(", ")}`;
+            response.data.message.forEach(
+              (field: { field: string; message: string[] }) => {
+                if (field.field === "content") {
+                  form.setError("content", {
+                    message: field.message.join(", "),
+                  });
+                }
+                if (field.field === "ordem") {
+                  form.setError("ordem", { message: field.message.join(", ") });
+                }
+                if (field.field === "difficultyId") {
+                  form.setError("difficultyId", {
+                    message: field.message.join(", "),
+                  });
+                }
+              },
+            );
+            form.setError("root", {
+              message: response.data.message
+                .map(
+                  (f: { field: string; message: string[] }) =>
+                    `${f.field}: ${f.message.join(", ")}`,
+                )
+                .join(" | "),
             });
-            errorMessage = fieldErrors.join(" | ");
           } else {
-            errorMessage = response.data.message;
+            form.setError("root", { message: response.data.message });
           }
         }
-
-        form.setError("root", { message: errorMessage });
-        toast.error(errorMessage);
       } else {
-        const errorMessage = "Erro de conexão";
-        form.setError("root", { message: errorMessage });
-        toast.error(errorMessage);
+        form.setError("root", { message: "Erro de conexão" });
       }
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
-  const filteredActivities = activities.filter(activity =>
-    activity.title.toLowerCase().includes(activitySearch.toLowerCase()) ||
-    activity.type.toLowerCase().includes(activitySearch.toLowerCase())
+  const filteredActivities = activities.filter(
+    (activity) =>
+      activity.title.toLowerCase().includes(activitySearch.toLowerCase()) ||
+      activity.type.toLowerCase().includes(activitySearch.toLowerCase()),
   );
 
   const handleActivitySelect = (activity: Activity) => {
@@ -193,30 +198,37 @@ export function CreateQuestionForm({ onSuccess }: CreateQuestionFormProps) {
         onSubmit={onSubmit}
         className="flex flex-col gap-4"
       >
-        <div className="space-y-2 relative">
-          <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+        <div className="relative space-y-2">
+          <label className="text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
             Atividade *
             {activities.length > 0 && (
-              <span className="font-1 text-green-600 ml-1"> ({activities.length} disponíveis)</span>
+              <span className="font-1 ml-1 text-green-600">
+                {" "}
+                ({activities.length} disponíveis)
+              </span>
             )}
           </label>
-          
+
           <div className="relative">
             <input
               type="text"
               value={activitySearch}
               onChange={(e) => handleActivitySearchChange(e.target.value)}
               onFocus={() => setShowActivityDropdown(activitySearch.length > 0)}
-              className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+              className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
               placeholder="Digite para buscar uma atividade..."
-              disabled={isSubmitting || activities.length === 0}
+              disabled={
+                create.isPending ||
+                activitiesQuery.isPending ||
+                activities.length === 0
+              }
             />
             {selectedActivity && (
               <button
                 type="button"
                 onClick={clearActivity}
-                className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                disabled={isSubmitting}
+                className="absolute top-1/2 right-2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                disabled={create.isPending}
               >
                 ×
               </button>
@@ -224,18 +236,18 @@ export function CreateQuestionForm({ onSuccess }: CreateQuestionFormProps) {
           </div>
 
           {showActivityDropdown && filteredActivities.length > 0 && (
-            <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-y-auto">
+            <div className="absolute z-10 mt-1 max-h-60 w-full overflow-y-auto rounded-md border border-gray-300 bg-white shadow-lg">
               {filteredActivities.map((activity) => (
                 <button
                   key={activity.id}
                   type="button"
                   onClick={() => handleActivitySelect(activity)}
-                  className="w-full px-3 py-2 text-left hover:bg-gray-100 focus:bg-gray-100 focus:outline-none border-b last:border-b-0"
-                  disabled={isSubmitting}
+                  className="w-full border-b px-3 py-2 text-left last:border-b-0 hover:bg-gray-100 focus:bg-gray-100 focus:outline-none"
+                  disabled={create.isPending}
                 >
-                  <div className="font-medium text-sm">{activity.title}</div>
+                  <div className="text-sm font-medium">{activity.title}</div>
                   <div className="text-xs text-gray-500">
-                    Tipo: {activity.type} 
+                    Tipo: {activity.type}
                   </div>
                 </button>
               ))}
@@ -256,8 +268,9 @@ export function CreateQuestionForm({ onSuccess }: CreateQuestionFormProps) {
           )} */}
 
           {activities.length === 0 && (
-            <div className="text-sm text-amber-600 bg-amber-50 p-3 rounded border border-amber-200">
-              ⚠️ Nenhuma atividade encontrada. Verifique se existem atividades cadastradas.
+            <div className="rounded border border-amber-200 bg-amber-50 p-3 text-sm text-amber-600">
+              ⚠️ Nenhuma atividade encontrada. Verifique se existem atividades
+              cadastradas.
             </div>
           )}
         </div>
@@ -267,14 +280,14 @@ export function CreateQuestionForm({ onSuccess }: CreateQuestionFormProps) {
           name="content"
           render={({ field }) => (
             <div className="space-y-2">
-              <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+              <label className="text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                 Conteúdo da Questão *
               </label>
               <textarea
                 {...field}
                 placeholder="Digite o conteúdo da questão... Ex: Quanto é 2 + 2?"
-                disabled={isSubmitting}
-                className="flex min-h-32 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 resize-vertical"
+                disabled={create.isPending}
+                className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring resize-vertical flex min-h-32 w-full rounded-md border px-3 py-2 text-sm focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
               />
             </div>
           )}
@@ -289,7 +302,7 @@ export function CreateQuestionForm({ onSuccess }: CreateQuestionFormProps) {
               label="Ordem da Questão *"
               type="number"
               placeholder="Ex: 1, 2, 3..."
-              disabled={isSubmitting}
+              disabled={create.isPending}
               onChange={(e) => field.onChange(Number(e.target.value))}
               min="1"
               max="100"
@@ -310,13 +323,23 @@ export function CreateQuestionForm({ onSuccess }: CreateQuestionFormProps) {
               }))}
               onChange={field.onChange}
               value={field.value || ""}
-              disabled={isSubmitting}
+              disabled={create.isPending}
             />
           )}
         />
 
-        <Form.Submit disabled={isSubmitting || !selectedActivity} className="bg-primary hover:bg-primary/90">
-          {isSubmitting ? "Criando..." : "Criar"}
+        <Form.Submit
+          disabled={create.isPending || !selectedActivity}
+          className="bg-primary hover:bg-primary/90"
+        >
+          {create.isPending ? (
+            <>
+              <Loader2 className="mr-2 inline h-4 w-4 animate-spin" />
+              Criando...
+            </>
+          ) : (
+            "Criar"
+          )}
         </Form.Submit>
       </Form.Main>
     </Form.Wrapper>

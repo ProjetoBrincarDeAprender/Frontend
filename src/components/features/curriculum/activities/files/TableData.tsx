@@ -1,40 +1,10 @@
+import { ACTIVITY_QUERY_KEY } from "@/hooks/Activity/useActivity";
+import type { Activity } from "@/types/activity";
 import type { ColumnDef } from "@tanstack/react-table";
-import DeleteModal from "../../../../utils/DataTable/DeleteModal";
 import { ArrowUpDown } from "lucide-react";
 import { Button } from "../../../../ui/button";
+import DeleteModal from "../../../../utils/DataTable/DeleteModal";
 import { EditActivityModal } from "../edit/ActivityEditModal";
-
-export type Activity = {
-  id: number;
-  titulo: string;
-  tipo: string;
-  // competenceId: {
-  //   id: number;
-  // };
-  nivel_dificuldadeId: {
-    id: number;
-    nome: string;
-  };
-  created_At: string;
-  updated_At: string;
-  competenciaId: {
-    id: number;
-    nome: string;
-  };
-  // competencia_id?: number;
-  // nivel_dificuldade_inicial: number;
-  deleted: boolean;
-  deletedBy?: number;
-  deleted_At?: string;
-  // competencia?: {
-  //   id: number;
-  //   nome: string;
-  // };
-  // nivelDificuldade?: {
-  //   id: number;
-  //   nome: string;
-  // };
-};
 
 export const ActivityColumns: ColumnDef<Activity>[] = [
   {
@@ -118,6 +88,8 @@ export const ActivityColumns: ColumnDef<Activity>[] = [
         <DeleteModal
           route="/activity/remove"
           id={row.original.id}
+          entity="Atividade"
+          queryKey={ACTIVITY_QUERY_KEY}
         />
       </div>
     ),

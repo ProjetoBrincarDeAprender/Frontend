@@ -37,3 +37,13 @@ export type FilterSchoolOption = FilterOption & {
 export type FilterSchoolAdminOption = FilterOption & {
   escolaId?: number;
 };
+
+export type FilterActivityOption = FilterOption & {};
+
+export type FilterQuestionOption = FilterOption & {};
+
+export type FilterDifficultyLevelOption = FilterOption & {};
+
+export type FilterCompetenceOption = FilterOption & {};
+
+export type FilterKnowledgeAreaOption = FilterOption & {};

@@ -1,14 +1,15 @@
+import useActivity, { ACTIVITY_QUERY_KEY } from "@/hooks/Activity/useActivity";
 import { useTable } from "@/hooks/Table/useTable";
-import { useUser } from "@/hooks/User/useUser";
-import api from "@/utils/api";
-import { useEffect, useState } from "react";
+import { useDelete } from "@/hooks/useDelete";
+import type { ColumnDef } from "@tanstack/react-table";
+import { useState } from "react";
 import { useSearchParams } from "react-router";
 import { DataTable } from "../../../../utils/DataTable/DataTable";
-import { ActivityColumns, type Activity } from "./TableData";
-import type { ColumnDef } from "@tanstack/react-table";
+import { ActivityColumns } from "./TableData";
 
 import { SkeletonTable } from "@/components/ui/skeleton-table";
 import DeleteModal from "@/components/utils/DataTable/DeleteModal";
+import type { Activity } from "@/types/activity";
 import { EditActivityModal } from "../edit/ActivityEditModal";
 
 interface CellContext {
@@ -18,46 +19,27 @@ interface CellContext {
 }
 
 export default function ActivityTable() {
-  const [data, setData] = useState<Activity[] | null>(null);
-  const [loading, setLoading] = useState(true);
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
-  
+
+  const { multiDeleteMutation } = useDelete({
+    route: "/activity/remove",
+    entity: "Atividade",
+    queryKey: ACTIVITY_QUERY_KEY,
+  });
+  const { mutateAsync: deleteActivities } = multiDeleteMutation;
+
   const handleDeleteSelected = async () => {
     if (selectedIds.length === 0) return;
-    for (const id of selectedIds) {
-      try {
-        await api.delete(`/activity/remove/${id}`);
-      } catch (error) {
-        console.error(`Erro ao deletar atividade ${id}:`, error);
-      }
-    }
+    await deleteActivities(selectedIds);
     setSelectedIds([]);
     setUpdating(true);
   };
 
   const [searchParams, _] = useSearchParams();
-  const { updating, setUpdating } = useTable();
-  const { user } = useUser();
+  const { setUpdating } = useTable();
 
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      try {
-        const response = await api.get("/activity/list");
-        
-        if (response.status === 200) {
-          setData(response.data);
-        }
-      } catch (error) {
-        console.error("Erro ao buscar dados:", error);
-        setData([]);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData().then(() => setUpdating(false));
-  }, [updating, setUpdating, user]);
+  const { activitiesQuery } = useActivity({});
+  const { data, isLoading: loading } = activitiesQuery;
 
   const columnsWithCheckbox: ColumnDef<Activity>[] = [
     {
@@ -107,6 +89,8 @@ export default function ActivityTable() {
                 <DeleteModal
                   route="/activity/remove"
                   id={row.original.id}
+                  entity="Atividade"
+                  queryKey={ACTIVITY_QUERY_KEY}
                 />
               </button>
             </div>

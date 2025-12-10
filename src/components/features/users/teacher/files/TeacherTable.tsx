@@ -39,7 +39,7 @@ export default function TeacherTable() {
 
   const filters: FilterTeacherOption = {};
   if (user?.perfil != "Admin") {
-    filters.escolaId = user?.escola?.id as number;
+    filters.escolaId = user?.escolaId as number;
   }
 
   const { teachersQuery } = useTeacher({
