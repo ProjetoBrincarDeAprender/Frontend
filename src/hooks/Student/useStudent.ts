@@ -98,6 +98,7 @@ export function useStudentsRelations(
   const studentsByRelationQuery = useQuery<Student[]>({
     queryKey: [...STUDENTS_QUERY_KEY, "relations", type, filters],
     queryFn: () => fetchStudentsByRelation(type, filters),
+    enabled: !!filters?.escolaId,
   });
 
   return { studentsByRelationQuery };
