@@ -95,10 +95,6 @@ export function Profile() {
             <p>
               <strong>Escola:</strong> {user.escola || "Não vinculado"}
             </p>
-            <p>
-              <strong>Data de criação:</strong>{" "}
-              {new Date(user.created_At).toLocaleDateString()}
-            </p>
           </div>
 
           {/* Ações movidas para a Sidebar (somente Alterar Senha conforme solicitado) */}

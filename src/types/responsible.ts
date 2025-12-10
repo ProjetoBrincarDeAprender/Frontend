@@ -6,5 +6,4 @@ export type Responsible = User & {
 
 export type ResponsibleFormData = {
   escolaId: number;
-  parentesco: string;
 } & UserFormData;

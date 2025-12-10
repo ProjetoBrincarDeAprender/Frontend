@@ -4,13 +4,14 @@ import { useUser } from "@/hooks/User/useUser";
 import { useState } from "react";
 import { useSearchParams } from "react-router";
 import { DataTable } from "../../../../utils/DataTable/DataTable";
-import { TeacherColumns, type Teacher } from "./TableData";
+import { TeacherColumns } from "./TableData";
 
 import { SkeletonTable } from "@/components/ui/skeleton-table";
 import DeleteModal from "@/components/utils/DataTable/DeleteModal";
 import { TEACHER_QUERY_KEY, useTeacher } from "@/hooks/Teacher/useTeacher";
 import { useDelete } from "@/hooks/useDelete";
 import type { FilterTeacherOption } from "@/types/filter";
+import type { Teacher } from "@/types/teacher";
 import { Share2 } from "lucide-react";
 import { EditTeacherModal } from "../edit/TeacherEditModal";
 

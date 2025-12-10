@@ -146,7 +146,7 @@ export function StudentSignUpForm({ onSuccess }: SignUpFormProps) {
       ...data,
       data_nascimento: dataFormatada,
       perfilId: 3,
-      escolaId: user?.escola?.id || data.escolaId,
+      escolaId: user?.escolaId || data.escolaId,
     };
 
     try {

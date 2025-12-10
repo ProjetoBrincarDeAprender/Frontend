@@ -2,11 +2,12 @@ import { useUser } from "@/hooks/User/useUser";
 //import { Loader2 } from "lucide-react";
 import { DataTable } from "@/components/utils/DataTable/DataTable";
 import { useSearchParams } from "react-router";
-import { ResponsibleColumns, type Responsible } from "./TableData";
+import { ResponsibleColumns } from "./TableData";
 
 import { SkeletonTable } from "@/components/ui/skeleton-table";
 import { useResponsible } from "@/hooks/Responsible/useResponsible";
 import type { FilterResponsibleOption } from "@/types/filter";
+import type { Responsible } from "@/types/responsible";
 import { UserPerfilEnum } from "@/types/user";
 
 export default function ResponsibleTable() {
