@@ -1,9 +1,8 @@
-import EditSchoolUserForm from "./SchoolUserEditForm";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { useTable } from "@/hooks/Table/useTable";
 import { useState } from "react";
-import { toast } from "sonner";
+import EditSchoolUserForm from "./SchoolUserEditForm";
 
 interface EditSchoolUserModalProps {
   schoolId: number;
@@ -14,7 +13,6 @@ export function EditSchoolUserModal({ schoolId }: EditSchoolUserModalProps) {
 
   const handleSuccess = () => {
     setIsOpen(false);
-    toast.success("Escola atualizada com sucesso!");
     setUpdating(true);
   };
 

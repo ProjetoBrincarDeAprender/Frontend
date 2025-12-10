@@ -1,8 +1,11 @@
 import { Form } from "@/components/forms/Root";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Link } from "@/components/utils/Link/Link";
-import api from "@/utils/api";
+import { useSchool } from "@/hooks/School/useSchool";
+import { useUpdateSchool } from "@/hooks/School/useUpdateSchool";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AxiosError } from "axios";
+import { Loader2 } from "lucide-react";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { IMaskInput } from "react-imask";
@@ -41,52 +44,46 @@ export default function EditSchoolForm({ id, onSuccess }: EditSchoolFormProps) {
     resolver: zodResolver(formSchema),
   });
 
+  const { update: updateSchoolMutation } = useUpdateSchool();
+  const {
+    mutateAsync: updateSchool,
+    isPending,
+    isSuccess,
+  } = updateSchoolMutation;
+
+  const { schoolQuery } = useSchool({ schoolId: id });
+  const { data: schoolData, isLoading: isSchoolLoading } = schoolQuery;
+
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await api.get(`/school/list/${id}`);
+    if (schoolData) {
+      form.reset({
+        nome: schoolData.nome || "",
+        descricao: schoolData.descricao ?? undefined,
+        localizacao: schoolData.localizacao || "",
+        telefone: schoolData.telefone || "",
+        email: schoolData.email || "",
+      });
+    }
+  }, [schoolData, form]);
 
-        if (response.status === 200) {
-          const formData = {
-            nome: response.data.nome || "",
-            descricao: response.data.descricao ?? undefined,
-            localizacao: response.data.localizacao || "",
-            telefone: response.data.telefone || "",
-            email: response.data.email || "",
-            usuariosIds: response.data.usuarios
-              ? response.data.usuarios
-                  .map((user: { id: number }) => user.id)
-                  .join(", ")
-              : "",
-          };
-          form.reset(formData);
-        }
-      } catch (error) {
-        if (error instanceof AxiosError) {
-          console.error("Erro ao buscar dados da escola:", error.message);
-        }
-      }
-    };
-
-    fetchData();
-  }, [id, form]);
+  useEffect(() => {
+    if (isSuccess) {
+      onSuccess();
+    }
+  }, [isSuccess, onSuccess]);
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     try {
-   const payload = {
-      ...data,
-      descricao: data.descricao?.trim() === "" ? null : data.descricao,
-      nome: data.nome?.trim() || undefined,
-      localizacao: data.localizacao?.trim() || undefined,
-      email: data.email?.trim() || undefined,
-      telefone: data.telefone?.trim() || undefined
-    };
+      const payload = {
+        ...data,
+        descricao: data.descricao?.trim() === "" ? undefined : data.descricao,
+        nome: data.nome?.trim() || undefined,
+        localizacao: data.localizacao?.trim() || undefined,
+        email: data.email?.trim() || undefined,
+        telefone: data.telefone?.trim() || undefined,
+      };
 
-    const response = await api.put(`/school/update/${id}`, payload);
-
-    if (response.status === 200) {
-      onSuccess();
-    }
+      await updateSchool({ schoolId: id, data: payload });
     } catch (error) {
       console.error("Erro ao atualizar escola:", error);
       if (error instanceof AxiosError) {
@@ -123,77 +120,96 @@ export default function EditSchoolForm({ id, onSuccess }: EditSchoolFormProps) {
         onSubmit={onSubmit}
         className="flex flex-col gap-4"
       >
-        <Form.Field
-          form={form}
-          name="nome"
-          render={({ field }) => (
-            <Form.Input
-              {...field}
-              label="Nome da Instituição"
-              placeholder="Universidade Estadual da Paraíba"
-            />
-          )}
-        />
-
-        <Form.Field
-          form={form}
-          name="descricao"
-          render={({ field }) => (
-            <Form.Input
-              {...field}
-              label="Descrição da Instituição (Opcional)"
-              placeholder="Escreva aqui a descrição"
-            />
-          )}
-        />
-        <Form.Field
-          form={form}
-          name="localizacao"
-          render={({ field }) => (
-            <Form.Input
-              {...field}
-              label="Endereço da Instituição"
-              placeholder="Ex: Rua Manoel Mendes dos Santos, 54"
-            />
-          )}
-        />
-        <Form.Field
-          form={form}
-          name="email"
-          render={({ field }) => (
-            <Form.Input
-              {...field}
-              label="Email"
-              placeholder="exemplo@gmail.com"
-            />
-          )}
-        />
-        <Form.Field
-          form={form}
-          name="telefone"
-          render={({ field }) => (
-            <Form.Item>
-              <div className="flex w-full flex-col gap-2">
-                <label htmlFor="telefone" className="text-sm font-medium">
-                  Telefone
-                </label>
-                <IMaskInput
-                  mask={[
-                    { mask: "(00) 0000-0000" },
-                    { mask: "(00) 00000-0000" },
-                  ]}
-                  value={field.value || ""}
-                  onAccept={(value: string) => {
-                    field.onChange(value);
-                  }}
-                  placeholder="(83) 99999-9999"
-                  className="border-purplish-blue hover:border-purplish-blue flex h-13 w-full rounded-lg border bg-transparent px-6 py-2 text-base text-gray-800 transition-colors duration-200 ease-in-out placeholder:text-gray-500 focus-visible:ring-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+        {isSchoolLoading ? (
+          <div className="flex flex-col gap-4">
+            <Skeleton className="h-12" />
+            <Skeleton className="h-12" />
+            <Skeleton className="h-12" />
+            <Skeleton className="h-12" />
+            <Skeleton className="h-12" />
+            <Skeleton className="h-12" />
+          </div>
+        ) : (
+          <>
+            <Form.Field
+              form={form}
+              name="nome"
+              render={({ field }) => (
+                <Form.Input
+                  {...field}
+                  label="Nome da Instituição"
+                  placeholder="Universidade Estadual da Paraíba"
                 />
-              </div>
-            </Form.Item>
-          )}
-        />
-        <Form.Submit>Atualizar Dados</Form.Submit>
+              )}
+            />
+
+            <Form.Field
+              form={form}
+              name="descricao"
+              render={({ field }) => (
+                <Form.Input
+                  {...field}
+                  label="Descrição da Instituição (Opcional)"
+                  placeholder="Escreva aqui a descrição"
+                />
+              )}
+            />
+            <Form.Field
+              form={form}
+              name="localizacao"
+              render={({ field }) => (
+                <Form.Input
+                  {...field}
+                  label="Endereço da Instituição"
+                  placeholder="Ex: Rua Manoel Mendes dos Santos, 54"
+                />
+              )}
+            />
+            <Form.Field
+              form={form}
+              name="email"
+              render={({ field }) => (
+                <Form.Input
+                  {...field}
+                  label="Email"
+                  placeholder="exemplo@gmail.com"
+                />
+              )}
+            />
+            <Form.Field
+              form={form}
+              name="telefone"
+              render={({ field }) => (
+                <Form.Item>
+                  <div className="flex w-full flex-col gap-2">
+                    <label htmlFor="telefone" className="text-sm font-medium">
+                      Telefone
+                    </label>
+                    <IMaskInput
+                      mask={[
+                        { mask: "(00) 0000-0000" },
+                        { mask: "(00) 00000-0000" },
+                      ]}
+                      value={field.value || ""}
+                      onAccept={(value: string) => {
+                        field.onChange(value);
+                      }}
+                      placeholder="(83) 99999-9999"
+                      className="border-purplish-blue hover:border-purplish-blue flex h-13 w-full rounded-lg border bg-transparent px-6 py-2 text-base text-gray-800 transition-colors duration-200 ease-in-out placeholder:text-gray-500 focus-visible:ring-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+                    />
+                  </div>
+                </Form.Item>
+              )}
+            />
+            <Form.Submit disabled={isPending}>
+              {isPending ? (
+                <Loader2 className="animate-spin" />
+              ) : (
+                "Atualizar Escola"
+              )}
+            </Form.Submit>
+          </>
+        )}
       </Form.Main>
       <p className="mt-6 w-full text-center text-lg">
         Desistiu de realizar as mordificações?{" "}

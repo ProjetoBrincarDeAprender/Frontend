@@ -9,50 +9,67 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { useTable } from "@/hooks/Table/useTable";
-import api from "@/utils/api";
+import { useDelete } from "@/hooks/useDelete";
 import { DialogClose } from "@radix-ui/react-dialog";
+import { AxiosError } from "axios";
 import { Trash2 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
-import { AxiosError } from "axios";
 
 type DeleteModalProps = {
   title?: string;
   id: number;
   route: string;
+  entity: string;
+  queryKey: string[];
 };
 
-export default function DeleteModal({ id, route }: DeleteModalProps) {
+export default function DeleteModal({
+  id,
+  route,
+  entity,
+  queryKey,
+}: DeleteModalProps) {
   const [open, setOpen] = useState(false);
   const { setUpdating } = useTable();
+  const { deleteMutation } = useDelete({ route, entity, queryKey });
+  const { mutateAsync: deleteStudent, status } = deleteMutation;
 
   const handleDelete = async () => {
     try {
-      const response = await api.delete(`${route}/${id}`);
-      if (response.status === 200) {
+      // const response = await api.delete(`${route}/${id}`)
+      await deleteStudent(id);
+
+      if (status === "success") {
         setOpen(false);
         setUpdating(true);
-        toast.success("Item excluído com sucesso!");
+        toast.success(`${entity} excluído com sucesso!`);
       }
     } catch (error) {
-      console.error("Error deleting item:", error);
-      
+      console.error(`Error deleting ${entity}:`, error);
+
       if (error instanceof AxiosError && error.response?.status === 400) {
-        let errorMessage = "Não é possível excluir este item pois ele possui dependências vinculadas.";
-        
+        let errorMessage =
+          "Não é possível excluir este item pois ele possui dependências vinculadas.";
+
         // Mensagens específicas baseadas na rota
-        if (route.includes('/knowledge-area/')) {
-          errorMessage = "Não é possível excluir esta área de conhecimento pois ela possui competências vinculadas.";
-        } else if (route.includes('/competence/')) {
-          errorMessage = "Não é possível excluir esta competência pois ela possui atividades vinculadas.";
-        } else if (route.includes('/activity/')) {
-          errorMessage = "Não é possível excluir esta atividade pois ela possui questões vinculadas.";
-        } else if (route.includes('/difficulty-level/')) {
-          errorMessage = "Não é possível excluir este nível de dificuldade pois ele possui atividades ou questões vinculadas.";
-        } else if (route.includes('/question/')) {
-          errorMessage = "Não é possível excluir esta questão. Verifique se não há dependências vinculadas.";
+        if (route.includes("/knowledge-area/")) {
+          errorMessage =
+            "Não é possível excluir esta área de conhecimento pois ela possui competências vinculadas.";
+        } else if (route.includes("/competence/")) {
+          errorMessage =
+            "Não é possível excluir esta competência pois ela possui atividades vinculadas.";
+        } else if (route.includes("/activity/")) {
+          errorMessage =
+            "Não é possível excluir esta atividade pois ela possui questões vinculadas.";
+        } else if (route.includes("/difficulty-level/")) {
+          errorMessage =
+            "Não é possível excluir este nível de dificuldade pois ele possui atividades ou questões vinculadas.";
+        } else if (route.includes("/question/")) {
+          errorMessage =
+            "Não é possível excluir esta questão. Verifique se não há dependências vinculadas.";
         }
-        
+
         toast.error(errorMessage);
       } else {
         toast.error("Erro ao excluir o item. Tente novamente.");

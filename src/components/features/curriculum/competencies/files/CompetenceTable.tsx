@@ -1,85 +1,128 @@
-import { useTable } from "@/hooks/Table/useTable";
-import { useUser } from "@/hooks/User/useUser";
-import api from "@/utils/api";
+import {
+  COMPETENCE_BY_KNOWLEDGE_AREA_QUERY_KEY,
+  COMPETENCE_QUERY_KEY,
+  useCompetence,
+} from "@/hooks/Competence/useCompetence";
+import { useDelete } from "@/hooks/useDelete";
+import type { ColumnDef } from "@tanstack/react-table";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router";
 import { DataTable } from "../../../../utils/DataTable/DataTable";
-import { CompetenceColumns, type Competence } from "./TableData";
-import type { ColumnDef } from "@tanstack/react-table";
+import { CompetenceColumns, type CompetenceFormatted } from "./TableData";
 
 import { SkeletonTable } from "@/components/ui/skeleton-table";
 import DeleteModal from "@/components/utils/DataTable/DeleteModal";
+import { useKnowledgeArea } from "@/hooks/KnowledgeArea/useKnowledgeArea";
+import type { Competence } from "@/types/competence";
 import { EditCompetenceModal } from "../edit/CompetenceEditModal";
 
 interface CellContext {
   row: {
-    original: Competence;
+    original: CompetenceFormatted;
   };
 }
 
 export default function CompetenceTable() {
-  const [data, setData] = useState<Competence[] | null>(null);
-  const [loading, setLoading] = useState(true);
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
-  
+
+  const { multiDeleteMutation } = useDelete({
+    route: "/competence/remove",
+    entity: "Competência",
+    queryKey: [
+      ...COMPETENCE_QUERY_KEY,
+      ...COMPETENCE_BY_KNOWLEDGE_AREA_QUERY_KEY,
+    ],
+  });
+  const { mutateAsync: deleteCompetences } = multiDeleteMutation;
+
   const handleDeleteSelected = async () => {
     if (selectedIds.length === 0) return;
-    for (const id of selectedIds) {
-      try {
-        await api.delete(`/competence/remove/${id}`);
-      } catch (error) {
-        console.error(`Erro ao deletar competência ${id}:`, error);
-      }
-    }
+    await deleteCompetences(selectedIds);
     setSelectedIds([]);
-    setUpdating(true);
   };
 
   const [searchParams, _] = useSearchParams();
-  const { updating, setUpdating } = useTable();
-  const { user } = useUser();
+
+  const { competencesQuery } = useCompetence({});
+  const { data: competencesData, isLoading: loading } = competencesQuery;
+
+  const { knowledgeAreasQuery } = useKnowledgeArea();
+  const { data: knowledgeAreasData, isLoading: isKnowledgeAreasLoading } =
+    knowledgeAreasQuery;
+
+  const [formattedCompetences, setFormattedCompetences] = useState<
+    CompetenceFormatted[]
+  >([]);
 
   useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      try {
-        const knowledgeAreasResponse = await api.get("/knowledge-area/list");
-        
-        if (knowledgeAreasResponse.status === 200) {
-          const allCompetences: Competence[] = [];
-          
-          for (const area of knowledgeAreasResponse.data) {
-            try {
-              const competencesResponse = await api.get(`/knowledge-area/list/${area.id}/competences`);
-              if (competencesResponse.status === 200) {
-                const competencesWithAreaName = competencesResponse.data.map((competence: Competence) => ({
-                  ...competence,
-                  areaId: {
-                    ...competence.areaId,
-                    nome: area.nome
-                  }
-                }));
-                allCompetences.push(...competencesWithAreaName);
-              }
-            } catch (error) {
-              console.error(`Erro ao buscar competências da área ${area.id}:`, error);
-            }
-          }
-          
-          setData(allCompetences);
-        }
-      } catch (error) {
-        console.error("Erro ao buscar dados:", error);
-        setData([]);
-      } finally {
-        setLoading(false);
-      }
-    };
+    if (competencesData && knowledgeAreasData) {
+      const knowledgeAreaMap = new Map<number, string>();
+      knowledgeAreasData.forEach((area) => {
+        knowledgeAreaMap.set(area.id, area.nome);
+      });
 
-    fetchData().then(() => setUpdating(false));
-  }, [updating, setUpdating, user]);
+      const formattedCompetences = competencesData.map((competence) => ({
+        ...competence,
+        area: {
+          id: competence.areaId,
+          nome: knowledgeAreaMap.get(competence.areaId) || "Desconhecida",
+        },
+      }));
 
-  const columnsWithCheckbox: ColumnDef<Competence>[] = [
+      console.log(formattedCompetences);
+
+      setFormattedCompetences(formattedCompetences);
+    }
+  }, [competencesData, knowledgeAreasData]);
+
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     setLoading(true);
+  //     try {
+  //       const knowledgeAreasResponse = await api.get("/knowledge-area/list");
+
+  //       if (knowledgeAreasResponse.status === 200) {
+  //         const allCompetences: Competence[] = [];
+
+  //         for (const area of knowledgeAreasResponse.data) {
+  //           try {
+  //             const competencesResponse = await api.get(
+  //               `/knowledge-area/list/${area.id}/competences`,
+  //             );
+  //             if (competencesResponse.status === 200) {
+  //               const competencesWithAreaName = competencesResponse.data.map(
+  //                 (competence: Competence) => ({
+  //                   ...competence,
+  //                   areaId: {
+  //                     ...competence.areaId,
+  //                     nome: area.nome,
+  //                   },
+  //                 }),
+  //               );
+  //               allCompetences.push(...competencesWithAreaName);
+  //             }
+  //           } catch (error) {
+  //             console.error(
+  //               `Erro ao buscar competências da área ${area.id}:`,
+  //               error,
+  //             );
+  //           }
+  //         }
+
+  //         setData(allCompetences);
+  //       }
+  //     } catch (error) {
+  //       console.error("Erro ao buscar dados:", error);
+  //       setData([]);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
+
+  //   fetchData().then(() => setUpdating(false));
+  // }, [updating, setUpdating, user]);
+
+  const columnsWithCheckbox: ColumnDef<CompetenceFormatted>[] = [
     {
       id: "select",
       header: () => <span className="font-bold">Selecionar</span>,
@@ -127,6 +170,8 @@ export default function CompetenceTable() {
                 <DeleteModal
                   route="/competence/remove"
                   id={row.original.id}
+                  entity="Competência"
+                  queryKey={COMPETENCE_QUERY_KEY}
                 />
               </button>
             </div>
@@ -139,12 +184,12 @@ export default function CompetenceTable() {
 
   return (
     <>
-      {loading ? (
+      {loading || isKnowledgeAreasLoading ? (
         <SkeletonTable rows={6} cols={columnsWithCheckbox.length} />
       ) : (
         <DataTable
           columns={columnsWithCheckbox}
-          data={data ?? []}
+          data={formattedCompetences ?? []}
           page={
             searchParams.get("page") ? parseInt(searchParams.get("page")!) : 0
           }

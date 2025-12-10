@@ -9,13 +9,30 @@ export type UserProfile = {
   escolaId: number | null;
 };
 
+export const UserPerfilEnum = {
+  ADMIN: "Admin",
+  SCHOOL_ADMIN: "Escola",
+  TEACHER: "Professor",
+  STUDENT: "Aluno",
+  RESPONSIBLE: "Responsavel",
+} as const;
+
+export type UserPerfilEnum =
+  (typeof UserPerfilEnum)[keyof typeof UserPerfilEnum];
+
 export type User = {
   codigo_usuario: string;
   nome_completo: string;
   email: string;
-  perfil: string;
-  escola: {
-    id: number | null;
-    nome: string | null;
-  } | null;
+  perfil: UserPerfilEnum;
+  escola: string | null;
+  escolaId: number | null;
+};
+
+export type UserFormData = {
+  nome_completo: string;
+  email: string;
+  senha: string;
+  confirmar_senha: string;
+  escolaId?: number | string;
 };

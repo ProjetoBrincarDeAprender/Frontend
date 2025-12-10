@@ -1,14 +1,22 @@
 import { FancyMultiSelect } from "@/components/forms/MultiSelect";
 import { Form } from "@/components/forms/Root";
 import { PasswordInput } from "@/components/ui/password-input";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Link } from "@/components/utils/Link/Link";
+import { useCreateResponsible } from "@/hooks/Responsible/useCreateResponsible";
+import { useSchool } from "@/hooks/School/useSchool";
+import { useStudentsRelations } from "@/hooks/Student/useStudent";
 import { useUser } from "@/hooks/User/useUser";
-import type { User, UserProfile } from "@/types/user";
-import api from "@/utils/api";
+import type {
+  FilterSchoolOption,
+  FilterStudentRelationsOption,
+} from "@/types/filter";
+import { UserPerfilEnum } from "@/types/user";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AxiosError } from "axios";
-import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { Loader2 } from "lucide-react";
+import { useEffect } from "react";
+import { useForm, type UseFormReturn } from "react-hook-form";
 import { z } from "zod";
 import type { SignUpFormProps } from "../../common/signUpFormProps";
 
@@ -44,8 +52,101 @@ const formSchema = z
     path: ["confirmar_senha"],
   });
 
+type FormSchema = z.infer<typeof formSchema>;
+
+function CommonFormFields({ form }: { form: UseFormReturn<FormSchema> }) {
+  return (
+    <>
+      <Form.Field
+        form={form}
+        name="nome_completo"
+        render={({ field }) => (
+          <Form.Input
+            {...field}
+            label="Nome Completo"
+            placeholder="Insira seu nome completo"
+          />
+        )}
+      />
+      <Form.Field
+        form={form}
+        name="email"
+        render={({ field }) => (
+          <Form.Input
+            {...field}
+            label="Email"
+            placeholder="exemplo@gmail.com"
+          />
+        )}
+      />
+      <Form.Field
+        form={form}
+        name="parentesco"
+        render={({ field }) => (
+          <Form.Input
+            {...field}
+            label="Parentesco"
+            placeholder="Insira qual seu parentesco"
+          />
+        )}
+      />
+    </>
+  );
+}
+
+function PasswordFields({ form }: { form: UseFormReturn<FormSchema> }) {
+  return (
+    <>
+      <Form.Field
+        form={form}
+        name="senha"
+        render={({ field, fieldState }) => (
+          <>
+            <PasswordInput
+              {...field}
+              label="Senha"
+              placeholder="Senha"
+              type="password"
+            />
+            {fieldState.error && (
+              <p className="text-sm text-red-600">{fieldState.error.message}</p>
+            )}
+          </>
+        )}
+      />
+      <Form.Field
+        form={form}
+        name="confirmar_senha"
+        render={({ field, fieldState }) => (
+          <>
+            <PasswordInput
+              {...field}
+              label="Confirmar Senha"
+              placeholder="Confirmar Senha"
+              type="password"
+            />
+            {fieldState.error && (
+              <p className="text-sm text-red-600">{fieldState.error.message}</p>
+            )}
+          </>
+        )}
+      />
+    </>
+  );
+}
+
+function LoadingSkeleton() {
+  return (
+    <div className="flex flex-col gap-4">
+      {[...Array(6)].map((_, i) => (
+        <Skeleton key={i} className="h-10 w-full" />
+      ))}
+    </div>
+  );
+}
+
 export function ResponsableSignUpForm({ onSuccess }: SignUpFormProps) {
-  const form = useForm<z.infer<typeof formSchema>>({
+  const form = useForm<FormSchema>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       nome_completo: "",
@@ -55,93 +156,85 @@ export function ResponsableSignUpForm({ onSuccess }: SignUpFormProps) {
     },
   });
   const { user } = useUser();
-  const [schools, setSchools] = useState<{ id: number; nome: string }[] | null>(
-    null,
-  );
-  const [users, setUsers] = useState<UserProfile[] | null>(null);
 
-  const [errorMensage, setErrorMessage] = useState<string | null>(null);
+  const {
+    create: createResponsibleMutation,
+    createRelations: createResponsibleRelationsMutation,
+  } = useCreateResponsible();
+  const {
+    mutateAsync: createResponsible,
+    isPending: isResponsiblePending,
+    isSuccess: isResponsibleSuccess,
+  } = createResponsibleMutation;
+  const {
+    mutateAsync: createResponsibleRelations,
+    isPending: isResponsibleRelationsPending,
+    isSuccess: isResponsibleRelationsSuccess,
+  } = createResponsibleRelationsMutation;
+
   const escolaSelecionada = form.watch("escolaId");
+  const isAdmin = user?.perfil === UserPerfilEnum.ADMIN;
+
+  const schoolFilters: FilterSchoolOption = isAdmin
+    ? {}
+    : { escolaId: Number(user?.escolaId) };
+
+  const studentRelationsFilters: FilterStudentRelationsOption = {
+    isNull: true,
+  };
+
+  if (!isAdmin) {
+    studentRelationsFilters.escolaId = Number(user?.escolaId);
+  }
+
+  const { schoolsQuery } = useSchool({ filters: schoolFilters });
+  const { data: schoolsData, isLoading: isSchoolLoading } = schoolsQuery;
+
+  const { studentsByRelationQuery } = useStudentsRelations(
+    "responsible",
+    studentRelationsFilters,
+  );
+  const { data: studentsData, isLoading: isStudentsLoading } =
+    studentsByRelationQuery;
+
+  const isLoading = isAdmin
+    ? isSchoolLoading || isStudentsLoading
+    : isStudentsLoading;
+  const isSubmitting = isResponsiblePending || isResponsibleRelationsPending;
 
   useEffect(() => {
-    if (user?.perfil !== "Admin") return;
-    const fetchSchools = async () => {
-      try {
-        const response = await api.get("/school/list");
+    const studentsIds = form.getValues("usersIds");
+    const hasStudents = studentsIds && studentsIds.length > 0;
 
-        if (response.status === 200) {
-          setSchools(response.data);
-        }
-      } catch (error) {
-        if (error instanceof AxiosError) {
-          form.setError("root", {
-            message: `Erro ao carregar escolas: ${error.message}`,
-          });
-        }
+    if (hasStudents) {
+      if (isResponsibleSuccess && isResponsibleRelationsSuccess) {
+        onSuccess();
       }
-    };
-    fetchSchools();
-  }, [user?.perfil, form]);
+    } else if (isResponsibleSuccess) {
+      onSuccess();
+    }
+  }, [isResponsibleSuccess, isResponsibleRelationsSuccess, onSuccess, form]);
 
-  useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const escola =
-          user?.perfil === "Admin"
-            ? schools?.find((school) => school.id === Number(escolaSelecionada))
-            : user?.escola;
-        if (!escola) return setUsers([]);
-
-        const response = await api.get(
-          `/student/list/relations/responsible?isNull=true`,
-        );
-
-        if (response.status == 200) {
-          const users = response.data;
-          setUsers(users.filter((u: User) => u.escola == escola.nome));
-          if (users.length === 0) {
-            setErrorMessage("Não há alunos cadastrados nesta escola!");
-          } else {
-            setErrorMessage(null);
-          }
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    };
-
-    fetchUsers();
-  }, [user, form, escolaSelecionada, schools]);
-
-  const onSubmit = async (data: z.infer<typeof formSchema>) => {
+  const onSubmit = async (data: FormSchema) => {
     const { usersIds, parentesco, ...userData } = data;
 
     const payload = {
       ...userData,
       perfilId: 5,
-      escolaId: user?.perfil === "Admin" ? data.escolaId : user?.escola?.id,
+      escolaId: isAdmin ? Number(data.escolaId) : Number(user?.escolaId),
     };
 
     try {
-      const response = await api.post("/responsible/register", payload);
+      const response = await createResponsible(payload);
+
+      console.log(response);
 
       if (usersIds && usersIds.length > 0) {
-        const responseLinking = await api.post(
-          "/responsible/register/relation",
-          {
-            userId: response.data.codigo_usuario,
-            educandosIds: usersIds.map((value) => Number(value)),
-            parentesco,
-          },
-        );
-
-        if (response.status == 201 && responseLinking.status == 201) {
-          return onSuccess();
-        }
-      }
-
-      if (response.status == 201) {
-        return onSuccess();
+        await createResponsibleRelations({
+          responsibleId: parseInt(response.codigo_usuario),
+          parentesco,
+          studentsIds: usersIds.map((value) => Number(value)),
+        });
       }
     } catch (error) {
       if (error instanceof AxiosError) {
@@ -151,7 +244,7 @@ export function ResponsableSignUpForm({ onSuccess }: SignUpFormProps) {
           response?.data?.message.map(
             (field: { field: string; message: string[] }) => {
               if (form.control._fields[field.field]) {
-                form.setError(field.field as keyof z.infer<typeof formSchema>, {
+                form.setError(field.field as keyof FormSchema, {
                   message: field.message.join(", "),
                 });
               }
@@ -169,6 +262,14 @@ export function ResponsableSignUpForm({ onSuccess }: SignUpFormProps) {
     }
   };
 
+  const filteredStudents = studentsData?.filter(({ escola }) => {
+    const targetSchoolId = isAdmin
+      ? schoolsData?.find((school) => school.id === Number(escolaSelecionada))
+          ?.nome
+      : user?.escola;
+    return escola === targetSchoolId;
+  });
+
   return (
     <Form.Wrapper>
       <Form.Title text="Cadastrar Novo Responsável" />
@@ -177,121 +278,85 @@ export function ResponsableSignUpForm({ onSuccess }: SignUpFormProps) {
         onSubmit={onSubmit}
         className="flex flex-col gap-4"
       >
-        <Form.Field
-          form={form}
-          name="nome_completo"
-          render={({ field }) => (
-            <Form.Input
-              {...field}
-              label="Nome Completo"
-              placeholder="Insira seu nome completo"
-            />
-          )}
-        />
-        <Form.Field
-          form={form}
-          name="email"
-          render={({ field }) => (
-            <Form.Input
-              {...field}
-              label="Email"
-              placeholder="exemplo@gmail.com"
-            />
-          )}
-        />
-        <Form.Field
-          form={form}
-          name="parentesco"
-          render={({ field }) => (
-            <Form.Input
-              {...field}
-              label="Parentesco"
-              placeholder="Insira qual seu parentesco"
-            />
-          )}
-        />
-        {user?.perfil == "Admin" && schools && (
-          <Form.Field
-            form={form}
-            name="escolaId"
-            render={({ field }) => (
-              <Form.Select
-                {...field}
-                label="Escola"
-                placeholder="Selecione a Escola"
-                options={schools.map((school) => ({
-                  value: String(school.id),
-                  label: school.nome,
-                }))}
+        {isLoading ? (
+          <LoadingSkeleton />
+        ) : (
+          <>
+            <CommonFormFields form={form} />
+
+            {isAdmin && (
+              <Form.Field
+                form={form}
+                name="escolaId"
+                render={({ field }) => (
+                  <Form.Select
+                    {...field}
+                    label="Escola"
+                    placeholder="Selecione a Escola"
+                    onValueChange={(e) => {
+                      field.onChange(e);
+                      form.setValue("usersIds", []);
+                    }}
+                    options={schoolsData!.map((school) => ({
+                      value: String(school.id),
+                      label: school.nome,
+                    }))}
+                  />
+                )}
               />
             )}
-          />
-        )}
 
-        <Form.Field
-          form={form}
-          name="senha"
-          render={({ field, fieldState }) => (
-            <>
-              <PasswordInput
-                {...field}
-                label="Senha"
-                placeholder="Senha"
-                type="password"
-              />
-              {fieldState.error && (
-                <p className="text-sm text-red-600">
-                  {fieldState.error.message}
-                </p>
-              )}
-            </>
-          )}
-        />
-        <Form.Field
-          form={form}
-          name="confirmar_senha"
-          render={({ field, fieldState }) => (
-            <>
-              <PasswordInput
-                {...field}
-                label="Confirmar Senha"
-                placeholder="Confirmar Senha"
-                type="password"
-              />
-              {fieldState.error && (
-                <p className="text-sm text-red-600">
-                  {fieldState.error.message}
-                </p>
-              )}
-            </>
-          )}
-        />
+            <PasswordFields form={form} />
 
-        <Form.Field
-          form={form}
-          name="usersIds"
-          render={({ field }) => (
-            <>
-              <FancyMultiSelect
-                onSelect={field.onChange}
-                label="Alunos do Responsável"
-                placeholder="Selecione os alunos do responsável..."
-                data={
-                  users
-                    ? users.map(({ codigo_usuario, email }) => ({
+            <Form.Field
+              form={form}
+              name="usersIds"
+              disabled={isAdmin && !escolaSelecionada}
+              render={({ field }) => (
+                <>
+                  <FancyMultiSelect
+                    onSelect={field.onChange}
+                    preSelectedData={
+                      Array.isArray(field.value)
+                        ? filteredStudents
+                            ?.filter((student) =>
+                              field.value.includes(
+                                String(student.codigo_usuario),
+                              ),
+                            )
+                            .map((student) => ({
+                              value: String(student.codigo_usuario),
+                              label: student.email,
+                            })) || []
+                        : []
+                    }
+                    label="Alunos do Responsável"
+                    placeholder="Selecione os alunos do responsável..."
+                    data={
+                      filteredStudents?.map(({ codigo_usuario, email }) => ({
                         value: codigo_usuario,
                         label: email,
-                      }))
-                    : []
-                }
-              />
-              {errorMensage && (
-                <p className="mt-1 text-sm text-yellow-800">{errorMensage}</p>
+                      })) || []
+                    }
+                  />
+                  {isAdmin && !escolaSelecionada && (
+                    <p className="mt-1 text-sm text-yellow-800">
+                      Selecione uma escola para carregar os alunos
+                    </p>
+                  )}
+                </>
               )}
-            </>
-          )}
-        />
-        <Form.Submit>Criar Conta</Form.Submit>
+            />
+
+            <Form.Submit disabled={isSubmitting}>
+              {isSubmitting ? (
+                <Loader2 className="animate-spin" />
+              ) : (
+                "Cadastrar Responsável"
+              )}
+            </Form.Submit>
+          </>
+        )}
       </Form.Main>
       <p className="mt-6 w-full text-center text-lg">
         O responsável já possui uma conta?{" "}

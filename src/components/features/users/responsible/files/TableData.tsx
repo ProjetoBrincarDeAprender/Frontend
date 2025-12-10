@@ -1,16 +1,10 @@
-import type { ColumnDef } from "@tanstack/react-table";
-import DeleteModal from "@/components/utils/DataTable/DeleteModal";
 import { Button } from "@/components/ui/button";
+import DeleteModal from "@/components/utils/DataTable/DeleteModal";
+import { RESPONSIBLE_QUERY_KEY } from "@/hooks/Responsible/useResponsible";
+import type { Responsible } from "@/types/responsible";
+import type { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown } from "lucide-react";
 import { EditResponsableModal } from "../edit/ResponsibleEditModal";
-
-export type Responsible = {
-  codigo_usuario: string;
-  nome_completo: string;
-  email: string;
-  escola: string;
-  parentesco: string;
-};
 
 export const ResponsibleColumns: ColumnDef<Responsible>[] = [
   {
@@ -62,7 +56,7 @@ export const ResponsibleColumns: ColumnDef<Responsible>[] = [
     ),
   },
   {
-   accessorKey: "parentesco",
+    accessorKey: "parentesco",
     header: ({ column }) => (
       <Button
         variant="ghost"
@@ -82,6 +76,8 @@ export const ResponsibleColumns: ColumnDef<Responsible>[] = [
         <DeleteModal
           route="/responsible/remove"
           id={+row.original.codigo_usuario}
+          entity="Responsável"
+          queryKey={RESPONSIBLE_QUERY_KEY}
         />
       </div>
     ),
