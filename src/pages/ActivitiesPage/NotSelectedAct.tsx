@@ -1,4 +1,5 @@
 import { MultipleChoiceForm } from "./multipleChoiceForm";
+import { TrueFalseForm } from "./TrueFalseForm";
 
 interface NotSelectedActProps {
   isFormValid?: boolean;
@@ -26,11 +27,8 @@ export default function NotSelectedAct({
           <>
             <div className="text-center text-white">
               <h2 className="flex flex-col justify-center text-center text-2xl font-semibold">
-                Verdadeiro ou Falso
+                <TrueFalseForm />
               </h2>
-              <p>
-                Template indisponível no momento. Mais informações em breve.
-              </p>
             </div>
           </>
         );
