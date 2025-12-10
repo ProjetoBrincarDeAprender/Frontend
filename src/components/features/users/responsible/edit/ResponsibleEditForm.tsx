@@ -179,14 +179,7 @@ export function ResponsibleEditForm({ id, onSuccess }: ResponsibleFormProps) {
     }
   };
 
-  const filteredStudents = availableStudentsData?.filter(({ escolaId }) => {
-    const targetSchoolId = isAdmin
-      ? Number(escolaSelecionada)
-      : Number(user?.escolaId);
-    return escolaId === targetSchoolId;
-  });
-
-  const hasNoStudents = filteredStudents?.length === 0;
+  const hasNoStudents = availableStudentsData?.length === 0;
 
   if (isLoading) {
     return (
@@ -276,7 +269,7 @@ export function ResponsibleEditForm({ id, onSuccess }: ResponsibleFormProps) {
                   label="Alunos do Responsável"
                   placeholder="Selecione os alunos do responsável..."
                   data={
-                    filteredStudents?.map(({ codigo_usuario, email }) => ({
+                    availableStudentsData?.map(({ codigo_usuario, email }) => ({
                       value: String(codigo_usuario),
                       label: email,
                     })) || []
