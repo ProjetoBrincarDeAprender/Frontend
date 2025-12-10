@@ -92,7 +92,7 @@ export function CreateActivityForm({
       title: "",
       competenceId: "",
       knowledgeAreaId: "",
-      template: "",
+      template: "multiple_choice",
     },
   });
 

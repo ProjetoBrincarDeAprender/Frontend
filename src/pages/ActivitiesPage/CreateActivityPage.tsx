@@ -17,17 +17,21 @@ export default function CreateActivityPage() {
   return (
     <>
       <Header />
-      <main className="mx-20 mt-40 mb-20 flex items-center gap-10">
-        <TableProvider>
-          <CreateActivityForm
-            onSuccess={() => {}}
-            onFormStateChange={handleFormStateChange}
+      <main className="mx-20 mt-40 mb-20 flex items-start gap-10">
+        <div className="w-[30%]">
+          <TableProvider>
+            <CreateActivityForm
+              onSuccess={() => {}}
+              onFormStateChange={handleFormStateChange}
+            />
+          </TableProvider>
+        </div>
+        <div className="w-[70%]">
+          <NotSelectedAct
+            isFormValid={isFormValid}
+            selectedTemplate={selectedTemplate}
           />
-        </TableProvider>
-        <NotSelectedAct
-          isFormValid={isFormValid}
-          selectedTemplate={selectedTemplate}
-        />
+        </div>
       </main>
       <Footer />
     </>

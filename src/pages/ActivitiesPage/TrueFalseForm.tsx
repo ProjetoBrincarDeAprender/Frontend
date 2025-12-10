@@ -28,7 +28,7 @@ const formSchema = z.object({
     .max(100, { message: "O comando deve ter no máximo 100 caracteres" }),
 });
 
-export function TrueFalseForm() {
+export function TrueFalseForm({ className = "" }: { className?: string }) {
   const [difficulties, setDifficulties] = useState<DifficultyQuestions[]>([
     { difficulty: "Fácil", questions: [] },
   ]);
@@ -145,7 +145,7 @@ export function TrueFalseForm() {
   };
 
   return (
-    <Form.Wrapper className="flex max-h-[85vh] flex-col">
+    <Form.Wrapper className={`flex max-h-[85vh] flex-col ${className}`}>
       <Form.Title
         text="Questões Verdadeiro ou Falso"
         className="flex-shrink-0"
@@ -191,17 +191,18 @@ export function TrueFalseForm() {
                       </Button>
                     )}
                 </div>
-                {difficulties.length > 1 && (
-                  <Button
-                    type="button"
-                    size="icon"
-                    variant="destructive"
-                    className="h-7 w-7"
-                    onClick={() => removeDifficulty(diffIndex)}
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                )}
+                {difficulties.length > 1 &&
+                  diffIndex === difficulties.length - 1 && (
+                    <Button
+                      type="button"
+                      size="icon"
+                      variant="destructive"
+                      className="h-7 w-7"
+                      onClick={() => removeDifficulty(diffIndex)}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  )}
               </div>
 
               <div className="space-y-4">
