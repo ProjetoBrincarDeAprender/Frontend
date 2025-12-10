@@ -7,13 +7,6 @@ import { Form } from "@/components/forms/Root";
 import { useTable } from "@/hooks/Table/useTable";
 import api from "@/utils/api";
 import { AxiosError } from "axios";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 
 const formSchema = z.object({
   title: z
@@ -26,9 +19,9 @@ const formSchema = z.object({
   competenceId: z
     .string({ error: "Competência é obrigatória" })
     .min(1, { error: "Selecione uma competência" }),
-  content: z
-    .string({ error: "Conteúdo é obrigatório" })
-    .min(1, { error: "Conteúdo é obrigatório" }),
+  // content: z
+  //   .string({ error: "Conteúdo é obrigatório" })
+  //   .min(1, { error: "Conteúdo é obrigatório" }),
   knowledgeAreaId: z
     .string({ error: "Área de conhecimento é obrigatória" })
     .min(1, { error: "Selecione uma área de conhecimento" }),
@@ -37,6 +30,7 @@ const formSchema = z.object({
 
 interface CreateActivityFormProps {
   onSuccess: () => void;
+  onFormStateChange?: (isFormValid: boolean) => void;
 }
 
 interface Competence {
@@ -73,7 +67,10 @@ interface CompetenceApiResponse {
 //   { value: "Jogo", label: "Jogo" },
 // ];
 
-export function CreateActivityForm({ onSuccess }: CreateActivityFormProps) {
+export function CreateActivityForm({
+  onSuccess,
+  onFormStateChange,
+}: CreateActivityFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [allCompetences, setAllCompetences] = useState<Competence[]>([]);
   const [competenceSearch, setCompetenceSearch] = useState("");
@@ -90,14 +87,33 @@ export function CreateActivityForm({ onSuccess }: CreateActivityFormProps) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      title: "",
       // type: "",
+      // content: "",
+      title: "",
       competenceId: "",
-      content: "",
       knowledgeAreaId: "",
       template: "",
     },
   });
+
+  // Monitora o estado do formulário para comunicar se está completo
+  useEffect(() => {
+    const title = form.watch("title");
+    const competenceId = form.watch("competenceId");
+    const template = form.watch("template");
+
+    const isFormValid =
+      title.length >= 3 && competenceId !== "" && template !== "";
+
+    if (onFormStateChange) {
+      onFormStateChange(isFormValid);
+    }
+  }, [
+    form.watch("title"),
+    form.watch("competenceId"),
+    form.watch("template"),
+    onFormStateChange,
+  ]);
 
   const formatCompetence = (
     comp: CompetenceApiResponse,
@@ -229,11 +245,12 @@ export function CreateActivityForm({ onSuccess }: CreateActivityFormProps) {
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     const payload = {
-      title: data.title,
+      // content: JSON.stringify({ texto: data.content }),
       // type: data.type,
+      title: data.title,
       competenceId: Number(data.competenceId),
-      content: JSON.stringify({ texto: data.content }),
       knowledgeAreaId: Number(data.knowledgeAreaId),
+      template: data.template,
     };
 
     try {
@@ -434,7 +451,7 @@ export function CreateActivityForm({ onSuccess }: CreateActivityFormProps) {
           )}
         </div>
 
-        <Form.Field
+        {/* <Form.Field
           form={form}
           name="template"
           render={({ field, fieldState }) => (
@@ -464,9 +481,23 @@ export function CreateActivityForm({ onSuccess }: CreateActivityFormProps) {
               </Select>
             </div>
           )}
-        />
+        /> */}
 
         <Form.Field
+          form={form}
+          name="template"
+          render={({ field }) => (
+            <Form.Select
+              {...field}
+              label="Template"
+              placeholder="Selecione o template"
+              options={templates}
+              disabled={isSubmitting}
+            />
+          )}
+        />
+
+        {/* <Form.Field
           form={form}
           name="content"
           render={({ field }) => (
@@ -485,7 +516,7 @@ export function CreateActivityForm({ onSuccess }: CreateActivityFormProps) {
               </p>
             </div>
           )}
-        />
+        /> */}
 
         <Form.Submit
           disabled={isSubmitting}
