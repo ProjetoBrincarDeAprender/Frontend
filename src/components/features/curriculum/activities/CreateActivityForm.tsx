@@ -7,6 +7,13 @@ import { Form } from "@/components/forms/Root";
 import { useTable } from "@/hooks/Table/useTable";
 import api from "@/utils/api";
 import { AxiosError } from "axios";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const formSchema = z.object({
   title: z
@@ -25,6 +32,7 @@ const formSchema = z.object({
   knowledgeAreaId: z
     .string({ error: "Área de conhecimento é obrigatória" })
     .min(1, { error: "Selecione uma área de conhecimento" }),
+  template: z.string().min(1, "Template é obrigatório"),
 });
 
 interface CreateActivityFormProps {
@@ -74,6 +82,11 @@ export function CreateActivityForm({ onSuccess }: CreateActivityFormProps) {
     useState<Competence | null>(null);
   const { setUpdating } = useTable();
 
+  const templates = [
+    { label: "Múltipla Escolha", value: "multiple_choice" },
+    { label: "Verdadeiro ou Falso", value: "true_false" },
+  ];
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -82,6 +95,7 @@ export function CreateActivityForm({ onSuccess }: CreateActivityFormProps) {
       competenceId: "",
       content: "",
       knowledgeAreaId: "",
+      template: "",
     },
   });
 
@@ -419,6 +433,38 @@ export function CreateActivityForm({ onSuccess }: CreateActivityFormProps) {
             </div>
           )}
         </div>
+
+        <Form.Field
+          form={form}
+          name="template"
+          render={({ field, fieldState }) => (
+            <div className="space-y-2">
+              <label className="text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                Template
+              </label>
+              <Select
+                name={field.name}
+                value={field.value}
+                onValueChange={field.onChange}
+              >
+                <SelectTrigger
+                  id="form-rhf-select-language"
+                  aria-invalid={fieldState.invalid}
+                  className="min-w-[120px]"
+                >
+                  <SelectValue placeholder="Escolha um Template" />
+                </SelectTrigger>
+                <SelectContent position="item-aligned">
+                  {templates.map((template) => (
+                    <SelectItem key={template.value} value={template.value}>
+                      {template.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
+        />
 
         <Form.Field
           form={form}
