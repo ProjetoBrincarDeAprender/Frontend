@@ -30,7 +30,7 @@ const formSchema = z.object({
 
 interface CreateActivityFormProps {
   onSuccess: () => void;
-  onFormStateChange?: (isFormValid: boolean) => void;
+  onFormStateChange?: (isFormValid: boolean, selectedTemplate?: string) => void;
 }
 
 interface Competence {
@@ -106,7 +106,7 @@ export function CreateActivityForm({
       title.length >= 3 && competenceId !== "" && template !== "";
 
     if (onFormStateChange) {
-      onFormStateChange(isFormValid);
+      onFormStateChange(isFormValid, template);
     }
   }, [
     form.watch("title"),

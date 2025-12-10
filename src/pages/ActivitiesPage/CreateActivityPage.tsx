@@ -7,9 +7,11 @@ import { useState } from "react";
 
 export default function CreateActivityPage() {
   const [isFormValid, setIsFormValid] = useState(false);
+  const [selectedTemplate, setSelectedTemplate] = useState<string>("");
 
-  const handleFormStateChange = (isValid: boolean) => {
+  const handleFormStateChange = (isValid: boolean, template?: string) => {
     setIsFormValid(isValid);
+    setSelectedTemplate(template || "");
   };
 
   return (
@@ -22,7 +24,10 @@ export default function CreateActivityPage() {
             onFormStateChange={handleFormStateChange}
           />
         </TableProvider>
-        <NotSelectedAct isFormValid={isFormValid} />
+        <NotSelectedAct
+          isFormValid={isFormValid}
+          selectedTemplate={selectedTemplate}
+        />
       </main>
       <Footer />
     </>
