@@ -39,10 +39,10 @@ interface CompetenceWithArea {
   areaName?: string;
 }
 
-const activityTypes = [
-  { value: "Atividade", label: "Atividade" },
-  { value: "Jogo", label: "Jogo" },
-];
+// const activityTypes = [
+//   { value: "Atividade", label: "Atividade" },
+//   { value: "Jogo", label: "Jogo" },
+// ];
 
 export function CreateActivityForm({
   onSuccess,
@@ -99,13 +99,6 @@ export function CreateActivityForm({
     const isFormValid =
       title.length >= 3 && competenceId !== "" && template !== "";
 
-    console.log("Estado do formulário:", {
-      title: title.length >= 3,
-      competenceId: competenceId !== "",
-      template: template !== "",
-      isFormValid,
-    });
-
     if (onFormStateChange) {
       onFormStateChange(isFormValid, template);
     }
@@ -118,7 +111,7 @@ export function CreateActivityForm({
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     const payload = {
-      template: "Template de Teste",
+      template: data.template,
       title: data.title,
       type: "Jogo",
       competenceId: Number(data.competenceId),
@@ -212,7 +205,7 @@ export function CreateActivityForm({
           )}
         />
 
-        <Form.Field
+        {/* <Form.Field
           form={form}
           name="type"
           render={({ field }) => (
@@ -224,7 +217,7 @@ export function CreateActivityForm({
               disabled={isActivityPending}
             />
           )}
-        />
+        /> */}
 
         <div className="relative space-y-2">
           <label className="text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
