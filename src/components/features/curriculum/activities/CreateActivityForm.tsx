@@ -115,7 +115,7 @@ export function CreateActivityForm({
       title: data.title,
       type: "Jogo",
       competenceId: Number(data.competenceId),
-      content: JSON.stringify({ text: data.content }),
+      content: JSON.stringify({ text: "Sem Conteúdo..." }),
       creatorId: Number(user?.codigo_usuario),
       maxQuestions: 10,
       escolaId: 101,
@@ -305,38 +305,6 @@ export function CreateActivityForm({
           )}
         </div>
 
-        {/* <Form.Field
-          form={form}
-          name="template"
-          render={({ field, fieldState }) => (
-            <div className="space-y-2">
-              <label className="text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                Template
-              </label>
-              <Select
-                name={field.name}
-                value={field.value}
-                onValueChange={field.onChange}
-              >
-                <SelectTrigger
-                  id="form-rhf-select-language"
-                  aria-invalid={fieldState.invalid}
-                  className="min-w-[120px]"
-                >
-                  <SelectValue placeholder="Escolha um Template" />
-                </SelectTrigger>
-                <SelectContent position="item-aligned">
-                  {templates.map((template) => (
-                    <SelectItem key={template.value} value={template.value}>
-                      {template.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          )}
-        /> */}
-
         <Form.Field
           form={form}
           name="template"
@@ -351,7 +319,7 @@ export function CreateActivityForm({
           )}
         />
 
-        <Form.Field
+        {/* <Form.Field
           form={form}
           name="content"
           render={({ field }) => (
@@ -370,7 +338,7 @@ export function CreateActivityForm({
               </p>
             </div>
           )}
-        />
+        /> */}
 
         <Form.Submit
           disabled={isActivityPending || isCompetencesLoading}

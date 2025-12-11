@@ -9,6 +9,8 @@ import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 import { useCreateQuestion } from "@/hooks/Question/useCreateQuestion";
 import { AxiosError } from "axios";
+import { useUpdateActivity } from "@/hooks/Activity/useUpdateActivity";
+import { useUser } from "@/hooks/User/useUser";
 import api from "@/utils/api";
 
 type Difficulty = "Fácil" | "Médio" | "Difícil";
@@ -39,8 +41,13 @@ const formSchema = z.object({
 });
 
 export function MultipleChoiceForm({ className = "" }: { className?: string }) {
+  const { user } = useUser();
+
   const { create } = useCreateQuestion();
   const { mutateAsync: createQuestion } = create;
+
+  const { update } = useUpdateActivity();
+  const { mutateAsync: updateActivity } = update;
 
   const [difficulties, setDifficulties] = useState<DifficultyQuestions[]>([
     { difficulty: "Fácil", questions: [] },
@@ -264,6 +271,7 @@ export function MultipleChoiceForm({ className = "" }: { className?: string }) {
       currentQuestion: "",
     });
 
+    const allPayload = [];
     try {
       let currentQuestionIndex = 0;
 
@@ -303,6 +311,7 @@ export function MultipleChoiceForm({ className = "" }: { className?: string }) {
               difficultyId: difficultyId,
             },
           };
+          allPayload.push(questionPayload);
           await createQuestion(questionPayload);
           await new Promise((resolve) => setTimeout(resolve, 100));
         }
@@ -342,6 +351,23 @@ export function MultipleChoiceForm({ className = "" }: { className?: string }) {
     } finally {
       setIsSubmitting(false);
     }
+
+    try {
+      const activityPayload = await api.get(
+        `/activity/list/${data.activityId}`,
+      );
+      // activityPayload.data.content = JSON.stringify({
+      //   text: "Atividade Atualizada",
+      // });
+      const variables = {
+        activityId: Number(data.activityId),
+        data: activityPayload.data,
+      };
+      await updateActivity(variables);
+      form.reset();
+    } catch (error) {
+      console.error("Error updating activity:", error);
+    }
   };
 
   const [activityOptions, setActivityOptions] = useState<
@@ -354,7 +380,6 @@ export function MultipleChoiceForm({ className = "" }: { className?: string }) {
     let response;
     try {
       response = await api.get(`/activity/list`);
-      console.log("Atividades recebidas:", response.data);
     } catch (error) {
       console.error("Error getting activities:", error);
       setIsLoadingActivities(false);
@@ -364,6 +389,11 @@ export function MultipleChoiceForm({ className = "" }: { className?: string }) {
       value: activity.id.toString(),
       label: activity.titulo,
     }));
+
+    // result.filter(
+    //   (activity: any) => activity.value.creatorId === user?.codigo_usuario,
+    // );
+
     setActivityOptions(result);
     setIsLoadingActivities(false);
   }
