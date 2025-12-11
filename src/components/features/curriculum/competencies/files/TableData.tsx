@@ -1,26 +1,22 @@
+import {
+  COMPETENCE_BY_KNOWLEDGE_AREA_QUERY_KEY,
+  COMPETENCE_QUERY_KEY,
+} from "@/hooks/Competence/useCompetence";
+import type { Competence } from "@/types/competence";
 import type { ColumnDef } from "@tanstack/react-table";
-import DeleteModal from "../../../../utils/DataTable/DeleteModal";
 import { ArrowUpDown } from "lucide-react";
 import { Button } from "../../../../ui/button";
+import DeleteModal from "../../../../utils/DataTable/DeleteModal";
 import { EditCompetenceModal } from "../edit/CompetenceEditModal";
 
-export type Competence = {
-  id: number;
-  nome: string;
-  descricao: string;
-  areaId: {
-    id: number;
-    nome?: string;
-  };
-  preRequisitos: Array<{
+export type CompetenceFormatted = Omit<Competence, "areaId"> & {
+  area: {
     id: number;
     nome: string;
-  }>;
-  createdAt: string;
-  updatedAt: string;
+  };
 };
 
-export const CompetenceColumns: ColumnDef<Competence>[] = [
+export const CompetenceColumns: ColumnDef<CompetenceFormatted>[] = [
   {
     accessorKey: "id",
     header: ({ column }) => (
@@ -60,7 +56,7 @@ export const CompetenceColumns: ColumnDef<Competence>[] = [
       const description = row.original.descricao;
       return (
         <div className="max-w-xs">
-          <span className="truncate" title={description}>
+          <span className="truncate" title={description || "Sem descrição"}>
             {description || "Sem descrição"}
           </span>
         </div>
@@ -79,12 +75,8 @@ export const CompetenceColumns: ColumnDef<Competence>[] = [
       </Button>
     ),
     cell: ({ row }) => {
-      const areaName = row.original.areaId?.nome;
-      return (
-        <span>
-          {areaName || `Área ${row.original.areaId?.id}`}
-        </span>
-      );
+      const areaName = row.original.area.nome;
+      return <span>{areaName || `Área ${row.original.area.id}`}</span>;
     },
   },
   // {
@@ -98,8 +90,8 @@ export const CompetenceColumns: ColumnDef<Competence>[] = [
   //     return (
   //       <div className="max-w-xs">
   //         <span className="truncate" title={prerequisites.map(p => p.nome).join(", ")}>
-  //           {prerequisites.length === 1 
-  //             ? prerequisites[0].nome 
+  //           {prerequisites.length === 1
+  //             ? prerequisites[0].nome
   //             : `${prerequisites[0].nome} (+${prerequisites.length - 1})`
   //           }
   //         </span>
@@ -108,22 +100,22 @@ export const CompetenceColumns: ColumnDef<Competence>[] = [
   //   },
   //   enableSorting: false,
   // },
-//   {
-//     accessorKey: "createdAt",
-//     header: ({ column }) => (
-//       <Button
-//         variant="ghost"
-//         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-//       >
-//         Criado em
-//         <ArrowUpDown className="ml-2 h-4 w-4" />
-//       </Button>
-//     ),
-//     cell: ({ row }) => {
-//       const date = new Date(row.original.createdAt);
-//       return <span>{date.toLocaleDateString("pt-BR")}</span>;
-//     },
-//   },
+  //   {
+  //     accessorKey: "createdAt",
+  //     header: ({ column }) => (
+  //       <Button
+  //         variant="ghost"
+  //         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+  //       >
+  //         Criado em
+  //         <ArrowUpDown className="ml-2 h-4 w-4" />
+  //       </Button>
+  //     ),
+  //     cell: ({ row }) => {
+  //       const date = new Date(row.original.createdAt);
+  //       return <span>{date.toLocaleDateString("pt-BR")}</span>;
+  //     },
+  //   },
   {
     accessorKey: "actions",
     header: "Ações",
@@ -133,6 +125,11 @@ export const CompetenceColumns: ColumnDef<Competence>[] = [
         <DeleteModal
           route="/competence/remove"
           id={row.original.id}
+          entity="Competência"
+          queryKey={[
+            ...COMPETENCE_QUERY_KEY,
+            ...COMPETENCE_BY_KNOWLEDGE_AREA_QUERY_KEY,
+          ]}
         />
       </div>
     ),

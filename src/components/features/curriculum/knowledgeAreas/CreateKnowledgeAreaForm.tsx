@@ -1,12 +1,11 @@
-import { useState } from "react";
+import { Form } from "@/components/forms/Root";
+import { useCreateKnowledgeArea } from "@/hooks/KnowledgeArea/useCreateKnowledgeArea";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { AxiosError } from "axios";
+import { Loader2 } from "lucide-react";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { toast } from "sonner";
-import { Form } from "@/components/forms/Root";
-import { useTable } from "@/hooks/Table/useTable";
-import api from "@/utils/api";
-import { AxiosError } from "axios";
 
 const formSchema = z.object({
   name: z
@@ -17,41 +16,46 @@ const formSchema = z.object({
     .string()
     .max(500, { error: "Descrição deve ter no máximo 500 caracteres" })
     .optional()
-    .or(z.literal(""))
+    .or(z.literal("")),
 });
 
 interface CreateKnowledgeAreaFormProps {
   onSuccess: () => void;
 }
 
-export function CreateKnowledgeAreaForm({ onSuccess }: CreateKnowledgeAreaFormProps) {
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const { setUpdating } = useTable();
-
+export function CreateKnowledgeAreaForm({
+  onSuccess,
+}: CreateKnowledgeAreaFormProps) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
-      description: ""
-    }
+      description: "",
+    },
   });
+
+  const { create: createKnowledgeAreaMutation } = useCreateKnowledgeArea();
+  const {
+    mutateAsync: createKnowledgeArea,
+    isPending: isCreating,
+    isSuccess: isCreateSuccess,
+  } = createKnowledgeAreaMutation;
+
+  useEffect(() => {
+    if (isCreateSuccess) {
+      form.reset();
+      onSuccess();
+    }
+  }, [isCreateSuccess, onSuccess, form]);
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     const payload = {
-      name: data.name,
-      description: data.description || ""
+      nome: data.name,
+      description: data.description || "",
     };
 
     try {
-      setIsSubmitting(true);
-      const response = await api.post("/knowledge-area/register", payload);
-
-      if (response.status === 201) {
-        toast.success("Área de conhecimento criada com sucesso!");
-        form.reset();
-        setUpdating(true);
-        return onSuccess();
-      }
+      await createKnowledgeArea(payload);
     } catch (error) {
       if (error instanceof AxiosError) {
         const response = error.response;
@@ -61,23 +65,20 @@ export function CreateKnowledgeAreaForm({ onSuccess }: CreateKnowledgeAreaFormPr
             (field: { field: string; message: string[] }) => {
               if (form.control._fields[field.field]) {
                 form.setError(field.field as keyof z.infer<typeof formSchema>, {
-                  message: field.message.join(", ")
+                  message: field.message.join(", "),
                 });
               }
               form.setError("root", {
-                message: `Erro ao criar área de conhecimento: ${field.message.join(", ")}`
+                message: `Erro ao criar área de conhecimento: ${field.message.join(", ")}`,
               });
-            }
+            },
           );
         } else {
           form.setError("root", {
-            message: `${response?.data?.message}`
+            message: `${response?.data?.message}`,
           });
         }
       }
-      toast.error("Erro ao criar área de conhecimento. Tente novamente.");
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
@@ -97,7 +98,7 @@ export function CreateKnowledgeAreaForm({ onSuccess }: CreateKnowledgeAreaFormPr
               {...field}
               label="Nome da Área de Conhecimento"
               placeholder="Ex: Matemática"
-              disabled={isSubmitting}
+              disabled={isCreating}
             />
           )}
         />
@@ -107,15 +108,15 @@ export function CreateKnowledgeAreaForm({ onSuccess }: CreateKnowledgeAreaFormPr
           name="description"
           render={({ field, fieldState }) => (
             <div className="space-y-2">
-              <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+              <label className="text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                 Descrição (opcional)
               </label>
               <textarea
                 {...field}
-                className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 resize-none"
+                className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex min-h-[80px] w-full resize-none rounded-md border px-3 py-2 text-sm focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
                 placeholder="Descreva os objetivos e escopo desta área de conhecimento... (opcional)"
                 rows={4}
-                disabled={isSubmitting}
+                disabled={isCreating}
               />
               {fieldState.error && (
                 <p className="text-sm text-red-600">
@@ -126,8 +127,11 @@ export function CreateKnowledgeAreaForm({ onSuccess }: CreateKnowledgeAreaFormPr
           )}
         />
 
-        <Form.Submit disabled={isSubmitting} className="bg-primary hover:bg-primary/90">
-          {isSubmitting ? "Criando..." : "Criar"}
+        <Form.Submit
+          disabled={isCreating}
+          className="bg-primary hover:bg-primary/90"
+        >
+          {isCreating ? <Loader2 className="animate-spin" /> : "Criar"}
         </Form.Submit>
       </Form.Main>
     </Form.Wrapper>

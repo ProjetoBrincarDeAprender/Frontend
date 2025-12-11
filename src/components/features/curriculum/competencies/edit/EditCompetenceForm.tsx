@@ -1,9 +1,11 @@
 import { Form } from "@/components/forms/Root";
-import { useTable } from "@/hooks/Table/useTable";
-import api from "@/utils/api";
+import { useCompetence } from "@/hooks/Competence/useCompetence";
+import { useUpdateCompetence } from "@/hooks/Competence/useUpdateCompetence";
+import { useKnowledgeArea } from "@/hooks/KnowledgeArea/useKnowledgeArea";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AxiosError } from "axios";
-import { useEffect, useState } from "react";
+import { Loader2 } from "lucide-react";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -14,15 +16,12 @@ const formSchema = z.object({
     .max(100, { message: "O limite suportado é de 100 caracteres" }),
   description: z
     .string({ error: "Descrição é obrigatória" })
-    .max(500, { message: "O limite suportado é de 500 caracteres" })   
+    .max(500, { message: "O limite suportado é de 500 caracteres" })
     .optional(),
   areaId: z
     .number({ error: "Área de conhecimento é obrigatória" })
     .min(1, { message: "Selecione uma área de conhecimento" }),
-  prerequisiteId: z
-    .number()
-    .optional()
-    .nullable(),
+  prerequisiteId: z.number().optional().nullable(),
 });
 
 type EditCompetenceFormProps = {
@@ -30,17 +29,32 @@ type EditCompetenceFormProps = {
   onSuccess: () => void;
 };
 
-interface KnowledgeArea {
-  id: number;
-  nome: string;
-}
-
-interface Competence {
-  id: number;
-  nome: string;
-}
-
 export function EditCompetenceForm({ id, onSuccess }: EditCompetenceFormProps) {
+  const { competenceQuery } = useCompetence({ competenceId: id });
+  const {
+    data: competenceData,
+    isLoading: isCompetenceLoading,
+    isError: isCompetenceError,
+  } = competenceQuery;
+  const { knowledgeAreasQuery } = useKnowledgeArea();
+  const {
+    data: knowledgeAreasData,
+    isLoading: isKnowledgeAreasLoading,
+    isError: isKnowledgeAreasError,
+  } = knowledgeAreasQuery;
+  const { competencesQuery } = useCompetence();
+  const {
+    data: competencesData,
+    isLoading: isCompetencesLoading,
+    isError: isCompetencesError,
+  } = competencesQuery;
+  const { update: updateCompetenceMutation } = useUpdateCompetence();
+  const {
+    mutateAsync: updateCompetence,
+    isPending: isCompetencePending,
+    isSuccess: isCompetenceSuccess,
+  } = updateCompetenceMutation;
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -51,60 +65,27 @@ export function EditCompetenceForm({ id, onSuccess }: EditCompetenceFormProps) {
     },
   });
 
-  const { setUpdating } = useTable();
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [knowledgeAreas, setKnowledgeAreas] = useState<KnowledgeArea[]>([]);
-  const [competences, setCompetences] = useState<Competence[]>([]);
+  useEffect(() => {
+    if (competenceData && knowledgeAreasData) {
+      const data = {
+        name: competenceData.nome || "",
+        description: competenceData.descricao || "",
+        areaId: Number(competenceData.areaId || 0),
+        prerequisiteId: competenceData.preRequisitos
+          ? Number(competenceData.preRequisitos)
+          : null,
+      };
+
+      console.log(data);
+      form.reset(data);
+    }
+  }, [competenceData, knowledgeAreasData, form]);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-
-        const [competenceResponse, areasResponse, competencesResponse] = await Promise.all([
-          api.get(`/competence/list/${id}`),
-          api.get('/knowledge-area/list'),
-          api.get('/competence/list'),
-        ]);
-
-        // Carrega dados da competência
-        if (competenceResponse.status === 200 && competenceResponse.data) {
-          const data = competenceResponse.data;
-          const competenceData = {
-            name: data.nome || "",
-            description: data.descricao || "",
-            areaId: Number(data.area_id || 0),
-            prerequisiteId: data.pre_requisito_id ? Number(data.pre_requisito_id ) : null,
-          };
-          form.reset(competenceData);
-        }
-
-        if (areasResponse.status === 200 && Array.isArray(areasResponse.data)) {
-          setKnowledgeAreas(areasResponse.data);
-        }
-        if (competencesResponse.status === 200 && Array.isArray(competencesResponse.data)) {
-          const filteredCompetences = competencesResponse.data.filter(
-            (comp: Competence) => comp.id !== id
-          );
-          setCompetences(filteredCompetences);
-        }
-      } catch (error) {
-        if (error instanceof AxiosError) {
-          setError(error.response?.data?.message || "Erro ao carregar dados");
-        } else {
-          setError("Erro desconhecido ao carregar dados");
-        }
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    if (id) {
-      fetchData();
+    if (isCompetenceSuccess) {
+      onSuccess();
     }
-  }, [id, form]);
+  }, [isCompetenceSuccess, onSuccess]);
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     try {
@@ -112,31 +93,32 @@ export function EditCompetenceForm({ id, onSuccess }: EditCompetenceFormProps) {
         name: String(data.name).trim(),
         description: String(data.description || "").trim(),
         areaId: Number(data.areaId),
-        prerequisiteId: data.prerequisiteId ? Number(data.prerequisiteId) : null,
+        prerequisiteId: data.prerequisiteId
+          ? Number(data.prerequisiteId)
+          : null,
       };
 
-      const response = await api.put(`/competence/update/${id}`, cleanData);
-
-      if (response.status === 200) {
-        setUpdating(true);
-        onSuccess();
-      }
+      await updateCompetence({
+        competenceId: id,
+        data: cleanData,
+      });
     } catch (error) {
       if (error instanceof AxiosError) {
         const response = error.response;
-        
+
         if (Array.isArray(response?.data?.message)) {
           response?.data?.message.forEach(
             (fieldError: { field: string; message: string[] }) => {
-              const fieldMap: Record<string, keyof z.infer<typeof formSchema>> = {
-                'name': 'name',
-                'description': 'description',
-                'areaId': 'areaId',
-                'prerequisiteId': 'prerequisiteId',
-              };
-              
+              const fieldMap: Record<string, keyof z.infer<typeof formSchema>> =
+                {
+                  name: "name",
+                  description: "description",
+                  areaId: "areaId",
+                  prerequisiteId: "prerequisiteId",
+                };
+
               const formFieldName = fieldMap[fieldError.field];
-              
+
               if (formFieldName) {
                 form.setError(formFieldName, {
                   message: fieldError.message.join(", "),
@@ -150,7 +132,8 @@ export function EditCompetenceForm({ id, onSuccess }: EditCompetenceFormProps) {
           );
         } else {
           form.setError("root", {
-            message: response?.data?.message || "Erro desconhecido na atualização",
+            message:
+              response?.data?.message || "Erro desconhecido na atualização",
           });
         }
       } else {
@@ -161,13 +144,13 @@ export function EditCompetenceForm({ id, onSuccess }: EditCompetenceFormProps) {
     }
   };
 
-  if (error) {
+  if (isCompetenceError || isKnowledgeAreasError || isCompetencesError) {
     return (
-      <div className="flex flex-col justify-center items-center py-8 text-red-600">
-        <p>Erro: {error}</p>
-        <button 
-          onClick={() => window.location.reload()} 
-          className="mt-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+      <div className="flex flex-col items-center justify-center py-8 text-red-600">
+        <p>Erro ao carregar dados</p>
+        <button
+          onClick={() => window.location.reload()}
+          className="mt-2 rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
         >
           Tentar Novamente
         </button>
@@ -175,14 +158,17 @@ export function EditCompetenceForm({ id, onSuccess }: EditCompetenceFormProps) {
     );
   }
 
-  if (loading) {
+  if (isCompetenceLoading || isKnowledgeAreasLoading || isCompetencesLoading) {
     return (
-      <div className="flex justify-center items-center py-8">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+      <div className="flex items-center justify-center py-8">
+        <Loader2 className="h-8 w-8 animate-spin" />
         <span className="ml-2">Carregando dados...</span>
       </div>
     );
   }
+
+  const filteredCompetences =
+    competencesData?.filter((comp) => comp.id !== id) || [];
 
   return (
     <Form.Wrapper>
@@ -223,12 +209,15 @@ export function EditCompetenceForm({ id, onSuccess }: EditCompetenceFormProps) {
             <Form.Select
               label="Área de Conhecimento"
               placeholder="Selecione uma área de conhecimento"
-              options={knowledgeAreas.map((area) => ({
-                value: area.id.toString(),
-                label: area.nome,
-              }))}
+              options={
+                knowledgeAreasData?.map((area) => ({
+                  value: area.id.toString(),
+                  label: area.nome,
+                })) || []
+              }
               onChange={(value) => field.onChange(Number(value))}
               value={field.value ? field.value.toString() : ""}
+              disabled={isCompetencePending}
             />
           )}
         />
@@ -242,7 +231,7 @@ export function EditCompetenceForm({ id, onSuccess }: EditCompetenceFormProps) {
               placeholder="Selecione uma competência pre-requisito"
               options={[
                 { value: "0", label: "Nenhuma" },
-                ...competences.map((comp) => ({
+                ...filteredCompetences.map((comp) => ({
                   value: comp.id.toString(),
                   label: comp.nome,
                 })),
@@ -252,11 +241,21 @@ export function EditCompetenceForm({ id, onSuccess }: EditCompetenceFormProps) {
                 field.onChange(numValue === 0 ? null : numValue);
               }}
               value={field.value ? field.value.toString() : "0"}
+              disabled={isCompetencePending}
             />
           )}
         />
 
-        <Form.Submit>Atualizar</Form.Submit>
+        <Form.Submit disabled={isCompetencePending}>
+          {isCompetencePending ? (
+            <>
+              <Loader2 className="mr-2 inline h-4 w-4 animate-spin" />
+              Atualizando...
+            </>
+          ) : (
+            "Atualizar"
+          )}
+        </Form.Submit>
       </Form.Main>
     </Form.Wrapper>
   );

@@ -1,9 +1,10 @@
 import { Form } from "@/components/forms/Root";
-import { useTable } from "@/hooks/Table/useTable";
-import api from "@/utils/api";
+import { useKnowledgeArea } from "@/hooks/KnowledgeArea/useKnowledgeArea";
+import { useUpdateKnowledgeArea } from "@/hooks/KnowledgeArea/useUpdateKnowledgeArea";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AxiosError } from "axios";
-import { useEffect, useState } from "react";
+import { Loader2 } from "lucide-react";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -23,7 +24,10 @@ type EditKnowledgeAreaFormProps = {
   onSuccess: () => void;
 };
 
-export function EditKnowledgeAreaForm({ id, onSuccess }: EditKnowledgeAreaFormProps) {
+export function EditKnowledgeAreaForm({
+  id,
+  onSuccess,
+}: EditKnowledgeAreaFormProps) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -32,70 +36,61 @@ export function EditKnowledgeAreaForm({ id, onSuccess }: EditKnowledgeAreaFormPr
     },
   });
 
-  const { setUpdating } = useTable();
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { knowledgeAreaQuery } = useKnowledgeArea({ knowledgeAreaId: id });
+  const {
+    data: knowledgeAreaData,
+    isLoading,
+    error: queryError,
+  } = knowledgeAreaQuery;
+
+  const { update: updateKnowledgeAreaMutation } = useUpdateKnowledgeArea();
+  const {
+    mutateAsync: updateKnowledgeArea,
+    isPending: isUpdating,
+    isSuccess: isUpdateSuccess,
+  } = updateKnowledgeAreaMutation;
 
   useEffect(() => {
-    const fetchKnowledgeAreaData = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-        
-        const response = await api.get(`/knowledge-area/list/${id}`);
-
-        if (response.status === 200) {
-          const areaData = {
-            name: response.data.nome || "",
-            description: response.data.descricao || "",
-          };
-          form.reset(areaData);
-        }
-      } catch (error) {
-        if (error instanceof AxiosError) {
-          setError(error.response?.data?.message || "Erro ao carregar dados");
-        } else {
-          setError("Erro desconhecido ao carregar dados");
-        }
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    if (id) {
-      fetchKnowledgeAreaData();
+    if (knowledgeAreaData) {
+      form.reset({
+        name: knowledgeAreaData.nome || "",
+        description: knowledgeAreaData.descricao || "",
+      });
     }
-  }, [id, form]);
+  }, [knowledgeAreaData, form]);
+
+  useEffect(() => {
+    if (isUpdateSuccess) {
+      onSuccess();
+    }
+  }, [isUpdateSuccess, onSuccess]);
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     const updateData = {
       name: String(data.name).trim(),
       description: String(data.description || "").trim(),
-      competencesIds: [],
-      deleted: false,
     };
 
     try {
-      const response = await api.put(`/knowledge-area/update/${id}`, updateData);
-
-      if (response.status === 200) {
-        setUpdating(true);
-        onSuccess();
-      }
+      await updateKnowledgeArea({
+        knowledgeAreaId: id,
+        data: updateData,
+      });
     } catch (error) {
       if (error instanceof AxiosError) {
         const response = error.response;
-        
+
         if (Array.isArray(response?.data?.message)) {
           response?.data?.message.forEach(
             (fieldError: { field: string; message: string[] }) => {
-              const fieldMap: Record<string, keyof z.infer<typeof formSchema>> = {
-                'name': 'name',
-                'description': 'description',
-              };
-              
+              const fieldMap: Record<string, keyof z.infer<typeof formSchema>> =
+                {
+                  name: "name",
+                  description: "description",
+                };
+
               const formFieldName = fieldMap[fieldError.field];
-              
+
               if (formFieldName) {
                 form.setError(formFieldName, {
                   message: fieldError.message.join(", "),
@@ -109,37 +104,36 @@ export function EditKnowledgeAreaForm({ id, onSuccess }: EditKnowledgeAreaFormPr
           );
         } else {
           form.setError("root", {
-            message: response?.data?.message || "Erro desconhecido na atualização",
+            message:
+              response?.data?.message || "Erro desconhecido na atualização",
           });
         }
-      } else {
-        form.setError("root", {
-          message: "Erro desconhecido na atualização",
-        });
       }
     }
   };
 
-  if (error) {
+  if (queryError) {
     return (
-      <div className="flex flex-col justify-center items-center py-8 text-red-600">
-        <p>Erro: {error}</p>
-        <button 
-          onClick={() => window.location.reload()} 
-          className="mt-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-        >
-          Tentar Novamente
-        </button>
-      </div>
+      <Form.Wrapper>
+        <Form.Title text="Atualizar Dados da Área de Conhecimento" />
+        <div className="flex flex-col items-center justify-center py-8 text-red-600">
+          <p>Erro ao carregar dados</p>
+        </div>
+      </Form.Wrapper>
     );
   }
 
-  if (loading) {
+  if (isLoading) {
     return (
-      <div className="flex justify-center items-center py-8">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-        <span className="ml-2">Carregando dados...</span>
-      </div>
+      <Form.Wrapper>
+        <Form.Title text="Atualizar Dados da Área de Conhecimento" />
+        <div className="flex flex-col gap-4 p-8">
+          <Loader2 className="mx-auto animate-spin" size={48} />
+          <p className="text-muted-foreground text-center">
+            Carregando dados...
+          </p>
+        </div>
+      </Form.Wrapper>
     );
   }
 
@@ -159,6 +153,7 @@ export function EditKnowledgeAreaForm({ id, onSuccess }: EditKnowledgeAreaFormPr
               {...field}
               label="Nome da Área de Conhecimento"
               placeholder="Digite o nome da área de conhecimento"
+              disabled={isUpdating}
             />
           )}
         />
@@ -171,11 +166,14 @@ export function EditKnowledgeAreaForm({ id, onSuccess }: EditKnowledgeAreaFormPr
               {...field}
               label="Descrição"
               placeholder="Digite a descrição da área de conhecimento"
+              disabled={isUpdating}
             />
           )}
         />
 
-        <Form.Submit>Atualizar</Form.Submit>
+        <Form.Submit disabled={isUpdating}>
+          {isUpdating ? <Loader2 className="animate-spin" /> : "Atualizar"}
+        </Form.Submit>
       </Form.Main>
     </Form.Wrapper>
   );

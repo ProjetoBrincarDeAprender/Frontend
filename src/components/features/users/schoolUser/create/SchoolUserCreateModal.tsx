@@ -1,10 +1,9 @@
 import SchoolUserSignUpForm from "@/components/features/users/schoolUser/create/SchoolUserCreateForm";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
-import { useState } from "react";
-import { toast } from "sonner";
-import type { RegisterModalProps } from "../../common/registerModalProps";
 import { useTable } from "@/hooks/Table/useTable";
+import { useState } from "react";
+import type { RegisterModalProps } from "../../common/registerModalProps";
 
 export function RegisterSchoolUserModal({
   isOnTable = true,
@@ -14,7 +13,6 @@ export function RegisterSchoolUserModal({
 
   const handleSuccess = () => {
     setIsOpen(false);
-    toast.success("Cadastro realizado com sucesso!");
     if (isOnTable) setUpdating(true);
   };
 

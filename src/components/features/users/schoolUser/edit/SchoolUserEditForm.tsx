@@ -1,8 +1,11 @@
 import { Form } from "@/components/forms/Root";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Link } from "@/components/utils/Link/Link";
-import api from "@/utils/api";
+import { useSchoolAdmin } from "@/hooks/SchoolAdmin/useSchoolAdmin";
+import { useUpdateSchoolAdmin } from "@/hooks/SchoolAdmin/useUpdateSchool";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AxiosError } from "axios";
+import { Loader2 } from "lucide-react";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import z from "zod";
@@ -30,30 +33,31 @@ export default function EditSchoolUserForm({
     resolver: zodResolver(formSchema),
   });
 
+  const { update: updateSchoolAdminMutation } = useUpdateSchoolAdmin();
+  const {
+    mutateAsync: updateSchoolAdmin,
+    isPending,
+    isSuccess,
+  } = updateSchoolAdminMutation;
+
+  const { schoolAdminQuery } = useSchoolAdmin({ schoolAdminId: id });
+  const { data: schoolAdminData, isLoading: isSchoolAdminLoading } =
+    schoolAdminQuery;
+
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await api.get(`/school-admin/list/${id}`);
+    if (schoolAdminData) {
+      form.reset({
+        nome_completo: schoolAdminData.nome_completo || "",
+        email: schoolAdminData.email || "",
+      });
+    }
+  }, [form, schoolAdminData]);
 
-        if (response.status === 200) {
-          const formData = {
-            nome_completo: response.data.nome_completo || "",
-            email: response.data.email || "",
-          };
-          form.reset(formData);
-        }
-      } catch (error) {
-        if (error instanceof AxiosError) {
-          console.error(
-            "Erro ao buscar dados do usuário da escola:",
-            error.message,
-          );
-        }
-      }
-    };
-
-    fetchData();
-  }, [id, form]);
+  useEffect(() => {
+    if (isSuccess) {
+      onSuccess();
+    }
+  }, [isSuccess, onSuccess]);
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     try {
@@ -61,11 +65,7 @@ export default function EditSchoolUserForm({
 
       const payload = verifiedData;
 
-      const response = await api.put(`/school-admin/update/${id}`, payload);
-
-      if (response.status === 200) {
-        onSuccess();
-      }
+      await updateSchoolAdmin({ schoolAdminId: id, updateData: payload });
     } catch (error) {
       console.error("Erro ao atualizar o usuário da escola:", error);
       if (error instanceof AxiosError) {
@@ -102,29 +102,44 @@ export default function EditSchoolUserForm({
         onSubmit={onSubmit}
         className="flex flex-col gap-4"
       >
-        <Form.Field
-          form={form}
-          name="nome_completo"
-          render={({ field }) => (
-            <Form.Input
-              {...field}
-              label="Nome Completo"
-              placeholder="Escreva aqui o seu nome completo"
+        {isSchoolAdminLoading ? (
+          <>
+            <Skeleton className="h-10 w-full" />
+            <Skeleton className="h-10 w-full" />
+          </>
+        ) : (
+          <>
+            <Form.Field
+              form={form}
+              name="nome_completo"
+              render={({ field }) => (
+                <Form.Input
+                  {...field}
+                  label="Nome Completo"
+                  placeholder="Escreva aqui o seu nome completo"
+                />
+              )}
             />
-          )}
-        />
-        <Form.Field
-          form={form}
-          name="email"
-          render={({ field }) => (
-            <Form.Input
-              {...field}
-              label="Email"
-              placeholder="exemplo@gmail.com"
+            <Form.Field
+              form={form}
+              name="email"
+              render={({ field }) => (
+                <Form.Input
+                  {...field}
+                  label="Email"
+                  placeholder="exemplo@gmail.com"
+                />
+              )}
             />
-          )}
-        />
-        <Form.Submit>Atualizar Dados</Form.Submit>
+            <Form.Submit disabled={isPending}>
+              {isPending ? (
+                <Loader2 className="animate-spin" />
+              ) : (
+                "Atualizar Dados"
+              )}
+            </Form.Submit>
+          </>
+        )}
       </Form.Main>
       <p className="mt-6 w-full text-center text-lg">
         Desistiu de realizar as mordificações?{" "}

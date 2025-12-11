@@ -26,17 +26,14 @@ export default function Select({
   options,
   onChange,
   defaultValue,
+  value,
   placeholder,
   ...props
 }: FormSelectProps) {
   return (
     <FormItem className={wrapperClassName}>
       <FormLabel className={labelClassName}>{label}</FormLabel>
-      <ShadcnSelect
-        defaultValue={defaultValue}
-        onValueChange={onChange}
-        {...props}
-      >
+      <ShadcnSelect value={value} onValueChange={onChange} {...props}>
         <FormControl autoFocus={autofocus}>
           <SelectTrigger className="w-full">
             <SelectValue placeholder={placeholder} />

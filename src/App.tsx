@@ -16,10 +16,11 @@ import PunctuationGame from "./components/features/games/PunctuationGame";
 import { SensorialGame } from "./components/features/games/SensorialGame";
 import SimpleSyllableGame from "./components/features/games/SimpleSyllableGame";
 import { SpaceGame } from "./components/features/games/SpaceGame";
+import StressSyllable from "./components/features/games/StressSyllable";
 import SubtractionGame from "./components/features/games/SubtractionGame";
 import SumGame from "./components/features/games/SumGame";
+import SyllableDivisionGame from "./components/features/games/SyllableDivisionGame";
 import SyllableGame from "./components/features/games/SyllableGame";
-import StressSyllable from "./components/features/games/StressSyllable";
 import UseSyllableGame from "./components/features/games/UseSyllableGame";
 import VowelsGame from "./components/features/games/VowelsGame";
 import { AuthGuard } from "./guards/AuthGuard";
@@ -46,7 +47,7 @@ import Logout from "./pages/Logout/Logout";
 import { Profile } from "./pages/Profile/Profile";
 import { RecoverPassword } from "./pages/RecoverPassword/RecoverPassword";
 import { SendPasswordToken } from "./pages/SendPasswordToken/SendPasswordToken";
-import SyllableDivisionGame from "./components/features/games/SyllableDivisionGame";
+import { UserPerfilEnum } from "./types/user";
 import CreateActivityPage from "./pages/ActivitiesPage/CreateActivityPage";
 
 function App() {
@@ -64,11 +65,18 @@ function App() {
 
       <Route
         path="/dashboard"
-        element={<AuthGuard requireAuth role={["Admin", "Escola"]} />}
+        element={
+          <AuthGuard
+            requireAuth
+            role={[UserPerfilEnum.ADMIN, UserPerfilEnum.SCHOOL_ADMIN]}
+          />
+        }
       >
         <Route index element={<Dashboard />} />
         <Route path="students" element={<Students />} />
-        <Route element={<AuthGuard requireAuth role={["Admin"]} />}>
+        <Route
+          element={<AuthGuard requireAuth role={[UserPerfilEnum.ADMIN]} />}
+        >
           <Route path="schools" element={<Schools />} />
           <Route path="schoolusers" element={<SchoolUsers />} />
         </Route>
@@ -82,7 +90,7 @@ function App() {
       {/* Rotas específicas do Professor */}
       <Route
         path="/dashboard/teacher"
-        element={<AuthGuard requireAuth role={["Professor"]} />}
+        element={<AuthGuard requireAuth role={[UserPerfilEnum.TEACHER]} />}
       >
         <Route index element={<TeacherDashboard />} />
         <Route path="curriculum/knowledge-areas" element={<KnowledgeAreas />} />
