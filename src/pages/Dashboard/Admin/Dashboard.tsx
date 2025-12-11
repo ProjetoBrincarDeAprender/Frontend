@@ -33,7 +33,7 @@ export default function Dashboard() {
             <img className="block h-auto max-w-26" src={saturn} alt="saturn" />
             <div className="flex flex-col gap-2">
               <h1 className="text-xl font-semibold">Bem vindo {username},</h1>
-              <h1 className="text-4xl">Painel de Logistica</h1>
+              <h1 className="text-4xl">Painel de Logística</h1>
             </div>
           </div>
           <div className="mt-16 flex justify-center gap-8">
