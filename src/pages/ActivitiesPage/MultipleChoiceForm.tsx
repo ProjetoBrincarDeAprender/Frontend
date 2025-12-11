@@ -7,6 +7,8 @@ import { Form } from "@/components/forms/Root";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
+import { useCreateQuestion } from "@/hooks/Question/useCreateQuestion";
+import { AxiosError } from "axios";
 
 type Difficulty = "Fácil" | "Médio" | "Difícil";
 
@@ -35,6 +37,9 @@ const formSchema = z.object({
 });
 
 export function MultipleChoiceForm({ className = "" }: { className?: string }) {
+  const { create } = useCreateQuestion();
+  const { mutateAsync: createQuestion } = create;
+
   const [difficulties, setDifficulties] = useState<DifficultyQuestions[]>([
     { difficulty: "Fácil", questions: [] },
   ]);
@@ -219,26 +224,43 @@ export function MultipleChoiceForm({ className = "" }: { className?: string }) {
     }
 
     const payload = {
-      comando: data.comando,
-      dificuldades: difficulties.map((diff) => ({
-        nivel: diff.difficulty,
-        questoes: diff.questions.map((q) => ({
-          enunciado: q.enunciado,
-          opcoes: q.opcoes.map((opt) => ({
-            texto: opt.texto,
-            correta: opt.correta,
-          })),
-        })),
-      })),
+      activityId: 43,
+      data: {
+        content: JSON.stringify({
+          comando: data.comando,
+        }),
+        ordem: 1,
+        difficultyId: 1,
+      },
     };
 
-    console.log("Payload:", payload);
+    try {
+      await createQuestion(payload);
+      form.reset();
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        const response = error.response;
 
-    // try {
-    //   const response = await api.post("/activity/multiple-choice", payload);
-    // } catch (error) {
-    //   console.error(error);
-    // }
+        if (Array.isArray(response?.data?.message)) {
+          response?.data?.message.map(
+            (field: { field: string; message: string[] }) => {
+              if (form.control._fields[field.field]) {
+                form.setError(field.field as keyof z.infer<typeof formSchema>, {
+                  message: field.message.join(", "),
+                });
+              }
+              form.setError("root", {
+                message: `Erro ao criar atividade: ${field.message.join(", ")}`,
+              });
+            },
+          );
+        } else {
+          form.setError("root", {
+            message: `${response?.data?.message}`,
+          });
+        }
+      }
+    }
   };
 
   return (
