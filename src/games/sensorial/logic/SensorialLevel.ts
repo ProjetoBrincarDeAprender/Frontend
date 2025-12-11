@@ -9,6 +9,7 @@ export default class SensorialLevel extends Level {
   private questionImage: string | null;
   private difficulty: string;
   private levelType: "audio-to-image" | "image-to-audio";
+  private questionId: number;
 
   constructor(
     question: string,
@@ -20,6 +21,7 @@ export default class SensorialLevel extends Level {
     answer: string,
     difficulty: string,
     levelType: "audio-to-image" | "image-to-audio",
+    questionId: number,
   ) {
     super(question, answer);
     this.question = question;
@@ -30,6 +32,7 @@ export default class SensorialLevel extends Level {
     this.questionImage = questionImage;
     this.difficulty = difficulty;
     this.levelType = levelType;
+    this.questionId = questionId;
   }
 
   getQuestion(): string {
@@ -62,6 +65,10 @@ export default class SensorialLevel extends Level {
 
   getLevelType(): "audio-to-image" | "image-to-audio" {
     return this.levelType;
+  }
+
+  getQuestionId(): number {
+    return this.questionId;
   }
 
   hasOptionsImages(): boolean {
