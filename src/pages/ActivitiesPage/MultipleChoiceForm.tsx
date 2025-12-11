@@ -10,7 +10,6 @@ import { cn } from "@/lib/utils";
 import { useCreateQuestion } from "@/hooks/Question/useCreateQuestion";
 import { AxiosError } from "axios";
 import { useUpdateActivity } from "@/hooks/Activity/useUpdateActivity";
-import { useUser } from "@/hooks/User/useUser";
 import api from "@/utils/api";
 
 type Difficulty = "Fácil" | "Médio" | "Difícil";
@@ -41,8 +40,6 @@ const formSchema = z.object({
 });
 
 export function MultipleChoiceForm({ className = "" }: { className?: string }) {
-  const { user } = useUser();
-
   const { create } = useCreateQuestion();
   const { mutateAsync: createQuestion } = create;
 
