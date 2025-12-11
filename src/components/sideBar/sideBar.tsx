@@ -212,6 +212,14 @@ export function LateralMenu({
               Questões
             </button>
           </li>
+          <li>
+            <button
+              onClick={() => handleNavigation("/dashboard/teacher/curriculum/difficulty-levels")}
+              className={`w-full text-lg font-semibold text-white rounded-lg py-2.5 px-4 hover:bg-[var(--color-am2)] hover:text-az3 cursor-pointer transition-colors flex items-center justify-center gap-2 ${isActive("/dashboard/teacher/curriculum/difficulty-levels") ? "bg-[var(--color-am2)] text-az3" : ""}`}
+            >
+              Níveis de Dificuldade
+            </button>
+          </li>
         </>
       )}
     </ul>
