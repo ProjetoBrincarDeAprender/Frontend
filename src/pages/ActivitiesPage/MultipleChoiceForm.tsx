@@ -31,6 +31,7 @@ interface DifficultyQuestions {
 }
 
 const formSchema = z.object({
+  activityId: z.string().min(1, { message: "Selecione uma atividade" }),
   comando: z
     .string()
     .min(3, { message: "O comando deve ter pelo menos 3 caracteres" })
@@ -54,6 +55,7 @@ export function MultipleChoiceForm({ className = "" }: { className?: string }) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      activityId: "",
       comando: "",
     },
   });
@@ -212,16 +214,21 @@ export function MultipleChoiceForm({ className = "" }: { className?: string }) {
   };
 
   const canSubmit = () => {
-    return difficulties.every(
-      (diff) =>
-        diff.questions.length > 0 &&
-        diff.questions.every(
-          (q) =>
-            q.enunciado.trim() !== "" &&
-            q.opcoes.length >= 2 &&
-            q.opcoes.every((opt) => opt.texto.trim() !== "") &&
-            q.opcoes.some((opt) => opt.correta),
-        ),
+    const formData = form.getValues();
+    return (
+      formData.activityId !== "" &&
+      formData.comando.trim() !== "" &&
+      difficulties.every(
+        (diff) =>
+          diff.questions.length > 0 &&
+          diff.questions.every(
+            (q) =>
+              q.enunciado.trim() !== "" &&
+              q.opcoes.length >= 2 &&
+              q.opcoes.every((opt) => opt.texto.trim() !== "") &&
+              q.opcoes.some((opt) => opt.correta),
+          ),
+      )
     );
   };
 
@@ -282,7 +289,7 @@ export function MultipleChoiceForm({ className = "" }: { className?: string }) {
 
           // Criar payload para esta questão específica
           const questionPayload = {
-            activityId: 43,
+            activityId: Number(data.activityId),
             data: {
               content: JSON.stringify({
                 comando: data.comando,
@@ -340,21 +347,25 @@ export function MultipleChoiceForm({ className = "" }: { className?: string }) {
   const [activityOptions, setActivityOptions] = useState<
     { value: string; label: string }[]
   >([]);
+  const [isLoadingActivities, setIsLoadingActivities] = useState(true);
 
   async function getActivityOptions() {
+    setIsLoadingActivities(true);
     let response;
     try {
       response = await api.get(`/activity/list`);
       console.log("Atividades recebidas:", response.data);
     } catch (error) {
       console.error("Error getting activities:", error);
+      setIsLoadingActivities(false);
       throw error;
     }
     const result = response.data.map((activity: any) => ({
-      value: activity.id,
+      value: activity.id.toString(),
       label: activity.titulo,
     }));
     setActivityOptions(result);
+    setIsLoadingActivities(false);
   }
 
   useEffect(() => {
@@ -379,12 +390,13 @@ export function MultipleChoiceForm({ className = "" }: { className?: string }) {
             <Form.Select
               {...field}
               label="Atividade"
-              placeholder="Em qual atividade essas questões serão adicionadas?"
-              options={activityOptions}
-              disabled={
-                // isActivityPending ||
-                form.formState.isSubmitting
+              placeholder={
+                isLoadingActivities
+                  ? "Carregando atividades..."
+                  : "Em qual atividade essas questões serão adicionadas?"
               }
+              options={activityOptions}
+              disabled={isLoadingActivities || form.formState.isSubmitting}
             />
           )}
         />
@@ -596,8 +608,9 @@ export function MultipleChoiceForm({ className = "" }: { className?: string }) {
 
           {!canSubmit() && !isSubmitting && (
             <p className="text-destructive text-center text-sm">
-              Todas as questões devem ter pelo menos 2 opções preenchidas e pelo
-              menos 1 resposta correta marcada
+              Selecione uma atividade, preencha o comando e certifique-se de que
+              todas as questões têm pelo menos 2 opções preenchidas e pelo menos
+              1 resposta correta marcada
             </p>
           )}
         </div>
