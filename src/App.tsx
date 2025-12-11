@@ -85,8 +85,6 @@ function App() {
         <Route path="responsables" element={<Responsibles />} />
       </Route>
 
-      <Route path="curriculum/activities" element={<Activities />} />
-
       {/* Rotas específicas do Professor */}
       <Route
         path="/dashboard/teacher"
@@ -95,11 +93,16 @@ function App() {
         <Route index element={<TeacherDashboard />} />
         <Route path="curriculum/knowledge-areas" element={<KnowledgeAreas />} />
         <Route path="curriculum/competences" element={<Competencies />} />
+        <Route path="curriculum/activities" element={<Activities />} />
         <Route
           path="curriculum/difficulty-levels"
           element={<DifficultyLevels />}
         />
         <Route path="curriculum/questions" element={<Questions />} />
+        <Route
+          path="curriculum/activities/create"
+          element={<CreateActivityPage />}
+        ></Route>
       </Route>
 
       <Route path="/games" element={<AuthGuard />}>
@@ -138,8 +141,6 @@ function App() {
       </Route>
 
       <Route path="*" element={<NotFound />} />
-
-      <Route path="/activities" element={<CreateActivityPage />}></Route>
     </Routes>
   );
 }

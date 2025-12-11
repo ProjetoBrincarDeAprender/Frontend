@@ -28,13 +28,12 @@ export function Activities() {
         <TableProvider>
           <div className="mt-16 flex items-center justify-between">
             <div className="flex items-center gap-8 text-2xl font-bold">
-              <CreateActivityModal 
-                trigger={
-                  <button className="blue bg-yellow hover:bg-purplish-blue hover:text-yellow flex min-h-[60px] items-center justify-center gap-8 rounded-2xl px-8 py-4 text-center text-sm font-bold uppercase shadow-xl transition duration-200">
-                    Cadastrar Atividade
-                  </button>
-                }
-              />
+              <Link
+                to="/dashboard/teacher/curriculum/activities/create"
+                className="blue bg-yellow hover:bg-purplish-blue hover:text-yellow flex min-h-[60px] items-center justify-center gap-8 rounded-2xl px-8 py-4 text-center text-sm font-bold uppercase shadow-xl transition duration-200"
+              >
+                Cadastrar Atividade
+              </Link>
               <Link
                 to="/dashboard/teacher/curriculum/questions"
                 className="blue bg-yellow hover:bg-purplish-blue hover:text-yellow flex min-h-[60px] items-center justify-center gap-8 rounded-2xl px-8 py-4 text-center text-sm font-bold uppercase shadow-xl transition duration-200"
