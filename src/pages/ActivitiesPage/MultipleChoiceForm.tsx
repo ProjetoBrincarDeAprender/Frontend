@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Plus, Trash2 } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Form } from "@/components/forms/Root";
@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 import { useCreateQuestion } from "@/hooks/Question/useCreateQuestion";
 import { AxiosError } from "axios";
+import api from "@/utils/api";
 
 type Difficulty = "Fácil" | "Médio" | "Difícil";
 
@@ -295,11 +296,7 @@ export function MultipleChoiceForm({ className = "" }: { className?: string }) {
               difficultyId: difficultyId,
             },
           };
-
-          // Fazer a requisição para esta questão
           await createQuestion(questionPayload);
-
-          // Pequena pausa para não sobrecarregar o servidor
           await new Promise((resolve) => setTimeout(resolve, 100));
         }
       }
@@ -340,6 +337,30 @@ export function MultipleChoiceForm({ className = "" }: { className?: string }) {
     }
   };
 
+  const [activityOptions, setActivityOptions] = useState<
+    { value: string; label: string }[]
+  >([]);
+
+  async function getActivityOptions() {
+    let response;
+    try {
+      response = await api.get(`/activity/list`);
+      console.log("Atividades recebidas:", response.data);
+    } catch (error) {
+      console.error("Error getting activities:", error);
+      throw error;
+    }
+    const result = response.data.map((activity: any) => ({
+      value: activity.id,
+      label: activity.titulo,
+    }));
+    setActivityOptions(result);
+  }
+
+  useEffect(() => {
+    getActivityOptions();
+  }, []);
+
   return (
     <Form.Wrapper className={`flex max-h-[85vh] flex-col ${className}`}>
       <Form.Title
@@ -351,6 +372,23 @@ export function MultipleChoiceForm({ className = "" }: { className?: string }) {
         onSubmit={onSubmit}
         className="flex flex-1 flex-col gap-6 overflow-y-auto pr-2"
       >
+        <Form.Field
+          form={form}
+          name="activityId"
+          render={({ field }) => (
+            <Form.Select
+              {...field}
+              label="Atividade"
+              placeholder="Em qual atividade essas questões serão adicionadas?"
+              options={activityOptions}
+              disabled={
+                // isActivityPending ||
+                form.formState.isSubmitting
+              }
+            />
+          )}
+        />
+
         <div className="flex-shrink-0">
           <Form.Field
             form={form}
