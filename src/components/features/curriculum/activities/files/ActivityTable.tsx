@@ -1,8 +1,9 @@
 import useActivity, { ACTIVITY_QUERY_KEY } from "@/hooks/Activity/useActivity";
 import { useTable } from "@/hooks/Table/useTable";
+import { useUser } from "@/hooks/User/useUser";
 import { useDelete } from "@/hooks/useDelete";
 import type { ColumnDef } from "@tanstack/react-table";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useSearchParams } from "react-router";
 import { DataTable } from "../../../../utils/DataTable/DataTable";
 import { ActivityColumns } from "./TableData";
@@ -37,11 +38,31 @@ export default function ActivityTable() {
 
   const [searchParams, _] = useSearchParams();
   const { setUpdating } = useTable();
+  const { user } = useUser();
 
   const { activitiesQuery } = useActivity({});
-  const { data, isLoading: loading } = activitiesQuery;
+  const { data: allActivities, isLoading: loading } = activitiesQuery;
 
-  const columnsWithCheckbox: ColumnDef<Activity>[] = [
+  const filteredData = useMemo(() => {
+    if (!allActivities) return [];
+
+    if (user?.perfil === "Professor") {
+      const userEscolaId = user?.escolaId;
+
+      return allActivities.filter((activity) => {
+        // Mostrar apenas atividades da mesma escola
+        if (userEscolaId && activity.escolaId === userEscolaId) {
+          return true;
+        }
+
+        return false;
+      });
+    }
+
+    return allActivities;
+  }, [allActivities, user]);
+
+  const columnsWithCheckbox = [
     {
       id: "select",
       header: () => <span className="font-bold">Selecionar</span>,
@@ -70,36 +91,53 @@ export default function ActivityTable() {
       if ((col as ColumnDef<Activity>).id === "actions") {
         return {
           ...col,
-          cell: ({ row }: CellContext) => (
-            <div className="flex items-center justify-center gap-2">
-              <button
-                disabled={selectedIds.length > 0}
-                className={
-                  selectedIds.length > 0 ? "cursor-not-allowed opacity-50" : ""
-                }
-              >
-                <EditActivityModal id={row.original.id} />
-              </button>
-              <button
-                disabled={selectedIds.length > 0}
-                className={
-                  selectedIds.length > 0 ? "cursor-not-allowed opacity-50" : ""
-                }
-              >
-                <DeleteModal
-                  route="/activity/remove"
-                  id={row.original.id}
-                  entity="Atividade"
-                  queryKey={ACTIVITY_QUERY_KEY}
-                />
-              </button>
-            </div>
-          ),
+          cell: ({ row }: CellContext) => {
+            const isOwner =
+              user?.perfil === "Admin" ||
+              String(row.original.usuarioCriadorId) === user?.codigo_usuario;
+            const isDisabled = selectedIds.length > 0 || !isOwner;
+
+            return (
+              <div className="flex items-center justify-center gap-2">
+                <button
+                  disabled={isDisabled}
+                  className={
+                    isDisabled ? "cursor-not-allowed opacity-50" : ""
+                  }
+                  title={
+                    !isOwner
+                      ? "Você não pode editar atividades de outros usuários"
+                      : ""
+                  }
+                >
+                  <EditActivityModal id={row.original.id} />
+                </button>
+                <button
+                  disabled={isDisabled}
+                  className={
+                    isDisabled ? "cursor-not-allowed opacity-50" : ""
+                  }
+                  title={
+                    !isOwner
+                      ? "Você não pode excluir atividades de outros usuários"
+                      : ""
+                  }
+                >
+                  <DeleteModal
+                    route="/activity/remove"
+                    id={row.original.id}
+                    entity="Atividade"
+                    queryKey={ACTIVITY_QUERY_KEY}
+                  />
+                </button>
+              </div>
+            );
+          },
         };
       }
       return col;
     }),
-  ];
+  ] as ColumnDef<Activity>[];
 
   return (
     <>
@@ -108,7 +146,7 @@ export default function ActivityTable() {
       ) : (
         <DataTable
           columns={columnsWithCheckbox}
-          data={data ?? []}
+          data={filteredData ?? []}
           page={
             searchParams.get("page") ? parseInt(searchParams.get("page")!) : 0
           }
