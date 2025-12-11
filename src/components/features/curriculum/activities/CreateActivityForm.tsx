@@ -20,9 +20,6 @@ const formSchema = z.object({
   competenceId: z
     .string({ error: "Competência é obrigatória" })
     .min(1, { error: "Selecione uma competência" }),
-  content: z
-    .string({ error: "Conteúdo é obrigatório" })
-    .min(1, { error: "Conteúdo é obrigatório" }),
   template: z.string().min(1, "Template é obrigatório"),
 });
 
@@ -78,7 +75,6 @@ export function CreateActivityForm({
       title: "",
       type: "Jogo",
       competenceId: "",
-      content: "",
       template: "multiple_choice",
     },
   });
@@ -116,7 +112,7 @@ export function CreateActivityForm({
       type: "Jogo",
       competenceId: Number(data.competenceId),
       content: JSON.stringify({ text: "Sem Conteúdo..." }),
-      creatorId: Number(user?.codigo_usuario),
+      creatorId: Number(user?.codigo_usuario) || 1,
       maxQuestions: 10,
       escolaId: 101,
     };

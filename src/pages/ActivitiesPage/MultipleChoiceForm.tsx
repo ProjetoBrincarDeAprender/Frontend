@@ -353,15 +353,11 @@ export function MultipleChoiceForm({ className = "" }: { className?: string }) {
     }
 
     try {
-      const activityPayload = await api.get(
-        `/activity/list/${data.activityId}`,
-      );
-      // activityPayload.data.content = JSON.stringify({
-      //   text: "Atividade Atualizada",
-      // });
       const variables = {
         activityId: Number(data.activityId),
-        data: activityPayload.data,
+        data: {
+          content: JSON.stringify({ allPayload }),
+        },
       };
       await updateActivity(variables);
       form.reset();
