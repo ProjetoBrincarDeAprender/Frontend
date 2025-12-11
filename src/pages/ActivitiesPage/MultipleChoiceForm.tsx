@@ -43,6 +43,12 @@ export function MultipleChoiceForm({ className = "" }: { className?: string }) {
   const [difficulties, setDifficulties] = useState<DifficultyQuestions[]>([
     { difficulty: "Fácil", questions: [] },
   ]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitProgress, setSubmitProgress] = useState<{
+    total: number;
+    current: number;
+    currentQuestion: string;
+  } | null>(null);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -218,26 +224,93 @@ export function MultipleChoiceForm({ className = "" }: { className?: string }) {
     );
   };
 
+  const getDifficultyId = (difficulty: Difficulty): number => {
+    switch (difficulty) {
+      case "Fácil":
+        return 1;
+      case "Médio":
+        return 2;
+      case "Difícil":
+        return 3;
+      default:
+        return 1;
+    }
+  };
+
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
-    if (!canSubmit()) {
+    if (!canSubmit() || isSubmitting) {
       return;
     }
 
-    const payload = {
-      activityId: 43,
-      data: {
-        content: JSON.stringify({
-          comando: data.comando,
-        }),
-        ordem: 1,
-        difficultyId: 1,
-      },
-    };
+    setIsSubmitting(true);
+
+    // Contar o total de questões
+    const totalQuestions = difficulties.reduce(
+      (total, diff) => total + diff.questions.length,
+      0,
+    );
+
+    setSubmitProgress({
+      total: totalQuestions,
+      current: 0,
+      currentQuestion: "",
+    });
 
     try {
-      await createQuestion(payload);
+      let currentQuestionIndex = 0;
+
+      // Iterar por cada nível de dificuldade
+      for (const difficulty of difficulties) {
+        const difficultyId = getDifficultyId(difficulty.difficulty);
+
+        // Iterar por cada questão do nível de dificuldade
+        for (
+          let questionIndex = 0;
+          questionIndex < difficulty.questions.length;
+          questionIndex++
+        ) {
+          const question = difficulty.questions[questionIndex];
+          currentQuestionIndex++;
+
+          // Atualizar progresso
+          setSubmitProgress({
+            total: totalQuestions,
+            current: currentQuestionIndex,
+            currentQuestion: question.enunciado.substring(0, 50) + "...",
+          });
+
+          // Criar payload para esta questão específica
+          const questionPayload = {
+            activityId: 43,
+            data: {
+              content: JSON.stringify({
+                comando: data.comando,
+                enunciado: question.enunciado,
+                opcoes: question.opcoes.map((opcao) => ({
+                  texto: opcao.texto,
+                  correta: opcao.correta,
+                })),
+              }),
+              ordem: currentQuestionIndex,
+              difficultyId: difficultyId,
+            },
+          };
+
+          // Fazer a requisição para esta questão
+          await createQuestion(questionPayload);
+
+          // Pequena pausa para não sobrecarregar o servidor
+          await new Promise((resolve) => setTimeout(resolve, 100));
+        }
+      }
+
+      // Sucesso - limpar o formulário
       form.reset();
+      setDifficulties([{ difficulty: "Fácil", questions: [] }]);
+      setSubmitProgress(null);
     } catch (error) {
+      console.error("Erro ao criar questões:", error);
+
       if (error instanceof AxiosError) {
         const response = error.response;
 
@@ -250,16 +323,20 @@ export function MultipleChoiceForm({ className = "" }: { className?: string }) {
                 });
               }
               form.setError("root", {
-                message: `Erro ao criar atividade: ${field.message.join(", ")}`,
+                message: `Erro ao criar questão: ${field.message.join(", ")}`,
               });
             },
           );
         } else {
           form.setError("root", {
-            message: `${response?.data?.message}`,
+            message: `${response?.data?.message || "Erro ao criar questões"}`,
           });
         }
       }
+
+      setSubmitProgress(null);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -447,17 +524,39 @@ export function MultipleChoiceForm({ className = "" }: { className?: string }) {
         </div>
 
         <div className="bg-am1 sticky bottom-0 -mx-2 flex-shrink-0 space-y-2 px-2 pt-4 pb-2">
+          {submitProgress && (
+            <div className="mb-3 space-y-2">
+              <div className="text-center text-sm text-gray-600">
+                Criando questões... {submitProgress.current}/
+                {submitProgress.total}
+              </div>
+              <div className="h-2 w-full rounded-full bg-gray-200">
+                <div
+                  className="h-2 rounded-full bg-blue-600 transition-all duration-300"
+                  style={{
+                    width: `${(submitProgress.current / submitProgress.total) * 100}%`,
+                  }}
+                ></div>
+              </div>
+              {submitProgress.currentQuestion && (
+                <div className="truncate text-center text-xs text-gray-500">
+                  {submitProgress.currentQuestion}
+                </div>
+              )}
+            </div>
+          )}
+
           <Form.Submit
             className={cn(
               "bg-primary hover:bg-primary/90",
-              !canSubmit() && "cursor-not-allowed opacity-50",
+              (!canSubmit() || isSubmitting) && "cursor-not-allowed opacity-50",
             )}
-            disabled={!canSubmit()}
+            disabled={!canSubmit() || isSubmitting}
           >
-            Criar Atividade
+            {isSubmitting ? "Criando Questões..." : "Criar Atividade"}
           </Form.Submit>
 
-          {!canSubmit() && (
+          {!canSubmit() && !isSubmitting && (
             <p className="text-destructive text-center text-sm">
               Todas as questões devem ter pelo menos 2 opções preenchidas e pelo
               menos 1 resposta correta marcada
