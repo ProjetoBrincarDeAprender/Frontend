@@ -87,8 +87,7 @@ function App() {
       {/* Rotas específicas do Professor */}
       <Route
         path="/dashboard/teacher"
-        // element={<AuthGuard requireAuth role={["Professor", "Admin"]} />}
-        element={<AuthGuard requireAuth role={[UserPerfilEnum.TEACHER]} />}
+        element={<AuthGuard requireAuth role={[UserPerfilEnum.TEACHER, UserPerfilEnum.ADMIN]} />}
       >
         <Route index element={<TeacherDashboard />} />
         <Route path="curriculum/knowledge-areas" element={<KnowledgeAreas />} />
