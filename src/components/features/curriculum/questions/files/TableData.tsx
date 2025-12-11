@@ -1,10 +1,11 @@
+import { QUESTION_QUERY_KEY } from "@/hooks/Question/useQuestion";
 import type { ColumnDef } from "@tanstack/react-table";
-import DeleteModal from "../../../../utils/DataTable/DeleteModal";
 import { ArrowUpDown } from "lucide-react";
 import { Button } from "../../../../ui/button";
+import DeleteModal from "../../../../utils/DataTable/DeleteModal";
 import { EditQuestionModal } from "../edit/QuestionEditModal";
 
-export type Question = {
+export type QuestionFormatted = {
   id: number;
   content: string;
   ordem: number;
@@ -15,10 +16,9 @@ export type Question = {
     titulo: string;
   };
   createdAt: string;
-  updatedAt: string;
 };
 
-export const QuestionColumns: ColumnDef<Question>[] = [
+export const QuestionColumns: ColumnDef<QuestionFormatted>[] = [
   {
     accessorKey: "id",
     header: ({ column }) => (
@@ -44,7 +44,7 @@ export const QuestionColumns: ColumnDef<Question>[] = [
     ),
     cell: ({ row }) => {
       const content = row.original.content;
-      
+
       if (!content) {
         return (
           <div className="max-w-xs">
@@ -52,10 +52,10 @@ export const QuestionColumns: ColumnDef<Question>[] = [
           </div>
         );
       }
-      
+
       return (
         <div className="max-w-xs">
-          <span className="truncate block" title={content}>
+          <span className="block truncate" title={content}>
             {content}
           </span>
         </div>
@@ -99,7 +99,10 @@ export const QuestionColumns: ColumnDef<Question>[] = [
       const activityTitle = row.original.activity?.titulo;
       return (
         <div className="max-w-xs">
-          <span className="truncate block" title={activityTitle || `Atividade ${row.original.activityId}`}>
+          <span
+            className="block truncate"
+            title={activityTitle || `Atividade ${row.original.activityId}`}
+          >
             {activityTitle || `Atividade ${row.original.activityId}`}
           </span>
         </div>
@@ -131,6 +134,8 @@ export const QuestionColumns: ColumnDef<Question>[] = [
         <DeleteModal
           route="/question/remove"
           id={row.original.id}
+          entity="Questão"
+          queryKey={QUESTION_QUERY_KEY}
         />
       </div>
     ),

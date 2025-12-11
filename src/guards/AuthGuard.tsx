@@ -50,7 +50,7 @@ export const AuthGuard = ({
     role &&
     isAuthenticated &&
     user &&
-    !role.includes(user.perfil)
+    !role.includes(user.perfil.toString())
   ) {
     toast.error("Você não tem permissão para acessar esta página.");
     return <Navigate to={redirectTo} replace />;

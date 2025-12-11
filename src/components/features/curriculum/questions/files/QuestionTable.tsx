@@ -1,20 +1,21 @@
-import { useTable } from "@/hooks/Table/useTable";
-import { useUser } from "@/hooks/User/useUser";
-import api from "@/utils/api";
+import { QUESTION_QUERY_KEY, useQuestion } from "@/hooks/Question/useQuestion";
+import { useDelete } from "@/hooks/useDelete";
+import type { ColumnDef } from "@tanstack/react-table";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router";
 import { DataTable } from "../../../../utils/DataTable/DataTable";
-import { QuestionColumns, type Question } from "./TableData";
-import type { ColumnDef } from "@tanstack/react-table";
-import { AxiosError } from "axios";
+import { QuestionColumns, type QuestionFormatted } from "./TableData";
 
 import { SkeletonTable } from "@/components/ui/skeleton-table";
 import DeleteModal from "@/components/utils/DataTable/DeleteModal";
+import useActivity from "@/hooks/Activity/useActivity";
+import type { Activity } from "@/types/activity";
+import type { Question } from "@/types/question";
 // import { EditQuestionModal } from "../edit/QuestionEditModal";
 
 interface CellContext {
   row: {
-    original: Question;
+    original: QuestionFormatted;
   };
 }
 
@@ -39,136 +40,92 @@ interface QuestionApiResponse {
 }
 
 export default function QuestionTable() {
-  const [data, setData] = useState<Question[] | null>(null);
-  const [loading, setLoading] = useState(true);
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
-  
+
+  const { multiDeleteMutation } = useDelete({
+    route: "/question/remove",
+    entity: "Questão",
+    queryKey: QUESTION_QUERY_KEY,
+  });
+  const { mutateAsync: deleteQuestions, isError: isQuestionError } =
+    multiDeleteMutation;
+
   const handleDeleteSelected = async () => {
     if (selectedIds.length === 0) return;
-    
-    try {
-      // Deletar questões selecionadas uma por vez
-      for (const id of selectedIds) {
-        try {
-          await api.delete(`/question/remove/${id}`);
-        } catch (error) {
-          console.error(`Erro ao deletar questão ${id}:`, error);
-        }
-      }
-      setSelectedIds([]);
-      setUpdating(true);
-    } catch (error) {
-      console.error("Erro ao deletar questões:", error);
-    }
+    await deleteQuestions(selectedIds);
+    setSelectedIds([]);
   };
 
+  useEffect(() => {
+    if (isQuestionError) {
+      setSelectedIds([]);
+    }
+  }, [isQuestionError]);
+
   const [searchParams, _] = useSearchParams();
-  const { updating, setUpdating } = useTable();
-  const { user } = useUser();
+
+  const { questionsQuery } = useQuestion({});
+  const { data: questionsData, isLoading: loading } = questionsQuery;
+
+  const { activitiesQuery } = useActivity();
+  const { data: activitiesData, isLoading: activitiesLoading } =
+    activitiesQuery;
+
+  const [formattedQuestions, setFormattedQuestions] = useState<
+    QuestionFormatted[]
+  >([]);
 
   useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);      
-      try {
-        const [questionsResponse, activitiesResponse] = await Promise.all([
-          api.get("/question/list"),
-          api.get("/activity/list"),
-        ]);
-   
-        if (questionsResponse.status === 200) {
-          const questionsData: QuestionApiResponse[] = questionsResponse.data || [];
-          
-          let filteredActivities = activitiesResponse.data || [];
-          
-          if (user?.perfil === "Professor") {
-            const userEscolaId = user?.escola?.id;
-            const userCodigo = user?.codigo_usuario;
-            
-            filteredActivities = filteredActivities.filter((activity: Activity) => {
-              if (!activity.usuarioCriadorId) {
-                return false;
+    if (questionsData && activitiesData) {
+      const activitiesMap = new Map<number, Activity>();
+      activitiesData.forEach((activity: Activity) => {
+        activitiesMap.set(activity.id, activity);
+      });
+
+      const enrichedQuestions: QuestionFormatted[] = questionsData?.map(
+        (question) => {
+          let content = "";
+          if (question.conteudo) {
+            if (
+              typeof question.conteudo === "object" &&
+              (question.conteudo as { texto: string })
+            ) {
+              content = (question.conteudo as { texto: string }).texto;
+            } else if (typeof question.conteudo === "string") {
+              // Se for uma string JSON, tentar fazer parse
+              try {
+                const parsed = JSON.parse(question.conteudo);
+                content = parsed.texto || question.conteudo;
+              } catch {
+                content = question.conteudo;
               }
-              
-              const criadorId = String(activity.usuarioCriadorId);
-              
-              if (userCodigo && criadorId === userCodigo) {
-                return true;
-              }
-              
-              if (userEscolaId && activity.escolaId === userEscolaId) {
-                return true;
-              }
-              
-              return false;
-            });
+            }
           }
-          
-          const activitiesMap = new Map<number, Activity>();
-          if (activitiesResponse.status === 200 && filteredActivities) {
-            filteredActivities.forEach((activity: Activity) => {
-              activitiesMap.set(activity.id, activity);
-            });
-          }
-          
-          const enrichedQuestions: Question[] = questionsData
-            .filter((question) => activitiesMap.has(question.atividade_id))
-            .map((question) => {
-              let content = "";
-              if (question.conteudo) {
-                if (typeof question.conteudo === 'object' && question.conteudo.texto) {
-                  content = question.conteudo.texto;
-                } else if (typeof question.conteudo === 'string') {
-                  try {
-                    const parsed = JSON.parse(question.conteudo);
-                    content = parsed.texto || question.conteudo;
-                  } catch {
-                    content = question.conteudo;
-                  }
-                }
-              }
-              
-              const activity = activitiesMap.get(question.atividade_id);
-              
-              return {
-                id: question.id,
-                content: content,
-                ordem: question.ordem,
-                activityId: question.atividade_id,
-                usuarioCriadorId: activity?.usuarioCriadorId,
-                activity: activity ? {
+
+          // Buscar dados da atividade
+          const activity = activitiesMap.get(question.atividade_id);
+
+          return {
+            id: question.id,
+            content: content,
+            ordem: question.ordem,
+            activityId: question.atividade_id,
+            activity: activity
+              ? {
                   id: activity.id,
-                  titulo: activity.titulo
-                } : undefined,
-                createdAt: question.created_At || "",
-                updatedAt: question.updated_At || "",
-              };
-            });
-          
-          setData(enrichedQuestions);
-        } else {
-          setData([]);
-        }
-      } catch (error) {        
-        if (error instanceof AxiosError) {
-          if (error.response?.status === 404) {
-            setData([]);
-          } else {
-            console.error("Erro ao buscar questões:", error);
-            setData([]);
-          }
-        } else {
-          console.error("Erro desconhecido:", error);
-          setData([]);
-        }
-      } finally {
-        setLoading(false);
-      }
-    };
+                  titulo: activity.titulo,
+                }
+              : undefined,
+            createdAt: question.created_At || "",
+          };
+        },
+      );
 
-    fetchData().then(() => setUpdating(false));
-  }, [updating, setUpdating, user]);
+      setFormattedQuestions(enrichedQuestions);
+    }
+  }, [questionsData, activitiesData]);
 
-  const columnsWithCheckbox: ColumnDef<Question>[] = [
+  const columnsWithCheckbox: ColumnDef<QuestionFormatted>[] = [
     {
       id: "select",
       header: () => <span className="font-bold">Selecionar</span>,
@@ -185,9 +142,7 @@ export default function QuestionTable() {
               );
             }}
             className="h-4 w-4 cursor-pointer accent-blue-600"
-            aria-label={
-              checked ? "Desmarcar questão" : "Selecionar questão"
-            }
+            aria-label={checked ? "Desmarcar questão" : "Selecionar questão"}
           />
         );
       },
@@ -216,6 +171,8 @@ export default function QuestionTable() {
                 <DeleteModal
                   route="/question/remove"
                   id={row.original.id}
+                  entity="Questão"
+                  queryKey={QUESTION_QUERY_KEY}
                 />
               </button>
             </div>
@@ -228,12 +185,12 @@ export default function QuestionTable() {
 
   return (
     <>
-      {loading ? (
+      {loading || activitiesLoading ? (
         <SkeletonTable rows={6} cols={columnsWithCheckbox.length} />
       ) : (
         <DataTable
           columns={columnsWithCheckbox}
-          data={data ?? []}
+          data={formattedQuestions ?? []}
           page={
             searchParams.get("page") ? parseInt(searchParams.get("page")!) : 0
           }

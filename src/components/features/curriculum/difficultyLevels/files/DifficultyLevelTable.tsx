@@ -1,14 +1,17 @@
-import { useTable } from "@/hooks/Table/useTable";
-import { useUser } from "@/hooks/User/useUser";
-import api from "@/utils/api";
-import { useEffect, useState } from "react";
+import type { ColumnDef } from "@tanstack/react-table";
+import { useState } from "react";
 import { useSearchParams } from "react-router";
 import { DataTable } from "../../../../utils/DataTable/DataTable";
-import { DifficultyLevelColumns, type DifficultyLevel } from "./TableData";
-import type { ColumnDef } from "@tanstack/react-table";
+import { DifficultyLevelColumns } from "./TableData";
 
 import { SkeletonTable } from "@/components/ui/skeleton-table";
 import DeleteModal from "@/components/utils/DataTable/DeleteModal";
+import {
+  DIFFICULTY_LEVEL_QUERY_KEY,
+  useDifficultyLevel,
+} from "@/hooks/DificultyLevel/useDifficultyLevel";
+import { useDelete } from "@/hooks/useDelete";
+import type { DifficultyLevel } from "@/types/difficultyLevels";
 import { EditDifficultyLevelModal } from "../edit/DifficultyLevelEditModal";
 
 interface CellContext {
@@ -18,46 +21,26 @@ interface CellContext {
 }
 
 export default function DifficultyLevelTable() {
-  const [data, setData] = useState<DifficultyLevel[] | null>(null);
-  const [loading, setLoading] = useState(true);
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
-  
+
+  const { multiDeleteMutation } = useDelete({
+    route: "/difficulty-level/remove",
+    entity: "Nível de Dificuldade",
+    queryKey: DIFFICULTY_LEVEL_QUERY_KEY,
+  });
+  const { mutateAsync: multiDelete } = multiDeleteMutation;
+
+  const { difficultyLevelsQuery } = useDifficultyLevel();
+  const { data: difficultyLevelsData, isLoading: isDifficultyLoading } =
+    difficultyLevelsQuery;
+
   const handleDeleteSelected = async () => {
     if (selectedIds.length === 0) return;
-    for (const id of selectedIds) {
-      try {
-        await api.delete(`/difficulty-level/remove/${id}`);
-      } catch (error) {
-        console.error(`Erro ao deletar nível de dificuldade ${id}:`, error);
-      }
-    }
+    await multiDelete(selectedIds);
     setSelectedIds([]);
-    setUpdating(true);
   };
 
   const [searchParams, _] = useSearchParams();
-  const { updating, setUpdating } = useTable();
-  const { user } = useUser();
-
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      try {
-        const response = await api.get("/difficulty-level/list");
-        
-        if (response.status === 200) {
-          setData(response.data);
-        }
-      } catch (error) {
-        console.error("Erro ao buscar dados:", error);
-        setData([]);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData().then(() => setUpdating(false));
-  }, [updating, setUpdating, user]);
 
   const columnsWithCheckbox: ColumnDef<DifficultyLevel>[] = [
     {
@@ -76,9 +59,7 @@ export default function DifficultyLevelTable() {
               );
             }}
             className="h-4 w-4 cursor-pointer accent-blue-600"
-            aria-label={
-              checked ? "Desmarcar nível" : "Selecionar nível"
-            }
+            aria-label={checked ? "Desmarcar nível" : "Selecionar nível"}
           />
         );
       },
@@ -107,6 +88,8 @@ export default function DifficultyLevelTable() {
                 <DeleteModal
                   route="/difficulty-level/remove"
                   id={row.original.id}
+                  entity="Níveis de Dificuldade"
+                  queryKey={DIFFICULTY_LEVEL_QUERY_KEY}
                 />
               </button>
             </div>
@@ -119,17 +102,17 @@ export default function DifficultyLevelTable() {
 
   return (
     <>
-      {loading ? (
+      {isDifficultyLoading ? (
         <SkeletonTable rows={6} cols={columnsWithCheckbox.length} />
       ) : (
         <DataTable
           columns={columnsWithCheckbox}
-          data={data ?? []}
+          data={difficultyLevelsData ?? []}
           page={
             searchParams.get("page") ? parseInt(searchParams.get("page")!) : 0
           }
           renderExtra={() =>
-            selectedIds.length > 0 && !loading ? (
+            selectedIds.length > 0 && !isDifficultyLoading ? (
               <button
                 onClick={handleDeleteSelected}
                 className="ml-2 flex items-center gap-2 rounded bg-red-500 px-4 py-2 font-bold text-white transition-all hover:bg-red-700"

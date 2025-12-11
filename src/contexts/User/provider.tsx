@@ -6,7 +6,8 @@ import { UserContext } from "./context";
 
 export const UserProvider = ({ children }: { children: ReactNode }) => {
   const { profile } = useAuth();
-  const [user, setUser] = useState<User | null>(null);
+  const { data: profileData, isLoading } = profile;
+  const [user, setUser] = useState<User | null>(profileData || null);
 
   const registerUser = (userData: User | null) => {
     setUser(userData);
@@ -14,28 +15,17 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     const fetchUser = async () => {
-      const response = await profile();
-
-      if (!response) {
-        throw new Error("Failed to fetch user data");
-      }
-
-      setUser({
-        codigo_usuario: response.codigo_usuario,
-        nome_completo: response.nome_completo,
-        email: response.email,
-        perfil: response.perfil,
-        escola: {
-          id: response.escolaId,
-          nome: response.escola || "",
-        },
-      });
+      setUser(profileData || null);
     };
 
     if (Cookies.get("authToken")) {
       fetchUser();
     }
-  }, []);
+  }, [profileData]);
+
+  if (isLoading) {
+    return null;
+  }
 
   return (
     <UserContext.Provider value={{ user, registerUser }}>

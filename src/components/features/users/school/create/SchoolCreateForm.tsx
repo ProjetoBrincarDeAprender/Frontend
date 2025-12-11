@@ -1,13 +1,14 @@
 import { Form } from "@/components/forms/Root";
 import { Link } from "@/components/utils/Link/Link";
-import api from "@/utils/api";
+import { useCreateSchool } from "@/hooks/School/useCreateSchool";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AxiosError } from "axios";
+import { Loader2 } from "lucide-react";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { IMaskInput } from "react-imask";
 import z from "zod";
 import type { SignUpFormProps } from "../../common/signUpFormProps";
-
 
 const formSchema = z.object({
   nome: z
@@ -15,10 +16,11 @@ const formSchema = z.object({
     .max(80, { error: "O limite suportado é de 80 caracteres" })
     .min(2, { error: "Nome da escola deve ter pelo menos 2 caracteres" }),
   descricao: z
-  .string()
-  .transform((val) => (val.trim() === "" ? undefined : val))
-  .optional(),
-  localizacao: z.string({ error: "O endereço da escola é obrigatório" })
+    .string()
+    .transform((val) => (val.trim() === "" ? undefined : val))
+    .optional(),
+  localizacao: z
+    .string({ error: "O endereço da escola é obrigatório" })
     .min(1, { message: "A localização da escola é obrigatória" }),
   telefone: z
     .string()
@@ -48,18 +50,28 @@ export default function CreateSchoolForm({ onSuccess }: SignUpFormProps) {
     },
   });
 
+  const { create: createSchoolMutation } = useCreateSchool();
+  const {
+    mutateAsync: createSchool,
+    isPending,
+    isSuccess,
+  } = createSchoolMutation;
+
+  useEffect(() => {
+    if (isSuccess) {
+      form.reset();
+      onSuccess();
+    }
+  }, [isSuccess, onSuccess, form]);
+
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     try {
       const payload = {
         ...data,
-        descricao: data.descricao ?? null,
+        descricao: data.descricao ?? undefined,
       };
 
-      const response = await api.post("/school/register", payload);
-      if (response.status === 201) {
-        form.reset();
-        onSuccess();
-      }
+      await createSchool(payload);
     } catch (error) {
       console.error("Erro ao criar escola:", error);
       if (error instanceof AxiosError) {
@@ -166,7 +178,9 @@ export default function CreateSchoolForm({ onSuccess }: SignUpFormProps) {
             </Form.Item>
           )}
         />
-        <Form.Submit>Criar Conta</Form.Submit>
+        <Form.Submit disabled={isPending}>
+          {isPending ? <Loader2 className="animate-spin" /> : "Criar Conta"}
+        </Form.Submit>
       </Form.Main>
       <p className="mt-6 w-full text-center text-lg">
         A escola já possui uma conta?{" "}

@@ -1,53 +1,57 @@
-import { useState } from "react";
+import { Form } from "@/components/forms/Root";
+import { useCreateDifficultyLevel } from "@/hooks/DificultyLevel/useCreateDifficultyLevel";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { AxiosError } from "axios";
+import { Loader2 } from "lucide-react";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { toast } from "sonner";
-import { Form } from "@/components/forms/Root";
-import { useTable } from "@/hooks/Table/useTable";
-import api from "@/utils/api";
-import { AxiosError } from "axios";
 
 const formSchema = z.object({
   name: z
     .string({ error: "Nome é obrigatório" })
     .min(2, { error: "Nome deve ter pelo menos 2 caracteres" })
     .max(50, { error: "Nome deve ter no máximo 50 caracteres" })
-    .regex(/^[a-zA-Z0-9\s\-àáâãäéêëíîïóôõöúûüç]+$/i, { 
-      error: "Nome deve conter apenas letras, números, espaços e hífens" 
-    })
+    .regex(/^[a-zA-Z0-9\s\-àáâãäéêëíîïóôõöúûüç]+$/i, {
+      error: "Nome deve conter apenas letras, números, espaços e hífens",
+    }),
 });
 
 interface CreateDifficultyLevelFormProps {
   onSuccess: () => void;
 }
 
-export function CreateDifficultyLevelForm({ onSuccess }: CreateDifficultyLevelFormProps) {
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const { setUpdating } = useTable();
+export function CreateDifficultyLevelForm({
+  onSuccess,
+}: CreateDifficultyLevelFormProps) {
+  const { create } = useCreateDifficultyLevel();
+  const {
+    mutateAsync: createDifficultyLevel,
+    isSuccess: isDifficultyLevelSuccess,
+    isPending: isDifficultyLevelPending,
+  } = create;
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: ""
-    }
+      name: "",
+    },
   });
+
+  useEffect(() => {
+    if (isDifficultyLevelSuccess) {
+      onSuccess();
+    }
+  }, [isDifficultyLevelSuccess, onSuccess]);
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     const payload = {
-      name: data.name.trim()
+      name: data.name.trim(),
     };
 
     try {
-      setIsSubmitting(true);
-      const response = await api.post("/difficulty-level/register", payload);
-
-      if (response.status === 201) {
-        toast.success("Nível de dificuldade criado com sucesso!");
-        form.reset();
-        setUpdating(true); // Trigger table refresh
-        return onSuccess();
-      }
+      await createDifficultyLevel(payload);
+      form.reset();
     } catch (error) {
       if (error instanceof AxiosError) {
         const response = error.response;
@@ -57,23 +61,20 @@ export function CreateDifficultyLevelForm({ onSuccess }: CreateDifficultyLevelFo
             (field: { field: string; message: string[] }) => {
               if (form.control._fields[field.field]) {
                 form.setError(field.field as keyof z.infer<typeof formSchema>, {
-                  message: field.message.join(", ")
+                  message: field.message.join(", "),
                 });
               }
               form.setError("root", {
-                message: `Erro ao criar nível de dificuldade: ${field.message.join(", ")}`
+                message: `Erro ao criar nível de dificuldade: ${field.message.join(", ")}`,
               });
-            }
+            },
           );
         } else {
           form.setError("root", {
-            message: `${response?.data?.message}`
+            message: `${response?.data?.message}`,
           });
         }
       }
-      toast.error("Erro ao criar nível de dificuldade. Tente novamente.");
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
@@ -94,7 +95,7 @@ export function CreateDifficultyLevelForm({ onSuccess }: CreateDifficultyLevelFo
                 {...field}
                 label="Nome do Nível de Dificuldade"
                 placeholder="Ex: Iniciante, Intermediário, Avançado..."
-                disabled={isSubmitting}
+                disabled={isDifficultyLevelPending}
               />
               <div className="text-xs text-gray-500">
                 Sugestões: Fácil, Médio, Difícil, Extremo
@@ -103,8 +104,15 @@ export function CreateDifficultyLevelForm({ onSuccess }: CreateDifficultyLevelFo
           )}
         />
 
-        <Form.Submit disabled={isSubmitting} className="bg-primary hover:bg-primary/90">
-          {isSubmitting ? "Criando..." : "Criar"}
+        <Form.Submit
+          disabled={isDifficultyLevelPending}
+          className="bg-primary hover:bg-primary/90"
+        >
+          {isDifficultyLevelPending ? (
+            <Loader2 className="mr-2 inline h-4 w-4 animate-spin" />
+          ) : (
+            "Criar"
+          )}
         </Form.Submit>
       </Form.Main>
     </Form.Wrapper>

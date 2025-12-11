@@ -1,50 +1,36 @@
 import { SkeletonTable } from "@/components/ui/skeleton-table";
+import { useSchoolAdmin } from "@/hooks/SchoolAdmin/useSchoolAdmin";
 import { useTable } from "@/hooks/Table/useTable";
 import { useUser } from "@/hooks/User/useUser";
-import api from "@/utils/api";
-import { useEffect, useState } from "react";
+import type { FilterSchoolAdminOption } from "@/types/filter";
+import { UserPerfilEnum } from "@/types/user";
 import { useSearchParams } from "react-router";
 import { DataTable } from "../../../../utils/DataTable/DataTable";
-import { SchoolUserColumns, type SchoolUser } from "./TableData";
+import { SchoolUserColumns } from "./TableData";
 
 export default function SchoolUserTable() {
-  const [data, setData] = useState<SchoolUser[] | null>(null);
-  const [loading, setLoading] = useState(true);
   const [searchParams, _] = useSearchParams();
   useTable();
   const { user } = useUser();
-  const { updating, setUpdating } = useTable();
 
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      try {
-        const response = await api.get(
-          `/school-admin/list${user?.perfil != "Admin" ? "?escolaId=" + user?.escola?.id : ""}`,
-          {},
-        );
+  const filters: FilterSchoolAdminOption = {};
 
-        if (response.status === 200) {
-          setData(response.data);
-        }
-      } catch (error) {
-        console.log(error);
-      } finally {
-        setLoading(false);
-      }
-    };
+  if (user?.perfil !== UserPerfilEnum.ADMIN) {
+    filters.escolaId = Number(user?.escolaId);
+  }
 
-    fetchData().then(() => setUpdating(false));
-  }, [user, updating, setUpdating]);
+  const { schoolAdminsQuery } = useSchoolAdmin({ filters });
+  const { data: schoolAdminsData, isLoading: isSchoolAdminsLoading } =
+    schoolAdminsQuery;
 
   return (
     <>
-      {loading ? (
+      {isSchoolAdminsLoading ? (
         <SkeletonTable rows={6} cols={SchoolUserColumns.length} />
       ) : (
         <DataTable
           columns={SchoolUserColumns}
-          data={data ?? []}
+          data={schoolAdminsData ?? []}
           {...{
             page: searchParams.get("page")
               ? parseInt(searchParams.get("page")!)

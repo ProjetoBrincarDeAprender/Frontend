@@ -2,7 +2,6 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { useTable } from "@/hooks/Table/useTable";
 import { useState } from "react";
-import { toast } from "sonner";
 import { TeacherEditForm } from "./TeacherEditForm";
 // interface EditSchoolModalProps {
 //   schoolId: number;
@@ -11,7 +10,6 @@ import { TeacherEditForm } from "./TeacherEditForm";
 interface EditTeacherModalProps {
   id: number;
   onSuccess?: () => void;
-
 }
 export function EditTeacherModal({ id }: EditTeacherModalProps) {
   const [isOpen, setIsOpen] = useState(false);
@@ -19,7 +17,6 @@ export function EditTeacherModal({ id }: EditTeacherModalProps) {
 
   const handleSuccess = () => {
     setIsOpen(false);
-    toast.success("Professor atualizado com sucesso!");
     setUpdating(true);
   };
 

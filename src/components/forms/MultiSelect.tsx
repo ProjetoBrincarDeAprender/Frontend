@@ -35,6 +35,12 @@ export function FancyMultiSelect({
   );
   const [inputValue, setInputValue] = React.useState("");
 
+  React.useEffect(() => {
+    if (preSelectedData !== undefined) {
+      setSelected(preSelectedData);
+    }
+  }, [preSelectedData]);
+
   const handleSelect = React.useCallback(
     (item: SelectItems) => {
       setSelected((prev) => {
@@ -62,52 +68,41 @@ export function FancyMultiSelect({
   );
 
   return (
-
     <>
       <Label>{label}</Label>
       <Command className="overflow-visible bg-transparent">
-        <div
-        className="
-          flex min-h-[52px] w-full flex-wrap items-center gap-2 rounded-lg px-6 py-2 text-base text-gray-800 bg-transparent
-          border border-purplish-blue
-          placeholder:text-gray-500
-          transition-colors ease-in-out duration-200
-          hover:border-purplish-blue
-          focus-within:outline-none focus-within:ring-2
-          disabled:cursor-not-allowed disabled:opacity-50"
-              
-      >
-            {selected.map((data) => {
-              return (
-                <Badge key={data.value} variant="secondary">
-                  {data.label}
-                  <button
-                    className="ring-offset-background focus:ring-ring ml-1 rounded-full outline-none focus:ring-2 focus:ring-offset-2"
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") {
-                        handleUnselect(data);
-                      }
-                    }}
-                    onMouseDown={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                    }}
-                    onClick={() => handleUnselect(data)}
-                  >
-                    <X className="text-muted-foreground hover:text-foreground h-3 w-3" />
-                  </button>
-                </Badge>
-              );
-            })}
-            <CommandPrimitive.Input
-              ref={inputRef}
-              value={inputValue}
-              onValueChange={setInputValue}
-              onBlur={() => setOpen(false)}
-              onFocus={() => setOpen(true)}
-              placeholder={placeholder}
-              className="flex-1 bg-transparent outline-none placeholder:text-gray-500 text-gray-800"
-            />
+        <div className="border-purplish-blue hover:border-purplish-blue flex min-h-[52px] w-full flex-wrap items-center gap-2 rounded-lg border bg-transparent px-6 py-2 text-base text-gray-800 transition-colors duration-200 ease-in-out placeholder:text-gray-500 focus-within:ring-2 focus-within:outline-none disabled:cursor-not-allowed disabled:opacity-50">
+          {selected.map((data) => {
+            return (
+              <Badge key={data.value} variant="secondary">
+                {data.label}
+                <button
+                  className="ring-offset-background focus:ring-ring ml-1 rounded-full outline-none focus:ring-2 focus:ring-offset-2"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      handleUnselect(data);
+                    }
+                  }}
+                  onMouseDown={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                  }}
+                  onClick={() => handleUnselect(data)}
+                >
+                  <X className="text-muted-foreground hover:text-foreground h-3 w-3" />
+                </button>
+              </Badge>
+            );
+          })}
+          <CommandPrimitive.Input
+            ref={inputRef}
+            value={inputValue}
+            onValueChange={setInputValue}
+            onBlur={() => setOpen(false)}
+            onFocus={() => setOpen(true)}
+            placeholder={placeholder}
+            className="flex-1 bg-transparent text-gray-800 outline-none placeholder:text-gray-500"
+          />
         </div>
         <div className="relative mt-2">
           <CommandList>
@@ -139,5 +134,5 @@ export function FancyMultiSelect({
         </div>
       </Command>
     </>
- );
+  );
 }

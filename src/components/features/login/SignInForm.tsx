@@ -4,10 +4,9 @@ import useAuth from "@/hooks/Auth/useAuth";
 import { useUser } from "@/hooks/User/useUser";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AxiosError } from "axios";
-import { Eye, EyeOff } from "lucide-react";
-import { useState } from "react";
+import { Eye, EyeOff, Loader2 } from "lucide-react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { toast } from "sonner";
 import z from "zod";
 
 const formSchema = z.object({
@@ -22,6 +21,8 @@ export default function SignInForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const { login, profile } = useAuth();
+  const { mutateAsync: loginUser, isPending } = login;
+  const { data: profileData } = profile;
   const { registerUser } = useUser();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -31,27 +32,20 @@ export default function SignInForm() {
     },
   });
 
+  useEffect(() => {
+    if (profileData) {
+      registerUser(profileData);
+    }
+  }, [profileData]);
+
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     if (isLoading) return;
     setIsLoading(true);
 
     try {
-      await login(data.login, data.senha);
-      const profileData = await profile();
+      await loginUser({ login: data.login, senha: data.senha });
 
-      if (profileData) {
-        registerUser({
-          codigo_usuario: profileData.codigo_usuario,
-          nome_completo: profileData.nome_completo,
-          email: profileData.email,
-          perfil: profileData.perfil,
-          escola: {
-            id: profileData.escolaId || null,
-            nome: profileData.escola || "",
-          },
-        });
-        toast.success("Login realizado com sucesso!");
-      }
+      registerUser(profileData || null);
     } catch (error) {
       if (error instanceof AxiosError) {
         const response = error.response;
@@ -119,7 +113,9 @@ export default function SignInForm() {
           )}
         />
 
-        <Form.Submit>Entrar</Form.Submit>
+        <Form.Submit disabled={isPending}>
+          {isPending ? <Loader2 className="animate-spin" /> : "Entrar"}
+        </Form.Submit>
       </Form.Main>
       <p className="mt-4 text-sm text-gray-600">
         Não lembra a sua senha?{" "}
