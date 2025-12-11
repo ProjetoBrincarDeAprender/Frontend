@@ -8,9 +8,8 @@ export type Activity = {
   id: number;
   titulo: string;
   tipo: string;
-  // competenceId: {
-  //   id: number;
-  // };
+  usuarioCriadorId?: number | string;
+  escolaId?: number | null;
   nivel_dificuldadeId: {
     id: number;
     nome: string;
@@ -21,19 +20,9 @@ export type Activity = {
     id: number;
     nome: string;
   };
-  // competencia_id?: number;
-  // nivel_dificuldade_inicial: number;
   deleted: boolean;
   deletedBy?: number;
   deleted_At?: string;
-  // competencia?: {
-  //   id: number;
-  //   nome: string;
-  // };
-  // nivelDificuldade?: {
-  //   id: number;
-  //   nome: string;
-  // };
 };
 
 export const ActivityColumns: ColumnDef<Activity>[] = [
@@ -73,42 +62,22 @@ export const ActivityColumns: ColumnDef<Activity>[] = [
       </Button>
     ),
   },
-  // {
-  //   accessorKey: "competenceId.nome",
-  //   header: ({ column }) => (
-  //     <Button
-  //       variant="ghost"
-  //       onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-  //     >
-  //       Competência
-  //       <ArrowUpDown className="ml-2 h-4 w-4" />
-  //     </Button>
-  //   ),
-  //   cell: ({ row }) => {
-  //     const competencia = row.original.competenciaId;
-  //     const competenceName = competencia?.nome || competencia?.nome || "Sem competência";
-
-  // return <span>{competenceName}</span>;
-  //   },
-  // },
-  // {
-  //   accessorKey: "initialDifficulty.nome",
-  //   header: ({ column }) => (
-  //     <Button
-  //       variant="ghost"
-  //       onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-  //     >
-  //       Nível de Dificuldade
-  //       <ArrowUpDown className="ml-2 h-4 w-4" />
-  //     </Button>
-  //   ),
-  //   cell: ({ row }) => {
-  //     const nivel = row.original.nivel_dificuldadeId;
-  //     const nivelName = nivel?.nome || nivel?.nome || "Sem nível definido";
-
-  //     return <span>{nivelName}</span>;
-  //   },
-  // },
+  {
+    accessorKey: "usuarioCriadorId",
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+      >
+        Criador (ID)
+        <ArrowUpDown className="ml-2 h-4 w-4" />
+      </Button>
+    ),
+    cell: ({ row }) => {
+      const criadorId = row.original.usuarioCriadorId;
+      return <span>{criadorId ?? "N/A"}</span>;
+    },
+  },
   {
     id: "actions",
     header: "Ações",

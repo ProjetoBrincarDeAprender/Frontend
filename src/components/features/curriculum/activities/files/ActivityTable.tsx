@@ -46,7 +46,32 @@ export default function ActivityTable() {
         const response = await api.get("/activity/list");
         
         if (response.status === 200) {
-          setData(response.data);
+          let activities = response.data;
+          
+          if (user?.perfil === "Professor") {
+            const userEscolaId = user?.escola?.id;
+            const userCodigo = user?.codigo_usuario;
+            
+            activities = activities.filter((activity: Activity) => {
+              if (!activity.usuarioCriadorId) {
+                return false;
+              }
+              
+              const criadorId = String(activity.usuarioCriadorId);
+              
+              if (userCodigo && criadorId === userCodigo) {
+                return true;
+              }
+              
+              if (userEscolaId && activity.escolaId === userEscolaId) {
+                return true;
+              }
+              
+              return false;
+            });
+          }
+          
+          setData(activities);
         }
       } catch (error) {
         console.error("Erro ao buscar dados:", error);
