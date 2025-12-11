@@ -1,10 +1,31 @@
 import { ACTIVITY_QUERY_KEY } from "@/hooks/Activity/useActivity";
-import type { Activity } from "@/types/activity";
+// import type { Activity } from "@/types/activity";
 import type { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown } from "lucide-react";
 import { Button } from "../../../../ui/button";
 import DeleteModal from "../../../../utils/DataTable/DeleteModal";
 import { EditActivityModal } from "../edit/ActivityEditModal";
+
+export type Activity = {
+  id: number;
+  titulo: string;
+  tipo: string;
+  usuarioCriadorId?: number | string;
+  escolaId?: number | null;
+  nivel_dificuldadeId: {
+    id: number;
+    nome: string;
+  };
+  created_At: string;
+  updated_At: string;
+  competenciaId: {
+    id: number;
+    nome: string;
+  };
+  deleted: boolean;
+  deletedBy?: number;
+  deleted_At?: string;
+};
 
 export const ActivityColumns: ColumnDef<Activity>[] = [
   {
@@ -43,42 +64,22 @@ export const ActivityColumns: ColumnDef<Activity>[] = [
       </Button>
     ),
   },
-  // {
-  //   accessorKey: "competenceId.nome",
-  //   header: ({ column }) => (
-  //     <Button
-  //       variant="ghost"
-  //       onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-  //     >
-  //       Competência
-  //       <ArrowUpDown className="ml-2 h-4 w-4" />
-  //     </Button>
-  //   ),
-  //   cell: ({ row }) => {
-  //     const competencia = row.original.competenciaId;
-  //     const competenceName = competencia?.nome || competencia?.nome || "Sem competência";
-
-  // return <span>{competenceName}</span>;
-  //   },
-  // },
-  // {
-  //   accessorKey: "initialDifficulty.nome",
-  //   header: ({ column }) => (
-  //     <Button
-  //       variant="ghost"
-  //       onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-  //     >
-  //       Nível de Dificuldade
-  //       <ArrowUpDown className="ml-2 h-4 w-4" />
-  //     </Button>
-  //   ),
-  //   cell: ({ row }) => {
-  //     const nivel = row.original.nivel_dificuldadeId;
-  //     const nivelName = nivel?.nome || nivel?.nome || "Sem nível definido";
-
-  //     return <span>{nivelName}</span>;
-  //   },
-  // },
+  {
+    accessorKey: "usuarioCriadorId",
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+      >
+        Criador (ID)
+        <ArrowUpDown className="ml-2 h-4 w-4" />
+      </Button>
+    ),
+    cell: ({ row }) => {
+      const criadorId = row.original.usuarioCriadorId;
+      return <span>{criadorId ?? "N/A"}</span>;
+    },
+  },
   {
     id: "actions",
     header: "Ações",

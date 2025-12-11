@@ -1,4 +1,5 @@
 import { QUESTION_QUERY_KEY, useQuestion } from "@/hooks/Question/useQuestion";
+import { useUser } from "@/hooks/User/useUser";
 import { useDelete } from "@/hooks/useDelete";
 import type { ColumnDef } from "@tanstack/react-table";
 import { useEffect, useState } from "react";
@@ -11,7 +12,6 @@ import DeleteModal from "@/components/utils/DataTable/DeleteModal";
 import useActivity from "@/hooks/Activity/useActivity";
 import type { Activity } from "@/types/activity";
 import type { Question } from "@/types/question";
-// import { EditQuestionModal } from "../edit/QuestionEditModal";
 
 interface CellContext {
   row: {
@@ -21,6 +21,7 @@ interface CellContext {
 
 export default function QuestionTable() {
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
+  const { user } = useUser();
 
   const { multiDeleteMutation } = useDelete({
     route: "/question/remove",
@@ -57,13 +58,39 @@ export default function QuestionTable() {
 
   useEffect(() => {
     if (questionsData && activitiesData) {
+      let filteredActivities = activitiesData;
+
+      if (user?.perfil === "Professor") {
+        const userEscolaId = user?.escolaId;
+        const userCodigo = user?.codigo_usuario;
+
+        filteredActivities = activitiesData.filter((activity: Activity) => {
+          if (!activity.usuarioCriadorId) {
+            return false;
+          }
+
+          const criadorId = String(activity.usuarioCriadorId);
+
+          if (userCodigo && criadorId === userCodigo) {
+            return true;
+          }
+
+          if (userEscolaId && activity.escolaId === userEscolaId) {
+            return true;
+          }
+
+          return false;
+        });
+      }
+
       const activitiesMap = new Map<number, Activity>();
-      activitiesData.forEach((activity: Activity) => {
+      filteredActivities.forEach((activity: Activity) => {
         activitiesMap.set(activity.id, activity);
       });
 
-      const enrichedQuestions: QuestionFormatted[] = questionsData?.map(
-        (question) => {
+      const enrichedQuestions: QuestionFormatted[] = questionsData
+        .filter((question) => activitiesMap.has(question.atividade_id))
+        .map((question) => {
           let content = "";
           if (question.conteudo) {
             if (
@@ -90,6 +117,7 @@ export default function QuestionTable() {
             content: content,
             ordem: question.ordem,
             activityId: question.atividade_id,
+            usuarioCriadorId: activity?.usuarioCriadorId,
             activity: activity
               ? {
                   id: activity.id,
@@ -103,7 +131,7 @@ export default function QuestionTable() {
 
       setFormattedQuestions(enrichedQuestions);
     }
-  }, [questionsData, activitiesData]);
+  }, [questionsData, activitiesData, user?.perfil, user?.codigo_usuario, user?.escolaId]);
 
   const columnsWithCheckbox: ColumnDef<QuestionFormatted>[] = [
     {
@@ -132,31 +160,48 @@ export default function QuestionTable() {
       if ((col as ColumnDef<Question>).id === "actions") {
         return {
           ...col,
-          cell: ({ row }: CellContext) => (
-            <div className="flex items-center justify-center gap-2">
-              <button
-                disabled={selectedIds.length > 0}
-                className={
-                  selectedIds.length > 0 ? "cursor-not-allowed opacity-50" : ""
-                }
-              >
-                {/* <EditQuestionModal id={row.original.id} /> */}
-              </button>
-              <button
-                disabled={selectedIds.length > 0}
-                className={
-                  selectedIds.length > 0 ? "cursor-not-allowed opacity-50" : ""
-                }
-              >
-                <DeleteModal
-                  route="/question/remove"
-                  id={row.original.id}
-                  entity="Questão"
-                  queryKey={QUESTION_QUERY_KEY}
-                />
-              </button>
-            </div>
-          ),
+          cell: ({ row }: CellContext) => {
+            const isOwner =
+              user?.perfil === "Admin" ||
+              String(row.original.usuarioCriadorId) === user?.codigo_usuario;
+            const isDisabled = selectedIds.length > 0 || !isOwner;
+
+            return (
+              <div className="flex items-center justify-center gap-2">
+                <button
+                  disabled={isDisabled}
+                  className={
+                    isDisabled ? "cursor-not-allowed opacity-50" : ""
+                  }
+                  title={
+                    !isOwner
+                      ? "Você não pode editar questões de outros usuários"
+                      : ""
+                  }
+                >
+                  {/* <EditQuestionModal id={row.original.id} /> */}
+                </button>
+                <button
+                  disabled={isDisabled}
+                  className={
+                    isDisabled ? "cursor-not-allowed opacity-50" : ""
+                  }
+                  title={
+                    !isOwner
+                      ? "Você não pode excluir questões de outros usuários"
+                      : ""
+                  }
+                >
+                  <DeleteModal
+                    route="/question/remove"
+                    id={row.original.id}
+                    entity="Questão"
+                    queryKey={QUESTION_QUERY_KEY}
+                  />
+                </button>
+              </div>
+            );
+          },
         };
       }
       return col;
