@@ -119,7 +119,7 @@ export function CreateActivityForm({
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     const payload = {
       template: "Template de Teste",
-      title: "Titulo de Teste",
+      title: data.title,
       type: "Jogo",
       competenceId: Number(data.competenceId),
       content: JSON.stringify({ text: data.content }),
@@ -127,13 +127,6 @@ export function CreateActivityForm({
       maxQuestions: 10,
       escolaId: 101,
     };
-
-    try {
-      await createActivity(payload);
-      form.reset();
-      setSelectedCompetence(null);
-      setCompetenceSearch("");
-    } catch (error) {}
 
     try {
       await createActivity(payload);
