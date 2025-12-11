@@ -10,6 +10,11 @@ export default function NotSelectedAct({
   isFormValid = false,
   selectedTemplate = "",
 }: NotSelectedActProps) {
+  console.log("NotSelectedAct - Props recebidas:", {
+    isFormValid,
+    selectedTemplate,
+  });
+
   const getTemplateName = (templateValue: string) => {
     switch (templateValue) {
       case "multiple_choice":

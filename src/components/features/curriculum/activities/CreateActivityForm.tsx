@@ -7,6 +7,7 @@ import { Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { useUser } from "@/hooks/User/useUser";
 
 const formSchema = z.object({
   title: z
@@ -22,6 +23,7 @@ const formSchema = z.object({
   content: z
     .string({ error: "Conteúdo é obrigatório" })
     .min(1, { error: "Conteúdo é obrigatório" }),
+  template: z.string().min(1, "Template é obrigatório"),
 });
 
 interface CreateActivityFormProps {
@@ -37,12 +39,16 @@ interface CompetenceWithArea {
   areaName?: string;
 }
 
-// const activityTypes = [
-//   { value: "Atividade", label: "Atividade" },
-//   { value: "Jogo", label: "Jogo" },
-// ];
+const activityTypes = [
+  { value: "Atividade", label: "Atividade" },
+  { value: "Jogo", label: "Jogo" },
+];
 
-export function CreateActivityForm({ onSuccess }: CreateActivityFormProps) {
+export function CreateActivityForm({
+  onSuccess,
+  onFormStateChange,
+}: CreateActivityFormProps) {
+  const { user } = useUser();
   const { create } = useCreateActivity();
   const {
     mutateAsync: createActivity,
@@ -69,11 +75,11 @@ export function CreateActivityForm({ onSuccess }: CreateActivityFormProps) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      // type: "",
-      // content: "",
       title: "",
+      type: "Jogo",
       competenceId: "",
       content: "",
+      template: "multiple_choice",
     },
   });
 
@@ -83,16 +89,51 @@ export function CreateActivityForm({ onSuccess }: CreateActivityFormProps) {
     }
   }, [isActivitySuccess, onSuccess]);
 
+  // Monitora o estado do formulário para comunicar se está completo
+  useEffect(() => {
+    const title = form.watch("title");
+    const competenceId = form.watch("competenceId");
+    const template = form.watch("template");
+
+    // Para simplificar, vamos só validar os campos essenciais
+    const isFormValid =
+      title.length >= 3 && competenceId !== "" && template !== "";
+
+    console.log("Estado do formulário:", {
+      title: title.length >= 3,
+      competenceId: competenceId !== "",
+      template: template !== "",
+      isFormValid,
+    });
+
+    if (onFormStateChange) {
+      onFormStateChange(isFormValid, template);
+    }
+  }, [
+    form.watch("title"),
+    form.watch("competenceId"),
+    form.watch("template"),
+    onFormStateChange,
+  ]);
+
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     const payload = {
-      titulo: data.title,
-      type: data.type,
+      template: "Template de Teste",
+      title: "Titulo de Teste",
+      type: "Jogo",
       competenceId: Number(data.competenceId),
-      content: JSON.stringify({ texto: data.content }),
-      nivel_dificuldade_inicial: 1,
-      quantQuestoes: 0,
-      creatorId: 0,
+      content: JSON.stringify({ text: data.content }),
+      creatorId: Number(user?.codigo_usuario),
+      maxQuestions: 10,
+      escolaId: 101,
     };
+
+    try {
+      await createActivity(payload);
+      form.reset();
+      setSelectedCompetence(null);
+      setCompetenceSearch("");
+    } catch (error) {}
 
     try {
       await createActivity(payload);
@@ -178,7 +219,7 @@ export function CreateActivityForm({ onSuccess }: CreateActivityFormProps) {
           )}
         />
 
-        {/* <Form.Field
+        <Form.Field
           form={form}
           name="type"
           render={({ field }) => (
@@ -190,7 +231,7 @@ export function CreateActivityForm({ onSuccess }: CreateActivityFormProps) {
               disabled={isActivityPending}
             />
           )}
-        /> */}
+        />
 
         <div className="relative space-y-2">
           <label className="text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
@@ -324,7 +365,7 @@ export function CreateActivityForm({ onSuccess }: CreateActivityFormProps) {
           )}
         />
 
-        {/* <Form.Field
+        <Form.Field
           form={form}
           name="content"
           render={({ field }) => (
@@ -343,7 +384,7 @@ export function CreateActivityForm({ onSuccess }: CreateActivityFormProps) {
               </p>
             </div>
           )}
-        /> */}
+        />
 
         <Form.Submit
           disabled={isActivityPending || isCompetencesLoading}

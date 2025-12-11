@@ -10,6 +10,7 @@ export default function CreateActivityPage() {
   const [selectedTemplate, setSelectedTemplate] = useState<string>("");
 
   const handleFormStateChange = (isValid: boolean, template?: string) => {
+    console.log("handleFormStateChange chamado:", { isValid, template });
     setIsFormValid(isValid);
     setSelectedTemplate(template || "");
   };
