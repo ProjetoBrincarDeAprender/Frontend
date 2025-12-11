@@ -14,6 +14,7 @@ export const GameQuestions = [
     ["natal.png", "carnaval.png", "festaJunina.png", "independencia.png"],
     "Natal",
     "easy",
+    68,
   ),
   new ComDatesLevel(
     "Qual DESTES feriados acontece em Setembro?",
@@ -21,6 +22,7 @@ export const GameQuestions = [
     ["independencia.png", "natal.png", "diaDasCriancas.png", "tiradentes.png"],
     "Independência",
     "easy",
+    69,
   ),
   new ComDatesLevel(
     "Qual DESTES feriados acontece em Outubro?",
@@ -28,6 +30,7 @@ export const GameQuestions = [
     ["diaDasCriancas.png", "natal.png", "carnaval.png", "festaJunina.png"],
     "Dia das Crianças",
     "easy",
+    70,
   ),
   new ComDatesLevel(
     "Qual DESTAS festas acontece em Junho?",
@@ -35,6 +38,7 @@ export const GameQuestions = [
     ["festaJunina.png", "carnaval.png", "natal.png", "independencia.png"],
     "Festa Junina",
     "easy",
+    71,
   ),
   new ComDatesLevel(
     "Qual DESTAS festas acontece em Fevereiro ou Março?",
@@ -42,6 +46,7 @@ export const GameQuestions = [
     ["carnaval.png", "festaJunina.png", "natal.png", "diaDasCriancas.png"],
     "Carnaval",
     "easy",
+    72,
   ),
 
   // Nível 2 - Associações sobre as datas comemorativas (respostas com imagem)
@@ -51,6 +56,7 @@ export const GameQuestions = [
     ["festaJunina.png", "carnaval.png", "natal.png", "independencia.png"],
     "JUNHO",
     "medium",
+    73,
   ),
   new ComDatesLevel(
     "Que data celebramos a Proclamação da República?",
@@ -63,6 +69,7 @@ export const GameQuestions = [
     ],
     "15 de Novembro",
     "medium",
+    74,
   ),
   new ComDatesLevel(
     "Quando é o Dia do Índio no Brasil?",
@@ -75,6 +82,7 @@ export const GameQuestions = [
     ],
     "19 de Abril",
     "medium",
+    75,
   ),
   new ComDatesLevel(
     "Qual data comemoramos o Dia das Mães?",
@@ -87,6 +95,7 @@ export const GameQuestions = [
     ["diaDasMaes.png", "consciencia.png", "diaDasCriancas.png", "natal.png"],
     "Segundo domingo de Maio",
     "medium",
+    76,
   ),
   new ComDatesLevel(
     "Quando comemoramos o Dia da Consciência Negra?",
@@ -99,6 +108,7 @@ export const GameQuestions = [
     ],
     "20 de Novembro",
     "medium",
+    77,
   ),
 
   // Nível 3 - Perguntas sobre mês e conceitos simples (apenas texto)
@@ -108,6 +118,7 @@ export const GameQuestions = [
     null,
     "Dezembro",
     "hard",
+    78,
   ),
   new ComDatesLevel(
     "Em que mês é o Dia do Soldado?",
@@ -115,6 +126,7 @@ export const GameQuestions = [
     null,
     "Agosto",
     "hard",
+    79,
   ),
   new ComDatesLevel(
     "Que dia é o Dia do Trabalho?",
@@ -122,6 +134,7 @@ export const GameQuestions = [
     null,
     "1 de Maio",
     "hard",
+    80,
   ),
   new ComDatesLevel(
     "Em que mês acontecem as Festas Juninas?",
@@ -129,6 +142,7 @@ export const GameQuestions = [
     null,
     "Junho",
     "hard",
+    81,
   ),
   new ComDatesLevel(
     "Qual o dia e mês que o Brasil comemora sua Independência?",
@@ -136,6 +150,7 @@ export const GameQuestions = [
     null,
     "7 de Setembro",
     "hard",
+    82,
   ),
 ]; /**
  * Função que agrupa as questões por dificuldade, criando níveis
