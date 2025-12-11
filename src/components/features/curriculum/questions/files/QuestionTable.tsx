@@ -23,6 +23,8 @@ interface Activity {
   titulo: string;
   descricao?: string;
   tipo?: string;
+  usuarioCriadorId?: number | string;
+  escolaId?: number | null;
 }
 
 interface QuestionApiResponse {
@@ -76,48 +78,71 @@ export default function QuestionTable() {
         if (questionsResponse.status === 200) {
           const questionsData: QuestionApiResponse[] = questionsResponse.data || [];
           
-          // Criar mapa de atividades
+          let filteredActivities = activitiesResponse.data || [];
+          
+          if (user?.perfil === "Professor") {
+            const userEscolaId = user?.escola?.id;
+            const userCodigo = user?.codigo_usuario;
+            
+            filteredActivities = filteredActivities.filter((activity: Activity) => {
+              if (!activity.usuarioCriadorId) {
+                return false;
+              }
+              
+              const criadorId = String(activity.usuarioCriadorId);
+              
+              if (userCodigo && criadorId === userCodigo) {
+                return true;
+              }
+              
+              if (userEscolaId && activity.escolaId === userEscolaId) {
+                return true;
+              }
+              
+              return false;
+            });
+          }
+          
           const activitiesMap = new Map<number, Activity>();
-          if (activitiesResponse.status === 200 && activitiesResponse.data) {
-            activitiesResponse.data.forEach((activity: Activity) => {
+          if (activitiesResponse.status === 200 && filteredActivities) {
+            filteredActivities.forEach((activity: Activity) => {
               activitiesMap.set(activity.id, activity);
             });
           }
           
-          // Mapear e enriquecer os dados das questões
-          const enrichedQuestions: Question[] = questionsData.map((question) => {
-            // Extrair conteúdo
-            let content = "";
-            if (question.conteudo) {
-              if (typeof question.conteudo === 'object' && question.conteudo.texto) {
-                content = question.conteudo.texto;
-              } else if (typeof question.conteudo === 'string') {
-                // Se for uma string JSON, tentar fazer parse
-                try {
-                  const parsed = JSON.parse(question.conteudo);
-                  content = parsed.texto || question.conteudo;
-                } catch {
-                  content = question.conteudo;
+          const enrichedQuestions: Question[] = questionsData
+            .filter((question) => activitiesMap.has(question.atividade_id))
+            .map((question) => {
+              let content = "";
+              if (question.conteudo) {
+                if (typeof question.conteudo === 'object' && question.conteudo.texto) {
+                  content = question.conteudo.texto;
+                } else if (typeof question.conteudo === 'string') {
+                  try {
+                    const parsed = JSON.parse(question.conteudo);
+                    content = parsed.texto || question.conteudo;
+                  } catch {
+                    content = question.conteudo;
+                  }
                 }
               }
-            }
-            
-            // Buscar dados da atividade
-            const activity = activitiesMap.get(question.atividade_id);
-            
-            return {
-              id: question.id,
-              content: content,
-              ordem: question.ordem,
-              activityId: question.atividade_id,
-              activity: activity ? {
-                id: activity.id,
-                titulo: activity.titulo
-              } : undefined,
-              createdAt: question.created_At || "",
-              updatedAt: question.updated_At || "",
-            };
-          });
+              
+              const activity = activitiesMap.get(question.atividade_id);
+              
+              return {
+                id: question.id,
+                content: content,
+                ordem: question.ordem,
+                activityId: question.atividade_id,
+                usuarioCriadorId: activity?.usuarioCriadorId,
+                activity: activity ? {
+                  id: activity.id,
+                  titulo: activity.titulo
+                } : undefined,
+                createdAt: question.created_At || "",
+                updatedAt: question.updated_At || "",
+              };
+            });
           
           setData(enrichedQuestions);
         } else {

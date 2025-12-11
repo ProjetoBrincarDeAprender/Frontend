@@ -9,6 +9,7 @@ export type Question = {
   content: string;
   ordem: number;
   activityId: number;
+  usuarioCriadorId?: number | string;
   activity?: {
     id: number;
     titulo: string;
@@ -103,6 +104,22 @@ export const QuestionColumns: ColumnDef<Question>[] = [
           </span>
         </div>
       );
+    },
+  },
+  {
+    accessorKey: "usuarioCriadorId",
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+      >
+        Criador (ID)
+        <ArrowUpDown className="ml-2 h-4 w-4" />
+      </Button>
+    ),
+    cell: ({ row }) => {
+      const criadorId = row.original.usuarioCriadorId;
+      return <span>{criadorId ?? "N/A"}</span>;
     },
   },
   {
