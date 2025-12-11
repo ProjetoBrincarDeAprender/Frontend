@@ -6,6 +6,7 @@ export default class HygieneLevel extends Level {
   private optionsImages: string[] | null;
   private difficulty: string;
   private actionImage: string | null;
+  private questionId: number;
 
   constructor(
     question: string,
@@ -13,6 +14,7 @@ export default class HygieneLevel extends Level {
     optionsImages: string[] | null,
     answer: string,
     difficulty: string,
+    questionId: number,
     actionImage: string | null = null,
   ) {
     super(question, answer); // Chama o construtor da classe pai
@@ -21,6 +23,7 @@ export default class HygieneLevel extends Level {
     this.optionsImages = optionsImages;
     this.difficulty = difficulty;
     this.actionImage = actionImage;
+    this.questionId = questionId;
   }
 
   getQuestion(): string {
@@ -41,6 +44,10 @@ export default class HygieneLevel extends Level {
 
   getActionImage(): string | null {
     return this.actionImage;
+  }
+
+  getQuestionId(): number {
+    return this.questionId;
   }
 
   hasImages(): boolean {
