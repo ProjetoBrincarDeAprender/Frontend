@@ -19,6 +19,7 @@ export type MemoryCard = {
 
 export class MemoryGameLevel extends Level {
   private _cards: MemoryCard[];
+  private questionId: number;
   public get cards(): MemoryCard[] {
     return this._cards;
   }
@@ -36,9 +37,15 @@ export class MemoryGameLevel extends Level {
     return this._cardsQuantity;
   }
 
-  constructor(name: string, cardPairs: MemoryCard[], correctAnswer?: string) {
+  constructor(
+    name: string,
+    cardPairs: MemoryCard[],
+    questionId: number,
+    correctAnswer?: string,
+  ) {
     super(name, correctAnswer || "pass");
     this._cardsQuantity = cardPairs.length * 2;
+    this.questionId = questionId;
 
     this._cards = cardPairs.flatMap((card) => [card, { ...card }]);
   }
@@ -47,6 +54,7 @@ export class MemoryGameLevel extends Level {
     name: string,
     cardsQuantity: number,
     cardImages: string[],
+    questionId: number,
     correctAnswer?: string,
   ): MemoryGameLevel {
     const cardPairs: MemoryCard[] = Array.from(
@@ -58,7 +66,7 @@ export class MemoryGameLevel extends Level {
       }),
     );
 
-    return new MemoryGameLevel(name, cardPairs, correctAnswer);
+    return new MemoryGameLevel(name, cardPairs, questionId, correctAnswer);
   }
 
   static createRandomLevel(
@@ -93,6 +101,7 @@ export class MemoryGameLevel extends Level {
       "9",
       "10",
     ],
+    questionId: number,
     correctAnswer?: string,
   ): MemoryGameLevel {
     const cardPairs: MemoryCard[] = [];
@@ -120,6 +129,10 @@ export class MemoryGameLevel extends Level {
       }
     }
 
-    return new MemoryGameLevel(name, cardPairs, correctAnswer);
+    return new MemoryGameLevel(name, cardPairs, questionId, correctAnswer);
+  }
+
+  getQuestionId(): number {
+    return this.questionId;
   }
 }
