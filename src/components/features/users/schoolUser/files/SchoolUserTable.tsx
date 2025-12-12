@@ -1,6 +1,5 @@
 import { SkeletonTable } from "@/components/ui/skeleton-table";
 import { useSchoolAdmin } from "@/hooks/SchoolAdmin/useSchoolAdmin";
-import { useTable } from "@/hooks/Table/useTable";
 import { useUser } from "@/hooks/User/useUser";
 import type { FilterSchoolAdminOption } from "@/types/filter";
 import { UserPerfilEnum } from "@/types/user";
@@ -9,11 +8,17 @@ import { DataTable } from "../../../../utils/DataTable/DataTable";
 import { SchoolUserColumns } from "./TableData";
 
 export default function SchoolUserTable() {
-  const [searchParams, _] = useSearchParams();
-  useTable();
+  const [searchParams, setSearchParams] = useSearchParams();
   const { user } = useUser();
 
-  const filters: FilterSchoolAdminOption = {};
+  // Get pagination params from URL
+  const page = Number(searchParams.get("page")) || 1;
+  const pageSize = Number(searchParams.get("pageSize")) || 10;
+
+  const filters: FilterSchoolAdminOption = {
+    page,
+    limit: pageSize as 10 | 25 | 50 | 100 | 500,
+  };
 
   if (user?.perfil !== UserPerfilEnum.ADMIN) {
     filters.escolaId = Number(user?.escolaId);
@@ -23,6 +28,17 @@ export default function SchoolUserTable() {
   const { data: schoolAdminsData, isLoading: isSchoolAdminsLoading } =
     schoolAdminsQuery;
 
+  // Handle pagination change
+  const handlePaginationChange = (pagination: {
+    pageIndex: number;
+    pageSize: number;
+  }) => {
+    setSearchParams({
+      page: String(pagination.pageIndex + 1), // Convert from 0-based to 1-based
+      pageSize: String(pagination.pageSize),
+    });
+  };
+
   return (
     <>
       {isSchoolAdminsLoading ? (
@@ -30,12 +46,14 @@ export default function SchoolUserTable() {
       ) : (
         <DataTable
           columns={SchoolUserColumns}
-          data={schoolAdminsData ?? []}
-          {...{
-            page: searchParams.get("page")
-              ? parseInt(searchParams.get("page")!)
-              : 0,
+          data={schoolAdminsData?.data ?? []}
+          manualPagination
+          pageCount={schoolAdminsData?.meta.totalPages}
+          pagination={{
+            pageIndex: page - 1, // Convert from 1-based to 0-based
+            pageSize,
           }}
+          onPaginationChange={handlePaginationChange}
         />
       )}
     </>

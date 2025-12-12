@@ -5,6 +5,7 @@ import {
   getCoreRowModel,
   getFilteredRowModel,
   getSortedRowModel,
+  type PaginationState,
   type SortingState,
   useReactTable,
 } from "@tanstack/react-table";
@@ -25,24 +26,41 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { useState, useMemo } from "react";
+import { useMemo, useState } from "react";
 import { DataTablePagination } from "./DataTablePagination";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
-  page?: number;
   renderExtra?: () => React.ReactNode;
+  // Server-side pagination props
+  pageCount?: number;
+  pagination?: PaginationState;
+  onPaginationChange?: (pagination: PaginationState) => void;
+  manualPagination?: boolean;
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
   renderExtra,
+  pageCount,
+  pagination: controlledPagination,
+  onPaginationChange,
+  manualPagination = false,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-  
+
+  // Local pagination state (used when not in manual mode)
+  const [localPagination, setLocalPagination] = useState<PaginationState>({
+    pageIndex: 0,
+    pageSize: 10,
+  });
+
+  // Use controlled pagination if provided, otherwise local
+  const pagination = controlledPagination || localPagination;
+
   // Detectar colunas disponíveis automaticamente
   const availableColumns = useMemo(() => {
     const cols = columns
@@ -53,30 +71,51 @@ export function DataTable<TData, TValue>({
         };
         return colDef.accessorKey || colDef.id;
       })
-      .filter((id): id is string => Boolean(id) && id !== "actions" && id !== "select");
-    
+      .filter(
+        (id): id is string =>
+          Boolean(id) && id !== "actions" && id !== "select",
+      );
+
     return cols;
   }, [columns]);
-  
+
   const [selectedColumn, setSelectedColumn] = useState<string>(
-    availableColumns[0] || "id"
+    availableColumns[0] || "id",
   );
 
   const table = useReactTable({
     data,
     columns,
+    pageCount: manualPagination ? pageCount : undefined,
     getCoreRowModel: getCoreRowModel(),
     onSortingChange: setSorting,
     getSortedRowModel: getSortedRowModel(),
     onColumnFiltersChange: setColumnFilters,
     getFilteredRowModel: getFilteredRowModel(),
+    // Pagination configuration
+    manualPagination,
+    onPaginationChange: (updaterOrValue) => {
+      const newPagination =
+        typeof updaterOrValue === "function"
+          ? updaterOrValue(pagination)
+          : updaterOrValue;
+
+      if (onPaginationChange) {
+        onPaginationChange(newPagination);
+      } else {
+        setLocalPagination(newPagination);
+      }
+    },
     state: {
       sorting,
       columnFilters,
+      pagination,
     },
   });
   const columnExists = table.getColumn(selectedColumn);
-  const effectiveSelectedColumn = columnExists ? selectedColumn : availableColumns[0];
+  const effectiveSelectedColumn = columnExists
+    ? selectedColumn
+    : availableColumns[0];
   const getColumnDisplayName = (columnId: string) => {
     const columnMap: Record<string, string> = {
       id: "ID",
@@ -94,8 +133,11 @@ export function DataTable<TData, TValue>({
       created_At: "Criado em",
       createdAt: "Criado em",
     };
-    
-    return columnMap[columnId] || columnId.charAt(0).toUpperCase() + columnId.slice(1).replace(/[._]/g, " ");
+
+    return (
+      columnMap[columnId] ||
+      columnId.charAt(0).toUpperCase() + columnId.slice(1).replace(/[._]/g, " ")
+    );
   };
 
   return (
@@ -104,7 +146,9 @@ export function DataTable<TData, TValue>({
         <Input
           placeholder={`Filtrar por ${getColumnDisplayName(effectiveSelectedColumn)}`}
           value={
-            (table.getColumn(effectiveSelectedColumn)?.getFilterValue() as string) ?? ""
+            (table
+              .getColumn(effectiveSelectedColumn)
+              ?.getFilterValue() as string) ?? ""
           }
           onChange={(event) => {
             if (effectiveSelectedColumn) {

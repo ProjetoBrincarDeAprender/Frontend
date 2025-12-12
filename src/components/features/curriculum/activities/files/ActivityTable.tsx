@@ -11,6 +11,7 @@ import { ActivityColumns } from "./TableData";
 import { SkeletonTable } from "@/components/ui/skeleton-table";
 import DeleteModal from "@/components/utils/DataTable/DeleteModal";
 import type { Activity } from "@/types/activity";
+import type { FilterActivityOption } from "@/types/filter";
 import { EditActivityModal } from "../edit/ActivityEditModal";
 
 interface CellContext {
@@ -36,20 +37,41 @@ export default function ActivityTable() {
     setUpdating(true);
   };
 
-  const [searchParams, _] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const { setUpdating } = useTable();
   const { user } = useUser();
 
-  const { activitiesQuery } = useActivity({});
+  // Get pagination params from URL
+  const page = Number(searchParams.get("page")) || 1;
+  const pageSize = Number(searchParams.get("pageSize")) || 10;
+
+  const filters: FilterActivityOption = {
+    page,
+    limit: pageSize as 10 | 25 | 50 | 100 | 500,
+  };
+
+  const { activitiesQuery } = useActivity({ filters });
   const { data: allActivities, isLoading: loading } = activitiesQuery;
 
+  // Handle pagination change
+  const handlePaginationChange = (pagination: {
+    pageIndex: number;
+    pageSize: number;
+  }) => {
+    setSearchParams({
+      page: String(pagination.pageIndex + 1),
+      pageSize: String(pagination.pageSize),
+    });
+    setSelectedIds([]);
+  };
+
   const filteredData = useMemo(() => {
-    if (!allActivities) return [];
+    if (!allActivities?.data) return [];
 
     if (user?.perfil === "Professor") {
       const userEscolaId = user?.escolaId;
 
-      return allActivities.filter((activity) => {
+      return allActivities.data.filter((activity) => {
         // Mostrar apenas atividades da mesma escola
         if (userEscolaId && activity.escolaId === userEscolaId) {
           return true;
@@ -59,7 +81,7 @@ export default function ActivityTable() {
       });
     }
 
-    return allActivities;
+    return allActivities.data;
   }, [allActivities, user]);
 
   const columnsWithCheckbox = [
@@ -101,9 +123,7 @@ export default function ActivityTable() {
               <div className="flex items-center justify-center gap-2">
                 <button
                   disabled={isDisabled}
-                  className={
-                    isDisabled ? "cursor-not-allowed opacity-50" : ""
-                  }
+                  className={isDisabled ? "cursor-not-allowed opacity-50" : ""}
                   title={
                     !isOwner
                       ? "Você não pode editar atividades de outros usuários"
@@ -114,9 +134,7 @@ export default function ActivityTable() {
                 </button>
                 <button
                   disabled={isDisabled}
-                  className={
-                    isDisabled ? "cursor-not-allowed opacity-50" : ""
-                  }
+                  className={isDisabled ? "cursor-not-allowed opacity-50" : ""}
                   title={
                     !isOwner
                       ? "Você não pode excluir atividades de outros usuários"
@@ -147,9 +165,13 @@ export default function ActivityTable() {
         <DataTable
           columns={columnsWithCheckbox}
           data={filteredData ?? []}
-          page={
-            searchParams.get("page") ? parseInt(searchParams.get("page")!) : 0
-          }
+          manualPagination
+          pageCount={allActivities?.meta.totalPages}
+          pagination={{
+            pageIndex: page - 1,
+            pageSize,
+          }}
+          onPaginationChange={handlePaginationChange}
           renderExtra={() =>
             selectedIds.length > 0 && !loading ? (
               <button

@@ -1,11 +1,12 @@
 import type { Activity } from "@/types/activity";
 import type { FilterActivityOption } from "@/types/filter";
+import type { PaginationMeta } from "@/types/pagination";
 import api from "@/utils/api";
 import { useQuery } from "@tanstack/react-query";
 
 async function fetchActivities(
   filters?: FilterActivityOption,
-): Promise<Activity[]> {
+): Promise<{ data: Activity[]; meta: PaginationMeta }> {
   try {
     const queryParams = new URLSearchParams(
       filters as Record<string, string>,
