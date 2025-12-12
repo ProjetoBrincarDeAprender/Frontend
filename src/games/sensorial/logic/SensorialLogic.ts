@@ -527,7 +527,7 @@ export default class SensorialLogic {
     const apiService = new APIDataService(this.scene);
     const uniqueQuestionIndex = this.getUniqueQuestionIndex();
 
-    apiService.sendGameData(this.activityId || 6, uniqueQuestionIndex, {
+    apiService.sendGameData(this.activityId || 8, uniqueQuestionIndex, {
       attempts: this.gameStats.getCurrentLevelMisses(),
       timeSpent: this.gameStats.getCurrentLevelTimeSpent(this.scene.time.now),
       isCorrect: true,
@@ -565,11 +565,7 @@ export default class SensorialLogic {
   }
 
   private getUniqueQuestionIndex(): number {
-    return (
-      this.currentLevelIndex * this.gameLevels[0].questions.length +
-      this.currentQuestionIndex +
-      1
-    );
+    return this.getCurrentQuestion().getQuestionId();
   }
 
   goToNextLevel(): void {
@@ -609,7 +605,7 @@ export default class SensorialLogic {
     const apiService = new APIDataService(this.scene);
     const uniqueQuestionIndex = this.getUniqueQuestionIndex();
 
-    apiService.sendGameData(this.activityId || 6, uniqueQuestionIndex, {
+    apiService.sendGameData(this.activityId || 8, uniqueQuestionIndex, {
       attempts: this.gameStats.getCurrentLevelMisses(),
       timeSpent: this.gameStats.getCurrentLevelTimeSpent(this.scene.time.now),
       isCorrect: false,
