@@ -1,10 +1,13 @@
 import { Form } from "@/components/forms/Root";
 import { PasswordInput } from "@/components/ui/password-input";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Link } from "@/components/utils/Link/Link";
-import api from "@/utils/api";
+import { useSchool } from "@/hooks/School/useSchool";
+import { useCreateSchoolAdmin } from "@/hooks/SchoolAdmin/useCreateSchoolAdmin";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AxiosError } from "axios";
-import { useEffect, useState } from "react";
+import { Loader2 } from "lucide-react";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import type { SignUpFormProps } from "../../common/signUpFormProps";
@@ -51,29 +54,18 @@ export default function SchoolUserSignUpForm({ onSuccess }: SignUpFormProps) {
       confirmar_senha: "",
     },
   });
-  const [schools, setSchools] = useState<{ id: number; nome: string }[] | null>(
-    null,
-  );
+
+  const { create: createSchoolAdminMutation } = useCreateSchoolAdmin();
+  const { mutateAsync, isPending, isSuccess } = createSchoolAdminMutation;
+
+  const { schoolsQuery } = useSchool({});
+  const { data: schoolsData, isLoading: isSchoolsLoading } = schoolsQuery;
 
   useEffect(() => {
-    const fetchSchools = async () => {
-      try {
-        const response = await api.get("/school/list");
-
-        if (response.status === 200) {
-          setSchools(response.data);
-        }
-      } catch (error) {
-        if (error instanceof AxiosError) {
-          form.setError("root", {
-            message: `Erro ao carregar escolas: ${error.message}`,
-          });
-        }
-      }
-    };
-
-    fetchSchools();
-  }, [form]);
+    if (isSuccess) {
+      onSuccess();
+    }
+  }, [isSuccess, onSuccess]);
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     const payload = {
@@ -82,11 +74,7 @@ export default function SchoolUserSignUpForm({ onSuccess }: SignUpFormProps) {
     };
 
     try {
-      const response = await api.post("/school-admin/register", payload);
-
-      if (response.status === 201) {
-        onSuccess();
-      }
+      await mutateAsync(payload);
     } catch (error) {
       if (error instanceof AxiosError) {
         const response = error.response;
@@ -121,84 +109,96 @@ export default function SchoolUserSignUpForm({ onSuccess }: SignUpFormProps) {
         onSubmit={onSubmit}
         className="flex flex-col gap-4"
       >
-        <Form.Field
-          form={form}
-          name="nome_completo"
-          render={({ field }) => (
-            <Form.Input
-              {...field}
-              label="Nome Completo"
-              placeholder="Insira seu nome completo"
+        {isSchoolsLoading ? (
+          <>
+            <Skeleton className="h-10 w-full" />
+            <Skeleton className="h-10 w-full" />
+            <Skeleton className="h-10 w-full" />
+            <Skeleton className="h-10 w-full" />
+            <Skeleton className="h-10 w-full" />
+          </>
+        ) : (
+          <>
+            <Form.Field
+              form={form}
+              name="nome_completo"
+              render={({ field }) => (
+                <Form.Input
+                  {...field}
+                  label="Nome Completo"
+                  placeholder="Insira seu nome completo"
+                />
+              )}
             />
-          )}
-        />
-        <Form.Field
-          form={form}
-          name="email"
-          render={({ field }) => (
-            <Form.Input
-              {...field}
-              label="Email"
-              placeholder="exemplo@gmail.com"
+            <Form.Field
+              form={form}
+              name="email"
+              render={({ field }) => (
+                <Form.Input
+                  {...field}
+                  label="Email"
+                  placeholder="exemplo@gmail.com"
+                />
+              )}
             />
-          )}
-        />
-        {schools && (
-          <Form.Field
-            form={form}
-            name="escolaId"
-            render={({ field }) => (
-              <Form.Select
-                {...field}
-                label="Escola"
-                placeholder="Selecione a Escola"
-                options={schools.map((school) => ({
-                  value: String(school.id),
-                  label: school.nome,
-                }))}
-              />
-            )}
-          />
+            <Form.Field
+              form={form}
+              name="escolaId"
+              render={({ field }) => (
+                <Form.Select
+                  {...field}
+                  label="Escola"
+                  placeholder="Selecione a Escola"
+                  options={schoolsData!.map((school) => ({
+                    value: String(school.id),
+                    label: school.nome,
+                  }))}
+                />
+              )}
+            />
+            <Form.Field
+              form={form}
+              name="senha"
+              render={({ field, fieldState }) => (
+                <>
+                  <PasswordInput
+                    {...field}
+                    label="Senha"
+                    placeholder="Senha"
+                    type="password"
+                  />
+                  {fieldState.error && (
+                    <p className="text-sm text-red-600">
+                      {fieldState.error.message}
+                    </p>
+                  )}
+                </>
+              )}
+            />
+            <Form.Field
+              form={form}
+              name="confirmar_senha"
+              render={({ field, fieldState }) => (
+                <>
+                  <PasswordInput
+                    {...field}
+                    label="Confirmar Senha"
+                    placeholder="Confirmar Senha"
+                    type="password"
+                  />
+                  {fieldState.error && (
+                    <p className="text-sm text-red-600">
+                      {fieldState.error.message}
+                    </p>
+                  )}
+                </>
+              )}
+            />
+            <Form.Submit disabled={isPending}>
+              {isPending ? <Loader2 className="animate-spin" /> : "Criar Conta"}
+            </Form.Submit>
+          </>
         )}
-        <Form.Field
-          form={form}
-          name="senha"
-          render={({ field, fieldState }) => (
-            <>
-              <PasswordInput
-                {...field}
-                label="Senha"
-                placeholder="Senha"
-                type="password"
-              />
-              {fieldState.error && (
-                <p className="text-sm text-red-600">
-                  {fieldState.error.message}
-                </p>
-              )}
-            </>
-          )}
-        />
-        <Form.Field
-          form={form}
-          name="confirmar_senha"
-          render={({ field, fieldState }) => (
-            <>
-              <PasswordInput
-                {...field}
-                label="Confirmar Senha"
-                placeholder="Confirmar Senha"
-                type="password"
-              />
-              {fieldState.error && (
-                <p className="text-sm text-red-600">
-                  {fieldState.error.message}
-                </p>
-              )}
-            </>
-          )}
-        />
-        <Form.Submit>Criar Conta</Form.Submit>
       </Form.Main>
       <p className="mt-6 w-full text-center text-lg">
         O administrador já possui uma conta?{" "}

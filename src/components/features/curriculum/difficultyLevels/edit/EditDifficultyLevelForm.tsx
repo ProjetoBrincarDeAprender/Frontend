@@ -1,9 +1,10 @@
 import { Form } from "@/components/forms/Root";
-import { useTable } from "@/hooks/Table/useTable";
-import api from "@/utils/api";
+import { useDifficultyLevel } from "@/hooks/DificultyLevel/useDifficultyLevel";
+import { useUpdateDifficultyLevel } from "@/hooks/DificultyLevel/useUpdateDifficultyLevel";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AxiosError } from "axios";
-import { useEffect, useState } from "react";
+import { Loader2 } from "lucide-react";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -19,7 +20,24 @@ type EditDifficultyLevelFormProps = {
   onSuccess: () => void;
 };
 
-export function EditDifficultyLevelForm({ id, onSuccess }: EditDifficultyLevelFormProps) {
+export function EditDifficultyLevelForm({
+  id,
+  onSuccess,
+}: EditDifficultyLevelFormProps) {
+  const { difficultyLevelQuery } = useDifficultyLevel({ id });
+  const {
+    data: difficultyLevelData,
+    isLoading: isDifficultyLevelLoading,
+    isError: isDifficultyLevelError,
+  } = difficultyLevelQuery;
+
+  const { update: updateDifficultyLevelMutation } = useUpdateDifficultyLevel();
+  const {
+    mutateAsync: updateDifficultyLevel,
+    isPending: isDifficultyLevelPending,
+    isSuccess: isDifficultyLevelSuccess,
+  } = updateDifficultyLevelMutation;
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -27,31 +45,20 @@ export function EditDifficultyLevelForm({ id, onSuccess }: EditDifficultyLevelFo
     },
   });
 
-  const { setUpdating } = useTable();
-  const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    if (difficultyLevelData) {
+      const levelData = {
+        name: difficultyLevelData.nome || "",
+      };
+      form.reset(levelData);
+    }
+  }, [difficultyLevelData, form]);
 
   useEffect(() => {
-    const fetchDifficultyLevelData = async () => {
-      try {
-        const response = await api.get(`/difficulty-level/list/${id}`);
-
-        if (response.status === 200) {
-          const levelData = {
-            name: response.data.nome || "",
-          };
-          form.reset(levelData);
-        }
-      } catch (error) {
-        if (error instanceof AxiosError) {
-          console.error("Erro ao buscar dados do nível de dificuldade:", error.message);
-        }
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchDifficultyLevelData();
-  }, [id, form]);
+    if (isDifficultyLevelSuccess) {
+      onSuccess();
+    }
+  }, [isDifficultyLevelSuccess, onSuccess]);
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     const cleanData = {
@@ -59,21 +66,19 @@ export function EditDifficultyLevelForm({ id, onSuccess }: EditDifficultyLevelFo
     };
 
     try {
-      const response = await api.put(`/difficulty-level/update/${id}`, cleanData);
-
-      if (response.status === 200) {
-        setUpdating(true);
-        onSuccess();
-      }
+      await updateDifficultyLevel({
+        difficultyLevelId: id,
+        data: cleanData,
+      });
     } catch (error) {
       if (error instanceof AxiosError) {
         const response = error.response;
-        
+
         if (Array.isArray(response?.data?.message)) {
           response?.data?.message.forEach(
             (fieldError: { field: string; message: string[] }) => {
-              if (fieldError.field === 'name') {
-                form.setError('name', {
+              if (fieldError.field === "name") {
+                form.setError("name", {
                   message: fieldError.message.join(", "),
                 });
               } else {
@@ -85,17 +90,32 @@ export function EditDifficultyLevelForm({ id, onSuccess }: EditDifficultyLevelFo
           );
         } else {
           form.setError("root", {
-            message: response?.data?.message || "Erro desconhecido na atualização",
+            message:
+              response?.data?.message || "Erro desconhecido na atualização",
           });
         }
       }
     }
   };
 
-  if (loading) {
+  if (isDifficultyLevelError) {
     return (
-      <div className="flex justify-center items-center py-8">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+      <div className="flex flex-col items-center justify-center py-8 text-red-600">
+        <p>Erro ao carregar dados</p>
+        <button
+          onClick={() => window.location.reload()}
+          className="mt-2 rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
+        >
+          Tentar Novamente
+        </button>
+      </div>
+    );
+  }
+
+  if (isDifficultyLevelLoading) {
+    return (
+      <div className="flex items-center justify-center py-8">
+        <Loader2 className="h-8 w-8 animate-spin" />
         <span className="ml-2">Carregando dados...</span>
       </div>
     );
@@ -117,11 +137,21 @@ export function EditDifficultyLevelForm({ id, onSuccess }: EditDifficultyLevelFo
               {...field}
               label="Nome do Nível de Dificuldade"
               placeholder="Digite o nome do nível de dificuldade"
+              disabled={isDifficultyLevelPending}
             />
           )}
         />
 
-        <Form.Submit>Atualizar</Form.Submit>
+        <Form.Submit disabled={isDifficultyLevelPending}>
+          {isDifficultyLevelPending ? (
+            <>
+              <Loader2 className="mr-2 inline h-4 w-4 animate-spin" />
+              Atualizando...
+            </>
+          ) : (
+            "Atualizar"
+          )}
+        </Form.Submit>
       </Form.Main>
     </Form.Wrapper>
   );

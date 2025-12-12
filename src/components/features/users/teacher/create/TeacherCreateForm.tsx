@@ -4,10 +4,14 @@ import { PasswordInput } from "@/components/ui/password-input";
 import { Link } from "@/components/utils/Link/Link";
 import { useUser } from "@/hooks/User/useUser";
 // import type { User, UserProfile } from "@/types/user";
-import api from "@/utils/api";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useSchool } from "@/hooks/School/useSchool";
+import { useCreateTeacher } from "@/hooks/Teacher/useCreateTeacher";
+import { UserPerfilEnum } from "@/types/user";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AxiosError } from "axios";
-import { useEffect, useState } from "react";
+import { Loader2 } from "lucide-react";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import type { SignUpFormProps } from "../../common/signUpFormProps";
@@ -34,7 +38,6 @@ const formSchema = z
         error: "Confirmação de senha deve ter no máximo 32 caracteres",
       }),
     escolaId: z.string().optional(),
-    usersIds: z.array(z.string()).optional(),
   })
   .refine((data) => data.senha == data.confirmar_senha, {
     error: "As senhas devem ser iguais",
@@ -52,90 +55,31 @@ export default function TeacherSignUpForm({ onSuccess }: SignUpFormProps) {
     },
   });
   const { user } = useUser();
-  const [schools, setSchools] = useState<{ id: number; nome: string }[] | null>(
-    null,
-  );
-  // const [users, setUsers] = useState<UserProfile[] | null>(null);
+  const { schoolsQuery } = useSchool({});
+  const { data: schoolsData, isLoading: isLoadingSchools } = schoolsQuery;
 
-  // const [errorMensage, setErrorMessage] = useState<string | null>(null);
-  const escolaSelecionada = form.watch("escolaId");
-
-  useEffect(() => {
-    if (user?.perfil !== "Admin") return;
-
-    const fetchSchools = async () => {
-      try {
-        const response = await api.get("/school/list");
-
-        if (response.status === 200) {
-          setSchools(response.data);
-        }
-      } catch (error) {
-        if (error instanceof AxiosError) {
-          form.setError("root", {
-            message: `Erro ao carregar escolas: ${error.message}`,
-          });
-        }
-      }
-    };
-    fetchSchools();
-  }, [user?.perfil, form]);
+  const { create: createTeacherMutation } = useCreateTeacher();
+  const {
+    mutateAsync: createTeacher,
+    isPending: isCreatingTeacher,
+    isSuccess: isCreateTeacherSuccess,
+  } = createTeacherMutation;
 
   useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        // const escola =
-        //   user?.perfil === "Admin"
-        //     ? schools?.find((school) => school.id === Number(escolaSelecionada))
-        //     : user?.escola;
-        // if (!escola) return setUsers([]);
-
-        const response = await api.get(
-          `/student/list/relations/teacher?isNull=true`,
-        );
-
-        if (response.status == 200) {
-          // const users = response.data;
-          // setUsers(users.filter((user: User) => user.escola == escola.nome));
-          // if (users.length === 0) {
-          //   setErrorMessage("Não há alunos cadastrados nesta escola!");
-          // } else {
-          //   setErrorMessage(null);
-          // }
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    fetchUsers();
-  }, [escolaSelecionada, user, schools]);
+    if (isCreateTeacherSuccess) {
+      onSuccess();
+    }
+  }, [isCreateTeacherSuccess, onSuccess]);
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
-    const { usersIds, ...userData } = data;
-
     const payload = {
-      ...userData,
+      ...data,
       perfilId: 4,
-      escolaId: user?.escola?.id || data.escolaId,
+      escolaId: Number(user?.escolaId) || Number(data.escolaId),
     };
 
     try {
-      const response = await api.post("/teacher/register", payload);
-
-      if (usersIds && usersIds.length > 0) {
-        const responseLinking = await api.post("/teacher/register/relation", {
-          userId: response.data.codigo_usuario,
-          educandosIds: usersIds.map((value) => Number(value)),
-        });
-
-        if (response.status == 201 && responseLinking.status == 201) {
-          return onSuccess();
-        }
-      }
-
-      if (response.status == 201) {
-        return onSuccess();
-      }
+      await createTeacher(payload);
     } catch (error) {
       if (error instanceof AxiosError) {
         const response = error.response;
@@ -170,108 +114,171 @@ export default function TeacherSignUpForm({ onSuccess }: SignUpFormProps) {
         onSubmit={onSubmit}
         className="flex flex-col gap-4"
       >
-        <Form.Field
-          form={form}
-          name="nome_completo"
-          render={({ field }) => (
-            <Form.Input
-              {...field}
-              label="Nome Completo"
-              placeholder="Insira seu nome completo"
+        {user?.perfil !== UserPerfilEnum.ADMIN ? (
+          <>
+            <Form.Field
+              form={form}
+              name="nome_completo"
+              render={({ field }) => (
+                <Form.Input
+                  {...field}
+                  label="Nome Completo"
+                  placeholder="Insira seu nome completo"
+                />
+              )}
             />
-          )}
-        />
-        <Form.Field
-          form={form}
-          name="email"
-          render={({ field }) => (
-            <Form.Input
-              {...field}
-              label="Email"
-              placeholder="exemplo@gmail.com"
+            <Form.Field
+              form={form}
+              name="email"
+              render={({ field }) => (
+                <Form.Input
+                  {...field}
+                  label="Email"
+                  placeholder="exemplo@gmail.com"
+                />
+              )}
             />
-          )}
-        />
-        {user?.perfil == "Admin" && schools && (
-          <Form.Field
-            form={form}
-            name="escolaId"
-            render={({ field }) => (
-              <Form.Select
-                {...field}
-                label="Escola"
-                placeholder="Selecione a Escola"
-                options={schools.map((school) => ({
-                  value: String(school.id),
-                  label: school.nome,
-                }))}
-              />
-            )}
-          />
+            <Form.Field
+              form={form}
+              name="senha"
+              render={({ field, fieldState }) => (
+                <>
+                  <PasswordInput
+                    {...field}
+                    label="Senha"
+                    placeholder="Senha"
+                    type="password"
+                  />
+                  {fieldState.error && (
+                    <p className="text-sm text-red-600">
+                      {fieldState.error.message}
+                    </p>
+                  )}
+                </>
+              )}
+            />
+            <Form.Field
+              form={form}
+              name="confirmar_senha"
+              render={({ field, fieldState }) => (
+                <>
+                  <PasswordInput
+                    {...field}
+                    label="Confirmar Senha"
+                    placeholder="Confirmar Senha"
+                    type="password"
+                  />
+                  {fieldState.error && (
+                    <p className="text-sm text-red-600">
+                      {fieldState.error.message}
+                    </p>
+                  )}
+                </>
+              )}
+            />
+            <Form.Submit disabled={isCreatingTeacher}>
+              {isCreatingTeacher ? (
+                <Loader2 className="animate-spin" />
+              ) : (
+                "Criar Conta"
+              )}
+            </Form.Submit>
+          </>
+        ) : isLoadingSchools ? (
+          <div className="flex flex-col gap-4">
+            <Skeleton className="h-10 w-full" />
+            <Skeleton className="h-10 w-full" />
+            <Skeleton className="h-10 w-full" />
+            <Skeleton className="h-10 w-full" />
+            <Skeleton className="h-10 w-full" />
+            <Skeleton className="h-10 w-full" />
+          </div>
+        ) : (
+          <>
+            <Form.Field
+              form={form}
+              name="nome_completo"
+              render={({ field }) => (
+                <Form.Input
+                  {...field}
+                  label="Nome Completo"
+                  placeholder="Insira seu nome completo"
+                />
+              )}
+            />
+            <Form.Field
+              form={form}
+              name="email"
+              render={({ field }) => (
+                <Form.Input
+                  {...field}
+                  label="Email"
+                  placeholder="exemplo@gmail.com"
+                />
+              )}
+            />
+            <Form.Field
+              form={form}
+              name="escolaId"
+              render={({ field }) => (
+                <Form.Select
+                  {...field}
+                  label="Escola"
+                  placeholder="Selecione a Escola"
+                  options={schoolsData!.map((school) => ({
+                    value: String(school.id),
+                    label: school.nome,
+                  }))}
+                />
+              )}
+            />
+            <Form.Field
+              form={form}
+              name="senha"
+              render={({ field, fieldState }) => (
+                <>
+                  <PasswordInput
+                    {...field}
+                    label="Senha"
+                    placeholder="Senha"
+                    type="password"
+                  />
+                  {fieldState.error && (
+                    <p className="text-sm text-red-600">
+                      {fieldState.error.message}
+                    </p>
+                  )}
+                </>
+              )}
+            />
+            <Form.Field
+              form={form}
+              name="confirmar_senha"
+              render={({ field, fieldState }) => (
+                <>
+                  <PasswordInput
+                    {...field}
+                    label="Confirmar Senha"
+                    placeholder="Confirmar Senha"
+                    type="password"
+                  />
+                  {fieldState.error && (
+                    <p className="text-sm text-red-600">
+                      {fieldState.error.message}
+                    </p>
+                  )}
+                </>
+              )}
+            />
+            <Form.Submit disabled={isCreatingTeacher}>
+              {isCreatingTeacher ? (
+                <Loader2 className="animate-spin" />
+              ) : (
+                "Criar Conta"
+              )}
+            </Form.Submit>
+          </>
         )}
-        <Form.Field
-          form={form}
-          name="senha"
-          render={({ field, fieldState }) => (
-            <>
-              <PasswordInput
-                {...field}
-                label="Senha"
-                placeholder="Senha"
-                type="password"
-              />
-              {fieldState.error && (
-                <p className="text-sm text-red-600">
-                  {fieldState.error.message}
-                </p>
-              )}
-            </>
-          )}
-        />
-        <Form.Field
-          form={form}
-          name="confirmar_senha"
-          render={({ field, fieldState }) => (
-            <>
-              <PasswordInput
-                {...field}
-                label="Confirmar Senha"
-                placeholder="Confirmar Senha"
-                type="password"
-              />
-              {fieldState.error && (
-                <p className="text-sm text-red-600">
-                  {fieldState.error.message}
-                </p>
-              )}
-            </>
-          )}
-        />
-        {/* <Form.Field
-          form={form}
-          name="usersIds"
-          render={({ field }) => (
-            <>
-              <FancyMultiSelect
-                onSelect={field.onChange}
-                label="Alunos do Professor"
-                placeholder="Selecione os alunos do professor..."
-                data={
-                  users
-                    ? users.map(({ codigo_usuario, email }) => ({
-                        value: String(codigo_usuario),
-                        label: email,
-                      }))
-                    : []
-                }
-              />
-              {errorMensage && (
-                <p className="mt-1 text-sm text-yellow-800">{errorMensage}</p>
-              )}
-            </>
-          )}
-        /> */}
-        <Form.Submit>Criar Conta</Form.Submit>
       </Form.Main>
       <p className="mt-6 w-full text-center text-lg">
         O professor já possui uma conta?{" "}

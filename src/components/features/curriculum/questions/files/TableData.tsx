@@ -1,23 +1,24 @@
+import { QUESTION_QUERY_KEY } from "@/hooks/Question/useQuestion";
 import type { ColumnDef } from "@tanstack/react-table";
-import DeleteModal from "../../../../utils/DataTable/DeleteModal";
 import { ArrowUpDown } from "lucide-react";
 import { Button } from "../../../../ui/button";
+import DeleteModal from "../../../../utils/DataTable/DeleteModal";
 import { EditQuestionModal } from "../edit/QuestionEditModal";
 
-export type Question = {
+export type QuestionFormatted = {
   id: number;
   content: string;
   ordem: number;
   activityId: number;
+  usuarioCriadorId?: number | string;
   activity?: {
     id: number;
     titulo: string;
   };
   createdAt: string;
-  updatedAt: string;
 };
 
-export const QuestionColumns: ColumnDef<Question>[] = [
+export const QuestionColumns: ColumnDef<QuestionFormatted>[] = [
   {
     accessorKey: "id",
     header: ({ column }) => (
@@ -43,7 +44,7 @@ export const QuestionColumns: ColumnDef<Question>[] = [
     ),
     cell: ({ row }) => {
       const content = row.original.content;
-      
+
       if (!content) {
         return (
           <div className="max-w-xs">
@@ -51,10 +52,10 @@ export const QuestionColumns: ColumnDef<Question>[] = [
           </div>
         );
       }
-      
+
       return (
         <div className="max-w-xs">
-          <span className="truncate block" title={content}>
+          <span className="block truncate" title={content}>
             {content}
           </span>
         </div>
@@ -98,11 +99,30 @@ export const QuestionColumns: ColumnDef<Question>[] = [
       const activityTitle = row.original.activity?.titulo;
       return (
         <div className="max-w-xs">
-          <span className="truncate block" title={activityTitle || `Atividade ${row.original.activityId}`}>
+          <span
+            className="block truncate"
+            title={activityTitle || `Atividade ${row.original.activityId}`}
+          >
             {activityTitle || `Atividade ${row.original.activityId}`}
           </span>
         </div>
       );
+    },
+  },
+  {
+    accessorKey: "usuarioCriadorId",
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+      >
+        Criador (ID)
+        <ArrowUpDown className="ml-2 h-4 w-4" />
+      </Button>
+    ),
+    cell: ({ row }) => {
+      const criadorId = row.original.usuarioCriadorId;
+      return <span>{criadorId ?? "N/A"}</span>;
     },
   },
   {
@@ -114,6 +134,8 @@ export const QuestionColumns: ColumnDef<Question>[] = [
         <DeleteModal
           route="/question/remove"
           id={row.original.id}
+          entity="Questão"
+          queryKey={QUESTION_QUERY_KEY}
         />
       </div>
     ),

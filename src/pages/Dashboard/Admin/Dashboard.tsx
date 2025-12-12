@@ -1,5 +1,5 @@
 // dependencias
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 
 // componentes do site
 import { Footer } from "@/components/Footer/Footer";
@@ -7,6 +7,8 @@ import { Header } from "@/components/Header/Header";
 import { useUser } from "@/hooks/User/useUser";
 import { LateralMenu } from "../../../components/sideBar/sideBar";
 import { InfoBadge } from "../../../components/utils/InfoBadge/InfoBadge";
+import { Button } from "@/components/ui/button";
+import { BookOpen, Target, Activity, HelpCircle } from "lucide-react";
 
 // imagens
 // import graphic from "../../../assets/graphic.svg";
@@ -17,6 +19,7 @@ import "./Dashboard.css";
 
 export default function Dashboard() {
   const { user } = useUser();
+  const navigate = useNavigate();
 
   const username = user?.nome_completo || "Usuário";
 
@@ -30,7 +33,7 @@ export default function Dashboard() {
             <img className="block h-auto max-w-26" src={saturn} alt="saturn" />
             <div className="flex flex-col gap-2">
               <h1 className="text-xl font-semibold">Bem vindo {username},</h1>
-              <h1 className="text-4xl">Painel de Logistica</h1>
+              <h1 className="text-4xl">Painel de Logística</h1>
             </div>
           </div>
           <div className="mt-16 flex justify-center gap-8">
@@ -88,6 +91,43 @@ export default function Dashboard() {
               </>
             )}
           </div>
+          
+          {/* Seção de Gestão de Aprendizagem */}
+          <h1 className="font-1 mt-16 text-2xl font-bold">Gestão de Aprendizagem</h1>
+          <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <Button
+              onClick={() => navigate("/dashboard/teacher/curriculum/knowledge-areas")}
+              className="bg-blue-600 hover:bg-blue-700 cursor-pointer text-white h-auto py-4 flex flex-col items-center gap-2"
+            >
+              <BookOpen className="h-6 w-6" />
+              <span className="font-medium text-center">Áreas de Conhecimento</span>
+            </Button>
+            
+            <Button
+              onClick={() => navigate("/dashboard/teacher/curriculum/competences")}
+              className="bg-green-600 hover:bg-green-700 cursor-pointer text-white h-auto py-4 flex flex-col items-center gap-2"
+            >
+              <Target className="h-6 w-6" />
+              <span className="font-medium text-center">Competências</span>
+            </Button>
+
+            <Button
+              onClick={() => navigate("/dashboard/teacher/curriculum/activities")}
+              className="bg-purple-600 hover:bg-purple-700 cursor-pointer text-white h-auto py-4 flex flex-col items-center gap-2"
+            >
+              <Activity className="h-6 w-6" />
+              <span className="font-medium text-center">Atividades</span>
+            </Button>
+
+            <Button
+              onClick={() => navigate("/dashboard/teacher/curriculum/questions")}
+              className="bg-orange-600 hover:bg-orange-700 cursor-pointer text-white h-auto py-4 flex flex-col items-center gap-2"
+            >
+              <HelpCircle className="h-6 w-6" />
+              <span className="font-medium text-center">Questões</span>
+            </Button>
+          </div>
+          
           <div className="mt-16 flex justify-around rounded-2xl bg-slate-300 py-8 shadow-2xl">
             <div className="bg-purplish-blue-dark rounded-2xl">
               <div className="font-1 bg-purplish-blue m-3 rounded-md p-1 text-center text-lg font-bold text-gray-100">

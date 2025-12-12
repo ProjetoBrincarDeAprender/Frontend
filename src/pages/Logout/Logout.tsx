@@ -1,32 +1,37 @@
 import useAuth from "@/hooks/Auth/useAuth";
 import { useUser } from "@/hooks/User/useUser";
 import Cookies from "js-cookie";
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import { Navigate } from "react-router";
 import { toast } from "sonner";
 
 export default function Logout() {
-  const hasLoggedOut = useRef(false);
   const { logout } = useAuth();
   const { registerUser } = useUser();
 
   useEffect(() => {
-    if (hasLoggedOut.current) return;
-
-    hasLoggedOut.current = true;
+    if (
+      toast
+        .getToasts()
+        .some((t) => t.id === "logging-out" || t.id === "logged-out")
+    ) {
+      return;
+    }
+    toast("Saindo...", {
+      id: "logging-out",
+      duration: Infinity,
+    });
 
     const performLogout = async () => {
-      const loggingOut = toast("Saindo...");
-
       try {
         logout();
         registerUser(null);
 
-        toast.dismiss(loggingOut);
-        toast.success("Desconectado com sucesso!");
-      } catch (error) {
-        toast.dismiss(loggingOut);
-        toast.error("Erro ao fazer logout");
+        toast.dismiss("logging-out");
+        toast.success("Desconectado com sucesso!", { id: "logged-out" });
+      } catch (_error) {
+        toast.dismiss("logging-out");
+        toast.error("Erro ao fazer logout", { id: "logged-out" });
       }
     };
 

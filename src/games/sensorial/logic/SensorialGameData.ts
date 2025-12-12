@@ -18,6 +18,7 @@ export const GameQuestions = [
     "chuva",
     "easy",
     "audio-to-image",
+    83,
   ),
   new SensorialLevel(
     "Qual instrumento está tocando?",
@@ -29,6 +30,7 @@ export const GameQuestions = [
     "bateria",
     "easy",
     "audio-to-image",
+    84,
   ),
   new SensorialLevel(
     "Que som de casa você está ouvindo?",
@@ -40,6 +42,7 @@ export const GameQuestions = [
     "campainha",
     "easy",
     "audio-to-image",
+    85,
   ),
   new SensorialLevel(
     "Que som você está ouvindo?",
@@ -51,6 +54,7 @@ export const GameQuestions = [
     "tempestade",
     "easy",
     "audio-to-image",
+    86,
   ),
   new SensorialLevel(
     "Que aparelho está fazendo este som?",
@@ -62,6 +66,7 @@ export const GameQuestions = [
     "telefone",
     "easy",
     "audio-to-image",
+    87,
   ),
 
   // Nível 2 - Image to Audio (5 questões)
@@ -75,6 +80,7 @@ export const GameQuestions = [
     "violão",
     "medium",
     "image-to-audio",
+    88,
   ),
   new SensorialLevel(
     "Qual som corresponde a esta imagem?",
@@ -86,6 +92,7 @@ export const GameQuestions = [
     "chuva forte",
     "medium",
     "image-to-audio",
+    89,
   ),
   new SensorialLevel(
     "Qual som corresponde a esta imagem?",
@@ -97,6 +104,7 @@ export const GameQuestions = [
     "telefone",
     "medium",
     "image-to-audio",
+    90,
   ),
   new SensorialLevel(
     "Qual som corresponde a esta imagem?",
@@ -108,6 +116,7 @@ export const GameQuestions = [
     "flauta",
     "medium",
     "image-to-audio",
+    91,
   ),
   new SensorialLevel(
     "Qual som corresponde a esta imagem?",
@@ -119,6 +128,7 @@ export const GameQuestions = [
     "microondas",
     "medium",
     "image-to-audio",
+    92,
   ),
 ];
 
