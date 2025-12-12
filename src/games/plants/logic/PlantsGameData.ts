@@ -14,6 +14,7 @@ export const GameQuestions = [
     ["caule.png", "folhas.png", "flores.png", "raizes.png"],
     "caule",
     "easy",
+    3,
   ),
   new PlantsLevel(
     "Qual são as FOLHAS das plantas?",
@@ -21,6 +22,7 @@ export const GameQuestions = [
     ["folhas.png", "flores.png", "caule.png", "fruta.png"],
     "folhas",
     "easy",
+    4,
   ),
   new PlantsLevel(
     "Onde estão as FLORES das plantas?",
@@ -28,6 +30,7 @@ export const GameQuestions = [
     ["flores.png", "caule.png", "folhas.png", "manga.png"],
     "flores",
     "easy",
+    5,
   ),
   new PlantsLevel(
     "Qual é a FRUTA da planta?",
@@ -35,6 +38,7 @@ export const GameQuestions = [
     ["fruta.png", "flores.png", "folhas.png", "raizes.png"],
     "fruta",
     "easy",
+    6,
   ),
   new PlantsLevel(
     "Onde estão as RAIZES das plantas?",
@@ -42,6 +46,7 @@ export const GameQuestions = [
     ["raizes.png", "folhas.png", "caule.png", "banana.png"],
     "raizes",
     "easy",
+    7,
   ),
 
   // Nível 2 - Curiosidades dos planetas (respostas com imagem)
@@ -51,6 +56,7 @@ export const GameQuestions = [
     ["manga.png", "banana.png", "fruta.png", "laranja.png"],
     "manga",
     "medium",
+    8,
   ),
   new PlantsLevel(
     "Qual a fruta da LARANJEIRA?",
@@ -58,6 +64,7 @@ export const GameQuestions = [
     ["laranja.png", "manga.png", "banana.png", "fruta.png"],
     "laranja",
     "medium",
+    9,
   ),
   new PlantsLevel(
     "Qual a fruta da MACIEIRA?",
@@ -65,6 +72,7 @@ export const GameQuestions = [
     ["laranja.png", "manga.png", "banana.png", "fruta.png"],
     "maçã",
     "medium",
+    10,
   ),
   new PlantsLevel(
     "Qual a fruta da BANANEIRA?",
@@ -72,6 +80,7 @@ export const GameQuestions = [
     ["laranja.png", "manga.png", "banana.png", "fruta.png"],
     "banana",
     "medium",
+    11,
   ),
   new PlantsLevel(
     "Qual a parte da planta responsável por absorver água e nutrientes do solo?",
@@ -79,6 +88,7 @@ export const GameQuestions = [
     ["caule.png", "folhas.png", "flores.png", "raizes.png"],
     "raizes",
     "medium",
+    12,
   ),
 
   // Nível 3 - Nomes/curiosidades sem imagem
@@ -88,6 +98,7 @@ export const GameQuestions = [
     null,
     "Floricultor",
     "hard",
+    13,
   ),
   new PlantsLevel(
     "Qual a parte da planta responsável pela fotossíntese?",
@@ -95,6 +106,7 @@ export const GameQuestions = [
     null,
     "Folhas",
     "hard",
+    14,
   ),
   new PlantsLevel(
     "Qual o nome do processo de alimentação das plantas?",
@@ -102,6 +114,7 @@ export const GameQuestions = [
     null,
     "Fotossíntese",
     "hard",
+    15,
   ),
   new PlantsLevel(
     "Qual é a função das flores nas plantas?",
@@ -114,6 +127,7 @@ export const GameQuestions = [
     null,
     "Produzir sementes",
     "hard",
+    16,
   ),
   new PlantsLevel(
     "Qual parte da planta absorve os nutrientes do solo?",
@@ -121,6 +135,7 @@ export const GameQuestions = [
     null,
     "Raízes",
     "hard",
+    17,
   ),
 ];
 
