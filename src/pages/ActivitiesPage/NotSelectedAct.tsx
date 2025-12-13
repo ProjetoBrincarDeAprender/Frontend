@@ -21,13 +21,11 @@ export default function NotSelectedAct({
         return <MultipleChoiceForm />;
       case "true_false":
         return (
-          <>
-            <div className="flex h-80 items-center justify-center">
-              <span className="text-2xl font-semibold text-gray-800">
-                Em breve...
-              </span>
-            </div>
-          </>
+          <div className="flex h-80 items-center justify-center rounded-2xl bg-gray-200">
+            <span className="text-2xl font-semibold text-gray-800">
+              Em breve...
+            </span>
+          </div>
         );
       // <TrueFalseForm />;
       default:
