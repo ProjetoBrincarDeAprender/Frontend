@@ -6,6 +6,11 @@ import { Button } from "../../../../ui/button";
 import DeleteModal from "../../../../utils/DataTable/DeleteModal";
 import { EditKnowledgeAreaModal } from "../edit/KnowledgeAreaEditModal";
 
+function truncateText(text: string, maxLength: number): string {
+  if (text.length <= maxLength) return text;
+  return text.slice(0, maxLength) + "...";
+}
+
 export const KnowledgeAreaColumns: ColumnDef<KnowledgeArea>[] = [
   {
     accessorKey: "id",
@@ -43,11 +48,13 @@ export const KnowledgeAreaColumns: ColumnDef<KnowledgeArea>[] = [
       </Button>
     ),
     cell: ({ row }) => {
-      const description = row.original.descricao;
+      const maxLength = 80;
+      let description = row.original.descricao;
+      if (!description) description = "Sem descrição";
       return (
-        <div className="max-w-xs">
+        <div className="max-w-100%">
           <span className="truncate" title={description}>
-            {description || "Sem descrição"}
+            {truncateText(description, maxLength)}
           </span>
         </div>
       );

@@ -1,4 +1,3 @@
-import { CreateActivityModal } from "@/components/features/curriculum/activities/CreateActivityModal";
 import { Footer } from "@/components/Footer/Footer";
 import { Header } from "@/components/Header/Header";
 import { useUser } from "@/hooks/User/useUser";
