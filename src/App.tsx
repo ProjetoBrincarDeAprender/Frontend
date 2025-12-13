@@ -48,6 +48,7 @@ import { Profile } from "./pages/Profile/Profile";
 import { RecoverPassword } from "./pages/RecoverPassword/RecoverPassword";
 import { SendPasswordToken } from "./pages/SendPasswordToken/SendPasswordToken";
 import { UserPerfilEnum } from "./types/user";
+import CreateActivityPage from "./pages/ActivitiesPage/CreateActivityPage";
 
 function App() {
   return (
@@ -98,6 +99,10 @@ function App() {
           element={<DifficultyLevels />}
         />
         <Route path="curriculum/questions" element={<Questions />} />
+        <Route
+          path="curriculum/activities/create"
+          element={<CreateActivityPage />}
+        ></Route>
       </Route>
 
       <Route path="/games" element={<AuthGuard />}>
