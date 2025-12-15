@@ -28,6 +28,26 @@ import {
 import { useState, useMemo } from "react";
 import { DataTablePagination } from "./DataTablePagination";
 
+// Função para filtro customizado que trata IDs de forma diferente
+const customFilterFn = (row: any, columnId: string, filterValue: string) => {
+  const cellValue = row.getValue(columnId);
+
+  // Se não há valor de filtro, mostrar tudo
+  if (!filterValue) return true;
+
+  // Para colunas de ID, fazer busca "começa com"
+  if (columnId === "id" || columnId.toLowerCase().includes("id")) {
+    const idString = String(cellValue || "");
+    const searchString = String(filterValue);
+    return idString.includes(searchString);
+  }
+
+  // Para outras colunas, fazer busca case-insensitive "contém"
+  const stringValue = String(cellValue || "").toLowerCase();
+  const searchValue = filterValue.toLowerCase();
+  return stringValue.includes(searchValue);
+};
+
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
@@ -42,7 +62,7 @@ export function DataTable<TData, TValue>({
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-  
+
   // Detectar colunas disponíveis automaticamente
   const availableColumns = useMemo(() => {
     const cols = columns
@@ -53,30 +73,63 @@ export function DataTable<TData, TValue>({
         };
         return colDef.accessorKey || colDef.id;
       })
-      .filter((id): id is string => Boolean(id) && id !== "actions" && id !== "select");
-    
+      .filter(
+        (id): id is string =>
+          Boolean(id) && id !== "actions" && id !== "select",
+      );
+
     return cols;
   }, [columns]);
-  
+
   const [selectedColumn, setSelectedColumn] = useState<string>(
-    availableColumns[0] || "id"
+    availableColumns[0] || "id",
   );
+
+  // Modificar colunas para usar filtro customizado
+  const columnsWithCustomFilter = useMemo(() => {
+    return columns.map((col) => {
+      const colDef = col as ColumnDef<TData, TValue> & {
+        accessorKey?: string;
+        id?: string;
+      };
+
+      const columnId = colDef.accessorKey || colDef.id;
+
+      // Para colunas de ID, aplicar filtro customizado
+      if (
+        columnId === "id" ||
+        (columnId && columnId.toLowerCase().includes("id"))
+      ) {
+        return {
+          ...col,
+          filterFn: customFilterFn,
+        };
+      }
+
+      return col;
+    });
+  }, [columns]);
 
   const table = useReactTable({
     data,
-    columns,
+    columns: columnsWithCustomFilter,
     getCoreRowModel: getCoreRowModel(),
     onSortingChange: setSorting,
     getSortedRowModel: getSortedRowModel(),
     onColumnFiltersChange: setColumnFilters,
     getFilteredRowModel: getFilteredRowModel(),
+    filterFns: {
+      customFilter: customFilterFn,
+    },
     state: {
       sorting,
       columnFilters,
     },
   });
   const columnExists = table.getColumn(selectedColumn);
-  const effectiveSelectedColumn = columnExists ? selectedColumn : availableColumns[0];
+  const effectiveSelectedColumn = columnExists
+    ? selectedColumn
+    : availableColumns[0];
   const getColumnDisplayName = (columnId: string) => {
     const columnMap: Record<string, string> = {
       id: "ID",
@@ -94,8 +147,11 @@ export function DataTable<TData, TValue>({
       created_At: "Criado em",
       createdAt: "Criado em",
     };
-    
-    return columnMap[columnId] || columnId.charAt(0).toUpperCase() + columnId.slice(1).replace(/[._]/g, " ");
+
+    return (
+      columnMap[columnId] ||
+      columnId.charAt(0).toUpperCase() + columnId.slice(1).replace(/[._]/g, " ")
+    );
   };
 
   return (
@@ -104,14 +160,18 @@ export function DataTable<TData, TValue>({
         <Input
           placeholder={`Filtrar por ${getColumnDisplayName(effectiveSelectedColumn)}`}
           value={
-            (table.getColumn(effectiveSelectedColumn)?.getFilterValue() as string) ?? ""
+            (table
+              .getColumn(effectiveSelectedColumn)
+              ?.getFilterValue() as string) ?? ""
           }
           onChange={(event) => {
             if (effectiveSelectedColumn) {
+              const filterValue = event.target.value;
+
               table.setColumnFilters([
                 {
                   id: effectiveSelectedColumn,
-                  value: event.target.value,
+                  value: filterValue,
                 },
               ]);
             }
