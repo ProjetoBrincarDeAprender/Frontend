@@ -1,10 +1,10 @@
-import ClickButtonGameScene from "@/games/clickedButton/scenes/ClickButtonGame";
 import { EndScene } from "@/games/common/scenes/EndScene";
 import { LevelCompletedScene } from "@/games/common/scenes/LevelCompletedScene";
 import { StartScene } from "@/games/common/scenes/StartScene";
 import { EventBus } from "@/games/common/utils/EventBus";
-import Phaser from "phaser";
 import { GameWrapper } from "./GameWrapper";
+import ClickButtonGameScene from "@/games/clickedButton/scenes/ClickButtonGame";
+import Phaser from "phaser";
 
 const PunctuationGame: React.FC = () => {
   const startScene = new StartScene({

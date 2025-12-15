@@ -1,108 +1,64 @@
-import { Footer } from "@/components/Footer/Footer";
-import { Header } from "@/components/Header/Header";
-import { BackButton } from "@/components/utils/BackButton";
 import { EventBus } from "@/games/common/utils/EventBus";
-import { useEffect, useRef } from "react";
-import { useUser } from "@/hooks/User/useUser";
 import { StartScene } from "@/games/common/scenes/StartScene";
 import { LevelCompletedScene } from "@/games/common/scenes/LevelCompletedScene";
 import { EndScene } from "@/games/common/scenes/EndScene";
+import { GameWrapper } from "./GameWrapper";
 import SyllableDivision from "@/games/syllableDivision/SyllableDivision";
 import Phaser from "phaser";
 
 const SyllableDivisionGame: React.FC = () => {
-  const gameRef = useRef<Phaser.Game | null>(null);
-  const containerRef = useRef<HTMLDivElement | null>(null);
-  const { user } = useUser();
+  const startScene = new StartScene({
+    backgroundPath: "/assets/syllableDivisionGame/images/backgroundMain.png",
+    gameTitle: "DIVIDINDO SÍLABAS",
+    nextSceneName: "SyllableDivision",
+  });
 
-  useEffect(() => {
-    if (gameRef.current || !user) return;
+  const gameScene = new SyllableDivision({
+    audiosPath: "/assets/useSyllableGame/sounds/",
+    backgroundPath: "/assets/syllableDivisionGame/images/backgroundMain.png",
+    imagesPath: "/assets/useSyllableGame/images/entities/",
+    instruction: "SEPARE A PALAVRA",
+    levels: [
+      ["CA", "SA"],
+      ["BO", "LA"],
+      ["SO", "FÁ"],
+      ["PA", "TO"],
+      ["MA", "LA"],
+      ["BO", "NE", "CA"],
+      ["BA", "NA", "NA"],
+      ["CA", "MI", "SA"],
+      ["CA", "VA", "LO"],
+      ["PI", "PO", "CA"],
+      ["PA", "RA", "FU", "SO"],
+      ["TE", "LE", "FO", "NE"],
+      ["CA", "RA", "ME", "LO"],
+      ["A", "LI", "CA", "TE"],
+      ["EN", "VE", "LO", "PE"],
+    ],
+  });
 
-    const startScene = new StartScene({
-      backgroundPath: "/assets/syllableDivisionGame/images/backgroundMain.png",
-      gameTitle: "DIVIDINDO SÍLABAS",
-      nextSceneName: "SyllableDivision",
-    });
+  const levelCompleted = new LevelCompletedScene({
+    nextLevelScene: "SyllableDivision",
+    menuScene: "StartScene",
+  });
 
-    const gameScene = new SyllableDivision({
-      audiosPath: "/assets/useSyllableGame/sounds/",
-      backgroundPath: "/assets/syllableDivisionGame/images/backgroundMain.png",
-      imagesPath: "/assets/useSyllableGame/images/entities/",
-      instruction: "SEPARE A PALAVRA",
-      levels: [
-        ["CA", "SA"],
-        ["BO", "LA"],
-        ["SO", "FÁ"],
-        ["PA", "TO"],
-        ["MA", "LA"],
-        ["BO", "NE", "CA"],
-        ["BA", "NA", "NA"],
-        ["CA", "MI", "SA"],
-        ["CA", "VA", "LO"],
-        ["PI", "PO", "CA"],
-        ["PA", "RA", "FU", "SO"],
-        ["TE", "LE", "FO", "NE"],
-        ["CA", "RA", "ME", "LO"],
-        ["A", "LI", "CA", "TE"],
-        ["EN", "VE", "LO", "PE"],
-      ],
-    });
+  const endScene = new EndScene({
+    restartScene: "StartScene",
+  });
 
-    const levelCompleted = new LevelCompletedScene({
-      nextLevelScene: "SyllableDivision",
-      menuScene: "StartScene",
-      onMenuReturn: () => {
-        // Reset do nível atual quando voltar ao menu
-        if (gameRef.current) {
-          SyllableDivision.resetGame(gameRef.current.scene.getScenes()[0]);
-        }
-      },
-    });
+  const config: Phaser.Types.Core.GameConfig = {
+    type: Phaser.AUTO,
+    width: 800,
+    height: 600,
+    scene: [startScene, gameScene, levelCompleted, endScene],
+    backgroundColor: "#ffffff",
+  };
 
-    const endScene = new EndScene({
-      restartScene: "StartScene",
-      onRestart: () => {
-        // Reset do nível atual quando reiniciar o jogo
-        if (gameRef.current) {
-          SyllableDivision.resetGame(gameRef.current.scene.getScenes()[0]);
-        }
-      },
-    });
+  EventBus.once("current-scene-ready", (log: string) => {
+    console.log({ log });
+  });
 
-    const config: Phaser.Types.Core.GameConfig = {
-      type: Phaser.AUTO,
-      width: 800,
-      height: 600,
-      scene: [startScene, gameScene, levelCompleted, endScene],
-      parent: containerRef.current,
-      backgroundColor: "#ffffff",
-    };
-
-    gameRef.current = new Phaser.Game(config);
-
-    if (user) {
-      gameRef.current.registry.set("userData", user);
-    }
-
-    EventBus.once("current-scene-ready", (log: string) => {
-      console.log({ log });
-    });
-  }, [user]);
-
-  return (
-    <>
-      <div className="mt-28 mb-20 flex justify-center py-4">
-        <Header />
-        <BackButton />
-        <div
-          ref={containerRef}
-          className="relative"
-          style={{ width: 800, height: 600 }}
-        ></div>
-      </div>
-      <Footer />
-    </>
-  );
+  return <GameWrapper gameConfig={config} />;
 };
 
 export default SyllableDivisionGame;
