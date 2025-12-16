@@ -10,6 +10,6 @@ export const formSchema = z.object({
     .min(1, { error: "Selecione um tipo de atividade" }),
   competenceId: z
     .string({ error: "Competência é obrigatória" })
-    .min(1, { error: "Selecione uma competência" }),
+    .min(1, { error: "Você não escolheu uma competência!" }),
   template: z.string().min(1, "Template é obrigatório"),
 });

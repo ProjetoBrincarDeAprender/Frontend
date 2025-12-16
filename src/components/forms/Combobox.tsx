@@ -33,6 +33,8 @@ export type FormComboboxProps = {
     | "ghost"
     | null
     | undefined;
+  value?: string;
+  onChange?: (value: string) => void;
 };
 
 export default function Combobox({
@@ -43,9 +45,12 @@ export default function Combobox({
   placeholder,
   variant,
   wrapperClassName,
+  value: controlledValue,
+  onChange,
 }: FormComboboxProps) {
   const [open, setOpen] = React.useState(false);
-  const [value, setValue] = React.useState("");
+  const [internalValue, setInternalValue] = React.useState("");
+  const value = controlledValue !== undefined ? controlledValue : internalValue;
 
   return (
     <FormItem className={wrapperClassName}>
@@ -56,7 +61,8 @@ export default function Combobox({
             variant={variant || "outline"}
             role="combobox"
             aria-expanded={open}
-            className="w-100% justify-between text-gray-400"
+            className="w-100% justify-between"
+            disabled={!options || options.length === 0}
           >
             {value
               ? options?.find((option) => option.value === value)?.label
@@ -64,7 +70,7 @@ export default function Combobox({
             <ChevronsUpDown className="opacity-50" />
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-[200px] p-0">
+        <PopoverContent className="w-100% p-0">
           <Command>
             <CommandInput placeholder={placeholder} className="h-9" />
             <CommandList>
@@ -75,9 +81,17 @@ export default function Combobox({
                 {options?.map((option) => (
                   <CommandItem
                     key={option.value}
-                    value={option.value}
-                    onSelect={(currentValue) => {
-                      setValue(currentValue === value ? "" : currentValue);
+                    value={option.label}
+                    onSelect={(currentLabel) => {
+                      const selected = options.find(
+                        (opt) => opt.label === currentLabel,
+                      );
+                      const newValue = selected ? selected.value : "";
+                      if (onChange) {
+                        onChange(newValue);
+                      } else {
+                        setInternalValue(newValue);
+                      }
                       setOpen(false);
                     }}
                   >

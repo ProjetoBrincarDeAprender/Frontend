@@ -4,7 +4,7 @@ import { useCompetence } from "@/hooks/Competence/useCompetence";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AxiosError } from "axios";
 import { Loader2 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useUser } from "@/hooks/User/useUser";
@@ -35,10 +35,10 @@ export function CreateActivityForm({
 
   const allCompetences = competencesData?.data as CompetenceWithArea[];
 
-  const [competenceSearch, setCompetenceSearch] = useState("");
-  const [showCompetenceDropdown, setShowCompetenceDropdown] = useState(false);
-  const [selectedCompetence, setSelectedCompetence] =
-    useState<CompetenceWithArea | null>(null);
+  const competenceOptions = allCompetences.map((competence) => ({
+    value: String(competence.id),
+    label: competence.nome,
+  }));
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -92,8 +92,6 @@ export function CreateActivityForm({
     try {
       await createActivity(payload);
       form.reset();
-      setSelectedCompetence(null);
-      setCompetenceSearch("");
     } catch (error) {
       if (error instanceof AxiosError) {
         const response = error.response;
@@ -120,7 +118,7 @@ export function CreateActivityForm({
     }
   };
 
-  const filteredCompetences = allCompetences;
+  // const filteredCompetences = allCompetences;
   // .filter(
   //   (competence) =>
   //     competence.nome.toLowerCase().includes(competenceSearch.toLowerCase()),
@@ -130,29 +128,6 @@ export function CreateActivityForm({
   //         .toLowerCase()
   //         .includes(competenceSearch.toLowerCase())),
   // );
-
-  const handleCompetenceSelect = (competence: CompetenceWithArea) => {
-    setSelectedCompetence(competence);
-    setCompetenceSearch(competence.nome);
-    setShowCompetenceDropdown(false);
-    form.setValue("competenceId", String(competence.id));
-  };
-
-  const handleCompetenceSearchChange = (value: string) => {
-    setCompetenceSearch(value);
-    if (value === "") {
-      setSelectedCompetence(null);
-      form.setValue("competenceId", "");
-    }
-    setShowCompetenceDropdown(value.length > 0);
-  };
-
-  const clearCompetence = () => {
-    setSelectedCompetence(null);
-    setCompetenceSearch("");
-    setShowCompetenceDropdown(false);
-    form.setValue("competenceId", "");
-  };
 
   return (
     <Form.Wrapper>
@@ -177,107 +152,17 @@ export function CreateActivityForm({
 
         <Form.Field
           form={form}
-          name="competence"
+          name="competenceId"
           render={({ field }) => (
             <Form.Combobox
               {...field}
               label="Selecione uma Competência"
               placeholder="Escolha..."
               noItemFoundMessage="Nenhuma competência encontrada."
-              // options={[{ value: "Next", label: "next" }]}
+              options={competenceOptions}
             />
           )}
         />
-
-        <div className="relative space-y-2">
-          <label className="text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-            Competência
-            {isCompetencesLoading ? (
-              <span className="ml-2 text-xs text-gray-500">
-                <Loader2 className="inline h-3 w-3 animate-spin" />{" "}
-                Carregando...
-              </span>
-            ) : allCompetences.length > 0 ? (
-              <span className="font-1 text-green-600">
-                {" "}
-                ({allCompetences.length} disponíveis)
-              </span>
-            ) : null}
-          </label>
-          <div className="relative">
-            <input
-              type="text"
-              value={competenceSearch}
-              onChange={(e) => handleCompetenceSearchChange(e.target.value)}
-              onFocus={() =>
-                setShowCompetenceDropdown(competenceSearch.length > 0)
-              }
-              className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
-              placeholder={
-                isCompetencesLoading
-                  ? "Carregando competências..."
-                  : allCompetences.length > 0
-                    ? "Digite para buscar uma competência..."
-                    : "Nenhuma competência disponível"
-              }
-              disabled={isActivityPending || isCompetencesLoading}
-            />
-            {selectedCompetence && (
-              <button
-                type="button"
-                onClick={clearCompetence}
-                className="absolute top-1/2 right-2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                disabled={isActivityPending}
-              >
-                ×
-              </button>
-            )}
-          </div>
-
-          {showCompetenceDropdown && filteredCompetences.length > 0 && (
-            <div className="absolute z-10 mt-1 max-h-60 w-full overflow-y-auto rounded-md border border-gray-300 bg-white shadow-lg">
-              {filteredCompetences.slice(0, 10).map((competence) => (
-                <button
-                  key={competence.id}
-                  type="button"
-                  onClick={() => handleCompetenceSelect(competence)}
-                  className="w-full border-b px-3 py-2 text-left last:border-b-0 hover:bg-gray-100 focus:bg-gray-100 focus:outline-none"
-                  disabled={isActivityPending}
-                >
-                  <div className="text-sm font-medium">{competence.nome}</div>
-                  {competence.descricao && (
-                    <div className="truncate text-xs text-gray-400">
-                      {competence.descricao}
-                    </div>
-                  )}
-                </button>
-              ))}
-              {filteredCompetences.length > 10 && (
-                <div className="border-t px-3 py-2 text-xs text-gray-500">
-                  E mais {filteredCompetences.length - 10} competências...
-                </div>
-              )}
-            </div>
-          )}
-
-          {competenceSearch.length > 0 && filteredCompetences.length === 0 && (
-            <div className="text-sm text-gray-500">
-              Nenhuma competência encontrada com "{competenceSearch}"
-            </div>
-          )}
-
-          {/* {
-            // allCompetences
-            [""].length === 0 && (
-              <div className="rounded border border-amber-200 bg-amber-50 p-3 text-sm text-amber-600">
-                ⚠️ <strong>Nenhuma competência encontrada.</strong>
-                <br />
-                Certifique-se de que existem competências cadastradas no
-                sistema.
-              </div>
-            )
-          } */}
-        </div>
 
         <Form.Field
           form={form}
