@@ -9,6 +9,11 @@ import { Button } from "../../../../ui/button";
 import DeleteModal from "../../../../utils/DataTable/DeleteModal";
 import { EditCompetenceModal } from "../edit/CompetenceEditModal";
 
+function truncateText(text: string, maxLength: number): string {
+  if (text.length <= maxLength) return text;
+  return text.slice(0, maxLength) + "...";
+}
+
 export type CompetenceFormatted = Omit<Competence, "areaId"> & {
   area: {
     id: number;
@@ -53,11 +58,12 @@ export const CompetenceColumns: ColumnDef<CompetenceFormatted>[] = [
       </Button>
     ),
     cell: ({ row }) => {
+      const maxLength = 80;
       const description = row.original.descricao;
       return (
-        <div className="max-w-xs">
+        <div className="max-w-100%">
           <span className="truncate" title={description || "Sem descrição"}>
-            {description || "Sem descrição"}
+            {truncateText(description || "Sem descrição", maxLength)}
           </span>
         </div>
       );

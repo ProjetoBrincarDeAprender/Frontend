@@ -1,20 +1,19 @@
+import { SkeletonTable } from "@/components/ui/skeleton-table";
+import DeleteModal from "@/components/utils/DataTable/DeleteModal";
 import {
   KNOWLEDGE_AREA_QUERY_KEY,
   useKnowledgeArea,
 } from "@/hooks/KnowledgeArea/useKnowledgeArea";
 import { useTable } from "@/hooks/Table/useTable";
 import { useDelete } from "@/hooks/useDelete";
+import type { FilterKnowledgeAreaOption } from "@/types/filter";
+import type { KnowledgeArea } from "@/types/knowledgeArea";
 import type { ColumnDef } from "@tanstack/react-table";
 import { useState } from "react";
 import { useSearchParams } from "react-router";
 import { DataTable } from "../../../../utils/DataTable/DataTable";
-import { KnowledgeAreaColumns } from "./TableData";
-
-import { SkeletonTable } from "@/components/ui/skeleton-table";
-import DeleteModal from "@/components/utils/DataTable/DeleteModal";
-import type { FilterKnowledgeAreaOption } from "@/types/filter";
-import type { KnowledgeArea } from "@/types/knowledgeArea";
 import { EditKnowledgeAreaModal } from "../edit/KnowledgeAreaEditModal";
+import { KnowledgeAreaColumns } from "./TableData";
 
 interface CellContext {
   row: {

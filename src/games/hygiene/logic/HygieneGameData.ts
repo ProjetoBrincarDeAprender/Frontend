@@ -14,6 +14,7 @@ export const GameQuestions = [
     ["sabao.png", "toalha.png"],
     "sabão",
     "easy",
+    53,
     "lavandoMao.png",
   ),
   new HygieneLevel(
@@ -22,6 +23,7 @@ export const GameQuestions = [
     ["toalha.png", "shampoo.png"],
     "toalha",
     "easy",
+    54,
     "tomandoBanho.png",
   ),
   new HygieneLevel(
@@ -30,6 +32,7 @@ export const GameQuestions = [
     ["pastaEscova.png", "pente.png"],
     "pastaEscova",
     "easy",
+    55,
     "escovandoDente.png",
   ),
   new HygieneLevel(
@@ -38,6 +41,7 @@ export const GameQuestions = [
     ["cortaUnha.png", "escovaCabelo.png"],
     "cortaUnha",
     "easy",
+    56,
     "cortandoUnha.png",
   ),
   new HygieneLevel(
@@ -46,6 +50,7 @@ export const GameQuestions = [
     ["escovaCabelo.png", "sabao.png"],
     "escovaCabelo",
     "easy",
+    57,
     "penteandoCabelo.png",
   ),
 
@@ -56,6 +61,7 @@ export const GameQuestions = [
     ["sabao.png", "toalha.png", "pastaEscova.png", "escovaCabelo.png"],
     "sabao",
     "medium",
+    58,
   ),
   new HygieneLevel(
     "Qual item usado para se ENXUGAR depois do BANHO?",
@@ -63,6 +69,7 @@ export const GameQuestions = [
     ["toalha.png", "sabao.png", "shampoo.png", "escovaCabelo.png"],
     "toalha",
     "medium",
+    59,
   ),
   new HygieneLevel(
     "Qual item devemos usar para ESCOVAR os DENTES?",
@@ -70,6 +77,7 @@ export const GameQuestions = [
     ["pastaEscova.png", "pente.png", "sabao.png", "mascara.png"],
     "pastaEscova",
     "medium",
+    60,
   ),
   new HygieneLevel(
     "Qual item usamos para PENTEAR o CABELO?",
@@ -77,6 +85,7 @@ export const GameQuestions = [
     ["pente.png", "cortaUnha.png", "pastaEscova.png", "escovaCabelo.png"],
     "pente",
     "medium",
+    61,
   ),
   new HygieneLevel(
     "O que devemos usar para PREVENIR o COVID?",
@@ -84,6 +93,7 @@ export const GameQuestions = [
     ["cortaUnha.png", "sabao.png", "pente.png", "mascara.png"],
     "máscara",
     "medium",
+    62,
   ),
 
   // Nível 3 - Conhecimento sobre higiene (respostas só com texto)
@@ -93,6 +103,7 @@ export const GameQuestions = [
     null,
     "Escovar os dentes",
     "hard",
+    63,
   ),
   new HygieneLevel(
     "Para que utilizamos o SABÃO?",
@@ -105,6 +116,7 @@ export const GameQuestions = [
     null,
     "Lavar as mãos",
     "hard",
+    64,
   ),
   new HygieneLevel(
     "Para que utilizamos o BANHO?",
@@ -117,6 +129,7 @@ export const GameQuestions = [
     null,
     "Manter o corpo limpo",
     "hard",
+    65,
   ),
   new HygieneLevel(
     "O que devemos fazer após USAR O BANHEIRO?",
@@ -129,6 +142,7 @@ export const GameQuestions = [
     null,
     "Lavar as mãos",
     "hard",
+    66,
   ),
   new HygieneLevel(
     "Para que é importante CORTAR as UNHAS?",
@@ -141,6 +155,7 @@ export const GameQuestions = [
     null,
     "Evitar acúmulo de sujeira",
     "hard",
+    67,
   ),
 ];
 

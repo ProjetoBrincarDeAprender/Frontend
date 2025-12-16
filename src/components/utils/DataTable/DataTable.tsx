@@ -29,6 +29,26 @@ import {
 import { useMemo, useState } from "react";
 import { DataTablePagination } from "./DataTablePagination";
 
+// Função para filtro customizado que trata IDs de forma diferente
+const customFilterFn = (row: any, columnId: string, filterValue: string) => {
+  const cellValue = row.getValue(columnId);
+
+  // Se não há valor de filtro, mostrar tudo
+  if (!filterValue) return true;
+
+  // Para colunas de ID, fazer busca "começa com"
+  if (columnId === "id" || columnId.toLowerCase().includes("id")) {
+    const idString = String(cellValue || "");
+    const searchString = String(filterValue);
+    return idString.includes(searchString);
+  }
+
+  // Para outras colunas, fazer busca case-insensitive "contém"
+  const stringValue = String(cellValue || "").toLowerCase();
+  const searchValue = filterValue.toLowerCase();
+  return stringValue.includes(searchValue);
+};
+
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
@@ -83,16 +103,49 @@ export function DataTable<TData, TValue>({
     availableColumns[0] || "id",
   );
 
+  // Modificar colunas para usar filtro customizado
+  const columnsWithCustomFilter = useMemo(() => {
+    return columns.map((col) => {
+      const colDef = col as ColumnDef<TData, TValue> & {
+        accessorKey?: string;
+        id?: string;
+      };
+
+      const columnId = colDef.accessorKey || colDef.id;
+
+      // Para colunas de ID, aplicar filtro customizado
+      if (
+        columnId === "id" ||
+        (columnId && columnId.toLowerCase().includes("id"))
+      ) {
+        return {
+          ...col,
+          filterFn: customFilterFn,
+        };
+      }
+
+      return col;
+    });
+  }, [columns]);
+
   const table = useReactTable({
     data,
-    columns,
     pageCount: manualPagination ? pageCount : undefined,
+    columns: columnsWithCustomFilter,
     getCoreRowModel: getCoreRowModel(),
     onSortingChange: setSorting,
     getSortedRowModel: getSortedRowModel(),
     onColumnFiltersChange: setColumnFilters,
     getFilteredRowModel: getFilteredRowModel(),
     // Pagination configuration
+    filterFns: {
+      customFilter: customFilterFn,
+    },
+    state: {
+      sorting,
+      columnFilters,
+      pagination,
+    },
     manualPagination,
     onPaginationChange: (updaterOrValue) => {
       const newPagination =
@@ -105,11 +158,6 @@ export function DataTable<TData, TValue>({
       } else {
         setLocalPagination(newPagination);
       }
-    },
-    state: {
-      sorting,
-      columnFilters,
-      pagination,
     },
   });
   const columnExists = table.getColumn(selectedColumn);
@@ -152,10 +200,12 @@ export function DataTable<TData, TValue>({
           }
           onChange={(event) => {
             if (effectiveSelectedColumn) {
+              const filterValue = event.target.value;
+
               table.setColumnFilters([
                 {
                   id: effectiveSelectedColumn,
-                  value: event.target.value,
+                  value: filterValue,
                 },
               ]);
             }

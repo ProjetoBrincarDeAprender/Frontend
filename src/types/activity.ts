@@ -11,12 +11,12 @@ export type Activity = {
 };
 
 export type ActivityFormData = {
-  titulo: string;
+  template: string;
+  title: string;
   type: string;
   competenceId: number;
   content: string;
-  nivel_dificuldade_inicial: number;
-  escolaId?: number | null;
-  quantQuestoes: number;
   creatorId: number;
+  maxQuestions: number;
+  escolaId?: number | null;
 };

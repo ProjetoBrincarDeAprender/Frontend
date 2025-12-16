@@ -5,6 +5,7 @@ export default class SpaceLevel extends Level {
   private options: string[];
   private optionsImages: string[] | null;
   private difficulty: string;
+  private questionId: number;
 
   constructor(
     question: string,
@@ -12,12 +13,14 @@ export default class SpaceLevel extends Level {
     optionsImages: string[] | null,
     answer: string,
     difficulty: string,
+    questionId: number,
   ) {
     super(question, answer); // Chama o construtor da classe pai
     this.question = question;
     this.options = options;
     this.optionsImages = optionsImages;
     this.difficulty = difficulty;
+    this.questionId = questionId;
   }
 
   getQuestion(): string {
@@ -34,6 +37,10 @@ export default class SpaceLevel extends Level {
 
   getDifficulty(): string {
     return this.difficulty;
+  }
+
+  getQuestionId(): number {
+    return this.questionId;
   }
 
   hasImages(): boolean {
