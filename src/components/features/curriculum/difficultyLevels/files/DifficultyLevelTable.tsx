@@ -12,6 +12,7 @@ import {
 } from "@/hooks/DificultyLevel/useDifficultyLevel";
 import { useDelete } from "@/hooks/useDelete";
 import type { DifficultyLevel } from "@/types/difficultyLevels";
+import type { FilterDifficultyLevelOption } from "@/types/filter";
 import { EditDifficultyLevelModal } from "../edit/DifficultyLevelEditModal";
 
 interface CellContext {
@@ -30,9 +31,21 @@ export default function DifficultyLevelTable() {
   });
   const { mutateAsync: multiDelete } = multiDeleteMutation;
 
-  const { difficultyLevelsQuery } = useDifficultyLevel();
-  const { data: difficultyLevelsData, isLoading: isDifficultyLoading } =
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  // Get pagination params from URL
+  const page = Number(searchParams.get("page")) || 1;
+  const pageSize = Number(searchParams.get("pageSize")) || 10;
+
+  const filters: FilterDifficultyLevelOption = {
+    page,
+    limit: pageSize as 10 | 25 | 50 | 100 | 500,
+  };
+
+  const { difficultyLevelsQuery } = useDifficultyLevel({ filters });
+  const { data: difficultyLevelsReturn, isLoading: isDifficultyLoading } =
     difficultyLevelsQuery;
+  const difficultyLevelsData = difficultyLevelsReturn?.data;
 
   const handleDeleteSelected = async () => {
     if (selectedIds.length === 0) return;
@@ -40,7 +53,17 @@ export default function DifficultyLevelTable() {
     setSelectedIds([]);
   };
 
-  const [searchParams, _] = useSearchParams();
+  // Handle pagination change
+  const handlePaginationChange = (pagination: {
+    pageIndex: number;
+    pageSize: number;
+  }) => {
+    setSearchParams({
+      page: String(pagination.pageIndex + 1),
+      pageSize: String(pagination.pageSize),
+    });
+    setSelectedIds([]);
+  };
 
   const columnsWithCheckbox: ColumnDef<DifficultyLevel>[] = [
     {
@@ -108,9 +131,13 @@ export default function DifficultyLevelTable() {
         <DataTable
           columns={columnsWithCheckbox}
           data={difficultyLevelsData ?? []}
-          page={
-            searchParams.get("page") ? parseInt(searchParams.get("page")!) : 0
-          }
+          manualPagination
+          pageCount={difficultyLevelsReturn?.meta.totalPages}
+          pagination={{
+            pageIndex: page - 1,
+            pageSize,
+          }}
+          onPaginationChange={handlePaginationChange}
           renderExtra={() =>
             selectedIds.length > 0 && !isDifficultyLoading ? (
               <button

@@ -1,11 +1,12 @@
 import { Form } from "@/components/forms/Root";
 import useActivity from "@/hooks/Activity/useActivity";
+import { useDifficultyLevel } from "@/hooks/DificultyLevel/useDifficultyLevel";
 import { useQuestion } from "@/hooks/Question/useQuestion";
 import { useUpdateQuestion } from "@/hooks/Question/useUpdateQuestion";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AxiosError } from "axios";
 import { Loader2 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -26,18 +27,14 @@ type EditQuestionFormProps = {
   onSuccess: () => void;
 };
 
-interface DifficultyLevel {
-  id: number;
-  nome: string;
-}
-
 export function EditQuestionForm({ id, onSuccess }: EditQuestionFormProps) {
   const { questionQuery } = useQuestion({ questionId: id });
   const { activitiesQuery } = useActivity();
+  const { data: activitiesReturn } = activitiesQuery;
   const { update } = useUpdateQuestion();
-  const [difficultyLevels, setDifficultyLevels] = useState<DifficultyLevel[]>(
-    [],
-  );
+  const { difficultyLevelsQuery } = useDifficultyLevel();
+  const { data: difficultyLevelsData, isLoading: isDifficultyLoading } =
+    difficultyLevelsQuery;
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -48,22 +45,6 @@ export function EditQuestionForm({ id, onSuccess }: EditQuestionFormProps) {
       difficultyId: "",
     },
   });
-
-  useEffect(() => {
-    const fetchDifficultyLevels = async () => {
-      try {
-        const { default: api } = await import("@/utils/api");
-        const response = await api.get("/difficulty-level/list");
-        if (response.status === 200 && Array.isArray(response.data)) {
-          setDifficultyLevels(response.data);
-        }
-      } catch (error) {
-        console.error("Erro ao carregar níveis de dificuldade:", error);
-      }
-    };
-
-    fetchDifficultyLevels();
-  }, []);
 
   useEffect(() => {
     if (questionQuery.data) {
@@ -156,7 +137,11 @@ export function EditQuestionForm({ id, onSuccess }: EditQuestionFormProps) {
     }
   };
 
-  if (questionQuery.isError || activitiesQuery.isError) {
+  if (
+    questionQuery.isError ||
+    activitiesQuery.isError ||
+    difficultyLevelsQuery.isError
+  ) {
     return (
       <div className="flex flex-col items-center justify-center py-8 text-red-600">
         <p>Erro ao carregar dados</p>
@@ -170,7 +155,11 @@ export function EditQuestionForm({ id, onSuccess }: EditQuestionFormProps) {
     );
   }
 
-  if (questionQuery.isPending || activitiesQuery.isPending) {
+  if (
+    questionQuery.isPending ||
+    activitiesQuery.isPending ||
+    isDifficultyLoading
+  ) {
     return (
       <div className="flex items-center justify-center py-8">
         <Loader2 className="h-8 w-8 animate-spin" />
@@ -179,10 +168,10 @@ export function EditQuestionForm({ id, onSuccess }: EditQuestionFormProps) {
     );
   }
 
-  const activities = activitiesQuery.data
-    ? Array.isArray(activitiesQuery.data)
-      ? activitiesQuery.data
-      : [activitiesQuery.data]
+  const activities = activitiesReturn?.data
+    ? Array.isArray(activitiesReturn.data)
+      ? activitiesReturn.data
+      : [activitiesReturn.data]
     : [];
 
   const activityOptions = activities
@@ -251,10 +240,12 @@ export function EditQuestionForm({ id, onSuccess }: EditQuestionFormProps) {
             <Form.Select
               label="Nível de Dificuldade"
               placeholder="Selecione um nível de dificuldade"
-              options={difficultyLevels.map((level) => ({
-                value: level.id.toString(),
-                label: level.nome,
-              }))}
+              options={
+                difficultyLevelsData?.data?.map((level) => ({
+                  value: level.id.toString(),
+                  label: level.nome,
+                })) ?? []
+              }
               onChange={field.onChange}
               value={field.value || ""}
               disabled={update.isPending}

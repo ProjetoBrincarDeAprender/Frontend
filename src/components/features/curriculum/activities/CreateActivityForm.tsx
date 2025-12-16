@@ -54,10 +54,10 @@ export function CreateActivityForm({
   } = create;
 
   const { competencesQuery } = useCompetence({});
-  const { data: competencesData = [], isLoading: isCompetencesLoading } =
+  const { data: competencesData, isLoading: isCompetencesLoading } =
     competencesQuery;
 
-  const allCompetences = competencesData as CompetenceWithArea[];
+  const allCompetences = competencesData?.data as CompetenceWithArea[];
 
   const [competenceSearch, setCompetenceSearch] = useState("");
   const [showCompetenceDropdown, setShowCompetenceDropdown] = useState(false);

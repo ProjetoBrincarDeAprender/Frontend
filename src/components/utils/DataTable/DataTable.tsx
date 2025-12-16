@@ -5,6 +5,7 @@ import {
   getCoreRowModel,
   getFilteredRowModel,
   getSortedRowModel,
+  type PaginationState,
   type SortingState,
   useReactTable,
 } from "@tanstack/react-table";
@@ -25,7 +26,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { useState, useMemo } from "react";
+import { useMemo, useState } from "react";
 import { DataTablePagination } from "./DataTablePagination";
 
 // Função para filtro customizado que trata IDs de forma diferente
@@ -51,17 +52,34 @@ const customFilterFn = (row: any, columnId: string, filterValue: string) => {
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
-  page?: number;
   renderExtra?: () => React.ReactNode;
+  // Server-side pagination props
+  pageCount?: number;
+  pagination?: PaginationState;
+  onPaginationChange?: (pagination: PaginationState) => void;
+  manualPagination?: boolean;
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
   renderExtra,
+  pageCount,
+  pagination: controlledPagination,
+  onPaginationChange,
+  manualPagination = false,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+
+  // Local pagination state (used when not in manual mode)
+  const [localPagination, setLocalPagination] = useState<PaginationState>({
+    pageIndex: 0,
+    pageSize: 10,
+  });
+
+  // Use controlled pagination if provided, otherwise local
+  const pagination = controlledPagination || localPagination;
 
   // Detectar colunas disponíveis automaticamente
   const availableColumns = useMemo(() => {
@@ -112,18 +130,34 @@ export function DataTable<TData, TValue>({
 
   const table = useReactTable({
     data,
+    pageCount: manualPagination ? pageCount : undefined,
     columns: columnsWithCustomFilter,
     getCoreRowModel: getCoreRowModel(),
     onSortingChange: setSorting,
     getSortedRowModel: getSortedRowModel(),
     onColumnFiltersChange: setColumnFilters,
     getFilteredRowModel: getFilteredRowModel(),
+    // Pagination configuration
     filterFns: {
       customFilter: customFilterFn,
     },
     state: {
       sorting,
       columnFilters,
+      pagination,
+    },
+    manualPagination,
+    onPaginationChange: (updaterOrValue) => {
+      const newPagination =
+        typeof updaterOrValue === "function"
+          ? updaterOrValue(pagination)
+          : updaterOrValue;
+
+      if (onPaginationChange) {
+        onPaginationChange(newPagination);
+      } else {
+        setLocalPagination(newPagination);
+      }
     },
   });
   const columnExists = table.getColumn(selectedColumn);

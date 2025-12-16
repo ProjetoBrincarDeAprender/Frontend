@@ -11,6 +11,7 @@ import { SkeletonTable } from "@/components/ui/skeleton-table";
 import DeleteModal from "@/components/utils/DataTable/DeleteModal";
 import useActivity from "@/hooks/Activity/useActivity";
 import type { Activity } from "@/types/activity";
+import type { FilterQuestionOption } from "@/types/filter";
 import type { Question } from "@/types/question";
 
 interface CellContext {
@@ -43,52 +44,81 @@ export default function QuestionTable() {
     }
   }, [isQuestionError]);
 
-  const [searchParams, _] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [filteredActivities, setFilteredActivities] = useState<number[]>([]);
 
-  const { questionsQuery } = useQuestion({});
+  const page = Number(searchParams.get("page")) || 1;
+  const pageSize = Number(searchParams.get("pageSize")) || 10;
+
+  const filters: FilterQuestionOption = {
+    page,
+    limit: pageSize as 10 | 25 | 50 | 100 | 500,
+  };
+
+  if (user?.perfil === "Professor") {
+    filters.activitiesIds = filteredActivities;
+  }
+
+  const { questionsQuery } = useQuestion({ filters });
   const { data: questionsData, isLoading: loading } = questionsQuery;
 
   const { activitiesQuery } = useActivity();
   const { data: activitiesData, isLoading: activitiesLoading } =
     activitiesQuery;
 
+  // Handle pagination change
+  const handlePaginationChange = (pagination: {
+    pageIndex: number;
+    pageSize: number;
+  }) => {
+    setSearchParams({
+      page: String(pagination.pageIndex + 1),
+      pageSize: String(pagination.pageSize),
+    });
+    setSelectedIds([]);
+  };
+
   const [formattedQuestions, setFormattedQuestions] = useState<
     QuestionFormatted[]
   >([]);
 
   useEffect(() => {
-    if (questionsData && activitiesData) {
-      let filteredActivities = activitiesData;
+    if (questionsData?.data && activitiesData?.data) {
+      let filteredActivities = activitiesData.data;
 
       if (user?.perfil === "Professor") {
         const userEscolaId = user?.escolaId;
         const userCodigo = user?.codigo_usuario;
 
-        filteredActivities = activitiesData.filter((activity: Activity) => {
-          if (!activity.usuarioCriadorId) {
+        filteredActivities = activitiesData.data.filter(
+          (activity: Activity) => {
+            if (!activity.usuarioCriadorId) {
+              return false;
+            }
+
+            const criadorId = String(activity.usuarioCriadorId);
+
+            if (userCodigo && criadorId === userCodigo) {
+              return true;
+            }
+
+            if (userEscolaId && activity.escolaId === userEscolaId) {
+              return true;
+            }
+
             return false;
-          }
-
-          const criadorId = String(activity.usuarioCriadorId);
-
-          if (userCodigo && criadorId === userCodigo) {
-            return true;
-          }
-
-          if (userEscolaId && activity.escolaId === userEscolaId) {
-            return true;
-          }
-
-          return false;
-        });
+          },
+        );
       }
+
+      setFilteredActivities(filteredActivities.map((activity) => activity.id));
 
       const activitiesMap = new Map<number, Activity>();
       filteredActivities.forEach((activity: Activity) => {
         activitiesMap.set(activity.id, activity);
       });
 
-      const enrichedQuestions: QuestionFormatted[] = questionsData
+      const enrichedQuestions: QuestionFormatted[] = questionsData.data
         .filter((question) => activitiesMap.has(question.atividade_id))
         .map((question) => {
           let content = "";
@@ -126,12 +156,19 @@ export default function QuestionTable() {
               : undefined,
             createdAt: question.created_At || "",
           };
-        },
-      );
+        });
+
+      console.log(enrichedQuestions);
 
       setFormattedQuestions(enrichedQuestions);
     }
-  }, [questionsData, activitiesData, user?.perfil, user?.codigo_usuario, user?.escolaId]);
+  }, [
+    questionsData,
+    activitiesData,
+    user?.perfil,
+    user?.codigo_usuario,
+    user?.escolaId,
+  ]);
 
   const columnsWithCheckbox: ColumnDef<QuestionFormatted>[] = [
     {
@@ -170,9 +207,7 @@ export default function QuestionTable() {
               <div className="flex items-center justify-center gap-2">
                 <button
                   disabled={isDisabled}
-                  className={
-                    isDisabled ? "cursor-not-allowed opacity-50" : ""
-                  }
+                  className={isDisabled ? "cursor-not-allowed opacity-50" : ""}
                   title={
                     !isOwner
                       ? "Você não pode editar questões de outros usuários"
@@ -183,9 +218,7 @@ export default function QuestionTable() {
                 </button>
                 <button
                   disabled={isDisabled}
-                  className={
-                    isDisabled ? "cursor-not-allowed opacity-50" : ""
-                  }
+                  className={isDisabled ? "cursor-not-allowed opacity-50" : ""}
                   title={
                     !isOwner
                       ? "Você não pode excluir questões de outros usuários"
@@ -216,9 +249,13 @@ export default function QuestionTable() {
         <DataTable
           columns={columnsWithCheckbox}
           data={formattedQuestions ?? []}
-          page={
-            searchParams.get("page") ? parseInt(searchParams.get("page")!) : 0
-          }
+          manualPagination
+          pageCount={questionsData?.meta.totalPages}
+          pagination={{
+            pageIndex: page - 1,
+            pageSize,
+          }}
+          onPaginationChange={handlePaginationChange}
           renderExtra={() =>
             selectedIds.length > 0 && !loading ? (
               <button

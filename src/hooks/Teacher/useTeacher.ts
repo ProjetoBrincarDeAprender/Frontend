@@ -1,4 +1,5 @@
 import type { FilterStudentOption, FilterTeacherOption } from "@/types/filter";
+import type { PaginationMeta } from "@/types/pagination";
 import type { Student } from "@/types/student";
 import type { Teacher } from "@/types/teacher";
 import api from "@/utils/api";
@@ -30,7 +31,7 @@ async function fetchTeacherData(
 
 async function fetchTeachersData(
   filters?: FilterTeacherOption,
-): Promise<Teacher[]> {
+): Promise<{ data: Teacher[]; meta: PaginationMeta }> {
   try {
     const filter =
       "?" + new URLSearchParams(filters as Record<string, string>).toString();
@@ -47,7 +48,7 @@ async function fetchTeachersData(
 async function fetchTeacherRelations(
   teacherId: string | number,
   filters: FilterStudentOption,
-): Promise<Student[]> {
+): Promise<{ data: Student[]; meta: PaginationMeta }> {
   try {
     const params = new URLSearchParams(
       filters as Record<string, string>,
@@ -56,7 +57,7 @@ async function fetchTeacherRelations(
     const response = await api.get(
       `/teacher/list/${teacherId}/students?${params}`,
     );
-    return response.data as Student[];
+    return response.data;
   } catch (error) {
     console.log(error);
     throw error;
@@ -82,7 +83,7 @@ export function useTeacher({
     enabled: !!teacherId,
   });
 
-  const teachersQuery = useQuery<Teacher[]>({
+  const teachersQuery = useQuery<{ data: Teacher[]; meta: PaginationMeta }>({
     queryKey: [...TEACHER_QUERY_KEY, filters],
     queryFn: () => fetchTeachersData(filters),
   });
@@ -97,7 +98,10 @@ export function useTeacherRelations({
   teacherId: string | number;
   filters: FilterStudentOption;
 }) {
-  const teacherRelationsQuery = useQuery<Student[]>({
+  const teacherRelationsQuery = useQuery<{
+    data: Student[];
+    meta: PaginationMeta;
+  }>({
     queryKey: [...TEACHER_RELATIONS_QUERY_KEY, teacherId, filters],
     queryFn: () => fetchTeacherRelations(teacherId!, filters || {}),
   });

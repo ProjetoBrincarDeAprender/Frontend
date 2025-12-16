@@ -1,15 +1,15 @@
 import { Form } from "@/components/forms/Root";
+import { useSchool } from "@/hooks/School/useSchool";
+import { useStudent } from "@/hooks/Student/useStudent";
+import { useUpdateStudent } from "@/hooks/Student/useUpdateStudent";
 import { useUser } from "@/hooks/User/useUser";
-import api from "@/utils/api";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AxiosError } from "axios";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 //import { PasswordInput } from "@/components/ui/password-input";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useStudent } from "@/hooks/Student/useStudent";
-import { useUpdateStudent } from "@/hooks/Student/useUpdateStudent";
 import { Loader2 } from "lucide-react";
 import { IMaskInput } from "react-imask";
 
@@ -86,34 +86,13 @@ export function StudentEditForm({ id, onSuccess }: StudentFormProps) {
   });
 
   const { user } = useUser();
-  const [schools, setSchools] = useState<{ id: number; nome: string }[] | null>(
-    null,
-  );
+  const { schoolsQuery } = useSchool({});
+  const { data: schoolsData, isLoading: isSchoolsLoading } = schoolsQuery;
 
   const { update } = useUpdateStudent();
   const { mutateAsync: updateStudent, isPending } = update;
 
   useEffect(() => {
-    const fetchSchools = async () => {
-      try {
-        const response = await api.get("/school/list");
-
-        if (response.status === 200) {
-          setSchools(response.data);
-          form.resetField("escolaId");
-        }
-      } catch (error) {
-        if (error instanceof AxiosError) {
-          form.setError("root", {
-            message: `Erro ao carregar escolas: ${error.message}`,
-          });
-        }
-      }
-    };
-
-    if (user?.perfil == "Admin") {
-      fetchSchools();
-    }
     if (studentData) {
       form.reset({
         nome_completo: studentData.nome_completo || "",
@@ -132,7 +111,7 @@ export function StudentEditForm({ id, onSuccess }: StudentFormProps) {
         escolaId: studentData.escolaId ? String(studentData.escolaId) : "",
       });
     }
-  }, [id, form, user?.perfil, studentData]);
+  }, [id, form, studentData]);
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     const studentPayload = Object.fromEntries(
@@ -271,7 +250,9 @@ export function StudentEditForm({ id, onSuccess }: StudentFormProps) {
               )}
             />
             {user?.perfil == "Admin" &&
-              (schools ? (
+              (isSchoolsLoading ? (
+                <span>Carregando escolas...</span>
+              ) : (
                 <Form.Field
                   form={form}
                   name="escolaId"
@@ -281,15 +262,15 @@ export function StudentEditForm({ id, onSuccess }: StudentFormProps) {
                       onChange={field.onChange}
                       label="Escola"
                       placeholder="Selecione a Escola"
-                      options={schools.map((school) => ({
-                        value: String(school.id),
-                        label: school.nome,
-                      }))}
+                      options={
+                        schoolsData?.data?.map((school) => ({
+                          value: String(school.id),
+                          label: school.nome,
+                        })) ?? []
+                      }
                     />
                   )}
                 />
-              ) : (
-                <span>Carregando escolas...</span>
               ))}
             <Form.Submit disabled={isPending}>
               {isPending ? (

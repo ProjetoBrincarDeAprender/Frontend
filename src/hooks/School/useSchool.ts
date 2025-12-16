@@ -1,4 +1,5 @@
 import type { FilterSchoolOption } from "@/types/filter";
+import type { PaginationMeta } from "@/types/pagination";
 import type { School } from "@/types/school";
 import type { User } from "@/types/user";
 import api from "@/utils/api";
@@ -8,11 +9,13 @@ async function fetchSchoolData(
   queryClient: QueryClient,
   schoolId: number | string,
 ): Promise<School> {
-  const schools: School[] | undefined =
-    await queryClient.getQueryData(SCHOOL_QUERY_KEY);
+  const schoolsResponse = queryClient.getQueryData<{
+    data: School[];
+    meta: PaginationMeta;
+  }>(SCHOOL_QUERY_KEY);
 
-  if (schools) {
-    const school = schools.find((s) => s.id === schoolId);
+  if (schoolsResponse?.data) {
+    const school = schoolsResponse.data.find((s) => s.id === schoolId);
     if (school) {
       return school;
     }
@@ -29,7 +32,7 @@ async function fetchSchoolData(
 
 async function fetchAllSchools(
   filters?: FilterSchoolOption,
-): Promise<School[]> {
+): Promise<{ data: School[]; meta: PaginationMeta }> {
   try {
     const params = new URLSearchParams(filters as Record<string, string>);
 
@@ -44,7 +47,7 @@ async function fetchAllSchools(
 async function fetchSchoolUsers(
   schoolId: number | string,
   filters?: FilterSchoolOption,
-): Promise<User[]> {
+): Promise<{ data: User[]; meta: PaginationMeta }> {
   try {
     const params = new URLSearchParams(filters as Record<string, string>);
 
@@ -77,13 +80,13 @@ export function useSchool({
     enabled: !!schoolId,
   });
 
-  const schoolsQuery = useQuery({
+  const schoolsQuery = useQuery<{ data: School[]; meta: PaginationMeta }>({
     queryKey: [...SCHOOL_QUERY_KEY, filters],
     queryFn: () => fetchAllSchools(filters),
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
 
-  const schoolUsersQuery = useQuery({
+  const schoolUsersQuery = useQuery<{ data: User[]; meta: PaginationMeta }>({
     queryKey: [...SCHOOL_USERS_QUERY_KEY, schoolId, filters],
     queryFn: () => fetchSchoolUsers(schoolId!, filters),
     staleTime: 5 * 60 * 1000, // 5 minutes

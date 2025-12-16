@@ -49,15 +49,17 @@ export function ResponsibleEditForm({ id, onSuccess }: ResponsibleFormProps) {
   });
   const { data: responsibleData, isLoading: isLoadingResponsible } =
     responsibleQuery;
-  const { data: studentsData, isLoading: isLoadingStudents } =
+  const { data: studentsReturn, isLoading: isLoadingStudents } =
     responsibleStudentsQuery;
+  const studentsData = studentsReturn?.data;
 
   // Fetch schools for admin
   const schoolFilters: FilterSchoolOption = isAdmin
     ? {}
     : { escolaId: Number(user?.escolaId) };
   const { schoolsQuery } = useSchool({ filters: schoolFilters });
-  const { data: schoolsData, isLoading: isLoadingSchools } = schoolsQuery;
+  const { data: schoolsReturn, isLoading: isLoadingSchools } = schoolsQuery;
+  const schoolsData = schoolsReturn?.data;
 
   // Fetch available students
   const studentRelationsFilters: FilterStudentRelationsOption = {
@@ -72,8 +74,11 @@ export function ResponsibleEditForm({ id, onSuccess }: ResponsibleFormProps) {
     "responsible",
     studentRelationsFilters,
   );
-  const { data: availableStudentsData, isLoading: isLoadingAvailableStudents } =
-    studentsByRelationQuery;
+  const {
+    data: availableStudentsReturn,
+    isLoading: isLoadingAvailableStudents,
+  } = studentsByRelationQuery;
+  const availableStudentsData = availableStudentsReturn?.data;
 
   // Update mutations
   const {

@@ -1,18 +1,19 @@
+import { SkeletonTable } from "@/components/ui/skeleton-table";
+import DeleteModal from "@/components/utils/DataTable/DeleteModal";
 import {
   KNOWLEDGE_AREA_QUERY_KEY,
   useKnowledgeArea,
 } from "@/hooks/KnowledgeArea/useKnowledgeArea";
 import { useTable } from "@/hooks/Table/useTable";
 import { useDelete } from "@/hooks/useDelete";
+import type { FilterKnowledgeAreaOption } from "@/types/filter";
+import type { KnowledgeArea } from "@/types/knowledgeArea";
+import type { ColumnDef } from "@tanstack/react-table";
 import { useState } from "react";
 import { useSearchParams } from "react-router";
 import { DataTable } from "../../../../utils/DataTable/DataTable";
-import { KnowledgeAreaColumns } from "./TableData";
-import { SkeletonTable } from "@/components/ui/skeleton-table";
 import { EditKnowledgeAreaModal } from "../edit/KnowledgeAreaEditModal";
-import type { ColumnDef } from "@tanstack/react-table";
-import type { KnowledgeArea } from "@/types/knowledgeArea";
-import DeleteModal from "@/components/utils/DataTable/DeleteModal";
+import { KnowledgeAreaColumns } from "./TableData";
 
 interface CellContext {
   row: {
@@ -37,11 +38,34 @@ export default function KnowledgeAreaTable() {
     setUpdating(true);
   };
 
-  const [searchParams, _] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const { setUpdating } = useTable();
 
-  const { knowledgeAreasQuery } = useKnowledgeArea({});
-  const { data, isLoading: loading } = knowledgeAreasQuery;
+  // Get pagination params from URL
+  const page = Number(searchParams.get("page")) || 1;
+  const pageSize = Number(searchParams.get("pageSize")) || 10;
+
+  const filters: FilterKnowledgeAreaOption = {
+    page,
+    limit: pageSize as 10 | 25 | 50 | 100 | 500,
+  };
+
+  const { knowledgeAreasQuery } = useKnowledgeArea({ filters });
+  const { data: knowledgeAreasReturn, isLoading: loading } =
+    knowledgeAreasQuery;
+  const knowledgeAreasData = knowledgeAreasReturn?.data;
+
+  // Handle pagination change
+  const handlePaginationChange = (pagination: {
+    pageIndex: number;
+    pageSize: number;
+  }) => {
+    setSearchParams({
+      page: String(pagination.pageIndex + 1),
+      pageSize: String(pagination.pageSize),
+    });
+    setSelectedIds([]);
+  };
 
   const columnsWithCheckbox: ColumnDef<KnowledgeArea>[] = [
     {
@@ -108,10 +132,14 @@ export default function KnowledgeAreaTable() {
       ) : (
         <DataTable
           columns={columnsWithCheckbox}
-          data={data ?? []}
-          page={
-            searchParams.get("page") ? parseInt(searchParams.get("page")!) : 0
-          }
+          data={knowledgeAreasData ?? []}
+          manualPagination
+          pageCount={knowledgeAreasReturn?.meta.totalPages}
+          pagination={{
+            pageIndex: page - 1,
+            pageSize,
+          }}
+          onPaginationChange={handlePaginationChange}
           renderExtra={() =>
             selectedIds.length > 0 && !loading ? (
               <button

@@ -36,7 +36,7 @@ export function EditActivityForm({ id, onSuccess }: EditActivityFormProps) {
 
   const { competencesQuery } = useCompetence({});
   const {
-    data: competences = [],
+    data: competences,
     isLoading: isCompetencesLoading,
     isError: isCompetencesError,
   } = competencesQuery;
@@ -205,7 +205,7 @@ export function EditActivityForm({ id, onSuccess }: EditActivityFormProps) {
             <Form.Select
               label="Competência"
               placeholder="Selecione uma competência"
-              options={competences.map((competence) => ({
+              options={competences!.data.map((competence) => ({
                 value: competence.id.toString(),
                 label: competence.nome,
               }))}

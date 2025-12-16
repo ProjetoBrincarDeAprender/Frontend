@@ -38,16 +38,18 @@ export function EditCompetenceForm({ id, onSuccess }: EditCompetenceFormProps) {
   } = competenceQuery;
   const { knowledgeAreasQuery } = useKnowledgeArea();
   const {
-    data: knowledgeAreasData,
+    data: knowledgeAreasReturn,
     isLoading: isKnowledgeAreasLoading,
     isError: isKnowledgeAreasError,
   } = knowledgeAreasQuery;
+  const knowledgeAreasData = knowledgeAreasReturn?.data;
   const { competencesQuery } = useCompetence();
   const {
-    data: competencesData,
+    data: competencesReturn,
     isLoading: isCompetencesLoading,
     isError: isCompetencesError,
   } = competencesQuery;
+  const competencesData = competencesReturn?.data;
   const { update: updateCompetenceMutation } = useUpdateCompetence();
   const {
     mutateAsync: updateCompetence,

@@ -188,14 +188,16 @@ export function ResponsableSignUpForm({ onSuccess }: SignUpFormProps) {
   }
 
   const { schoolsQuery } = useSchool({ filters: schoolFilters });
-  const { data: schoolsData, isLoading: isSchoolLoading } = schoolsQuery;
+  const { data: schoolsReturn, isLoading: isSchoolLoading } = schoolsQuery;
+  const schoolsData = schoolsReturn?.data;
 
   const { studentsByRelationQuery } = useStudentsRelations(
     "responsible",
     studentRelationsFilters,
   );
-  const { data: studentsData, isLoading: isStudentsLoading } =
+  const { data: studentsReturn, isLoading: isStudentsLoading } =
     studentsByRelationQuery;
+  const studentsData = studentsReturn?.data;
 
   const isLoading = isAdmin
     ? isSchoolLoading || isStudentsLoading

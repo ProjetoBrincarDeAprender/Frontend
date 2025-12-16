@@ -1,4 +1,5 @@
 import { Form } from "@/components/forms/Root";
+import { Skeleton } from "@/components/ui/skeleton";
 import useActivity from "@/hooks/Activity/useActivity";
 import { useCreateQuestion } from "@/hooks/Question/useCreateQuestion";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -49,6 +50,10 @@ interface ActivityApiResponse {
 export function CreateQuestionForm({ onSuccess }: CreateQuestionFormProps) {
   const { create } = useCreateQuestion();
   const { activitiesQuery } = useActivity();
+  const { data: activitiesReturn, isLoading: isActivitiesLoading } =
+    activitiesQuery;
+  const activitiesData = activitiesReturn?.data;
+
   const [difficultyLevels, setDifficultyLevels] = useState<DifficultyLevel[]>(
     [],
   );
@@ -74,11 +79,10 @@ export function CreateQuestionForm({ onSuccess }: CreateQuestionFormProps) {
     type: activity.tipo,
   });
 
-  const activities = activitiesQuery.data
-    ? (Array.isArray(activitiesQuery.data)
-        ? activitiesQuery.data
-        : [activitiesQuery.data]
-      ).map(formatActivity)
+  const activities = activitiesData
+    ? (Array.isArray(activitiesData) ? activitiesData : [activitiesData]).map(
+        formatActivity,
+      )
     : [];
 
   useEffect(() => {
@@ -198,149 +202,158 @@ export function CreateQuestionForm({ onSuccess }: CreateQuestionFormProps) {
         onSubmit={onSubmit}
         className="flex flex-col gap-4"
       >
-        <div className="relative space-y-2">
-          <label className="text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-            Atividade *
-            {activities.length > 0 && (
-              <span className="font-1 ml-1 text-green-600">
-                {" "}
-                ({activities.length} disponíveis)
-              </span>
-            )}
-          </label>
-
-          <div className="relative">
-            <input
-              type="text"
-              value={activitySearch}
-              onChange={(e) => handleActivitySearchChange(e.target.value)}
-              onFocus={() => setShowActivityDropdown(activitySearch.length > 0)}
-              className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
-              placeholder="Digite para buscar uma atividade..."
-              disabled={
-                create.isPending ||
-                activitiesQuery.isPending ||
-                activities.length === 0
-              }
-            />
-            {selectedActivity && (
-              <button
-                type="button"
-                onClick={clearActivity}
-                className="absolute top-1/2 right-2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                disabled={create.isPending}
-              >
-                ×
-              </button>
-            )}
-          </div>
-
-          {showActivityDropdown && filteredActivities.length > 0 && (
-            <div className="absolute z-10 mt-1 max-h-60 w-full overflow-y-auto rounded-md border border-gray-300 bg-white shadow-lg">
-              {filteredActivities.map((activity) => (
-                <button
-                  key={activity.id}
-                  type="button"
-                  onClick={() => handleActivitySelect(activity)}
-                  className="w-full border-b px-3 py-2 text-left last:border-b-0 hover:bg-gray-100 focus:bg-gray-100 focus:outline-none"
-                  disabled={create.isPending}
-                >
-                  <div className="text-sm font-medium">{activity.title}</div>
-                  <div className="text-xs text-gray-500">
-                    Tipo: {activity.type}
-                  </div>
-                </button>
-              ))}
-            </div>
-          )}
-
-          {activitySearch.length > 0 && filteredActivities.length === 0 && (
-            <div className="text-sm text-gray-500">
-              Nenhuma atividade encontrada com "{activitySearch}"
-            </div>
-          )}
-
-          {/* {selectedActivity && (
-            <div className="font-1 text-green-600">
-              Atividade selecionada: {selectedActivity.title}
-              <span className="text-gray-500"> (Tipo: {selectedActivity.type})</span>
-            </div>
-          )} */}
-
-          {activities.length === 0 && (
-            <div className="rounded border border-amber-200 bg-amber-50 p-3 text-sm text-amber-600">
-              ⚠️ Nenhuma atividade encontrada. Verifique se existem atividades
-              cadastradas.
-            </div>
-          )}
-        </div>
-
-        <Form.Field
-          form={form}
-          name="content"
-          render={({ field }) => (
-            <div className="space-y-2">
+        {isActivitiesLoading ? (
+          <>
+            <Skeleton className="h-10 w-full" />
+            <Skeleton className="h-32 w-full" />
+            <Skeleton className="h-10 w-full" />
+            <Skeleton className="h-10 w-full" />
+            <Skeleton className="h-10 w-full" />
+          </>
+        ) : (
+          <>
+            <div className="relative space-y-2">
               <label className="text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                Conteúdo da Questão *
+                Atividade *
+                {activities.length > 0 && (
+                  <span className="font-1 ml-1 text-green-600">
+                    {" "}
+                    ({activities.length} disponíveis)
+                  </span>
+                )}
               </label>
-              <textarea
-                {...field}
-                placeholder="Digite o conteúdo da questão... Ex: Quanto é 2 + 2?"
-                disabled={create.isPending}
-                className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring resize-vertical flex min-h-32 w-full rounded-md border px-3 py-2 text-sm focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
-              />
+
+              <div className="relative">
+                <input
+                  type="text"
+                  value={activitySearch}
+                  onChange={(e) => handleActivitySearchChange(e.target.value)}
+                  onFocus={() =>
+                    setShowActivityDropdown(activitySearch.length > 0)
+                  }
+                  className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+                  placeholder="Digite para buscar uma atividade..."
+                  disabled={
+                    create.isPending ||
+                    activitiesQuery.isPending ||
+                    activities.length === 0
+                  }
+                />
+                {selectedActivity && (
+                  <button
+                    type="button"
+                    onClick={clearActivity}
+                    className="absolute top-1/2 right-2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                    disabled={create.isPending}
+                  >
+                    ×
+                  </button>
+                )}
+              </div>
+
+              {showActivityDropdown && filteredActivities.length > 0 && (
+                <div className="absolute z-10 mt-1 max-h-60 w-full overflow-y-auto rounded-md border border-gray-300 bg-white shadow-lg">
+                  {filteredActivities.map((activity) => (
+                    <button
+                      key={activity.id}
+                      type="button"
+                      onClick={() => handleActivitySelect(activity)}
+                      className="w-full border-b px-3 py-2 text-left last:border-b-0 hover:bg-gray-100 focus:bg-gray-100 focus:outline-none"
+                      disabled={create.isPending}
+                    >
+                      <div className="text-sm font-medium">
+                        {activity.title}
+                      </div>
+                      <div className="text-xs text-gray-500">
+                        Tipo: {activity.type}
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              {activitySearch.length > 0 && filteredActivities.length === 0 && (
+                <div className="text-sm text-gray-500">
+                  Nenhuma atividade encontrada com "{activitySearch}"
+                </div>
+              )}
+
+              {activities.length === 0 && (
+                <div className="rounded border border-amber-200 bg-amber-50 p-3 text-sm text-amber-600">
+                  ⚠️ Nenhuma atividade encontrada. Verifique se existem
+                  atividades cadastradas.
+                </div>
+              )}
             </div>
-          )}
-        />
 
-        <Form.Field
-          form={form}
-          name="ordem"
-          render={({ field }) => (
-            <Form.Input
-              {...field}
-              label="Ordem da Questão *"
-              type="number"
-              placeholder="Ex: 1, 2, 3..."
-              disabled={create.isPending}
-              onChange={(e) => field.onChange(Number(e.target.value))}
-              min="1"
-              max="100"
+            <Form.Field
+              form={form}
+              name="content"
+              render={({ field }) => (
+                <div className="space-y-2">
+                  <label className="text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                    Conteúdo da Questão *
+                  </label>
+                  <textarea
+                    {...field}
+                    placeholder="Digite o conteúdo da questão... Ex: Quanto é 2 + 2?"
+                    disabled={create.isPending}
+                    className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring resize-vertical flex min-h-32 w-full rounded-md border px-3 py-2 text-sm focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+                  />
+                </div>
+              )}
             />
-          )}
-        />
 
-        <Form.Field
-          form={form}
-          name="difficultyId"
-          render={({ field }) => (
-            <Form.Select
-              label="Nível de Dificuldade *"
-              placeholder="Selecione um nível de dificuldade"
-              options={difficultyLevels.map((level) => ({
-                value: level.id.toString(),
-                label: level.nome,
-              }))}
-              onChange={field.onChange}
-              value={field.value || ""}
-              disabled={create.isPending}
+            <Form.Field
+              form={form}
+              name="ordem"
+              render={({ field }) => (
+                <Form.Input
+                  {...field}
+                  label="Ordem da Questão *"
+                  type="number"
+                  placeholder="Ex: 1, 2, 3..."
+                  disabled={create.isPending}
+                  onChange={(e) => field.onChange(Number(e.target.value))}
+                  min="1"
+                  max="100"
+                />
+              )}
             />
-          )}
-        />
 
-        <Form.Submit
-          disabled={create.isPending || !selectedActivity}
-          className="bg-primary hover:bg-primary/90"
-        >
-          {create.isPending ? (
-            <>
-              <Loader2 className="mr-2 inline h-4 w-4 animate-spin" />
-              Criando...
-            </>
-          ) : (
-            "Criar"
-          )}
-        </Form.Submit>
+            <Form.Field
+              form={form}
+              name="difficultyId"
+              render={({ field }) => (
+                <Form.Select
+                  label="Nível de Dificuldade *"
+                  placeholder="Selecione um nível de dificuldade"
+                  options={difficultyLevels.map((level) => ({
+                    value: level.id.toString(),
+                    label: level.nome,
+                  }))}
+                  onChange={field.onChange}
+                  value={field.value || ""}
+                  disabled={create.isPending}
+                />
+              )}
+            />
+
+            <Form.Submit
+              disabled={create.isPending || !selectedActivity}
+              className="bg-primary hover:bg-primary/90"
+            >
+              {create.isPending ? (
+                <>
+                  <Loader2 className="mr-2 inline h-4 w-4 animate-spin" />
+                  Criando...
+                </>
+              ) : (
+                "Criar"
+              )}
+            </Form.Submit>
+          </>
+        )}
       </Form.Main>
     </Form.Wrapper>
   );
