@@ -9,6 +9,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useUser } from "@/hooks/User/useUser";
 import { constants } from "./utils/constants";
+import type { CompetenceWithArea } from "./common/types/activity.types";
 
 const formSchema = z.object({
   title: z
@@ -27,14 +28,6 @@ const formSchema = z.object({
 interface CreateActivityFormProps {
   onSuccess: () => void;
   onFormStateChange?: (isFormValid: boolean, selectedTemplate?: string) => void;
-}
-
-interface CompetenceWithArea {
-  id: number;
-  nome: string;
-  descricao: string | null;
-  areaId: number;
-  areaName?: string;
 }
 
 export function CreateActivityForm({
