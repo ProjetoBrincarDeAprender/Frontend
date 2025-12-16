@@ -9,6 +9,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useUser } from "@/hooks/User/useUser";
 import { formSchema } from "./utils/validation";
+import { ACTIVITY_CONFIG, TEMPLATES } from "./utils/constants";
 import type { CompetenceWithArea } from "./common/types/activity.types";
 
 interface CreateActivityFormProps {
@@ -38,11 +39,6 @@ export function CreateActivityForm({
   const [showCompetenceDropdown, setShowCompetenceDropdown] = useState(false);
   const [selectedCompetence, setSelectedCompetence] =
     useState<CompetenceWithArea | null>(null);
-
-  const templates = [
-    { label: "Múltipla Escolha", value: "multiple_choice" },
-    { label: "Verdadeiro ou Falso", value: "true_false" },
-  ];
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -87,9 +83,10 @@ export function CreateActivityForm({
       type: "Jogo",
       competenceId: Number(data.competenceId),
       content: JSON.stringify({ text: "Sem Conteúdo..." }),
-      creatorId: Number(user?.codigo_usuario) || 1,
-      maxQuestions: 10,
-      escolaId: 101,
+      creatorId:
+        Number(user?.codigo_usuario) || ACTIVITY_CONFIG.DEFAULT_CREATOR_ID,
+      maxQuestions: ACTIVITY_CONFIG.DEFAULT_MAX_QUESTIONS,
+      escolaId: ACTIVITY_CONFIG.DEFAULT_SCHOOL_ID,
     };
 
     try {
@@ -123,16 +120,16 @@ export function CreateActivityForm({
     }
   };
 
-  const filteredCompetences = allCompetences
-   .filter(
-     (competence) =>
-       competence.nome.toLowerCase().includes(competenceSearch.toLowerCase()) 
-    //  ||
+  const filteredCompetences = allCompetences;
+  // .filter(
+  //   (competence) =>
+  //     competence.nome.toLowerCase().includes(competenceSearch.toLowerCase()),
+  //   //  ||
   //     (competence.descricao &&
   //       competence.descricao
   //         .toLowerCase()
   //         .includes(competenceSearch.toLowerCase())),
-   );
+  // );
 
   const handleCompetenceSelect = (competence: CompetenceWithArea) => {
     setSelectedCompetence(competence);
@@ -174,6 +171,20 @@ export function CreateActivityForm({
               label="Título da Atividade"
               placeholder="Ex: Exercícios de Adição e Subtração"
               disabled={isActivityPending}
+            />
+          )}
+        />
+
+        <Form.Field
+          form={form}
+          name="competence"
+          render={({ field }) => (
+            <Form.Combobox
+              {...field}
+              label="Selecione uma Competência"
+              placeholder="Escolha..."
+              noItemFoundMessage="Nenhuma competência encontrada."
+              // options={[{ value: "Next", label: "next" }]}
             />
           )}
         />
@@ -255,9 +266,9 @@ export function CreateActivityForm({
             </div>
           )}
 
-          {
+          {/* {
             // allCompetences
-            [].length === 0 && (
+            [""].length === 0 && (
               <div className="rounded border border-amber-200 bg-amber-50 p-3 text-sm text-amber-600">
                 ⚠️ <strong>Nenhuma competência encontrada.</strong>
                 <br />
@@ -265,7 +276,7 @@ export function CreateActivityForm({
                 sistema.
               </div>
             )
-          }
+          } */}
         </div>
 
         <Form.Field
@@ -276,7 +287,7 @@ export function CreateActivityForm({
               {...field}
               label="Template"
               placeholder="Selecione o template"
-              options={templates}
+              options={TEMPLATES}
               disabled={isActivityPending || form.formState.isSubmitting}
             />
           )}
