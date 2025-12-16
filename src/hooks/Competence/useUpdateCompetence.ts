@@ -86,8 +86,14 @@ export function useUpdateCompetence() {
       }
       toast.error("Erro ao atualizar competência!");
     },
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: COMPETENCE_QUERY_KEY });
+    onSettled: (_data, _error, variables) => {
+      // Invalidate only specific queries to avoid unnecessary refetches
+      queryClient.invalidateQueries({
+        queryKey: [...COMPETENCE_QUERY_KEY, variables.competenceId],
+      });
+      queryClient.invalidateQueries({
+        queryKey: [...COMPETENCE_QUERY_KEY, undefined],
+      });
       queryClient.invalidateQueries({
         queryKey: COMPETENCE_BY_KNOWLEDGE_AREA_QUERY_KEY,
       });

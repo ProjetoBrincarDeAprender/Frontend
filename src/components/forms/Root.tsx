@@ -8,6 +8,8 @@ import type { FormItemProps } from "./Item";
 import Item from "./Item";
 import type { FromMainProps } from "./Main";
 import Main from "./Main";
+import type { FormComboboxProps } from "./Combobox";
+import Combobox from "./Combobox";
 import { FancyMultiSelect, type MultiSelectProps } from "./MultiSelect";
 import PasswordInput, { type FormPasswordInputProps } from "./PasswordInput";
 import type { FormSelectProps } from "./Select";
@@ -36,6 +38,7 @@ export const Form = {
     />
   ),
   Input: (props: FormInputProps) => <Input {...props} />,
+  Combobox: (props: FormComboboxProps) => <Combobox {...props} />,
   PasswordInput: (props: FormPasswordInputProps) => (
     <PasswordInput {...props} />
   ),

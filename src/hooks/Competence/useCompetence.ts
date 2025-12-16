@@ -9,6 +9,10 @@ async function fetchCompetenceData(
   queryClient: QueryClient,
   competenceId: number,
 ): Promise<Competence> {
+  if (!competenceId || competenceId === undefined) {
+    throw new Error("competenceId is required and cannot be undefined");
+  }
+
   const competencesResponse = queryClient.getQueryData<{
     data: Competence[];
     meta: PaginationMeta;
@@ -71,6 +75,10 @@ async function fetchCompetencesByKnowledgeArea(
   knowledgeAreaId: number,
   filters?: FilterCompetenceOption,
 ): Promise<{ data: Competence[]; meta: PaginationMeta }> {
+  if (!knowledgeAreaId || knowledgeAreaId === undefined) {
+    throw new Error("knowledgeAreaId is required and cannot be undefined");
+  }
+
   try {
     const params = new URLSearchParams(
       filters as Record<string, string>,
@@ -105,8 +113,13 @@ export function useCompetence({
 
   const competenceQuery = useQuery({
     queryKey: [...COMPETENCE_QUERY_KEY, competenceId],
-    queryFn: () => fetchCompetenceData(queryClient, competenceId!),
-    enabled: !!competenceId,
+    queryFn: () => {
+      if (!competenceId) {
+        throw new Error("competenceId is required");
+      }
+      return fetchCompetenceData(queryClient, competenceId);
+    },
+    enabled: !!competenceId && competenceId !== undefined,
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
 
@@ -128,8 +141,13 @@ export function useCompetence({
       knowledgeAreaId,
       filters,
     ],
-    queryFn: () => fetchCompetencesByKnowledgeArea(knowledgeAreaId!, filters),
-    enabled: !!knowledgeAreaId,
+    queryFn: () => {
+      if (!knowledgeAreaId) {
+        throw new Error("knowledgeAreaId is required");
+      }
+      return fetchCompetencesByKnowledgeArea(knowledgeAreaId, filters);
+    },
+    enabled: !!knowledgeAreaId && knowledgeAreaId !== undefined,
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
 
