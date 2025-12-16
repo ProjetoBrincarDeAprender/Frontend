@@ -72,7 +72,7 @@ export default function DeleteModal({
 
         toast.error(errorMessage);
       } else {
-        toast.error("Erro ao excluir o item. Tente novamente.");
+        // toast.error("Erro ao excluir o item. Tente novamente.");
       }
     }
   };
