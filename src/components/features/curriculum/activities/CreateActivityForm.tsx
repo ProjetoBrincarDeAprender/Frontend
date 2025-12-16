@@ -8,22 +8,8 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useUser } from "@/hooks/User/useUser";
-import { constants } from "./utils/constants";
+import { formSchema } from "./utils/validation";
 import type { CompetenceWithArea } from "./common/types/activity.types";
-
-const formSchema = z.object({
-  title: z
-    .string({ error: "Título é obrigatório" })
-    .min(3, { error: "Título deve ter pelo menos 3 caracteres" })
-    .max(100, { error: "Título deve ter no máximo 100 caracteres" }),
-  type: z
-    .string({ error: "Tipo é obrigatório" })
-    .min(1, { error: "Selecione um tipo de atividade" }),
-  competenceId: z
-    .string({ error: "Competência é obrigatória" })
-    .min(1, { error: "Selecione uma competência" }),
-  template: z.string().min(1, "Template é obrigatório"),
-});
 
 interface CreateActivityFormProps {
   onSuccess: () => void;
@@ -53,7 +39,10 @@ export function CreateActivityForm({
   const [selectedCompetence, setSelectedCompetence] =
     useState<CompetenceWithArea | null>(null);
 
-  const templates = constants.TEMPLATES;
+  const templates = [
+    { label: "Múltipla Escolha", value: "multiple_choice" },
+    { label: "Verdadeiro ou Falso", value: "true_false" },
+  ];
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -98,9 +87,9 @@ export function CreateActivityForm({
       type: "Jogo",
       competenceId: Number(data.competenceId),
       content: JSON.stringify({ text: "Sem Conteúdo..." }),
-      creatorId: Number(user?.codigo_usuario) || constants.DEFAULT_CREATOR_ID,
-      maxQuestions: constants.DEFAULT_MAX_QUESTIONS,
-      escolaId: constants.DEFAULT_SCHOOL_ID,
+      creatorId: Number(user?.codigo_usuario) || 1,
+      maxQuestions: 10,
+      escolaId: 101,
     };
 
     try {
@@ -134,14 +123,16 @@ export function CreateActivityForm({
     }
   };
 
-  const filteredCompetences = allCompetences.filter(
-    (competence) =>
-      competence.nome.toLowerCase().includes(competenceSearch.toLowerCase()) ||
-      (competence.descricao &&
-        competence.descricao
-          .toLowerCase()
-          .includes(competenceSearch.toLowerCase())),
-  );
+  const filteredCompetences = allCompetences
+   .filter(
+     (competence) =>
+       competence.nome.toLowerCase().includes(competenceSearch.toLowerCase()) 
+    //  ||
+  //     (competence.descricao &&
+  //       competence.descricao
+  //         .toLowerCase()
+  //         .includes(competenceSearch.toLowerCase())),
+   );
 
   const handleCompetenceSelect = (competence: CompetenceWithArea) => {
     setSelectedCompetence(competence);
@@ -264,13 +255,17 @@ export function CreateActivityForm({
             </div>
           )}
 
-          {allCompetences.length === 0 && (
-            <div className="rounded border border-amber-200 bg-amber-50 p-3 text-sm text-amber-600">
-              ⚠️ <strong>Nenhuma competência encontrada.</strong>
-              <br />
-              Certifique-se de que existem competências cadastradas no sistema.
-            </div>
-          )}
+          {
+            // allCompetences
+            [].length === 0 && (
+              <div className="rounded border border-amber-200 bg-amber-50 p-3 text-sm text-amber-600">
+                ⚠️ <strong>Nenhuma competência encontrada.</strong>
+                <br />
+                Certifique-se de que existem competências cadastradas no
+                sistema.
+              </div>
+            )
+          }
         </div>
 
         <Form.Field
