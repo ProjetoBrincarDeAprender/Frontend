@@ -25,8 +25,9 @@ export default function SchoolUserTable() {
   }
 
   const { schoolAdminsQuery } = useSchoolAdmin({ filters });
-  const { data: schoolAdminsData, isLoading: isSchoolAdminsLoading } =
+  const { data: schoolAdminsReturn, isLoading: isSchoolAdminsLoading } =
     schoolAdminsQuery;
+  const schoolAdminsData = schoolAdminsReturn?.data;
 
   // Handle pagination change
   const handlePaginationChange = (pagination: {
@@ -46,9 +47,9 @@ export default function SchoolUserTable() {
       ) : (
         <DataTable
           columns={SchoolUserColumns}
-          data={schoolAdminsData?.data ?? []}
+          data={schoolAdminsData ?? []}
           manualPagination
-          pageCount={schoolAdminsData?.meta.totalPages}
+          pageCount={schoolAdminsReturn?.meta.totalPages}
           pagination={{
             pageIndex: page - 1, // Convert from 1-based to 0-based
             pageSize,

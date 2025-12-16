@@ -43,8 +43,9 @@ export default function DifficultyLevelTable() {
   };
 
   const { difficultyLevelsQuery } = useDifficultyLevel({ filters });
-  const { data: difficultyLevelsData, isLoading: isDifficultyLoading } =
+  const { data: difficultyLevelsReturn, isLoading: isDifficultyLoading } =
     difficultyLevelsQuery;
+  const difficultyLevelsData = difficultyLevelsReturn?.data;
 
   const handleDeleteSelected = async () => {
     if (selectedIds.length === 0) return;
@@ -129,9 +130,9 @@ export default function DifficultyLevelTable() {
       ) : (
         <DataTable
           columns={columnsWithCheckbox}
-          data={difficultyLevelsData?.data ?? []}
+          data={difficultyLevelsData ?? []}
           manualPagination
-          pageCount={difficultyLevelsData?.meta.totalPages}
+          pageCount={difficultyLevelsReturn?.meta.totalPages}
           pagination={{
             pageIndex: page - 1,
             pageSize,

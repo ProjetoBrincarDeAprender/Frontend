@@ -40,7 +40,8 @@ export default function StudentTable() {
   }
 
   const { studentsQuery } = useStudent({ filters });
-  const { data, isLoading } = studentsQuery;
+  const { data: studentsReturn, isLoading } = studentsQuery;
+  const studentsData = studentsReturn?.data;
 
   // Função para deletar múltiplos alunos
   const handleDeleteSelected = async () => {
@@ -130,9 +131,9 @@ export default function StudentTable() {
       ) : (
         <DataTable
           columns={columnsWithCheckbox}
-          data={data?.data ?? []}
+          data={studentsData ?? []}
           manualPagination
-          pageCount={data?.meta.totalPages}
+          pageCount={studentsReturn?.meta.totalPages}
           pagination={{
             pageIndex: page - 1, // Convert from 1-based to 0-based
             pageSize,

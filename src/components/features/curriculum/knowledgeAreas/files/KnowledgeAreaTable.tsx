@@ -52,7 +52,9 @@ export default function KnowledgeAreaTable() {
   };
 
   const { knowledgeAreasQuery } = useKnowledgeArea({ filters });
-  const { data, isLoading: loading } = knowledgeAreasQuery;
+  const { data: knowledgeAreasReturn, isLoading: loading } =
+    knowledgeAreasQuery;
+  const knowledgeAreasData = knowledgeAreasReturn?.data;
 
   // Handle pagination change
   const handlePaginationChange = (pagination: {
@@ -131,9 +133,9 @@ export default function KnowledgeAreaTable() {
       ) : (
         <DataTable
           columns={columnsWithCheckbox}
-          data={data?.data ?? []}
+          data={knowledgeAreasData ?? []}
           manualPagination
-          pageCount={data?.meta.totalPages}
+          pageCount={knowledgeAreasReturn?.meta.totalPages}
           pagination={{
             pageIndex: page - 1,
             pageSize,

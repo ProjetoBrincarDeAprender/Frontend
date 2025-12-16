@@ -25,7 +25,8 @@ export default function SchoolTable() {
   }
 
   const { schoolsQuery } = useSchool({ filters });
-  const { data: schoolsData, isLoading: isSchoolLoading } = schoolsQuery;
+  const { data: schoolsReturn, isLoading: isSchoolLoading } = schoolsQuery;
+  const schoolsData = schoolsReturn?.data;
 
   // Handle pagination change
   const handlePaginationChange = (pagination: {
@@ -45,11 +46,9 @@ export default function SchoolTable() {
       ) : (
         <DataTable
           columns={SchoolColumns}
-          data={
-            schoolsData?.data?.map((item) => ({ ...item, id: item.id })) ?? []
-          }
+          data={schoolsData?.map((item) => ({ ...item, id: item.id })) ?? []}
           manualPagination
-          pageCount={schoolsData?.meta.totalPages}
+          pageCount={schoolsReturn?.meta.totalPages}
           pagination={{
             pageIndex: page - 1, // Convert from 1-based to 0-based
             pageSize,

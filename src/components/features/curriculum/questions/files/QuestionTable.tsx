@@ -45,8 +45,8 @@ export default function QuestionTable() {
   }, [isQuestionError]);
 
   const [searchParams, setSearchParams] = useSearchParams();
+  const [filteredActivities, setFilteredActivities] = useState<number[]>([]);
 
-  // Get pagination params from URL
   const page = Number(searchParams.get("page")) || 1;
   const pageSize = Number(searchParams.get("pageSize")) || 10;
 
@@ -54,6 +54,10 @@ export default function QuestionTable() {
     page,
     limit: pageSize as 10 | 25 | 50 | 100 | 500,
   };
+
+  if (user?.perfil === "Professor") {
+    filters.activitiesIds = filteredActivities;
+  }
 
   const { questionsQuery } = useQuestion({ filters });
   const { data: questionsData, isLoading: loading } = questionsQuery;
@@ -107,6 +111,8 @@ export default function QuestionTable() {
         );
       }
 
+      setFilteredActivities(filteredActivities.map((activity) => activity.id));
+
       const activitiesMap = new Map<number, Activity>();
       filteredActivities.forEach((activity: Activity) => {
         activitiesMap.set(activity.id, activity);
@@ -151,6 +157,8 @@ export default function QuestionTable() {
             createdAt: question.created_At || "",
           };
         });
+
+      console.log(enrichedQuestions);
 
       setFormattedQuestions(enrichedQuestions);
     }

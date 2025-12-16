@@ -52,7 +52,8 @@ export default function TeacherTable() {
   const { teachersQuery } = useTeacher({
     filters,
   });
-  const { data, isLoading } = teachersQuery;
+  const { data: teachersReturn, isLoading } = teachersQuery;
+  const teachersData = teachersReturn?.data;
 
   // Handle pagination change
   const handlePaginationChange = (pagination: {
@@ -145,9 +146,9 @@ export default function TeacherTable() {
       ) : (
         <DataTable
           columns={columnsWithCheckbox}
-          data={data!.data}
+          data={teachersData!}
           manualPagination
-          pageCount={data!.meta.totalPages}
+          pageCount={teachersReturn!.meta.totalPages}
           pagination={{
             pageIndex: page - 1, // Convert from 1-based to 0-based
             pageSize,

@@ -48,6 +48,7 @@ export default function ActivityTable() {
   const filters: FilterActivityOption = {
     page,
     limit: pageSize as 10 | 25 | 50 | 100 | 500,
+    escolaId: user?.perfil === "Professor" ? user.escolaId! : undefined,
   };
 
   const { activitiesQuery } = useActivity({ filters });

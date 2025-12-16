@@ -54,11 +54,13 @@ export default function CompetenceTable() {
   };
 
   const { competencesQuery } = useCompetence({ filters });
-  const { data: competencesData, isLoading: loading } = competencesQuery;
+  const { data: competencesReturn, isLoading: loading } = competencesQuery;
+  const competencesData = competencesReturn?.data;
 
   const { knowledgeAreasQuery } = useKnowledgeArea();
-  const { data: knowledgeAreasData, isLoading: isKnowledgeAreasLoading } =
+  const { data: knowledgeAreasReturn, isLoading: isKnowledgeAreasLoading } =
     knowledgeAreasQuery;
+  const knowledgeAreasData = knowledgeAreasReturn?.data;
 
   // Handle pagination change
   const handlePaginationChange = (pagination: {
@@ -77,13 +79,13 @@ export default function CompetenceTable() {
   >([]);
 
   useEffect(() => {
-    if (competencesData?.data && knowledgeAreasData?.data) {
+    if (competencesData && knowledgeAreasData) {
       const knowledgeAreaMap = new Map<number, string>();
-      knowledgeAreasData.data.forEach((area) => {
+      knowledgeAreasData.forEach((area) => {
         knowledgeAreaMap.set(area.id, area.nome);
       });
 
-      const formattedCompetences = competencesData.data.map((competence) => ({
+      const formattedCompetences = competencesData.map((competence) => ({
         ...competence,
         area: {
           id: competence.areaId,
@@ -213,7 +215,7 @@ export default function CompetenceTable() {
           columns={columnsWithCheckbox}
           data={formattedCompetences ?? []}
           manualPagination
-          pageCount={competencesData?.meta.totalPages}
+          pageCount={competencesReturn?.meta.totalPages}
           pagination={{
             pageIndex: page - 1,
             pageSize,

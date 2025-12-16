@@ -28,8 +28,9 @@ export default function ResponsibleTable() {
   }
 
   const { responsiblesQuery } = useResponsible({ filters });
-  const { data: responsiblesData, isLoading: isResponsiblesLoading } =
+  const { data: responsiblesReturn, isLoading: isResponsiblesLoading } =
     responsiblesQuery;
+  const responsiblesData = responsiblesReturn?.data;
 
   // Handle pagination change
   const handlePaginationChange = (pagination: {
@@ -49,9 +50,9 @@ export default function ResponsibleTable() {
       ) : (
         <DataTable
           columns={ResponsibleColumns}
-          data={(responsiblesData?.data as Responsible[] | undefined) ?? []}
+          data={(responsiblesData as Responsible[] | undefined) ?? []}
           manualPagination
-          pageCount={responsiblesData?.meta.totalPages}
+          pageCount={responsiblesReturn?.meta.totalPages}
           pagination={{
             pageIndex: page - 1, // Convert from 1-based to 0-based
             pageSize,
