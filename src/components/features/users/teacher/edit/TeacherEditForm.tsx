@@ -4,7 +4,7 @@ import { useSchool } from "@/hooks/School/useSchool";
 import { useTeacher } from "@/hooks/Teacher/useTeacher";
 import { useUpdateTeacher } from "@/hooks/Teacher/useUpdateTeacher";
 import { useUser } from "@/hooks/User/useUser";
-import type { FilterTeacherOption } from "@/types/filter";
+import type { FilterSchoolOption, FilterTeacherOption } from "@/types/filter";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AxiosError } from "axios";
 import { Loader2 } from "lucide-react";
@@ -42,13 +42,16 @@ export function TeacherEditForm({ id, onSuccess }: TeacherFormProps) {
     updateTeacherMutation;
 
   const filters: FilterTeacherOption = {};
+  const schoolFilters: FilterSchoolOption = {};
 
   if (user?.perfil !== "Admin") {
     filters.escolaId = user?.escolaId as number;
+    schoolFilters.escolaId = user?.escolaId as number;
   }
 
-  const { schoolsQuery } = useSchool({ filters: filters });
-  const { data: schoolsData, isLoading: isSchoolsLoading } = schoolsQuery;
+  const { schoolsQuery } = useSchool({ filters: schoolFilters });
+  const { data: schoolsReturn, isLoading: isSchoolsLoading } = schoolsQuery;
+  const schoolsData = schoolsReturn?.data;
 
   const { teacherQuery } = useTeacher({
     teacherId: id,

@@ -59,7 +59,8 @@ export default function SchoolUserSignUpForm({ onSuccess }: SignUpFormProps) {
   const { mutateAsync, isPending, isSuccess } = createSchoolAdminMutation;
 
   const { schoolsQuery } = useSchool({});
-  const { data: schoolsData, isLoading: isSchoolsLoading } = schoolsQuery;
+  const { data: schoolsReturn, isLoading: isSchoolsLoading } = schoolsQuery;
+  const schoolsData = schoolsReturn?.data;
 
   useEffect(() => {
     if (isSuccess) {

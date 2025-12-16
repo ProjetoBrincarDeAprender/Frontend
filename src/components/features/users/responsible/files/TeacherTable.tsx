@@ -11,18 +11,37 @@ import type { Responsible } from "@/types/responsible";
 import { UserPerfilEnum } from "@/types/user";
 
 export default function ResponsibleTable() {
-  const [searchParams, _] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const { user } = useUser();
 
-  const filters: FilterResponsibleOption = {};
+  // Get pagination params from URL
+  const page = Number(searchParams.get("page")) || 1;
+  const pageSize = Number(searchParams.get("pageSize")) || 10;
+
+  const filters: FilterResponsibleOption = {
+    page,
+    limit: pageSize as 10 | 25 | 50 | 100 | 500,
+  };
 
   if (user?.perfil !== UserPerfilEnum.ADMIN) {
     filters.escolaId = Number(user?.escolaId);
   }
 
   const { responsiblesQuery } = useResponsible({ filters });
-  const { data: responsiblesData, isLoading: isResponsiblesLoading } =
+  const { data: responsiblesReturn, isLoading: isResponsiblesLoading } =
     responsiblesQuery;
+  const responsiblesData = responsiblesReturn?.data;
+
+  // Handle pagination change
+  const handlePaginationChange = (pagination: {
+    pageIndex: number;
+    pageSize: number;
+  }) => {
+    setSearchParams({
+      page: String(pagination.pageIndex + 1), // Convert from 0-based to 1-based
+      pageSize: String(pagination.pageSize),
+    });
+  };
 
   return (
     <>
@@ -32,11 +51,13 @@ export default function ResponsibleTable() {
         <DataTable
           columns={ResponsibleColumns}
           data={(responsiblesData as Responsible[] | undefined) ?? []}
-          {...{
-            page: searchParams.get("page")
-              ? parseInt(searchParams.get("page")!)
-              : 0,
+          manualPagination
+          pageCount={responsiblesReturn?.meta.totalPages}
+          pagination={{
+            pageIndex: page - 1, // Convert from 1-based to 0-based
+            pageSize,
           }}
+          onPaginationChange={handlePaginationChange}
         />
       )}
     </>

@@ -1,5 +1,6 @@
 import type { FilterKnowledgeAreaOption } from "@/types/filter";
 import type { KnowledgeArea } from "@/types/knowledgeArea";
+import type { PaginationMeta } from "@/types/pagination";
 import api from "@/utils/api";
 import { QueryClient, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -8,11 +9,13 @@ async function fetchKnowledgeAreaData(
   queryClient: QueryClient,
   knowledgeAreaId: number,
 ): Promise<KnowledgeArea> {
-  const knowledgeAreas: KnowledgeArea[] | undefined =
-    await queryClient.getQueryData([KNOWLEDGE_AREA_QUERY_KEY]);
+  const knowledgeAreasResponse = queryClient.getQueryData<{
+    data: KnowledgeArea[];
+    meta: PaginationMeta;
+  }>([KNOWLEDGE_AREA_QUERY_KEY]);
 
-  if (knowledgeAreas) {
-    const knowledgeArea = knowledgeAreas.find(
+  if (knowledgeAreasResponse?.data) {
+    const knowledgeArea = knowledgeAreasResponse.data.find(
       (ka) => ka.id === knowledgeAreaId,
     );
     if (knowledgeArea) {
@@ -32,7 +35,7 @@ async function fetchKnowledgeAreaData(
 
 async function fetchKnowledgeAreas(
   filters?: FilterKnowledgeAreaOption,
-): Promise<KnowledgeArea[]> {
+): Promise<{ data: KnowledgeArea[]; meta: PaginationMeta }> {
   try {
     const params = new URLSearchParams(
       filters as Record<string, string>,
@@ -65,7 +68,10 @@ export function useKnowledgeArea({
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
 
-  const knowledgeAreasQuery = useQuery({
+  const knowledgeAreasQuery = useQuery<{
+    data: KnowledgeArea[];
+    meta: PaginationMeta;
+  }>({
     queryKey: [...KNOWLEDGE_AREA_QUERY_KEY, filters],
     queryFn: () => fetchKnowledgeAreas(filters),
     staleTime: 5 * 60 * 1000, // 5 minutes

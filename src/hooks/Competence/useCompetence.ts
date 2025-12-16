@@ -1,5 +1,6 @@
 import type { Competence } from "@/types/competence";
 import type { FilterCompetenceOption } from "@/types/filter";
+import type { PaginationMeta } from "@/types/pagination";
 import api from "@/utils/api";
 import { QueryClient, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -8,12 +9,15 @@ async function fetchCompetenceData(
   queryClient: QueryClient,
   competenceId: number,
 ): Promise<Competence> {
-  const competences: Competence[] | undefined = await queryClient.getQueryData([
-    COMPETENCE_QUERY_KEY,
-  ]);
+  const competencesResponse = queryClient.getQueryData<{
+    data: Competence[];
+    meta: PaginationMeta;
+  }>([COMPETENCE_QUERY_KEY]);
 
-  if (competences) {
-    const competence = competences.find((c) => c.id === competenceId);
+  if (competencesResponse?.data) {
+    const competence = competencesResponse.data.find(
+      (c) => c.id === competenceId,
+    );
     if (competence) {
       return competence;
     }
@@ -38,13 +42,13 @@ async function fetchCompetenceData(
 
 async function fetchCompetences(
   filters?: FilterCompetenceOption,
-): Promise<Competence[]> {
+): Promise<{ data: Competence[]; meta: PaginationMeta }> {
   try {
     const params = new URLSearchParams(
       filters as Record<string, string>,
     ).toString();
     const response = await api.get(`/competence/list?${params}`);
-    return response.data.map((item: any) => ({
+    const mappedData = response.data.data.map((item: any) => ({
       id: item.id,
       nome: item.nome,
       descricao: item.descricao,
@@ -52,6 +56,10 @@ async function fetchCompetences(
       preRequisitos: item.pre_requisito_id,
       createdAt: item.created_At,
     }));
+    return {
+      data: mappedData,
+      meta: response.data.meta,
+    };
   } catch (error) {
     console.log(error);
     toast.error("Erro ao buscar competências!");
@@ -62,7 +70,7 @@ async function fetchCompetences(
 async function fetchCompetencesByKnowledgeArea(
   knowledgeAreaId: number,
   filters?: FilterCompetenceOption,
-): Promise<Competence[]> {
+): Promise<{ data: Competence[]; meta: PaginationMeta }> {
   try {
     const params = new URLSearchParams(
       filters as Record<string, string>,
@@ -102,13 +110,19 @@ export function useCompetence({
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
 
-  const competencesQuery = useQuery({
+  const competencesQuery = useQuery<{
+    data: Competence[];
+    meta: PaginationMeta;
+  }>({
     queryKey: [...COMPETENCE_QUERY_KEY, filters],
     queryFn: () => fetchCompetences(filters),
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
 
-  const competencesByKnowledgeAreaQuery = useQuery({
+  const competencesByKnowledgeAreaQuery = useQuery<{
+    data: Competence[];
+    meta: PaginationMeta;
+  }>({
     queryKey: [
       ...COMPETENCE_BY_KNOWLEDGE_AREA_QUERY_KEY,
       knowledgeAreaId,

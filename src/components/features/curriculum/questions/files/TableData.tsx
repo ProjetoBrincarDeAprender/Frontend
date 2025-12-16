@@ -47,14 +47,14 @@ export const QuestionColumns: ColumnDef<QuestionFormatted>[] = [
 
       if (!content) {
         return (
-          <div className="max-w-xs">
+          <div className="max-w-100%">
             <span className="text-gray-500">Sem conteúdo</span>
           </div>
         );
       }
 
       return (
-        <div className="max-w-xs">
+        <div className="max-w-100%">
           <span className="block truncate" title={content}>
             {content}
           </span>
@@ -98,7 +98,7 @@ export const QuestionColumns: ColumnDef<QuestionFormatted>[] = [
     cell: ({ row }) => {
       const activityTitle = row.original.activity?.titulo;
       return (
-        <div className="max-w-xs">
+        <div className="max-w-100%">
           <span
             className="block truncate"
             title={activityTitle || `Atividade ${row.original.activityId}`}

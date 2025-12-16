@@ -11,6 +11,7 @@ import { StudentColumns } from "./TableData";
 import { SkeletonTable } from "@/components/ui/skeleton-table";
 import { STUDENTS_QUERY_KEY, useStudent } from "@/hooks/Student/useStudent";
 import { useDelete } from "@/hooks/useDelete";
+import type { FilterStudentOption } from "@/types/filter";
 
 export default function StudentTable() {
   const { multiDeleteMutation } = useDelete({
@@ -19,6 +20,28 @@ export default function StudentTable() {
     queryKey: STUDENTS_QUERY_KEY,
   });
   const { mutateAsync: deleteUsers } = multiDeleteMutation;
+
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const { setUpdating } = useTable();
+  const { user } = useUser();
+
+  // Get pagination params from URL
+  const page = Number(searchParams.get("page")) || 1;
+  const pageSize = Number(searchParams.get("pageSize")) || 10;
+
+  const filters: FilterStudentOption = {
+    page,
+    limit: pageSize as 10 | 25 | 50 | 100 | 500,
+  };
+
+  if (user?.perfil !== "Admin") {
+    filters.escolaId = Number(user?.escolaId);
+  }
+
+  const { studentsQuery } = useStudent({ filters });
+  const { data: studentsReturn, isLoading } = studentsQuery;
+  const studentsData = studentsReturn?.data;
 
   // Função para deletar múltiplos alunos
   const handleDeleteSelected = async () => {
@@ -29,18 +52,18 @@ export default function StudentTable() {
     setSelectedIds([]);
     setUpdating(true);
   };
-  const [selectedIds, setSelectedIds] = useState<string[]>([]);
-  const [searchParams, _] = useSearchParams();
-  const { setUpdating } = useTable();
-  const { user } = useUser();
-  const { studentsQuery } = useStudent({
-    filters:
-      user?.perfil != "Admin"
-        ? { escolaId: Number(user?.escolaId) }
-        : undefined,
-  });
 
-  const { data, isLoading } = studentsQuery;
+  // Handle pagination change
+  const handlePaginationChange = (pagination: {
+    pageIndex: number;
+    pageSize: number;
+  }) => {
+    setSearchParams({
+      page: String(pagination.pageIndex + 1), // Convert from 0-based to 1-based
+      pageSize: String(pagination.pageSize),
+    });
+    setSelectedIds([]); // Clear selections on page change
+  };
 
   // Adiciona coluna de checkbox dinamicamente
   const columnsWithCheckbox = [
@@ -108,10 +131,14 @@ export default function StudentTable() {
       ) : (
         <DataTable
           columns={columnsWithCheckbox}
-          data={data ?? []}
-          page={
-            searchParams.get("page") ? parseInt(searchParams.get("page")!) : 0
-          }
+          data={studentsData ?? []}
+          manualPagination
+          pageCount={studentsReturn?.meta.totalPages}
+          pagination={{
+            pageIndex: page - 1, // Convert from 1-based to 0-based
+            pageSize,
+          }}
+          onPaginationChange={handlePaginationChange}
           renderExtra={() =>
             selectedIds.length > 0 && !isLoading ? (
               <button

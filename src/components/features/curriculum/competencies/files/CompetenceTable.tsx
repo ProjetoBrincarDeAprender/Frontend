@@ -14,6 +14,7 @@ import { SkeletonTable } from "@/components/ui/skeleton-table";
 import DeleteModal from "@/components/utils/DataTable/DeleteModal";
 import { useKnowledgeArea } from "@/hooks/KnowledgeArea/useKnowledgeArea";
 import type { Competence } from "@/types/competence";
+import type { FilterCompetenceOption } from "@/types/filter";
 import { EditCompetenceModal } from "../edit/CompetenceEditModal";
 
 interface CellContext {
@@ -41,14 +42,37 @@ export default function CompetenceTable() {
     setSelectedIds([]);
   };
 
-  const [searchParams, _] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
 
-  const { competencesQuery } = useCompetence({});
-  const { data: competencesData, isLoading: loading } = competencesQuery;
+  // Get pagination params from URL
+  const page = Number(searchParams.get("page")) || 1;
+  const pageSize = Number(searchParams.get("pageSize")) || 10;
+
+  const filters: FilterCompetenceOption = {
+    page,
+    limit: pageSize as 10 | 25 | 50 | 100 | 500,
+  };
+
+  const { competencesQuery } = useCompetence({ filters });
+  const { data: competencesReturn, isLoading: loading } = competencesQuery;
+  const competencesData = competencesReturn?.data;
 
   const { knowledgeAreasQuery } = useKnowledgeArea();
-  const { data: knowledgeAreasData, isLoading: isKnowledgeAreasLoading } =
+  const { data: knowledgeAreasReturn, isLoading: isKnowledgeAreasLoading } =
     knowledgeAreasQuery;
+  const knowledgeAreasData = knowledgeAreasReturn?.data;
+
+  // Handle pagination change
+  const handlePaginationChange = (pagination: {
+    pageIndex: number;
+    pageSize: number;
+  }) => {
+    setSearchParams({
+      page: String(pagination.pageIndex + 1),
+      pageSize: String(pagination.pageSize),
+    });
+    setSelectedIds([]);
+  };
 
   const [formattedCompetences, setFormattedCompetences] = useState<
     CompetenceFormatted[]
@@ -190,9 +214,13 @@ export default function CompetenceTable() {
         <DataTable
           columns={columnsWithCheckbox}
           data={formattedCompetences ?? []}
-          page={
-            searchParams.get("page") ? parseInt(searchParams.get("page")!) : 0
-          }
+          manualPagination
+          pageCount={competencesReturn?.meta.totalPages}
+          pagination={{
+            pageIndex: page - 1,
+            pageSize,
+          }}
+          onPaginationChange={handlePaginationChange}
           renderExtra={() =>
             selectedIds.length > 0 && !loading ? (
               <button

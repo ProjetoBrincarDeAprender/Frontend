@@ -11,7 +11,6 @@ import DeleteModal from "@/components/utils/DataTable/DeleteModal";
 import { TEACHER_QUERY_KEY, useTeacher } from "@/hooks/Teacher/useTeacher";
 import { useDelete } from "@/hooks/useDelete";
 import type { FilterTeacherOption } from "@/types/filter";
-import type { Teacher } from "@/types/teacher";
 import { Share2 } from "lucide-react";
 import { EditTeacherModal } from "../edit/TeacherEditModal";
 
@@ -34,11 +33,18 @@ export default function TeacherTable() {
     setUpdating(true);
   };
 
-  const [searchParams, _] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const { setUpdating } = useTable();
   const { user } = useUser();
 
-  const filters: FilterTeacherOption = {};
+  // Get pagination params from URL
+  const page = Number(searchParams.get("page")) || 1;
+  const pageSize = Number(searchParams.get("pageSize")) || 10;
+
+  const filters: FilterTeacherOption = {
+    page,
+    limit: pageSize as 10 | 25 | 50 | 100 | 500,
+  };
   if (user?.perfil != "Admin") {
     filters.escolaId = user?.escolaId as number;
   }
@@ -46,7 +52,20 @@ export default function TeacherTable() {
   const { teachersQuery } = useTeacher({
     filters,
   });
-  const { data, isLoading } = teachersQuery;
+  const { data: teachersReturn, isLoading } = teachersQuery;
+  const teachersData = teachersReturn?.data;
+
+  // Handle pagination change
+  const handlePaginationChange = (pagination: {
+    pageIndex: number;
+    pageSize: number;
+  }) => {
+    setSearchParams({
+      page: String(pagination.pageIndex + 1), // Convert from 0-based to 1-based
+      pageSize: String(pagination.pageSize),
+    });
+    setSelectedIds([]); // Clear selections on page change
+  };
 
   const columnsWithCheckbox = [
     {
@@ -127,10 +146,14 @@ export default function TeacherTable() {
       ) : (
         <DataTable
           columns={columnsWithCheckbox}
-          data={(data as Teacher[] | undefined) ?? []}
-          page={
-            searchParams.get("page") ? parseInt(searchParams.get("page")!) : 0
-          }
+          data={teachersData!}
+          manualPagination
+          pageCount={teachersReturn!.meta.totalPages}
+          pagination={{
+            pageIndex: page - 1, // Convert from 1-based to 0-based
+            pageSize,
+          }}
+          onPaginationChange={handlePaginationChange}
           renderExtra={() =>
             selectedIds.length > 0 && !isLoading ? (
               <button

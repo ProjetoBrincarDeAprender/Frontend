@@ -1,11 +1,12 @@
 import type { FilterQuestionOption } from "@/types/filter";
+import type { PaginationMeta } from "@/types/pagination";
 import type { Question } from "@/types/question";
 import api from "@/utils/api";
 import { useQuery } from "@tanstack/react-query";
 
 async function fetchQuestions(
   filters?: FilterQuestionOption,
-): Promise<Question[]> {
+): Promise<{ data: Question[]; meta: PaginationMeta }> {
   try {
     const params = new URLSearchParams(filters as Record<string, string>);
 
@@ -42,7 +43,7 @@ export function useQuestion({
     enabled: !!questionId,
   });
 
-  const questionsQuery = useQuery({
+  const questionsQuery = useQuery<{ data: Question[]; meta: PaginationMeta }>({
     queryKey: [...QUESTION_QUERY_KEY, filters],
     queryFn: () => fetchQuestions(filters),
   });

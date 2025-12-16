@@ -8,17 +8,36 @@ import { DataTable } from "../../../../utils/DataTable/DataTable";
 import { SchoolColumns } from "./TableData";
 
 export default function SchoolTable() {
-  const [searchParams, _] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const { user } = useUser();
 
-  const filters: FilterSchoolOption = {};
+  // Get pagination params from URL
+  const page = Number(searchParams.get("page")) || 1;
+  const pageSize = Number(searchParams.get("pageSize")) || 10;
+
+  const filters: FilterSchoolOption = {
+    page,
+    limit: pageSize as 10 | 25 | 50 | 100 | 500,
+  };
 
   if (user?.perfil !== UserPerfilEnum.ADMIN) {
     filters.escolaId = Number(user?.escolaId);
   }
 
   const { schoolsQuery } = useSchool({ filters });
-  const { data: schoolsData, isLoading: isSchoolLoading } = schoolsQuery;
+  const { data: schoolsReturn, isLoading: isSchoolLoading } = schoolsQuery;
+  const schoolsData = schoolsReturn?.data;
+
+  // Handle pagination change
+  const handlePaginationChange = (pagination: {
+    pageIndex: number;
+    pageSize: number;
+  }) => {
+    setSearchParams({
+      page: String(pagination.pageIndex + 1), // Convert from 0-based to 1-based
+      pageSize: String(pagination.pageSize),
+    });
+  };
 
   return (
     <>
@@ -28,11 +47,13 @@ export default function SchoolTable() {
         <DataTable
           columns={SchoolColumns}
           data={schoolsData?.map((item) => ({ ...item, id: item.id })) ?? []}
-          {...{
-            page: searchParams.get("page")
-              ? parseInt(searchParams.get("page")!)
-              : 0,
+          manualPagination
+          pageCount={schoolsReturn?.meta.totalPages}
+          pagination={{
+            pageIndex: page - 1, // Convert from 1-based to 0-based
+            pageSize,
           }}
+          onPaginationChange={handlePaginationChange}
         />
       )}
     </>

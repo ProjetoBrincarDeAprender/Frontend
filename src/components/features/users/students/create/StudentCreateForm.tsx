@@ -1,13 +1,12 @@
 import { Form } from "@/components/forms/Root";
 import { PasswordInput } from "@/components/ui/password-input";
 import { Link } from "@/components/utils/Link/Link";
+import { useSchool } from "@/hooks/School/useSchool";
 import { useCreateStudent } from "@/hooks/Student/useCreateStudent";
 import { useUser } from "@/hooks/User/useUser";
-import api from "@/utils/api";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AxiosError } from "axios";
 import { Loader2 } from "lucide-react";
-import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { IMaskInput } from "react-imask";
 import { z } from "zod";
@@ -104,33 +103,12 @@ export function StudentSignUpForm({ onSuccess }: SignUpFormProps) {
     },
   });
   const { user } = useUser();
-  const [schools, setSchools] = useState<{ id: number; nome: string }[] | null>(
-    null,
-  );
+  const { schoolsQuery } = useSchool({});
+  const { data: schoolsReturn, isLoading: isSchoolsLoading } = schoolsQuery;
+  const schoolsData = schoolsReturn?.data;
+
   const { create } = useCreateStudent();
   const { mutateAsync: createUser, isPending } = create;
-
-  useEffect(() => {
-    const fetchSchools = async () => {
-      try {
-        const response = await api.get("/school/list");
-
-        if (response.status === 200) {
-          setSchools(response.data);
-        }
-      } catch (error) {
-        if (error instanceof AxiosError) {
-          form.setError("root", {
-            message: `Erro ao carregar escolas: ${error.message}`,
-          });
-        }
-      }
-    };
-
-    if (user?.perfil == "Admin") {
-      fetchSchools();
-    }
-  }, [form, user]);
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     if (!data.avatar_url) {
@@ -250,24 +228,29 @@ export function StudentSignUpForm({ onSuccess }: SignUpFormProps) {
             />
           )}
         />
-        {user?.perfil == "Admin" && schools && (
-          <Form.Field
-            form={form}
-            name="escolaId"
-            render={({ field }) => (
-              <Form.Select
-                {...field}
-                // value={field.value || ""}
-                label="Escola"
-                placeholder="Selecione a Escola"
-                options={schools.map((school) => ({
-                  value: String(school.id),
-                  label: school.nome,
-                }))}
-              />
-            )}
-          />
-        )}
+        {user?.perfil == "Admin" &&
+          (isSchoolsLoading ? (
+            <span>Carregando escolas...</span>
+          ) : (
+            <Form.Field
+              form={form}
+              name="escolaId"
+              render={({ field }) => (
+                <Form.Select
+                  {...field}
+                  // value={field.value || ""}
+                  label="Escola"
+                  placeholder="Selecione a Escola"
+                  options={
+                    schoolsData?.map((school) => ({
+                      value: String(school.id),
+                      label: school.nome,
+                    })) ?? []
+                  }
+                />
+              )}
+            />
+          ))}
         <Form.Field
           form={form}
           name="senha"

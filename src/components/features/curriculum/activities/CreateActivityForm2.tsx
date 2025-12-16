@@ -1,25 +1,30 @@
-import { Form } from "@/components/forms/Root";
-import { useCreateActivity } from "@/hooks/Activity/useCreateActivity";
-import { useCompetence } from "@/hooks/Competence/useCompetence";
+import { useState, useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { AxiosError } from "axios";
-import { Loader2 } from "lucide-react";
-import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { useUser } from "@/hooks/User/useUser";
+import { toast } from "sonner";
+import { Form } from "@/components/forms/Root";
+import { useTable } from "@/hooks/Table/useTable";
+import api from "@/utils/api";
+import { AxiosError } from "axios";
 
 const formSchema = z.object({
   title: z
     .string({ error: "Título é obrigatório" })
     .min(3, { error: "Título deve ter pelo menos 3 caracteres" })
     .max(100, { error: "Título deve ter no máximo 100 caracteres" }),
-  type: z
-    .string({ error: "Tipo é obrigatório" })
-    .min(1, { error: "Selecione um tipo de atividade" }),
+  // type: z
+  //   .string({ error: "Tipo é obrigatório" })
+  //   .min(1, { error: "Selecione um tipo de atividade" }),
   competenceId: z
     .string({ error: "Competência é obrigatória" })
     .min(1, { error: "Selecione uma competência" }),
+  // content: z
+  //   .string({ error: "Conteúdo é obrigatório" })
+  //   .min(1, { error: "Conteúdo é obrigatório" }),
+  knowledgeAreaId: z
+    .string({ error: "Área de conhecimento é obrigatória" })
+    .min(1, { error: "Selecione uma área de conhecimento" }),
   template: z.string().min(1, "Template é obrigatório"),
 });
 
@@ -28,12 +33,33 @@ interface CreateActivityFormProps {
   onFormStateChange?: (isFormValid: boolean, selectedTemplate?: string) => void;
 }
 
-interface CompetenceWithArea {
+interface Competence {
   id: number;
   nome: string;
-  descricao: string | null;
-  areaId: number;
-  areaName?: string;
+  descricao?: string;
+  areaId?: {
+    id: number;
+    nome: string;
+  };
+}
+
+interface KnowledgeArea {
+  id: number;
+  nome: string;
+  competences?: Competence[];
+}
+
+interface CompetenceApiResponse {
+  id: number;
+  name?: string;
+  nome?: string;
+  description?: string;
+  descricao?: string;
+  knowledgeArea?: {
+    id: number;
+    name?: string;
+    nome?: string;
+  };
 }
 
 // const activityTypes = [
@@ -45,24 +71,13 @@ export function CreateActivityForm({
   onSuccess,
   onFormStateChange,
 }: CreateActivityFormProps) {
-  const { user } = useUser();
-  const { create } = useCreateActivity();
-  const {
-    mutateAsync: createActivity,
-    isSuccess: isActivitySuccess,
-    isPending: isActivityPending,
-  } = create;
-
-  const { competencesQuery } = useCompetence({});
-  const { data: competencesData, isLoading: isCompetencesLoading } =
-    competencesQuery;
-
-  const allCompetences = competencesData?.data as CompetenceWithArea[];
-
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [allCompetences, setAllCompetences] = useState<Competence[]>([]);
   const [competenceSearch, setCompetenceSearch] = useState("");
   const [showCompetenceDropdown, setShowCompetenceDropdown] = useState(false);
   const [selectedCompetence, setSelectedCompetence] =
-    useState<CompetenceWithArea | null>(null);
+    useState<Competence | null>(null);
+  const { setUpdating } = useTable();
 
   const templates = [
     { label: "Múltipla Escolha", value: "multiple_choice" },
@@ -72,18 +87,14 @@ export function CreateActivityForm({
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      // type: "",
+      // content: "",
       title: "",
-      type: "Jogo",
       competenceId: "",
+      knowledgeAreaId: "",
       template: "multiple_choice",
     },
   });
-
-  useEffect(() => {
-    if (isActivitySuccess) {
-      onSuccess();
-    }
-  }, [isActivitySuccess, onSuccess]);
 
   // Monitora o estado do formulário para comunicar se está completo
   useEffect(() => {
@@ -91,7 +102,6 @@ export function CreateActivityForm({
     const competenceId = form.watch("competenceId");
     const template = form.watch("template");
 
-    // Para simplificar, vamos só validar os campos essenciais
     const isFormValid =
       title.length >= 3 && competenceId !== "" && template !== "";
 
@@ -105,23 +115,156 @@ export function CreateActivityForm({
     onFormStateChange,
   ]);
 
+  const formatCompetence = (
+    comp: CompetenceApiResponse,
+    areaInfo?: { id: number; nome: string },
+  ): Competence => ({
+    id: comp.id,
+    nome: comp.name || comp.nome || "",
+    descricao: comp.description || comp.descricao,
+    areaId: comp.knowledgeArea
+      ? {
+          id: comp.knowledgeArea.id,
+          nome: comp.knowledgeArea.name || comp.knowledgeArea.nome || "",
+        }
+      : areaInfo,
+  });
+
+  useEffect(() => {
+    const fetchCompetencesDirect = async (): Promise<Competence[]> => {
+      try {
+        const response = await api.get("/competence/list");
+        if (response.status === 200 && response.data) {
+          const competences = Array.isArray(response.data)
+            ? response.data
+            : [response.data];
+          return competences.map((comp: CompetenceApiResponse) =>
+            formatCompetence(comp),
+          );
+        }
+      } catch {
+        // Silently fail and try next method
+      }
+      return [];
+    };
+
+    const fetchCompetencesViaAreas = async (): Promise<Competence[]> => {
+      try {
+        const areasResponse = await api.get("/knowledge-area/list");
+        if (areasResponse.status !== 200 || !areasResponse.data) return [];
+
+        const areas: KnowledgeArea[] = Array.isArray(areasResponse.data)
+          ? areasResponse.data
+          : [areasResponse.data];
+
+        const allCompetences: Competence[] = [];
+
+        for (const area of areas) {
+          if (area.competences && Array.isArray(area.competences)) {
+            const areaCompetences = area.competences.map(
+              (comp: CompetenceApiResponse) =>
+                formatCompetence(comp, { id: area.id, nome: area.nome }),
+            );
+            allCompetences.push(...areaCompetences);
+          } else {
+            try {
+              const compResponse = await api.get(
+                `/knowledge-area/${area.id}/competences`,
+              );
+              if (compResponse.status === 200 && compResponse.data) {
+                const areaCompetences = Array.isArray(compResponse.data)
+                  ? compResponse.data
+                  : [compResponse.data];
+
+                const formattedComps = areaCompetences.map(
+                  (comp: CompetenceApiResponse) =>
+                    formatCompetence(comp, { id: area.id, nome: area.nome }),
+                );
+
+                allCompetences.push(...formattedComps);
+              }
+            } catch {
+              // Continue to next area
+            }
+          }
+        }
+
+        return allCompetences;
+      } catch {
+        return [];
+      }
+    };
+
+    const fetchCompetencesAlternative = async (): Promise<Competence[]> => {
+      const endpoints = [
+        "/competences",
+        "/competence",
+        "/competency/list",
+        "/competencies",
+      ];
+
+      for (const endpoint of endpoints) {
+        try {
+          const response = await api.get(endpoint);
+          if (response.status === 200 && response.data) {
+            const competences = Array.isArray(response.data)
+              ? response.data
+              : [response.data];
+            return competences.map((comp: CompetenceApiResponse) =>
+              formatCompetence(comp),
+            );
+          }
+        } catch {
+          continue;
+        }
+      }
+
+      return [];
+    };
+
+    const fetchAllCompetences = async () => {
+      try {
+        let competences = await fetchCompetencesDirect();
+
+        if (competences.length === 0) {
+          competences = await fetchCompetencesViaAreas();
+        }
+
+        if (competences.length === 0) {
+          competences = await fetchCompetencesAlternative();
+        }
+
+        setAllCompetences(competences);
+      } catch {
+        setAllCompetences([]);
+      }
+    };
+
+    fetchAllCompetences();
+  }, []);
+
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     const payload = {
-      template: data.template,
+      // content: JSON.stringify({ texto: data.content }),
+      // type: data.type,
       title: data.title,
-      type: "Jogo",
       competenceId: Number(data.competenceId),
-      content: JSON.stringify({ text: "Sem Conteúdo..." }),
-      creatorId: Number(user?.codigo_usuario) || 1,
-      maxQuestions: 10,
-      escolaId: 101,
+      knowledgeAreaId: Number(data.knowledgeAreaId),
+      template: data.template,
     };
 
     try {
-      await createActivity(payload);
-      form.reset();
-      setSelectedCompetence(null);
-      setCompetenceSearch("");
+      setIsSubmitting(true);
+      const response = await api.post("/activity/register", payload);
+
+      if (response.status === 201) {
+        toast.success("Atividade criada com sucesso!");
+        form.reset();
+        setSelectedCompetence(null);
+        setCompetenceSearch("");
+        setUpdating(true); // Trigger table refresh
+        return onSuccess();
+      }
     } catch (error) {
       if (error instanceof AxiosError) {
         const response = error.response;
@@ -145,6 +288,9 @@ export function CreateActivityForm({
           });
         }
       }
+      toast.error("Erro ao criar atividade. Tente novamente.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -154,10 +300,14 @@ export function CreateActivityForm({
       (competence.descricao &&
         competence.descricao
           .toLowerCase()
+          .includes(competenceSearch.toLowerCase())) ||
+      (competence.areaId &&
+        competence.areaId.nome
+          .toLowerCase()
           .includes(competenceSearch.toLowerCase())),
   );
 
-  const handleCompetenceSelect = (competence: CompetenceWithArea) => {
+  const handleCompetenceSelect = (competence: Competence) => {
     setSelectedCompetence(competence);
     setCompetenceSearch(competence.nome);
     setShowCompetenceDropdown(false);
@@ -196,7 +346,7 @@ export function CreateActivityForm({
               {...field}
               label="Título da Atividade"
               placeholder="Ex: Exercícios de Adição e Subtração"
-              disabled={isActivityPending}
+              disabled={isSubmitting}
             />
           )}
         />
@@ -210,7 +360,7 @@ export function CreateActivityForm({
               label="Tipo de Atividade"
               placeholder="Selecione o tipo de atividade"
               options={activityTypes}
-              disabled={isActivityPending}
+              disabled={isSubmitting}
             />
           )}
         /> */}
@@ -218,17 +368,14 @@ export function CreateActivityForm({
         <div className="relative space-y-2">
           <label className="text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
             Competência
-            {isCompetencesLoading ? (
-              <span className="ml-2 text-xs text-gray-500">
-                <Loader2 className="inline h-3 w-3 animate-spin" />{" "}
-                Carregando...
-              </span>
-            ) : allCompetences.length > 0 ? (
+            {allCompetences.length > 0 ? (
               <span className="font-1 text-green-600">
                 {" "}
                 ({allCompetences.length} disponíveis)
               </span>
-            ) : null}
+            ) : (
+              <span className="text-xs text-red-500">(Carregando...)</span>
+            )}
           </label>
           <div className="relative">
             <input
@@ -240,20 +387,18 @@ export function CreateActivityForm({
               }
               className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
               placeholder={
-                isCompetencesLoading
-                  ? "Carregando competências..."
-                  : allCompetences.length > 0
-                    ? "Digite para buscar uma competência..."
-                    : "Nenhuma competência disponível"
+                allCompetences.length > 0
+                  ? "Digite para buscar uma competência..."
+                  : "Carregando competências..."
               }
-              disabled={isActivityPending || isCompetencesLoading}
+              disabled={isSubmitting || allCompetences.length === 0}
             />
             {selectedCompetence && (
               <button
                 type="button"
                 onClick={clearCompetence}
                 className="absolute top-1/2 right-2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                disabled={isActivityPending}
+                disabled={isSubmitting}
               >
                 ×
               </button>
@@ -268,9 +413,14 @@ export function CreateActivityForm({
                   type="button"
                   onClick={() => handleCompetenceSelect(competence)}
                   className="w-full border-b px-3 py-2 text-left last:border-b-0 hover:bg-gray-100 focus:bg-gray-100 focus:outline-none"
-                  disabled={isActivityPending}
+                  disabled={isSubmitting}
                 >
                   <div className="text-sm font-medium">{competence.nome}</div>
+                  {competence.areaId && (
+                    <div className="text-xs text-gray-500">
+                      Área: {competence.areaId.nome}
+                    </div>
+                  )}
                   {competence.descricao && (
                     <div className="truncate text-xs text-gray-400">
                       {competence.descricao}
@@ -301,6 +451,38 @@ export function CreateActivityForm({
           )}
         </div>
 
+        {/* <Form.Field
+          form={form}
+          name="template"
+          render={({ field, fieldState }) => (
+            <div className="space-y-2">
+              <label className="text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                Template
+              </label>
+              <Select
+                name={field.name}
+                value={field.value}
+                onValueChange={field.onChange}
+              >
+                <SelectTrigger
+                  id="form-rhf-select-language"
+                  aria-invalid={fieldState.invalid}
+                  className="min-w-[120px]"
+                >
+                  <SelectValue placeholder="Escolha um Template" />
+                </SelectTrigger>
+                <SelectContent position="item-aligned">
+                  {templates.map((template) => (
+                    <SelectItem key={template.value} value={template.value}>
+                      {template.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
+        /> */}
+
         <Form.Field
           form={form}
           name="template"
@@ -310,7 +492,7 @@ export function CreateActivityForm({
               label="Template"
               placeholder="Selecione o template"
               options={templates}
-              disabled={isActivityPending || form.formState.isSubmitting}
+              disabled={isSubmitting}
             />
           )}
         />
@@ -326,7 +508,7 @@ export function CreateActivityForm({
               <textarea
                 {...field}
                 placeholder="Ex: Descrição da atividade ou instruções..."
-                disabled={isActivityPending}
+                disabled={isSubmitting}
                 className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring resize-vertical flex min-h-32 w-full rounded-md border px-3 py-2 text-sm focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
               />
               <p className="text-xs text-gray-500">
@@ -337,14 +519,10 @@ export function CreateActivityForm({
         /> */}
 
         <Form.Submit
-          disabled={isActivityPending || isCompetencesLoading}
+          disabled={isSubmitting}
           className="bg-primary hover:bg-primary/90"
         >
-          {isActivityPending ? (
-            <Loader2 className="mr-2 inline h-4 w-4 animate-spin" />
-          ) : (
-            "Criar"
-          )}
+          {isSubmitting ? "Criando..." : "Criar"}
         </Form.Submit>
       </Form.Main>
     </Form.Wrapper>
