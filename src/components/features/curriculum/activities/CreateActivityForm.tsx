@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useUser } from "@/hooks/User/useUser";
+import { constants } from "./utils/constants";
 
 const formSchema = z.object({
   title: z
@@ -36,11 +37,6 @@ interface CompetenceWithArea {
   areaName?: string;
 }
 
-// const activityTypes = [
-//   { value: "Atividade", label: "Atividade" },
-//   { value: "Jogo", label: "Jogo" },
-// ];
-
 export function CreateActivityForm({
   onSuccess,
   onFormStateChange,
@@ -64,10 +60,7 @@ export function CreateActivityForm({
   const [selectedCompetence, setSelectedCompetence] =
     useState<CompetenceWithArea | null>(null);
 
-  const templates = [
-    { label: "Múltipla Escolha", value: "multiple_choice" },
-    { label: "Verdadeiro ou Falso", value: "true_false" },
-  ];
+  const templates = constants.TEMPLATES;
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -112,9 +105,9 @@ export function CreateActivityForm({
       type: "Jogo",
       competenceId: Number(data.competenceId),
       content: JSON.stringify({ text: "Sem Conteúdo..." }),
-      creatorId: Number(user?.codigo_usuario) || 1,
-      maxQuestions: 10,
-      escolaId: 101,
+      creatorId: Number(user?.codigo_usuario) || constants.DEFAULT_CREATOR_ID,
+      maxQuestions: constants.DEFAULT_MAX_QUESTIONS,
+      escolaId: constants.DEFAULT_SCHOOL_ID,
     };
 
     try {
@@ -200,20 +193,6 @@ export function CreateActivityForm({
             />
           )}
         />
-
-        {/* <Form.Field
-          form={form}
-          name="type"
-          render={({ field }) => (
-            <Form.Select
-              {...field}
-              label="Tipo de Atividade"
-              placeholder="Selecione o tipo de atividade"
-              options={activityTypes}
-              disabled={isActivityPending}
-            />
-          )}
-        /> */}
 
         <div className="relative space-y-2">
           <label className="text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
@@ -314,27 +293,6 @@ export function CreateActivityForm({
             />
           )}
         />
-
-        {/* <Form.Field
-          form={form}
-          name="content"
-          render={({ field }) => (
-            <div className="space-y-2">
-              <label className="text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                Conteúdo *
-              </label>
-              <textarea
-                {...field}
-                placeholder="Ex: Descrição da atividade ou instruções..."
-                disabled={isActivityPending}
-                className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring resize-vertical flex min-h-32 w-full rounded-md border px-3 py-2 text-sm focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
-              />
-              <p className="text-xs text-gray-500">
-                Este texto será convertido para JSON automaticamente.
-              </p>
-            </div>
-          )}
-        /> */}
 
         <Form.Submit
           disabled={isActivityPending || isCompetencesLoading}
