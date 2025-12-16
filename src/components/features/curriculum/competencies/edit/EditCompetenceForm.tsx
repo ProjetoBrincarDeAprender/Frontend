@@ -36,7 +36,7 @@ export function EditCompetenceForm({ id, onSuccess }: EditCompetenceFormProps) {
     isLoading: isCompetenceLoading,
     isError: isCompetenceError,
   } = competenceQuery;
-  const { knowledgeAreasQuery } = useKnowledgeArea();
+const { knowledgeAreasQuery } = useKnowledgeArea();
   const {
     data: knowledgeAreasReturn,
     isLoading: isKnowledgeAreasLoading,
