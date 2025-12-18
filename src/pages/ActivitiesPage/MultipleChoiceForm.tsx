@@ -10,26 +10,10 @@ import { cn } from "@/lib/utils";
 import { useCreateQuestion } from "@/hooks/Question/useCreateQuestion";
 import { AxiosError } from "axios";
 import { useUpdateActivity } from "@/hooks/Activity/useUpdateActivity";
-import api from "@/utils/api";
-
-type Difficulty = "Fácil" | "Médio" | "Difícil";
-
-interface Option {
-  id: string;
-  texto: string;
-  correta: boolean;
-}
-
-interface Question {
-  id: string;
-  enunciado: string;
-  opcoes: Option[];
-}
-
-interface DifficultyQuestions {
-  difficulty: Difficulty;
-  questions: Question[];
-}
+import { useDifficultyManager } from "./MultipleChoiceForm/UseDifficultyManager";
+import { useActivityQuestions } from "@/hooks/Activity/useActivityQuestions";
+import useActivity from "@/hooks/Activity/useActivity";
+import handleAxiosError from "@/components/features/curriculum/activities/files/HandleAxiosError";
 
 const formSchema = z.object({
   activityId: z.string().min(1, { message: "Selecione uma atividade" }),
@@ -40,21 +24,41 @@ const formSchema = z.object({
 });
 
 export function MultipleChoiceForm({ className = "" }: { className?: string }) {
-  const { create } = useCreateQuestion();
-  const { mutateAsync: createQuestion } = create;
-
-  const { update } = useUpdateActivity();
-  const { mutateAsync: updateActivity } = update;
-
-  const [difficulties, setDifficulties] = useState<DifficultyQuestions[]>([
-    { difficulty: "Fácil", questions: [] },
-  ]);
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitProgress, setSubmitProgress] = useState<{
     total: number;
     current: number;
     currentQuestion: string;
   } | null>(null);
+
+  const [activityOptions, setActivityOptions] = useState<
+    { value: string; label: string }[]
+  >([]);
+
+  const { create } = useCreateQuestion();
+  const { mutateAsync: createQuestion } = create;
+
+  const { activitiesQuery } = useActivity({});
+  const { data: allActivities, isLoading: isLoadingActivities } =
+    activitiesQuery;
+
+  const { update: updateActivityMutation } = useUpdateActivity();
+  const { mutateAsync: updateActivity, isPending: isActivityPending } =
+    updateActivityMutation;
+
+  const {
+    difficulties,
+    addDifficulty,
+    removeDifficulty,
+    resetDifficulties,
+    loadExistingQuestions,
+    addQuestion,
+    removeQuestion,
+    updateQuestion,
+    addOption,
+    removeOption,
+    updateOption,
+    getDifficultyId,
+  } = useDifficultyManager();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -64,158 +68,60 @@ export function MultipleChoiceForm({ className = "" }: { className?: string }) {
     },
   });
 
-  const addDifficulty = () => {
-    if (difficulties.length === 1) {
-      setDifficulties([
-        ...difficulties,
-        { difficulty: "Médio", questions: [] },
-      ]);
-    } else if (difficulties.length === 2) {
-      setDifficulties([
-        ...difficulties,
-        { difficulty: "Difícil", questions: [] },
-      ]);
+  // Hook para buscar questões da atividade selecionada
+  const selectedActivityId = form.watch("activityId");
+  const { activityQuestionsQuery } = useActivityQuestions({
+    activityId: selectedActivityId ? Number(selectedActivityId) : undefined,
+  });
+  const { data: existingQuestions } = activityQuestionsQuery;
+
+  useEffect(() => {
+    const result = allActivities?.data.map((activity: any) => ({
+      value: activity.id.toString(),
+      label: activity.titulo,
+    }));
+
+    if (result) setActivityOptions(result);
+  }, [allActivities, isLoadingActivities]);
+
+  // Carregar questões existentes quando uma atividade for selecionada
+  useEffect(() => {
+    if (selectedActivityId && existingQuestions?.data) {
+      loadExistingQuestions(existingQuestions.data);
+
+      // Se existirem questões, carregar também o comando da primeira questão
+      if (existingQuestions.data.length > 0) {
+        try {
+          const firstQuestion = existingQuestions.data[0];
+          let parsedContent: any = {};
+
+          if (typeof firstQuestion.conteudo === "string") {
+            parsedContent = JSON.parse(firstQuestion.conteudo);
+          } else if (typeof firstQuestion.conteudo === "object") {
+            parsedContent = firstQuestion.conteudo;
+          }
+
+          if (parsedContent.comando) {
+            form.setValue("comando", parsedContent.comando);
+          }
+        } catch (error) {
+          console.warn(
+            "⚠️ Erro ao extrair comando das questões existentes:",
+            error,
+          );
+        }
+      }
+    } else if (!selectedActivityId) {
+      resetDifficulties();
+      form.setValue("comando", "");
     }
-  };
-
-  const removeDifficulty = (index: number) => {
-    if (difficulties.length > 1) {
-      setDifficulties(difficulties.filter((_, i) => i !== index));
-    }
-  };
-
-  const addQuestion = (difficultyIndex: number) => {
-    const newQuestion: Question = {
-      id: `${Date.now()}-${Math.random()}`,
-      enunciado: "",
-      opcoes: [
-        { id: `${Date.now()}-1`, texto: "", correta: false },
-        { id: `${Date.now()}-2`, texto: "", correta: false },
-      ],
-    };
-
-    setDifficulties((prev) =>
-      prev.map((diff, idx) =>
-        idx === difficultyIndex
-          ? { ...diff, questions: [...diff.questions, newQuestion] }
-          : diff,
-      ),
-    );
-  };
-
-  const removeQuestion = (difficultyIndex: number, questionIndex: number) => {
-    setDifficulties((prev) =>
-      prev.map((diff, idx) =>
-        idx === difficultyIndex
-          ? {
-              ...diff,
-              questions: diff.questions.filter(
-                (_, qIdx) => qIdx !== questionIndex,
-              ),
-            }
-          : diff,
-      ),
-    );
-  };
-
-  const updateQuestion = (
-    difficultyIndex: number,
-    questionIndex: number,
-    field: keyof Question,
-    value: string | Option[],
-  ) => {
-    setDifficulties((prev) =>
-      prev.map((diff, idx) =>
-        idx === difficultyIndex
-          ? {
-              ...diff,
-              questions: diff.questions.map((q, qIdx) =>
-                qIdx === questionIndex ? { ...q, [field]: value } : q,
-              ),
-            }
-          : diff,
-      ),
-    );
-  };
-
-  const updateOption = (
-    difficultyIndex: number,
-    questionIndex: number,
-    optionIndex: number,
-    field: keyof Option,
-    value: string | boolean,
-  ) => {
-    setDifficulties((prev) =>
-      prev.map((diff, idx) =>
-        idx === difficultyIndex
-          ? {
-              ...diff,
-              questions: diff.questions.map((q, qIdx) =>
-                qIdx === questionIndex
-                  ? {
-                      ...q,
-                      opcoes: q.opcoes.map((opt, optIdx) =>
-                        optIdx === optionIndex
-                          ? { ...opt, [field]: value }
-                          : opt,
-                      ),
-                    }
-                  : q,
-              ),
-            }
-          : diff,
-      ),
-    );
-  };
-
-  const addOption = (difficultyIndex: number, questionIndex: number) => {
-    const newOption: Option = {
-      id: `${Date.now()}-${Math.random()}`,
-      texto: "",
-      correta: false,
-    };
-
-    setDifficulties((prev) =>
-      prev.map((diff, idx) =>
-        idx === difficultyIndex
-          ? {
-              ...diff,
-              questions: diff.questions.map((q, qIdx) =>
-                qIdx === questionIndex
-                  ? { ...q, opcoes: [...q.opcoes, newOption] }
-                  : q,
-              ),
-            }
-          : diff,
-      ),
-    );
-  };
-
-  const removeOption = (
-    difficultyIndex: number,
-    questionIndex: number,
-    optionIndex: number,
-  ) => {
-    setDifficulties((prev) =>
-      prev.map((diff, idx) =>
-        idx === difficultyIndex
-          ? {
-              ...diff,
-              questions: diff.questions.map((q, qIdx) =>
-                qIdx === questionIndex
-                  ? {
-                      ...q,
-                      opcoes: q.opcoes.filter(
-                        (_, optIdx) => optIdx !== optionIndex,
-                      ),
-                    }
-                  : q,
-              ),
-            }
-          : diff,
-      ),
-    );
-  };
+  }, [
+    selectedActivityId,
+    existingQuestions,
+    loadExistingQuestions,
+    resetDifficulties,
+    form,
+  ]);
 
   const canSubmit = () => {
     const formData = form.getValues();
@@ -228,42 +134,21 @@ export function MultipleChoiceForm({ className = "" }: { className?: string }) {
           diff.questions.every(
             (q) =>
               q.enunciado.trim() !== "" &&
-              q.opcoes.length >= 2 &&
-              q.opcoes.every((opt) => opt.texto.trim() !== "") &&
-              q.opcoes.some((opt) => opt.correta),
+              q.opcoes.length >= 2 && // Pelo menos duas opções
+              q.opcoes.every((opt) => opt.texto.trim() !== "") && // Se a opção existir
+              q.opcoes.some((opt) => opt.correta), // Se tiver pelo menos uma opção correta
           ),
       )
     );
   };
 
-  const getDifficultyId = (difficulty: Difficulty): number => {
-    switch (difficulty) {
-      case "Fácil":
-        return 1;
-      case "Médio":
-        return 2;
-      case "Difícil":
-        return 3;
-      default:
-        return 1;
-    }
-  };
-
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
-    if (!canSubmit() || isSubmitting) {
+    if (!canSubmit() || isActivityPending) {
       return;
     }
 
-    setIsSubmitting(true);
-
-    // Contar o total de questões
-    const totalQuestions = difficulties.reduce(
-      (total, diff) => total + diff.questions.length,
-      0,
-    );
-
     setSubmitProgress({
-      total: totalQuestions,
+      total: difficulties.length,
       current: 0,
       currentQuestion: "",
     });
@@ -287,7 +172,7 @@ export function MultipleChoiceForm({ className = "" }: { className?: string }) {
 
           // Atualizar progresso
           setSubmitProgress({
-            total: totalQuestions,
+            total: difficulties.length,
             current: currentQuestionIndex,
             currentQuestion: question.enunciado.substring(0, 50) + "...",
           });
@@ -316,37 +201,10 @@ export function MultipleChoiceForm({ className = "" }: { className?: string }) {
 
       // Sucesso - limpar o formulário
       form.reset();
-      setDifficulties([{ difficulty: "Fácil", questions: [] }]);
-      setSubmitProgress(null);
+      (resetDifficulties(), setSubmitProgress(null));
     } catch (error) {
-      console.error("Erro ao criar questões:", error);
-
-      if (error instanceof AxiosError) {
-        const response = error.response;
-
-        if (Array.isArray(response?.data?.message)) {
-          response?.data?.message.map(
-            (field: { field: string; message: string[] }) => {
-              if (form.control._fields[field.field]) {
-                form.setError(field.field as keyof z.infer<typeof formSchema>, {
-                  message: field.message.join(", "),
-                });
-              }
-              form.setError("root", {
-                message: `Erro ao criar questão: ${field.message.join(", ")}`,
-              });
-            },
-          );
-        } else {
-          form.setError("root", {
-            message: `${response?.data?.message || "Erro ao criar questões"}`,
-          });
-        }
-      }
-
+      handleAxiosError(error as AxiosError, form, formSchema);
       setSubmitProgress(null);
-    } finally {
-      setIsSubmitting(false);
     }
 
     try {
@@ -362,38 +220,6 @@ export function MultipleChoiceForm({ className = "" }: { className?: string }) {
       console.error("Error updating activity:", error);
     }
   };
-
-  const [activityOptions, setActivityOptions] = useState<
-    { value: string; label: string }[]
-  >([]);
-  const [isLoadingActivities, setIsLoadingActivities] = useState(true);
-
-  async function getActivityOptions() {
-    setIsLoadingActivities(true);
-    let response;
-    try {
-      response = await api.get(`/activity/list`);
-    } catch (error) {
-      console.error("Error getting activities:", error);
-      setIsLoadingActivities(false);
-      throw error;
-    }
-    const result = response.data.map((activity: any) => ({
-      value: activity.id.toString(),
-      label: activity.titulo,
-    }));
-
-    // result.filter(
-    //   (activity: any) => activity.value.creatorId === user?.codigo_usuario,
-    // );
-
-    setActivityOptions(result);
-    setIsLoadingActivities(false);
-  }
-
-  useEffect(() => {
-    getActivityOptions();
-  }, []);
 
   return (
     <Form.Wrapper className={`flex max-h-[85vh] flex-col ${className}`}>
@@ -423,7 +249,14 @@ export function MultipleChoiceForm({ className = "" }: { className?: string }) {
             />
           )}
         />
-
+        {/* Indicador de carregamento das questões */}
+        {selectedActivityId && (
+          <div className="text-sm text-gray-600">
+            {existingQuestions?.data?.length
+              ? `${existingQuestions.data.length} questões existentes carregadas`
+              : "Nenhuma questão existente encontrada para esta atividade"}
+          </div>
+        )}{" "}
         <div className="flex-shrink-0">
           <Form.Field
             form={form}
@@ -437,7 +270,6 @@ export function MultipleChoiceForm({ className = "" }: { className?: string }) {
             )}
           />
         </div>
-
         <div className="flex-1 space-y-6">
           {difficulties.map((diff, diffIndex) => (
             <div
@@ -447,6 +279,9 @@ export function MultipleChoiceForm({ className = "" }: { className?: string }) {
               <div className="mb-4 flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <h3 className="text-lg font-semibold">{diff.difficulty}</h3>
+                  <span className="text-sm text-gray-500">
+                    ({diff.questions.length} questões)
+                  </span>
                   {diffIndex === difficulties.length - 1 &&
                     difficulties.length < 3 && (
                       <Button
@@ -478,8 +313,19 @@ export function MultipleChoiceForm({ className = "" }: { className?: string }) {
                 {diff.questions.map((question, qIndex) => (
                   <div
                     key={question.id}
-                    className="space-y-3 rounded-md border bg-gray-50 p-4"
+                    className={`space-y-3 rounded-md border p-4 ${
+                      question.isExisting
+                        ? "border-blue-200 bg-blue-50"
+                        : "border-gray-200 bg-gray-50"
+                    }`}
                   >
+                    {question.isExisting && (
+                      <div className="mb-2 flex items-center gap-2">
+                        <span className="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800">
+                          Questão Existente
+                        </span>
+                      </div>
+                    )}
                     <div className="flex items-start justify-between gap-2">
                       <div className="flex-1">
                         <Label className="mb-2">Enunciado:</Label>
@@ -595,7 +441,6 @@ export function MultipleChoiceForm({ className = "" }: { className?: string }) {
             </div>
           ))}
         </div>
-
         <div className="bg-am1 sticky bottom-0 -mx-2 flex-shrink-0 space-y-2 px-2 pt-4 pb-2">
           {submitProgress && (
             <div className="mb-3 space-y-2">
@@ -622,14 +467,15 @@ export function MultipleChoiceForm({ className = "" }: { className?: string }) {
           <Form.Submit
             className={cn(
               "bg-primary hover:bg-primary/90",
-              (!canSubmit() || isSubmitting) && "cursor-not-allowed opacity-50",
+              (!canSubmit() || isActivityPending) &&
+                "cursor-not-allowed opacity-50",
             )}
-            disabled={!canSubmit() || isSubmitting}
+            disabled={!canSubmit() || isActivityPending}
           >
-            {isSubmitting ? "Criando Questões..." : "Criar Atividade"}
+            {isActivityPending ? "Criando Questões..." : "Criar Atividade"}
           </Form.Submit>
 
-          {!canSubmit() && !isSubmitting && (
+          {!canSubmit() && !isActivityPending && (
             <p className="text-destructive text-center text-sm">
               Selecione uma atividade, preencha o comando e certifique-se de que
               todas as questões têm pelo menos 2 opções preenchidas e pelo menos

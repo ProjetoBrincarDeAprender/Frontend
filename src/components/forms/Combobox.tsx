@@ -56,7 +56,7 @@ export default function Combobox({
     <FormItem className={wrapperClassName}>
       <FormLabel className={labelClassName}>{label}</FormLabel>
       <Popover open={open} onOpenChange={setOpen}>
-        <PopoverTrigger asChild>
+        <PopoverTrigger className="border-1 border-gray-800" asChild>
           <Button
             variant={variant || "outline"}
             role="combobox"
