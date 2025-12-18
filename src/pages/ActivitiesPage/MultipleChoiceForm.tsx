@@ -40,6 +40,13 @@ const formSchema = z.object({
 });
 
 export function MultipleChoiceForm({ className = "" }: { className?: string }) {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitProgress, setSubmitProgress] = useState<{
+    total: number;
+    current: number;
+    currentQuestion: string;
+  } | null>(null);
+
   const { create } = useCreateQuestion();
   const { mutateAsync: createQuestion } = create;
 
@@ -49,12 +56,6 @@ export function MultipleChoiceForm({ className = "" }: { className?: string }) {
   const [difficulties, setDifficulties] = useState<DifficultyQuestions[]>([
     { difficulty: "Fácil", questions: [] },
   ]);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitProgress, setSubmitProgress] = useState<{
-    total: number;
-    current: number;
-    currentQuestion: string;
-  } | null>(null);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -378,7 +379,8 @@ export function MultipleChoiceForm({ className = "" }: { className?: string }) {
       setIsLoadingActivities(false);
       throw error;
     }
-    const result = response.data.map((activity: any) => ({
+
+    const result = response.data.data.map((activity: any) => ({
       value: activity.id.toString(),
       label: activity.titulo,
     }));
@@ -419,7 +421,7 @@ export function MultipleChoiceForm({ className = "" }: { className?: string }) {
                   : "Em qual atividade essas questões serão adicionadas?"
               }
               options={activityOptions}
-              disabled={isLoadingActivities || form.formState.isSubmitting}
+              // disabled={isLoadingActivities || form.formState.isSubmitting}
             />
           )}
         />
