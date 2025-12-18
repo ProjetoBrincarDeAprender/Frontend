@@ -2,13 +2,13 @@ import { Form } from "@/components/forms/Root";
 import { useCreateActivity } from "@/hooks/Activity/useCreateActivity";
 import { useCompetence } from "@/hooks/Competence/useCompetence";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { AxiosError } from "axios";
 import { Loader2 } from "lucide-react";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useUser } from "@/hooks/User/useUser";
 import type { CompetenceWithArea } from "./common/types/activity.types";
+import handleAxiosError from "./files/HandleAxiosError";
 
 const TEMPLATES = [
   { label: "Múltipla Escolha", value: "multiple_choice" },
@@ -103,28 +103,7 @@ export function CreateActivityForm({
       await createActivity(payload);
       form.reset();
     } catch (error) {
-      if (error instanceof AxiosError) {
-        const response = error.response;
-
-        if (Array.isArray(response?.data?.message)) {
-          response?.data?.message.map(
-            (field: { field: string; message: string[] }) => {
-              if (form.control._fields[field.field]) {
-                form.setError(field.field as keyof z.infer<typeof formSchema>, {
-                  message: field.message.join(", "),
-                });
-              }
-              form.setError("root", {
-                message: `Erro ao criar atividade: ${field.message.join(", ")}`,
-              });
-            },
-          );
-        } else {
-          form.setError("root", {
-            message: `${response?.data?.message}`,
-          });
-        }
-      }
+      handleAxiosError(error, form, formSchema);
     }
   };
 
