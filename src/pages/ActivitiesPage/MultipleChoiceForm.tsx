@@ -10,7 +10,7 @@ import { cn } from "@/lib/utils";
 import { useCreateQuestion } from "@/hooks/Question/useCreateQuestion";
 import { AxiosError } from "axios";
 import { useUpdateActivity } from "@/hooks/Activity/useUpdateActivity";
-import { useDifficultyManager } from "./MultipleChoiceForm/useDifficultyManager";
+import { useDifficultyManager } from "./MultipleChoiceForm/UseDifficultyManager";
 import { useActivityQuestions } from "@/hooks/Activity/useActivityQuestions";
 import useActivity from "@/hooks/Activity/useActivity";
 import handleAxiosError from "@/components/features/curriculum/activities/files/HandleAxiosError";
