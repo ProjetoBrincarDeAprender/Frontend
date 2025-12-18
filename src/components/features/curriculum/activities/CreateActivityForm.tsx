@@ -8,8 +8,20 @@ import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useUser } from "@/hooks/User/useUser";
-import { ACTIVITY_CONFIG, TEMPLATES } from "./utils/constants";
 import type { CompetenceWithArea } from "./common/types/activity.types";
+
+const TEMPLATES = [
+  { label: "Múltipla Escolha", value: "multiple_choice" },
+  { label: "Verdadeiro ou Falso", value: "true_false" },
+];
+
+const ACTIVITY_CONFIG = {
+  DEFAULT_CONTENT: JSON.stringify({ text: "Sem Conteúdo..." }),
+  DEFAULT_CREATOR_ID: 1,
+  DEFAULT_MAX_QUESTIONS: 10,
+  DEFAULT_SCHOOL_ID: 101,
+  DEFAULT_TYPE: "Jogo",
+} as const;
 
 const formSchema = z.object({
   title: z
@@ -78,9 +90,9 @@ export function CreateActivityForm({
     const payload = {
       template: data.template,
       title: data.title,
-      type: "Jogo",
+      type: ACTIVITY_CONFIG.DEFAULT_TYPE,
       competenceId: Number(data.competenceId),
-      content: JSON.stringify({ text: "Sem Conteúdo..." }),
+      content: ACTIVITY_CONFIG.DEFAULT_CONTENT,
       creatorId:
         Number(user?.codigo_usuario) || ACTIVITY_CONFIG.DEFAULT_CREATOR_ID,
       maxQuestions: ACTIVITY_CONFIG.DEFAULT_MAX_QUESTIONS,
