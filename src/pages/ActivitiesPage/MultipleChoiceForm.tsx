@@ -10,8 +10,8 @@ import { cn } from "@/lib/utils";
 import { useCreateQuestion } from "@/hooks/Question/useCreateQuestion";
 import { AxiosError } from "axios";
 import { useUpdateActivity } from "@/hooks/Activity/useUpdateActivity";
-import useActivity from "@/hooks/Activity/useActivity";
 import { useDifficultyManager } from "./MultipleChoiceForm/useDifficultyManager";
+import useActivity from "@/hooks/Activity/useActivity";
 import handleAxiosError from "@/components/features/curriculum/activities/files/HandleAxiosError";
 
 const formSchema = z.object({
@@ -23,12 +23,26 @@ const formSchema = z.object({
 });
 
 export function MultipleChoiceForm({ className = "" }: { className?: string }) {
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitProgress, setSubmitProgress] = useState<{
     total: number;
     current: number;
     currentQuestion: string;
   } | null>(null);
+
+  const [activityOptions, setActivityOptions] = useState<
+    { value: string; label: string }[]
+  >([]);
+
+  const { create } = useCreateQuestion();
+  const { mutateAsync: createQuestion } = create;
+
+  const { activitiesQuery } = useActivity({});
+  const { data: allActivities, isLoading: isLoadingActivities } =
+    activitiesQuery;
+
+  const { update: updateActivityMutation } = useUpdateActivity();
+  const { mutateAsync: updateActivity, isPending: isActivityPending } =
+    updateActivityMutation;
 
   const {
     difficulties,
@@ -41,18 +55,8 @@ export function MultipleChoiceForm({ className = "" }: { className?: string }) {
     addOption,
     removeOption,
     updateOption,
-    getTotalQuestions,
+    getDifficultyId,
   } = useDifficultyManager();
-
-  const { create } = useCreateQuestion();
-  const { mutateAsync: createQuestion } = create;
-
-  const { activitiesQuery } = useActivity({});
-  const { data: allActivities, isLoading: isLoadingActivities } =
-    activitiesQuery;
-
-  const { update } = useUpdateActivity();
-  const { mutateAsync: updateActivity } = update;
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -62,9 +66,14 @@ export function MultipleChoiceForm({ className = "" }: { className?: string }) {
     },
   });
 
-  const [activityOptions, setActivityOptions] = useState<
-    { value: string; label: string }[]
-  >([]);
+  useEffect(() => {
+    const result = allActivities?.data.map((activity: any) => ({
+      value: activity.id.toString(),
+      label: activity.titulo,
+    }));
+
+    if (result) setActivityOptions(result);
+  }, [allActivities, isLoadingActivities]);
 
   const canSubmit = () => {
     const formData = form.getValues();
@@ -77,36 +86,21 @@ export function MultipleChoiceForm({ className = "" }: { className?: string }) {
           diff.questions.every(
             (q) =>
               q.enunciado.trim() !== "" &&
-              q.opcoes.length >= 2 &&
-              q.opcoes.every((opt) => opt.texto.trim() !== "") &&
-              q.opcoes.some((opt) => opt.correta),
+              q.opcoes.length >= 2 && // Pelo menos duas opções
+              q.opcoes.every((opt) => opt.texto.trim() !== "") && // Se a opção existir
+              q.opcoes.some((opt) => opt.correta), // Se tiver pelo menos uma opção correta
           ),
       )
     );
   };
 
-  const getDifficultyId = (difficulty: any): number => {
-    switch (difficulty) {
-      case "Fácil":
-        return 1;
-      case "Médio":
-        return 2;
-      case "Difícil":
-        return 3;
-      default:
-        return 1;
-    }
-  };
-
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
-    if (!canSubmit() || isSubmitting) {
+    if (!canSubmit() || isActivityPending) {
       return;
     }
 
-    setIsSubmitting(true);
-
     setSubmitProgress({
-      total: getTotalQuestions(),
+      total: difficulties.length,
       current: 0,
       currentQuestion: "",
     });
@@ -130,7 +124,7 @@ export function MultipleChoiceForm({ className = "" }: { className?: string }) {
 
           // Atualizar progresso
           setSubmitProgress({
-            total: getTotalQuestions(),
+            total: difficulties.length,
             current: currentQuestionIndex,
             currentQuestion: question.enunciado.substring(0, 50) + "...",
           });
@@ -163,8 +157,6 @@ export function MultipleChoiceForm({ className = "" }: { className?: string }) {
     } catch (error) {
       handleAxiosError(error as AxiosError, form, formSchema);
       setSubmitProgress(null);
-    } finally {
-      setIsSubmitting(false);
     }
 
     try {
@@ -180,15 +172,6 @@ export function MultipleChoiceForm({ className = "" }: { className?: string }) {
       console.error("Error updating activity:", error);
     }
   };
-
-  useEffect(() => {
-    const result = allActivities?.data.map((activity: any) => ({
-      value: activity.id.toString(),
-      label: activity.titulo,
-    }));
-
-    if (result) setActivityOptions(result);
-  }, [allActivities, isLoadingActivities]);
 
   return (
     <Form.Wrapper className={`flex max-h-[85vh] flex-col ${className}`}>
@@ -242,8 +225,8 @@ export function MultipleChoiceForm({ className = "" }: { className?: string }) {
               <div className="mb-4 flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <h3 className="text-lg font-semibold">{diff.difficulty}</h3>
-                  {diffIndex === getTotalQuestions() - 1 &&
-                    getTotalQuestions() < 3 && (
+                  {diffIndex === difficulties.length - 1 &&
+                    difficulties.length < 3 && (
                       <Button
                         type="button"
                         size="icon"
@@ -255,8 +238,8 @@ export function MultipleChoiceForm({ className = "" }: { className?: string }) {
                       </Button>
                     )}
                 </div>
-                {getTotalQuestions() > 1 &&
-                  diffIndex === getTotalQuestions() - 1 && (
+                {difficulties.length > 1 &&
+                  diffIndex === difficulties.length - 1 && (
                     <Button
                       type="button"
                       size="icon"
@@ -417,14 +400,15 @@ export function MultipleChoiceForm({ className = "" }: { className?: string }) {
           <Form.Submit
             className={cn(
               "bg-primary hover:bg-primary/90",
-              (!canSubmit() || isSubmitting) && "cursor-not-allowed opacity-50",
+              (!canSubmit() || isActivityPending) &&
+                "cursor-not-allowed opacity-50",
             )}
-            disabled={!canSubmit() || isSubmitting}
+            disabled={!canSubmit() || isActivityPending}
           >
-            {isSubmitting ? "Criando Questões..." : "Criar Atividade"}
+            {isActivityPending ? "Criando Questões..." : "Criar Atividade"}
           </Form.Submit>
 
-          {!canSubmit() && !isSubmitting && (
+          {!canSubmit() && !isActivityPending && (
             <p className="text-destructive text-center text-sm">
               Selecione uma atividade, preencha o comando e certifique-se de que
               todas as questões têm pelo menos 2 opções preenchidas e pelo menos

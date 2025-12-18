@@ -51,6 +51,7 @@ interface UseDifficultyManagerReturn {
 
   //   canAddDifficulty: boolean;
   getTotalQuestions: () => number;
+  getDifficultyId: (difficulty: any) => number;
 }
 
 export function useDifficultyManager(): UseDifficultyManagerReturn {
@@ -236,6 +237,19 @@ export function useDifficultyManager(): UseDifficultyManagerReturn {
     );
   }, []);
 
+  const getDifficultyId = (difficulty: any): number => {
+    switch (difficulty) {
+      case "Fácil":
+        return 1;
+      case "Médio":
+        return 2;
+      case "Difícil":
+        return 3;
+      default:
+        return 1;
+    }
+  };
+
   return {
     difficulties,
 
@@ -252,5 +266,6 @@ export function useDifficultyManager(): UseDifficultyManagerReturn {
     updateOption,
 
     getTotalQuestions,
+    getDifficultyId,
   };
 }
