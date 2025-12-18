@@ -11,25 +11,7 @@ import { useCreateQuestion } from "@/hooks/Question/useCreateQuestion";
 import { AxiosError } from "axios";
 import { useUpdateActivity } from "@/hooks/Activity/useUpdateActivity";
 import useActivity from "@/hooks/Activity/useActivity";
-
-type Difficulty = "Fácil" | "Médio" | "Difícil";
-
-interface Option {
-  id: string;
-  texto: string;
-  correta: boolean;
-}
-
-interface Question {
-  id: string;
-  enunciado: string;
-  opcoes: Option[];
-}
-
-interface DifficultyQuestions {
-  difficulty: Difficulty;
-  questions: Question[];
-}
+import { useDifficultyManager } from "./MultipleChoiceForm/useDifficultyManager";
 
 const formSchema = z.object({
   activityId: z.string().min(1, { message: "Selecione uma atividade" }),
@@ -47,6 +29,20 @@ export function MultipleChoiceForm({ className = "" }: { className?: string }) {
     currentQuestion: string;
   } | null>(null);
 
+  const {
+    difficulties,
+    addDifficulty,
+    removeDifficulty,
+    resetDifficulties,
+    addQuestion,
+    removeQuestion,
+    updateQuestion,
+    addOption,
+    removeOption,
+    updateOption,
+    getTotalQuestions,
+  } = useDifficultyManager();
+
   const { create } = useCreateQuestion();
   const { mutateAsync: createQuestion } = create;
 
@@ -56,10 +52,6 @@ export function MultipleChoiceForm({ className = "" }: { className?: string }) {
 
   const { update } = useUpdateActivity();
   const { mutateAsync: updateActivity } = update;
-
-  const [difficulties, setDifficulties] = useState<DifficultyQuestions[]>([
-    { difficulty: "Fácil", questions: [] },
-  ]);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -73,179 +65,7 @@ export function MultipleChoiceForm({ className = "" }: { className?: string }) {
     { value: string; label: string }[]
   >([]);
 
-  const addDifficulty = () => {
-    if (difficulties.length === 1) {
-      setDifficulties([
-        ...difficulties,
-        { difficulty: "Médio", questions: [] },
-      ]);
-    } else if (difficulties.length === 2) {
-      setDifficulties([
-        ...difficulties,
-        { difficulty: "Difícil", questions: [] },
-      ]);
-    }
-  };
-
-  const removeDifficulty = (index: number) => {
-    if (difficulties.length > 1) {
-      setDifficulties(difficulties.filter((_, i) => i !== index));
-    }
-  };
-
-  const addQuestion = (difficultyIndex: number) => {
-    const newQuestion: Question = {
-      id: `${Date.now()}-${Math.random()}`,
-      enunciado: "",
-      opcoes: [
-        { id: `${Date.now()}-1`, texto: "", correta: false },
-        { id: `${Date.now()}-2`, texto: "", correta: false },
-      ],
-    };
-
-    setDifficulties((prev) =>
-      prev.map((diff, idx) =>
-        idx === difficultyIndex
-          ? { ...diff, questions: [...diff.questions, newQuestion] }
-          : diff,
-      ),
-    );
-  };
-
-  const removeQuestion = (difficultyIndex: number, questionIndex: number) => {
-    setDifficulties((prev) =>
-      prev.map((diff, idx) =>
-        idx === difficultyIndex
-          ? {
-              ...diff,
-              questions: diff.questions.filter(
-                (_, qIdx) => qIdx !== questionIndex,
-              ),
-            }
-          : diff,
-      ),
-    );
-  };
-
-  const updateQuestion = (
-    difficultyIndex: number,
-    questionIndex: number,
-    field: keyof Question,
-    value: string | Option[],
-  ) => {
-    setDifficulties((prev) =>
-      prev.map((diff, idx) =>
-        idx === difficultyIndex
-          ? {
-              ...diff,
-              questions: diff.questions.map((q, qIdx) =>
-                qIdx === questionIndex ? { ...q, [field]: value } : q,
-              ),
-            }
-          : diff,
-      ),
-    );
-  };
-
-  const updateOption = (
-    difficultyIndex: number,
-    questionIndex: number,
-    optionIndex: number,
-    field: keyof Option,
-    value: string | boolean,
-  ) => {
-    setDifficulties((prev) =>
-      prev.map((diff, idx) =>
-        idx === difficultyIndex
-          ? {
-              ...diff,
-              questions: diff.questions.map((q, qIdx) =>
-                qIdx === questionIndex
-                  ? {
-                      ...q,
-                      opcoes: q.opcoes.map((opt, optIdx) =>
-                        optIdx === optionIndex
-                          ? { ...opt, [field]: value }
-                          : opt,
-                      ),
-                    }
-                  : q,
-              ),
-            }
-          : diff,
-      ),
-    );
-  };
-
-  const addOption = (difficultyIndex: number, questionIndex: number) => {
-    const newOption: Option = {
-      id: `${Date.now()}-${Math.random()}`,
-      texto: "",
-      correta: false,
-    };
-
-    setDifficulties((prev) =>
-      prev.map((diff, idx) =>
-        idx === difficultyIndex
-          ? {
-              ...diff,
-              questions: diff.questions.map((q, qIdx) =>
-                qIdx === questionIndex
-                  ? { ...q, opcoes: [...q.opcoes, newOption] }
-                  : q,
-              ),
-            }
-          : diff,
-      ),
-    );
-  };
-
-  const removeOption = (
-    difficultyIndex: number,
-    questionIndex: number,
-    optionIndex: number,
-  ) => {
-    setDifficulties((prev) =>
-      prev.map((diff, idx) =>
-        idx === difficultyIndex
-          ? {
-              ...diff,
-              questions: diff.questions.map((q, qIdx) =>
-                qIdx === questionIndex
-                  ? {
-                      ...q,
-                      opcoes: q.opcoes.filter(
-                        (_, optIdx) => optIdx !== optionIndex,
-                      ),
-                    }
-                  : q,
-              ),
-            }
-          : diff,
-      ),
-    );
-  };
-
-  const canSubmit = () => {
-    const formData = form.getValues();
-    return (
-      formData.activityId !== "" &&
-      formData.comando.trim() !== "" &&
-      difficulties.every(
-        (diff) =>
-          diff.questions.length > 0 &&
-          diff.questions.every(
-            (q) =>
-              q.enunciado.trim() !== "" &&
-              q.opcoes.length >= 2 &&
-              q.opcoes.every((opt) => opt.texto.trim() !== "") &&
-              q.opcoes.some((opt) => opt.correta),
-          ),
-      )
-    );
-  };
-
-  const getDifficultyId = (difficulty: Difficulty): number => {
+  const getDifficultyId = (difficulty: any): number => {
     switch (difficulty) {
       case "Fácil":
         return 1;
@@ -259,20 +79,20 @@ export function MultipleChoiceForm({ className = "" }: { className?: string }) {
   };
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
-    if (!canSubmit() || isSubmitting) {
-      return;
-    }
+    // if (!canSubmit() || isSubmitting) {
+    //   return;
+    // }
 
     setIsSubmitting(true);
 
     // Contar o total de questões
-    const totalQuestions = difficulties.reduce(
-      (total, diff) => total + diff.questions.length,
-      0,
-    );
+    // const totalQuestions = difficulties.reduce(
+    //   (total, diff) => total + diff.questions.length,
+    //   0,
+    // );
 
     setSubmitProgress({
-      total: totalQuestions,
+      total: getTotalQuestions(),
       current: 0,
       currentQuestion: "",
     });
@@ -296,7 +116,7 @@ export function MultipleChoiceForm({ className = "" }: { className?: string }) {
 
           // Atualizar progresso
           setSubmitProgress({
-            total: totalQuestions,
+            total: getTotalQuestions(),
             current: currentQuestionIndex,
             currentQuestion: question.enunciado.substring(0, 50) + "...",
           });
@@ -325,8 +145,7 @@ export function MultipleChoiceForm({ className = "" }: { className?: string }) {
 
       // Sucesso - limpar o formulário
       form.reset();
-      setDifficulties([{ difficulty: "Fácil", questions: [] }]);
-      setSubmitProgress(null);
+      (resetDifficulties(), setSubmitProgress(null));
     } catch (error) {
       console.error("Erro ao criar questões:", error);
 
@@ -373,12 +192,12 @@ export function MultipleChoiceForm({ className = "" }: { className?: string }) {
   };
 
   useEffect(() => {
-    const result = allActivities!.data.map((activity: any) => ({
+    const result = allActivities?.data.map((activity: any) => ({
       value: activity.id.toString(),
       label: activity.titulo,
     }));
 
-    setActivityOptions(result);
+    if (result) setActivityOptions(result);
   }, [allActivities, isLoadingActivities]);
 
   return (
@@ -433,8 +252,8 @@ export function MultipleChoiceForm({ className = "" }: { className?: string }) {
               <div className="mb-4 flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <h3 className="text-lg font-semibold">{diff.difficulty}</h3>
-                  {diffIndex === difficulties.length - 1 &&
-                    difficulties.length < 3 && (
+                  {diffIndex === getTotalQuestions() - 1 &&
+                    getTotalQuestions() < 3 && (
                       <Button
                         type="button"
                         size="icon"
@@ -446,8 +265,8 @@ export function MultipleChoiceForm({ className = "" }: { className?: string }) {
                       </Button>
                     )}
                 </div>
-                {difficulties.length > 1 &&
-                  diffIndex === difficulties.length - 1 && (
+                {getTotalQuestions() > 1 &&
+                  diffIndex === getTotalQuestions() - 1 && (
                     <Button
                       type="button"
                       size="icon"
@@ -608,20 +427,21 @@ export function MultipleChoiceForm({ className = "" }: { className?: string }) {
           <Form.Submit
             className={cn(
               "bg-primary hover:bg-primary/90",
-              (!canSubmit() || isSubmitting) && "cursor-not-allowed opacity-50",
+              // (!canSubmit() || isSubmitting) &&
+              "cursor-not-allowed opacity-50",
             )}
-            disabled={!canSubmit() || isSubmitting}
+            // disabled={!canSubmit() || isSubmitting}
           >
             {isSubmitting ? "Criando Questões..." : "Criar Atividade"}
           </Form.Submit>
 
-          {!canSubmit() && !isSubmitting && (
-            <p className="text-destructive text-center text-sm">
-              Selecione uma atividade, preencha o comando e certifique-se de que
-              todas as questões têm pelo menos 2 opções preenchidas e pelo menos
-              1 resposta correta marcada
-            </p>
-          )}
+          {/* {!canSubmit() && !isSubmitting && ( */}
+          <p className="text-destructive text-center text-sm">
+            Selecione uma atividade, preencha o comando e certifique-se de que
+            todas as questões têm pelo menos 2 opções preenchidas e pelo menos 1
+            resposta correta marcada
+          </p>
+          {/*)}*/}
         </div>
       </Form.Main>
     </Form.Wrapper>
