@@ -11,6 +11,7 @@ import { useCreateQuestion } from "@/hooks/Question/useCreateQuestion";
 import { AxiosError } from "axios";
 import { useUpdateActivity } from "@/hooks/Activity/useUpdateActivity";
 import { useDifficultyManager } from "./MultipleChoiceForm/useDifficultyManager";
+import { useActivityQuestions } from "@/hooks/Activity/useActivityQuestions";
 import useActivity from "@/hooks/Activity/useActivity";
 import handleAxiosError from "@/components/features/curriculum/activities/files/HandleAxiosError";
 
@@ -49,6 +50,7 @@ export function MultipleChoiceForm({ className = "" }: { className?: string }) {
     addDifficulty,
     removeDifficulty,
     resetDifficulties,
+    loadExistingQuestions,
     addQuestion,
     removeQuestion,
     updateQuestion,
@@ -66,6 +68,13 @@ export function MultipleChoiceForm({ className = "" }: { className?: string }) {
     },
   });
 
+  // Hook para buscar questões da atividade selecionada
+  const selectedActivityId = form.watch("activityId");
+  const { activityQuestionsQuery } = useActivityQuestions({
+    activityId: selectedActivityId ? Number(selectedActivityId) : undefined,
+  });
+  const { data: existingQuestions } = activityQuestionsQuery;
+
   useEffect(() => {
     const result = allActivities?.data.map((activity: any) => ({
       value: activity.id.toString(),
@@ -74,6 +83,45 @@ export function MultipleChoiceForm({ className = "" }: { className?: string }) {
 
     if (result) setActivityOptions(result);
   }, [allActivities, isLoadingActivities]);
+
+  // Carregar questões existentes quando uma atividade for selecionada
+  useEffect(() => {
+    if (selectedActivityId && existingQuestions?.data) {
+      loadExistingQuestions(existingQuestions.data);
+
+      // Se existirem questões, carregar também o comando da primeira questão
+      if (existingQuestions.data.length > 0) {
+        try {
+          const firstQuestion = existingQuestions.data[0];
+          let parsedContent: any = {};
+
+          if (typeof firstQuestion.conteudo === "string") {
+            parsedContent = JSON.parse(firstQuestion.conteudo);
+          } else if (typeof firstQuestion.conteudo === "object") {
+            parsedContent = firstQuestion.conteudo;
+          }
+
+          if (parsedContent.comando) {
+            form.setValue("comando", parsedContent.comando);
+          }
+        } catch (error) {
+          console.warn(
+            "⚠️ Erro ao extrair comando das questões existentes:",
+            error,
+          );
+        }
+      }
+    } else if (!selectedActivityId) {
+      resetDifficulties();
+      form.setValue("comando", "");
+    }
+  }, [
+    selectedActivityId,
+    existingQuestions,
+    loadExistingQuestions,
+    resetDifficulties,
+    form,
+  ]);
 
   const canSubmit = () => {
     const formData = form.getValues();
@@ -201,7 +249,14 @@ export function MultipleChoiceForm({ className = "" }: { className?: string }) {
             />
           )}
         />
-
+        {/* Indicador de carregamento das questões */}
+        {selectedActivityId && (
+          <div className="text-sm text-gray-600">
+            {existingQuestions?.data?.length
+              ? `${existingQuestions.data.length} questões existentes carregadas`
+              : "Nenhuma questão existente encontrada para esta atividade"}
+          </div>
+        )}{" "}
         <div className="flex-shrink-0">
           <Form.Field
             form={form}
@@ -215,7 +270,6 @@ export function MultipleChoiceForm({ className = "" }: { className?: string }) {
             )}
           />
         </div>
-
         <div className="flex-1 space-y-6">
           {difficulties.map((diff, diffIndex) => (
             <div
@@ -225,6 +279,9 @@ export function MultipleChoiceForm({ className = "" }: { className?: string }) {
               <div className="mb-4 flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <h3 className="text-lg font-semibold">{diff.difficulty}</h3>
+                  <span className="text-sm text-gray-500">
+                    ({diff.questions.length} questões)
+                  </span>
                   {diffIndex === difficulties.length - 1 &&
                     difficulties.length < 3 && (
                       <Button
@@ -256,8 +313,19 @@ export function MultipleChoiceForm({ className = "" }: { className?: string }) {
                 {diff.questions.map((question, qIndex) => (
                   <div
                     key={question.id}
-                    className="space-y-3 rounded-md border bg-gray-50 p-4"
+                    className={`space-y-3 rounded-md border p-4 ${
+                      question.isExisting
+                        ? "border-blue-200 bg-blue-50"
+                        : "border-gray-200 bg-gray-50"
+                    }`}
                   >
+                    {question.isExisting && (
+                      <div className="mb-2 flex items-center gap-2">
+                        <span className="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800">
+                          Questão Existente
+                        </span>
+                      </div>
+                    )}
                     <div className="flex items-start justify-between gap-2">
                       <div className="flex-1">
                         <Label className="mb-2">Enunciado:</Label>
@@ -373,7 +441,6 @@ export function MultipleChoiceForm({ className = "" }: { className?: string }) {
             </div>
           ))}
         </div>
-
         <div className="bg-am1 sticky bottom-0 -mx-2 flex-shrink-0 space-y-2 px-2 pt-4 pb-2">
           {submitProgress && (
             <div className="mb-3 space-y-2">

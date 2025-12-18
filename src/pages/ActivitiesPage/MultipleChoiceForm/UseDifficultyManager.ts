@@ -12,6 +12,7 @@ interface Question {
   id: string;
   enunciado: string;
   opcoes: Option[];
+  isExisting?: boolean; // Flag para identificar se é uma questão existente
 }
 
 interface DifficultyQuestions {
@@ -25,6 +26,7 @@ interface UseDifficultyManagerReturn {
   addDifficulty: () => void;
   removeDifficulty: (difficultyIndex: number) => void;
   resetDifficulties: () => void;
+  loadExistingQuestions: (questions: any[]) => void;
 
   addQuestion: (difficultyIndex: number) => void;
   removeQuestion: (difficultyIndex: number, questionIndex: number) => void;
@@ -86,10 +88,101 @@ export function useDifficultyManager(): UseDifficultyManagerReturn {
     setDifficulties([{ difficulty: "Fácil", questions: [] }]);
   }, []);
 
+  const loadExistingQuestions = useCallback((questions: any[]) => {
+    if (!questions || questions.length === 0) {
+      setDifficulties([{ difficulty: "Fácil", questions: [] }]);
+      return;
+    }
+
+    // Organizar questões por nível de dificuldade
+    const questionsByDifficulty: { [key: number]: any[] } = {
+      1: [], // Fácil
+      2: [], // Médio
+      3: [], // Difícil
+    };
+
+    questions.forEach((question) => {
+      const difficultyId = question.nivelDificuldadeId || 1;
+      if (!questionsByDifficulty[difficultyId]) {
+        questionsByDifficulty[difficultyId] = [];
+      }
+      questionsByDifficulty[difficultyId].push(question);
+    });
+
+    // Converter para o formato do formulário
+    const newDifficulties: DifficultyQuestions[] = [];
+
+    // Adicionar níveis de dificuldade que têm questões
+    Object.entries(questionsByDifficulty).forEach(
+      ([difficultyId, questionsForDifficulty]) => {
+        if (questionsForDifficulty.length > 0) {
+          const difficultyName = getDifficultyNameById(Number(difficultyId));
+
+          const formattedQuestions = questionsForDifficulty.map((question) => {
+            let parsedContent: any = {};
+
+            try {
+              if (typeof question.conteudo === "string") {
+                parsedContent = JSON.parse(question.conteudo);
+              } else if (typeof question.conteudo === "object") {
+                parsedContent = question.conteudo;
+              }
+            } catch (error) {
+              console.warn(
+                "Erro ao fazer parse do conteúdo da questão:",
+                error,
+              );
+              parsedContent = { enunciado: "", opcoes: [] };
+            }
+
+            return {
+              id: question.id?.toString() || `${Date.now()}-${Math.random()}`,
+              enunciado: parsedContent.enunciado || "",
+              isExisting: true, // Marcar como questão existente
+              opcoes: (parsedContent.opcoes || []).map(
+                (opcao: any, index: number) => ({
+                  id: `${question.id || Date.now()}-${index}`,
+                  texto: opcao.texto || "",
+                  correta: opcao.correta || false,
+                }),
+              ),
+            };
+          });
+
+          newDifficulties.push({
+            difficulty: difficultyName,
+            questions: formattedQuestions,
+          });
+        }
+      },
+    );
+
+    // Se não houver questões, inicializar com nível Fácil vazio
+    if (newDifficulties.length === 0) {
+      newDifficulties.push({ difficulty: "Fácil", questions: [] });
+    }
+
+    setDifficulties(newDifficulties);
+  }, []);
+
+  const getDifficultyNameById = (id: number): Difficulty => {
+    switch (id) {
+      case 1:
+        return "Fácil";
+      case 2:
+        return "Médio";
+      case 3:
+        return "Difícil";
+      default:
+        return "Fácil";
+    }
+  };
+
   const addQuestion = useCallback((difficultyIndex: number) => {
     const newQuestion: Question = {
       id: `${Date.now()}-${Math.random()}`,
       enunciado: "",
+      isExisting: false, // Marcar como questão nova
       opcoes: [
         { id: `${Date.now()}-1`, texto: "", correta: false },
         { id: `${Date.now()}-2`, texto: "", correta: false },
@@ -256,6 +349,7 @@ export function useDifficultyManager(): UseDifficultyManagerReturn {
     addDifficulty,
     removeDifficulty,
     resetDifficulties,
+    loadExistingQuestions,
 
     addQuestion,
     removeQuestion,
