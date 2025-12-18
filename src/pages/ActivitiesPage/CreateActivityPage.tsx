@@ -2,8 +2,8 @@ import { Header } from "@/components/Header/Header";
 import { Footer } from "@/components/Footer/Footer";
 import { CreateActivityForm } from "@/components/features/curriculum/activities/CreateActivityForm";
 import { TableProvider } from "@/contexts/Table/provider";
-import NotSelectedAct from "./NotSelectedAct";
 import { useState } from "react";
+import CreateQuestionsForm from "./CreateQuestionsForm";
 
 export default function CreateActivityPage() {
   const [selectedTemplate, setSelectedTemplate] = useState<string>("");
@@ -25,10 +25,7 @@ export default function CreateActivityPage() {
           </TableProvider>
         </div>
         <div className="w-[70%]">
-          <NotSelectedAct
-            isFormValid={true}
-            selectedTemplate={selectedTemplate}
-          />
+          <CreateQuestionsForm selectedTemplate={selectedTemplate} />
         </div>
       </main>
       <Footer />
