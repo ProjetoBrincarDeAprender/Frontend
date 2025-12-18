@@ -6,12 +6,9 @@ import NotSelectedAct from "./NotSelectedAct";
 import { useState } from "react";
 
 export default function CreateActivityPage() {
-  const [isFormValid, setIsFormValid] = useState(false);
   const [selectedTemplate, setSelectedTemplate] = useState<string>("");
 
-  const handleFormStateChange = (isValid: boolean, template?: string) => {
-    console.log("handleFormStateChange chamado:", { isValid, template });
-    setIsFormValid(isValid);
+  const handleTemplateChange = (template?: string) => {
     setSelectedTemplate(template || "");
   };
 
@@ -23,13 +20,13 @@ export default function CreateActivityPage() {
           <TableProvider>
             <CreateActivityForm
               onSuccess={() => {}}
-              onFormStateChange={handleFormStateChange}
+              templateChange={handleTemplateChange}
             />
           </TableProvider>
         </div>
         <div className="w-[70%]">
           <NotSelectedAct
-            isFormValid={isFormValid}
+            isFormValid={true}
             selectedTemplate={selectedTemplate}
           />
         </div>

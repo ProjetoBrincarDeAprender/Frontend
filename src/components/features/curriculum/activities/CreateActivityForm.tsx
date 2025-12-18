@@ -8,37 +8,48 @@ import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useUser } from "@/hooks/User/useUser";
-import { formSchema } from "./utils/validation";
 import { ACTIVITY_CONFIG, TEMPLATES } from "./utils/constants";
 import type { CompetenceWithArea } from "./common/types/activity.types";
 
+const formSchema = z.object({
+  title: z
+    .string({ error: "Título é obrigatório" })
+    .min(3, { error: "Título deve ter pelo menos 3 caracteres" })
+    .max(100, { error: "Título deve ter no máximo 100 caracteres" }),
+  type: z
+    .string({ error: "Tipo é obrigatório" })
+    .min(1, { error: "Selecione um tipo de atividade" }),
+  competenceId: z
+    .string({ error: "Competência é obrigatória" })
+    .min(1, { error: "Você não escolheu uma competência!" }),
+  template: z.string().min(1, "Template é obrigatório"),
+});
+
 interface CreateActivityFormProps {
   onSuccess: () => void;
-  onFormStateChange?: (isFormValid: boolean, selectedTemplate?: string) => void;
+  templateChange?: (selectedTemplate?: string) => void;
 }
 
 export function CreateActivityForm({
   onSuccess,
-  onFormStateChange,
+  templateChange,
 }: CreateActivityFormProps) {
   const { user } = useUser();
+  const { competencesQuery } = useCompetence({});
+  const { data: competencesData, isLoading: isCompetencesLoading } =
+    competencesQuery;
+  const allCompetences = (competencesData?.data as CompetenceWithArea[]) || [];
+  const competenceOptions = allCompetences.map((competence) => ({
+    value: String(competence.id),
+    label: competence.nome,
+  }));
+
   const { create } = useCreateActivity();
   const {
     mutateAsync: createActivity,
     isSuccess: isActivitySuccess,
     isPending: isActivityPending,
   } = create;
-
-  const { competencesQuery } = useCompetence({});
-  const { data: competencesData, isLoading: isCompetencesLoading } =
-    competencesQuery;
-
-  const allCompetences = competencesData?.data as CompetenceWithArea[];
-
-  const competenceOptions = allCompetences.map((competence) => ({
-    value: String(competence.id),
-    label: competence.nome,
-  }));
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -56,25 +67,12 @@ export function CreateActivityForm({
     }
   }, [isActivitySuccess, onSuccess]);
 
-  // Monitora o estado do formulário para comunicar se está completo
   useEffect(() => {
-    const title = form.watch("title");
-    const competenceId = form.watch("competenceId");
     const template = form.watch("template");
-
-    // Para simplificar, vamos só validar os campos essenciais
-    const isFormValid =
-      title.length >= 3 && competenceId !== "" && template !== "";
-
-    if (onFormStateChange) {
-      onFormStateChange(isFormValid, template);
+    if (templateChange) {
+      templateChange(template);
     }
-  }, [
-    form.watch("title"),
-    form.watch("competenceId"),
-    form.watch("template"),
-    onFormStateChange,
-  ]);
+  }, [form.watch("template"), templateChange]);
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     const payload = {
@@ -117,17 +115,6 @@ export function CreateActivityForm({
       }
     }
   };
-
-  // const filteredCompetences = allCompetences;
-  // .filter(
-  //   (competence) =>
-  //     competence.nome.toLowerCase().includes(competenceSearch.toLowerCase()),
-  //   //  ||
-  //     (competence.descricao &&
-  //       competence.descricao
-  //         .toLowerCase()
-  //         .includes(competenceSearch.toLowerCase())),
-  // );
 
   return (
     <Form.Wrapper>
