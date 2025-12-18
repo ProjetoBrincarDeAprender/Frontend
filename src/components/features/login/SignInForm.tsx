@@ -75,7 +75,7 @@ export default function SignInForm() {
   };
 
   return (
-    <Form.Wrapper>
+    <Form.Wrapper className="w-full max-w-md">
       <Form.Title text="Entrar" />
       <Form.Main form={form} onSubmit={onSubmit}>
         <Form.Field
