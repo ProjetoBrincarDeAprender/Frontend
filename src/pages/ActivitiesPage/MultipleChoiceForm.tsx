@@ -12,6 +12,7 @@ import { AxiosError } from "axios";
 import { useUpdateActivity } from "@/hooks/Activity/useUpdateActivity";
 import useActivity from "@/hooks/Activity/useActivity";
 import { useDifficultyManager } from "./MultipleChoiceForm/useDifficultyManager";
+import handleAxiosError from "@/components/features/curriculum/activities/files/HandleAxiosError";
 
 const formSchema = z.object({
   activityId: z.string().min(1, { message: "Selecione uma atividade" }),
@@ -160,31 +161,7 @@ export function MultipleChoiceForm({ className = "" }: { className?: string }) {
       form.reset();
       (resetDifficulties(), setSubmitProgress(null));
     } catch (error) {
-      console.error("Erro ao criar questões:", error);
-
-      if (error instanceof AxiosError) {
-        const response = error.response;
-
-        if (Array.isArray(response?.data?.message)) {
-          response?.data?.message.map(
-            (field: { field: string; message: string[] }) => {
-              if (form.control._fields[field.field]) {
-                form.setError(field.field as keyof z.infer<typeof formSchema>, {
-                  message: field.message.join(", "),
-                });
-              }
-              form.setError("root", {
-                message: `Erro ao criar questão: ${field.message.join(", ")}`,
-              });
-            },
-          );
-        } else {
-          form.setError("root", {
-            message: `${response?.data?.message || "Erro ao criar questões"}`,
-          });
-        }
-      }
-
+      handleAxiosError(error as AxiosError, form, formSchema);
       setSubmitProgress(null);
     } finally {
       setIsSubmitting(false);
