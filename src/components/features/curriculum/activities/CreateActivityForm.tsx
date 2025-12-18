@@ -138,6 +138,7 @@ export function CreateActivityForm({
               placeholder="Escolha..."
               noItemFoundMessage="Nenhuma competência encontrada."
               options={competenceOptions}
+              variant={"ghost"}
             />
           )}
         />
