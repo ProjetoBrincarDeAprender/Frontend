@@ -10,7 +10,7 @@ import { cn } from "@/lib/utils";
 import { useCreateQuestion } from "@/hooks/Question/useCreateQuestion";
 import { AxiosError } from "axios";
 import { useUpdateActivity } from "@/hooks/Activity/useUpdateActivity";
-import api from "@/utils/api";
+import useActivity from "@/hooks/Activity/useActivity";
 
 type Difficulty = "Fácil" | "Médio" | "Difícil";
 
@@ -50,6 +50,10 @@ export function MultipleChoiceForm({ className = "" }: { className?: string }) {
   const { create } = useCreateQuestion();
   const { mutateAsync: createQuestion } = create;
 
+  const { activitiesQuery } = useActivity({});
+  const { data: allActivities, isLoading: isLoadingActivities } =
+    activitiesQuery;
+
   const { update } = useUpdateActivity();
   const { mutateAsync: updateActivity } = update;
 
@@ -64,6 +68,10 @@ export function MultipleChoiceForm({ className = "" }: { className?: string }) {
       comando: "",
     },
   });
+
+  const [activityOptions, setActivityOptions] = useState<
+    { value: string; label: string }[]
+  >([]);
 
   const addDifficulty = () => {
     if (difficulties.length === 1) {
@@ -364,38 +372,14 @@ export function MultipleChoiceForm({ className = "" }: { className?: string }) {
     }
   };
 
-  const [activityOptions, setActivityOptions] = useState<
-    { value: string; label: string }[]
-  >([]);
-  const [isLoadingActivities, setIsLoadingActivities] = useState(true);
-
-  async function getActivityOptions() {
-    setIsLoadingActivities(true);
-    let response;
-    try {
-      response = await api.get(`/activity/list`);
-    } catch (error) {
-      console.error("Error getting activities:", error);
-      setIsLoadingActivities(false);
-      throw error;
-    }
-
-    const result = response.data.data.map((activity: any) => ({
+  useEffect(() => {
+    const result = allActivities!.data.map((activity: any) => ({
       value: activity.id.toString(),
       label: activity.titulo,
     }));
 
-    // result.filter(
-    //   (activity: any) => activity.value.creatorId === user?.codigo_usuario,
-    // );
-
     setActivityOptions(result);
-    setIsLoadingActivities(false);
-  }
-
-  useEffect(() => {
-    getActivityOptions();
-  }, []);
+  }, [allActivities, isLoadingActivities]);
 
   return (
     <Form.Wrapper className={`flex max-h-[85vh] flex-col ${className}`}>
