@@ -65,6 +65,25 @@ export function MultipleChoiceForm({ className = "" }: { className?: string }) {
     { value: string; label: string }[]
   >([]);
 
+  const canSubmit = () => {
+    const formData = form.getValues();
+    return (
+      formData.activityId !== "" &&
+      formData.comando.trim() !== "" &&
+      difficulties.every(
+        (diff) =>
+          diff.questions.length > 0 &&
+          diff.questions.every(
+            (q) =>
+              q.enunciado.trim() !== "" &&
+              q.opcoes.length >= 2 &&
+              q.opcoes.every((opt) => opt.texto.trim() !== "") &&
+              q.opcoes.some((opt) => opt.correta),
+          ),
+      )
+    );
+  };
+
   const getDifficultyId = (difficulty: any): number => {
     switch (difficulty) {
       case "Fácil":
@@ -79,17 +98,11 @@ export function MultipleChoiceForm({ className = "" }: { className?: string }) {
   };
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
-    // if (!canSubmit() || isSubmitting) {
-    //   return;
-    // }
+    if (!canSubmit() || isSubmitting) {
+      return;
+    }
 
     setIsSubmitting(true);
-
-    // Contar o total de questões
-    // const totalQuestions = difficulties.reduce(
-    //   (total, diff) => total + diff.questions.length,
-    //   0,
-    // );
 
     setSubmitProgress({
       total: getTotalQuestions(),
@@ -224,7 +237,7 @@ export function MultipleChoiceForm({ className = "" }: { className?: string }) {
                   : "Em qual atividade essas questões serão adicionadas?"
               }
               options={activityOptions}
-              // disabled={isLoadingActivities || form.formState.isSubmitting}
+              disabled={isLoadingActivities || form.formState.isSubmitting}
             />
           )}
         />
@@ -427,21 +440,20 @@ export function MultipleChoiceForm({ className = "" }: { className?: string }) {
           <Form.Submit
             className={cn(
               "bg-primary hover:bg-primary/90",
-              // (!canSubmit() || isSubmitting) &&
-              "cursor-not-allowed opacity-50",
+              (!canSubmit() || isSubmitting) && "cursor-not-allowed opacity-50",
             )}
-            // disabled={!canSubmit() || isSubmitting}
+            disabled={!canSubmit() || isSubmitting}
           >
             {isSubmitting ? "Criando Questões..." : "Criar Atividade"}
           </Form.Submit>
 
-          {/* {!canSubmit() && !isSubmitting && ( */}
-          <p className="text-destructive text-center text-sm">
-            Selecione uma atividade, preencha o comando e certifique-se de que
-            todas as questões têm pelo menos 2 opções preenchidas e pelo menos 1
-            resposta correta marcada
-          </p>
-          {/*)}*/}
+          {!canSubmit() && !isSubmitting && (
+            <p className="text-destructive text-center text-sm">
+              Selecione uma atividade, preencha o comando e certifique-se de que
+              todas as questões têm pelo menos 2 opções preenchidas e pelo menos
+              1 resposta correta marcada
+            </p>
+          )}
         </div>
       </Form.Main>
     </Form.Wrapper>
