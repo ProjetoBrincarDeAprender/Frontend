@@ -92,9 +92,6 @@ export default function CompetenceTable() {
           nome: knowledgeAreaMap.get(competence.areaId) || "Desconhecida",
         },
       }));
-
-      console.log(formattedCompetences);
-
       setFormattedCompetences(formattedCompetences);
     }
   }, [competencesData, knowledgeAreasData]);
