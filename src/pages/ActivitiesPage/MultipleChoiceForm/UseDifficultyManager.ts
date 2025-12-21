@@ -138,7 +138,7 @@ export function useDifficultyManager(): UseDifficultyManagerReturn {
             return {
               id: question.id?.toString() || `${Date.now()}-${Math.random()}`,
               enunciado: parsedContent.enunciado || "",
-              isExisting: true, // Marcar como questão existente
+              isExisting: true,
               opcoes: (parsedContent.opcoes || []).map(
                 (opcao: any, index: number) => ({
                   id: `${question.id || Date.now()}-${index}`,

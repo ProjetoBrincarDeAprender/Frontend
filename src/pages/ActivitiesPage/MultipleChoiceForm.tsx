@@ -7,11 +7,12 @@ import { Form } from "@/components/forms/Root";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
-import { useCreateQuestion } from "@/hooks/Question/useCreateQuestion";
 import { AxiosError } from "axios";
+import { useCreateQuestion } from "@/hooks/Question/useCreateQuestion";
 import { useUpdateActivity } from "@/hooks/Activity/useUpdateActivity";
 import { useDifficultyManager } from "./MultipleChoiceForm/UseDifficultyManager";
 import { useActivityQuestions } from "@/hooks/Activity/useActivityQuestions";
+import { useUpdateQuestion } from "@/hooks/Question/useUpdateQuestion";
 import useActivity from "@/hooks/Activity/useActivity";
 import handleAxiosError from "@/components/features/curriculum/activities/files/HandleAxiosError";
 
@@ -36,6 +37,10 @@ export function MultipleChoiceForm({ className = "" }: { className?: string }) {
 
   const { create } = useCreateQuestion();
   const { mutateAsync: createQuestion } = create;
+
+  const { update: updateQuestionMutation } = useUpdateQuestion();
+  const { mutateAsync: updateQuestionHook, isPending: isUpdatePending } =
+    updateQuestionMutation;
 
   const { activitiesQuery } = useActivity({});
   const { data: allActivities, isLoading: isLoadingActivities } =
@@ -194,7 +199,14 @@ export function MultipleChoiceForm({ className = "" }: { className?: string }) {
             },
           };
           allPayload.push(questionPayload);
-          await createQuestion(questionPayload);
+          if (question.isExisting) {
+            await updateQuestionHook({
+              questionId: Number(question.id),
+              data: questionPayload.data,
+            });
+          } else {
+            await createQuestion(questionPayload);
+          }
           await new Promise((resolve) => setTimeout(resolve, 100));
         }
       }
