@@ -248,7 +248,7 @@ export function MultipleChoiceForm({ className = "" }: { className?: string }) {
           form={form}
           name="activityId"
           render={({ field }) => (
-            <Form.Select
+            <Form.Combobox
               {...field}
               label="Atividade"
               placeholder={
@@ -257,8 +257,8 @@ export function MultipleChoiceForm({ className = "" }: { className?: string }) {
                   : "Em qual atividade essas questões serão adicionadas?"
               }
               options={activityOptions}
-              disabled={isLoadingActivities || form.formState.isSubmitting}
-            />
+              variant={"ghost"}
+            ></Form.Combobox>
           )}
         />
         {/* Indicador de carregamento das questões */}
