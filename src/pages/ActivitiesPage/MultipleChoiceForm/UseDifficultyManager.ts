@@ -62,27 +62,24 @@ export function useDifficultyManager(): UseDifficultyManagerReturn {
   ]);
 
   const addDifficulty = useCallback(() => {
-    if (difficulties.length === 1) {
-      setDifficulties([
-        ...difficulties,
-        { difficulty: "Médio", questions: [] },
-      ]);
-    } else if (difficulties.length === 2) {
-      setDifficulties([
-        ...difficulties,
-        { difficulty: "Difícil", questions: [] },
-      ]);
-    }
-  }, [difficulties.length]);
-
-  const removeDifficulty = useCallback(
-    (index: number) => {
-      if (difficulties.length > 1) {
-        setDifficulties(difficulties.filter((_, i) => i !== index));
+    setDifficulties((prev) => {
+      if (prev.length === 1) {
+        return [...prev, { difficulty: "Médio", questions: [] }];
+      } else if (prev.length === 2) {
+        return [...prev, { difficulty: "Difícil", questions: [] }];
       }
-    },
-    [difficulties.length],
-  );
+      return prev;
+    });
+  }, []);
+
+  const removeDifficulty = useCallback((index: number) => {
+    setDifficulties((prev) => {
+      if (prev.length > 1) {
+        return prev.filter((_, i) => i !== index);
+      }
+      return prev;
+    });
+  }, []);
 
   const resetDifficulties = useCallback(() => {
     setDifficulties([{ difficulty: "Fácil", questions: [] }]);
@@ -328,7 +325,7 @@ export function useDifficultyManager(): UseDifficultyManagerReturn {
       (total, diff) => total + diff.questions.length,
       0,
     );
-  }, []);
+  }, [difficulties]);
 
   const getDifficultyId = (difficulty: any): number => {
     switch (difficulty) {
