@@ -39,8 +39,10 @@ export function MultipleChoiceForm({ className = "" }: { className?: string }) {
   const { mutateAsync: createQuestion } = create;
 
   const { update: updateQuestionMutation } = useUpdateQuestion();
-  const { mutateAsync: updateQuestionHook, isPending: isUpdatePending } =
-    updateQuestionMutation;
+  const {
+    mutateAsync: updateQuestionHook,
+    // isSuccess: updateQuestionHookSuccess,
+  } = updateQuestionMutation;
 
   const { activitiesQuery } = useActivity({});
   const { data: allActivities, isLoading: isLoadingActivities } =

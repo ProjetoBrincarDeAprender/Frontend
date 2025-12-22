@@ -1,3 +1,5 @@
+import { QUESTION_QUERY_KEY } from "@/hooks/Question/useQuestion";
+import { useDelete } from "@/hooks/useDelete";
 import { useCallback, useState } from "react";
 
 type Difficulty = "Fácil" | "Médio" | "Difícil";
@@ -57,6 +59,13 @@ interface UseDifficultyManagerReturn {
 }
 
 export function useDifficultyManager(): UseDifficultyManagerReturn {
+  const { multiDeleteMutation } = useDelete({
+    route: "/question/remove",
+    entity: "Questão",
+    queryKey: QUESTION_QUERY_KEY,
+  });
+  const { mutateAsync: deleteQuestion } = multiDeleteMutation;
+
   const [difficulties, setDifficulties] = useState<DifficultyQuestions[]>([
     { difficulty: "Fácil", questions: [] },
   ]);
@@ -200,8 +209,18 @@ export function useDifficultyManager(): UseDifficultyManagerReturn {
 
   const removeQuestion = useCallback(
     (difficultyIndex: number, questionIndex: number) => {
-      setDifficulties((prev) =>
-        prev.map((diff, idx) =>
+      let removedQuestion: Question | null = null;
+
+      setDifficulties((prev) => {
+        const difficulty = prev[difficultyIndex];
+        if (difficulty && difficulty.questions[questionIndex]) {
+          removedQuestion = difficulty.questions[questionIndex];
+          if (removedQuestion.isExisting) {
+            deleteQuestion([removedQuestion.id]);
+          }
+        }
+
+        return prev.map((diff, idx) =>
           idx === difficultyIndex
             ? {
                 ...diff,
@@ -210,8 +229,8 @@ export function useDifficultyManager(): UseDifficultyManagerReturn {
                 ),
               }
             : diff,
-        ),
-      );
+        );
+      });
     },
     [],
   );
