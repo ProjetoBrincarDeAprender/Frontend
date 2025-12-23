@@ -16,7 +16,7 @@ export interface InteractionData {
 
 export class LocationsGameService {
   private apiService: APIDataService;
-  private static readonly ACTIVITY_ID = 4; // ID específico para o jogo de localizações
+  private static readonly ACTIVITY_ID = 15; // ID específico para o jogo de localizações
   private static readonly DEFAULT_STUDENT_ID = 10130001; // ID padrão quando não há aluno logado
   private startTime: number = 0;
   private attempts: number = 0;

@@ -2,6 +2,7 @@ import { Form } from "@/components/forms/Root";
 import { Skeleton } from "@/components/ui/skeleton";
 import useActivity from "@/hooks/Activity/useActivity";
 import { useCreateQuestion } from "@/hooks/Question/useCreateQuestion";
+import { useDifficultyLevel } from "@/hooks/DificultyLevel/useDifficultyLevel";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AxiosError } from "axios";
 import { Loader2 } from "lucide-react";
@@ -36,11 +37,6 @@ interface Activity {
   type: string;
 }
 
-interface DifficultyLevel {
-  id: number;
-  nome: string;
-}
-
 interface ActivityApiResponse {
   id: number;
   titulo: string;
@@ -54,9 +50,11 @@ export function CreateQuestionForm({ onSuccess }: CreateQuestionFormProps) {
     activitiesQuery;
   const activitiesData = activitiesReturn?.data;
 
-  const [difficultyLevels, setDifficultyLevels] = useState<DifficultyLevel[]>(
-    [],
-  );
+  const { difficultyLevelsQuery } = useDifficultyLevel();
+  const { data: difficultyLevelsReturn, isLoading: isDifficultyLevelsLoading } =
+    difficultyLevelsQuery;
+  const difficultyLevels = difficultyLevelsReturn?.data || [];
+
   const [activitySearch, setActivitySearch] = useState("");
   const [showActivityDropdown, setShowActivityDropdown] = useState(false);
   const [selectedActivity, setSelectedActivity] = useState<Activity | null>(
@@ -84,23 +82,6 @@ export function CreateQuestionForm({ onSuccess }: CreateQuestionFormProps) {
         formatActivity,
       )
     : [];
-
-  useEffect(() => {
-    const fetchDifficultyLevels = async () => {
-      try {
-        const { default: api } = await import("@/utils/api");
-        const response = await api.get("/difficulty-level/list");
-        if (response.status === 200 && Array.isArray(response.data)) {
-          setDifficultyLevels(response.data);
-        }
-      } catch (error) {
-        console.error("Erro ao buscar níveis de dificuldade:", error);
-        setDifficultyLevels([]);
-      }
-    };
-
-    fetchDifficultyLevels();
-  }, []);
 
   useEffect(() => {
     if (create.isSuccess) {
@@ -202,7 +183,7 @@ export function CreateQuestionForm({ onSuccess }: CreateQuestionFormProps) {
         onSubmit={onSubmit}
         className="flex flex-col gap-4"
       >
-        {isActivitiesLoading ? (
+        {isActivitiesLoading || isDifficultyLevelsLoading ? (
           <>
             <Skeleton className="h-10 w-full" />
             <Skeleton className="h-32 w-full" />
@@ -325,17 +306,25 @@ export function CreateQuestionForm({ onSuccess }: CreateQuestionFormProps) {
               form={form}
               name="difficultyId"
               render={({ field }) => (
-                <Form.Select
-                  label="Nível de Dificuldade *"
-                  placeholder="Selecione um nível de dificuldade"
-                  options={difficultyLevels.map((level) => ({
-                    value: level.id.toString(),
-                    label: level.nome,
-                  }))}
-                  onChange={field.onChange}
-                  value={field.value || ""}
-                  disabled={create.isPending}
-                />
+                <div className="space-y-2">
+                  <Form.Select
+                    label="Nível de Dificuldade *"
+                    placeholder="Selecione um nível de dificuldade"
+                    options={difficultyLevels.map((level) => ({
+                      value: level.id.toString(),
+                      label: level.nome,
+                    }))}
+                    onChange={field.onChange}
+                    value={field.value || ""}
+                    disabled={create.isPending || isDifficultyLevelsLoading}
+                  />
+                  {difficultyLevels.length === 0 && !isDifficultyLevelsLoading && (
+                    <div className="rounded border border-amber-200 bg-amber-50 p-3 text-sm text-amber-600">
+                      ⚠️ Nenhum nível de dificuldade encontrado. Verifique se
+                      existem níveis cadastrados.
+                    </div>
+                  )}
+                </div>
               )}
             />
 

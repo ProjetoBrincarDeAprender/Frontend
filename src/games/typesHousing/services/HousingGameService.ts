@@ -11,7 +11,7 @@ export interface InteractionData {
 }
 
 export class HousingGameService {
-  private static readonly ACTIVITY_ID = 2; // ID específico para o jogo de tipos de moradia
+  private static readonly ACTIVITY_ID = 20; // ID específico para o jogo de tipos de moradia
   private startTime: number = 0;
   private attempts: number = 0;
   private hintsUsed: boolean = false;
