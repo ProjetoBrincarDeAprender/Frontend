@@ -90,8 +90,8 @@ export function CreateQuestionForm({ onSuccess }: CreateQuestionFormProps) {
       try {
         const { default: api } = await import("@/utils/api");
         const response = await api.get("/difficulty-level/list");
-        if (response.status === 200 && Array.isArray(response.data)) {
-          setDifficultyLevels(response.data);
+        if (response.status === 200 && Array.isArray(response.data.data)) {
+          setDifficultyLevels(response.data.data);
         }
       } catch (error) {
         console.error("Erro ao buscar níveis de dificuldade:", error);
