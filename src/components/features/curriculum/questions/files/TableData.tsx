@@ -3,7 +3,7 @@ import type { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown } from "lucide-react";
 import { Button } from "../../../../ui/button";
 import DeleteModal from "../../../../utils/DataTable/DeleteModal";
-import { EditQuestionModal } from "../edit/QuestionEditModal";
+import { QuestionViewModal } from "../view/QuestionViewModal";
 
 export type QuestionFormatted = {
   id: number;
@@ -31,37 +31,37 @@ export const QuestionColumns: ColumnDef<QuestionFormatted>[] = [
       </Button>
     ),
   },
-  {
-    accessorKey: "content",
-    header: ({ column }) => (
-      <Button
-        variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-      >
-        Conteúdo
-        <ArrowUpDown className="ml-2 h-4 w-4" />
-      </Button>
-    ),
-    cell: ({ row }) => {
-      const content = row.original.content;
+  // {
+  //   accessorKey: "content",
+  //   header: ({ column }) => (
+  //     <Button
+  //       variant="ghost"
+  //       onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+  //     >
+  //       Conteúdo
+  //       <ArrowUpDown className="ml-2 h-4 w-4" />
+  //     </Button>
+  //   ),
+  //   cell: ({ row }) => {
+  //     const content = row.original.content;
 
-      if (!content) {
-        return (
-          <div className="max-w-100%">
-            <span className="text-gray-500">Sem conteúdo</span>
-          </div>
-        );
-      }
+  //     if (!content) {
+  //       return (
+  //         <div className="max-w-100%">
+  //           <span className="text-gray-500">Sem conteúdo</span>
+  //         </div>
+  //       );
+  //     }
 
-      return (
-        <div className="max-w-100%">
-          <span className="block truncate" title={content}>
-            {content}
-          </span>
-        </div>
-      );
-    },
-  },
+  //     return (
+  //       <div className="max-w-100%">
+  //         <span className="block truncate" title={content}>
+  //           {content}
+  //         </span>
+  //       </div>
+  //     );
+  //   },
+  // },
   {
     accessorKey: "ordem",
     header: ({ column }) => (
@@ -130,7 +130,7 @@ export const QuestionColumns: ColumnDef<QuestionFormatted>[] = [
     header: "Ações",
     cell: ({ row }) => (
       <div className="flex items-center justify-center gap-2">
-        <EditQuestionModal id={row.original.id} />
+        <QuestionViewModal id={row.original.id} />
         <DeleteModal
           route="/question/remove"
           id={row.original.id}

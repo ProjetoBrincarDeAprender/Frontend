@@ -70,7 +70,7 @@ export default class MathLevelManager {
 export class SumGameDataManager {
   private gameSession: SumGameSession;
   private currentLevelData: SumLevelData | null = null;
-  private activityId: number = 2;
+  private activityId: number = 1;
   private apiService: APIDataService;
 
   constructor(userId: string, scene: Phaser.Scene, activityId?: number) {
