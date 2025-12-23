@@ -8,11 +8,9 @@ import { DataTable } from "../../../../utils/DataTable/DataTable";
 import { QuestionColumns, type QuestionFormatted } from "./TableData";
 
 import { SkeletonTable } from "@/components/ui/skeleton-table";
-import DeleteModal from "@/components/utils/DataTable/DeleteModal";
 import useActivity from "@/hooks/Activity/useActivity";
 import type { Activity } from "@/types/activity";
 import type { FilterQuestionOption } from "@/types/filter";
-import type { Question } from "@/types/question";
 
 interface CellContext {
   row: {
@@ -193,52 +191,7 @@ export default function QuestionTable() {
       },
       enableSorting: false,
     },
-    ...QuestionColumns.map((col) => {
-      if ((col as ColumnDef<Question>).id === "actions") {
-        return {
-          ...col,
-          cell: ({ row }: CellContext) => {
-            const isOwner =
-              user?.perfil === "Admin" ||
-              String(row.original.usuarioCriadorId) === user?.codigo_usuario;
-            const isDisabled = selectedIds.length > 0 || !isOwner;
-
-            return (
-              <div className="flex items-center justify-center gap-2">
-                <button
-                  disabled={isDisabled}
-                  className={isDisabled ? "cursor-not-allowed opacity-50" : ""}
-                  title={
-                    !isOwner
-                      ? "Você não pode editar questões de outros usuários"
-                      : ""
-                  }
-                >
-                  {/* <EditQuestionModal id={row.original.id} /> */}
-                </button>
-                <button
-                  disabled={isDisabled}
-                  className={isDisabled ? "cursor-not-allowed opacity-50" : ""}
-                  title={
-                    !isOwner
-                      ? "Você não pode excluir questões de outros usuários"
-                      : ""
-                  }
-                >
-                  <DeleteModal
-                    route="/question/remove"
-                    id={row.original.id}
-                    entity="Questão"
-                    queryKey={QUESTION_QUERY_KEY}
-                  />
-                </button>
-              </div>
-            );
-          },
-        };
-      }
-      return col;
-    }),
+    ...QuestionColumns.map((col) => col),
   ];
 
   return (
