@@ -7,6 +7,7 @@ import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useUser } from "@/hooks/User/useUser";
+import { useState } from "react";
 import type { CompetenceWithArea } from "./common/types/activity.types";
 import handleAxiosError from "./files/HandleAxiosError";
 
@@ -46,6 +47,7 @@ export function CreateActivityForm({
   onSuccess,
   templateChange,
 }: CreateActivityFormProps) {
+  const [canSubmit, setCanSubmit] = useState(false);
   const { user } = useUser();
   const { competencesQuery } = useCompetence({});
   const { data: competencesData, isLoading: isCompetencesLoading } =
@@ -72,6 +74,21 @@ export function CreateActivityForm({
       template: "multiple_choice",
     },
   });
+
+  useEffect(() => {
+    if (!isActivityPending || !isCompetencesLoading || form.formState.isValid)
+      setCanSubmit(form.formState.isValid);
+    else setCanSubmit(false);
+
+    if (form.watch("template") === "true_false") {
+      setCanSubmit(false);
+    }
+  }, [
+    isActivityPending,
+    isCompetencesLoading,
+    form.formState.isValid,
+    form.watch("template"),
+  ]);
 
   useEffect(() => {
     if (isActivitySuccess) {
@@ -158,7 +175,7 @@ export function CreateActivityForm({
         />
 
         <Form.Submit
-          disabled={isActivityPending || isCompetencesLoading}
+          disabled={!canSubmit}
           className="bg-primary hover:bg-primary/90"
         >
           {isActivityPending ? (
