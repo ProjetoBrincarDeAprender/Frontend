@@ -134,10 +134,8 @@ export function QuestionViewModal({ id }: QuestionViewModalProps) {
                 <label className="font-semibold text-base leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                   Ordem
                 </label>
-                <div className="border-2 border-az3 bg-background ring-offset-background flex h-10 w-full items-center rounded-lg px-3 py-2 text-base">
-                  <span className="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800">
-                    {questionData.ordem}
-                  </span>
+                <div className="border-2 border-az3 bg-background ring-offset-background flex h-10 w-full rounded-lg px-3 py-2 text-base">
+                  {questionData.ordem}
                 </div>
               </div>
 
@@ -174,7 +172,7 @@ export function QuestionViewModal({ id }: QuestionViewModalProps) {
                       {(parsedContent.comando && typeof parsedContent.comando === 'string') ? (
                         <div className="space-y-1">
                           <div className="text-sm font-semibold text-gray-600">Comando</div>
-                          <div className="border-2 border-az3 bg-white w-full rounded-lg px-3 py-2 text-base">
+                          <div className="border-2 border-az3 bg-white w-full rounded-lg px-4 py-3 text-lg">
                             {String(parsedContent.comando)}
                           </div>
                         </div>
@@ -183,7 +181,7 @@ export function QuestionViewModal({ id }: QuestionViewModalProps) {
                       {(parsedContent.enunciado && typeof parsedContent.enunciado === 'string') ? (
                         <div className="space-y-1">
                           <div className="text-sm font-semibold text-gray-600">Enunciado</div>
-                          <div className="border-2 border-az3 bg-white w-full rounded-lg px-3 py-2 text-base">
+                          <div className="border-2 border-az3 bg-white w-full rounded-lg px-4 py-3 text-lg">
                             {String(parsedContent.enunciado)}
                           </div>
                         </div>
@@ -192,7 +190,7 @@ export function QuestionViewModal({ id }: QuestionViewModalProps) {
                       {(parsedContent.question && typeof parsedContent.question === 'string') ? (
                         <div className="space-y-1">
                           <div className="text-sm font-semibold text-gray-600">Pergunta</div>
-                          <div className="border-2 border-az3 bg-white w-full rounded-lg px-3 py-2 text-base">
+                          <div className="border-2 border-az3 bg-white w-full rounded-lg px-4 py-3 text-lg">
                             {String(parsedContent.question)}
                           </div>
                         </div>
@@ -201,7 +199,7 @@ export function QuestionViewModal({ id }: QuestionViewModalProps) {
                       {(parsedContent.profession && typeof parsedContent.profession === 'string') ? (
                         <div className="space-y-1">
                           <div className="text-sm font-semibold text-gray-600">Profissão</div>
-                          <div className="border-2 border-az3 bg-white w-full rounded-lg px-3 py-2 text-base font-semibold">
+                          <div className="border-2 border-az3 bg-white w-full rounded-lg px-4 py-3 text-lg font-semibold">
                             {String(parsedContent.profession)}
                           </div>
                         </div>
