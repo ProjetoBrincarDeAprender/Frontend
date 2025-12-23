@@ -65,7 +65,7 @@ export function TeacherDashboard() {
               className="flex h-auto cursor-pointer flex-col items-center gap-2 bg-blue-600 py-3 text-sm text-white hover:bg-blue-700 sm:py-4 sm:text-base"
             >
               <BookOpen className="h-5 w-5 sm:h-6 sm:w-6" />
-              <span className="text-center font-medium">
+              <span className="text-center text-[90%]">
                 Áreas de Conhecimento
               </span>
             </Button>
