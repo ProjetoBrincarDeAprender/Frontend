@@ -9,7 +9,10 @@ interface CreateQuestionModalProps {
   onSuccess?: () => void;
 }
 
-export function CreateQuestionModal({ trigger, onSuccess }: CreateQuestionModalProps) {
+export function CreateQuestionModal({
+  trigger,
+  onSuccess,
+}: CreateQuestionModalProps) {
   const [open, setOpen] = useState(false);
 
   const handleSuccess = () => {
@@ -18,19 +21,17 @@ export function CreateQuestionModal({ trigger, onSuccess }: CreateQuestionModalP
   };
 
   const defaultTrigger = (
-    <Button className="bg-indigo-600 hover:bg-indigo-700 text-white">
-      <Plus className="h-4 w-4 mr-2" />
+    <Button className="bg-indigo-600 text-white hover:bg-indigo-700">
+      <Plus className="mr-2 h-4 w-4" />
       Nova Questão
     </Button>
   );
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <div onClick={() => setOpen(true)}>
-        {trigger || defaultTrigger}
-      </div>
-      
-      <DialogContent className="sm:max-w-[700px] max-h-[90vh] overflow-y-auto">
+      <div onClick={() => setOpen(true)}>{trigger || defaultTrigger}</div>
+
+      <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-[700px]">
         <div className="mt-4">
           <CreateQuestionForm onSuccess={handleSuccess} />
         </div>
