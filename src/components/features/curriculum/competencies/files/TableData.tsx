@@ -58,7 +58,7 @@ export const CompetenceColumns: ColumnDef<CompetenceFormatted>[] = [
       </Button>
     ),
     cell: ({ row }) => {
-      const maxLength = 80;
+      const maxLength = 50;
       const description = row.original.descricao;
       return (
         <div className="max-w-100%">

@@ -96,53 +96,6 @@ export default function CompetenceTable() {
     }
   }, [competencesData, knowledgeAreasData]);
 
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     setLoading(true);
-  //     try {
-  //       const knowledgeAreasResponse = await api.get("/knowledge-area/list");
-
-  //       if (knowledgeAreasResponse.status === 200) {
-  //         const allCompetences: Competence[] = [];
-
-  //         for (const area of knowledgeAreasResponse.data) {
-  //           try {
-  //             const competencesResponse = await api.get(
-  //               `/knowledge-area/list/${area.id}/competences`,
-  //             );
-  //             if (competencesResponse.status === 200) {
-  //               const competencesWithAreaName = competencesResponse.data.map(
-  //                 (competence: Competence) => ({
-  //                   ...competence,
-  //                   areaId: {
-  //                     ...competence.areaId,
-  //                     nome: area.nome,
-  //                   },
-  //                 }),
-  //               );
-  //               allCompetences.push(...competencesWithAreaName);
-  //             }
-  //           } catch (error) {
-  //             console.error(
-  //               `Erro ao buscar competências da área ${area.id}:`,
-  //               error,
-  //             );
-  //           }
-  //         }
-
-  //         setData(allCompetences);
-  //       }
-  //     } catch (error) {
-  //       console.error("Erro ao buscar dados:", error);
-  //       setData([]);
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
-
-  //   fetchData().then(() => setUpdating(false));
-  // }, [updating, setUpdating, user]);
-
   const columnsWithCheckbox: ColumnDef<CompetenceFormatted>[] = [
     {
       id: "select",
