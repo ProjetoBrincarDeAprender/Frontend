@@ -144,11 +144,11 @@ export function StudentEditForm({ id, onSuccess }: StudentFormProps) {
 
     if (data.avatar_url?.trim()) {
       payloadEntries.avatar_url = data.avatar_url;
+    } else {
+      payloadEntries.avatar_url = null;
     }
 
-    if (data.tema_preferido?.trim()) {
-      payloadEntries.tema_preferido = data.tema_preferido;
-    }
+    payloadEntries.tema_preferido = data.tema_preferido?.trim() || "";
 
     if (data.data_nascimento) {
       const [dia, mes, ano] = data.data_nascimento.split("/").map(Number);

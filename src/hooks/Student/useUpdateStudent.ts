@@ -52,6 +52,12 @@ export function useUpdateStudent() {
 
       return { previousQueries };
     },
+    onSuccess: (_data, variables) => {
+      queryClient.removeQueries({ 
+        queryKey: [...STUDENTS_QUERY_KEY, String(variables.studentId)] 
+      });
+      queryClient.invalidateQueries({ queryKey: STUDENTS_QUERY_KEY });
+    },
     onError: (_err, _variables, context) => {
       if (context?.previousQueries) {
         context.previousQueries.forEach(([queryKey, data]) => {
