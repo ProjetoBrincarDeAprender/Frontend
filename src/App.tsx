@@ -26,8 +26,7 @@ import { RecoverPassword } from "./pages/RecoverPassword/RecoverPassword";
 import { SendPasswordToken } from "./pages/SendPasswordToken/SendPasswordToken";
 import { UserPerfilEnum } from "./types/user";
 import CreateActivityPage from "./pages/ActivitiesPage/CreateActivityPage";
-import { GameFactory } from "./components/features/games/GameFactory";
-import { GameWrapper } from "./components/features/games/GameWrapper";
+import GameRenderer from "./pages/Games/GameRenderer";
 
 function App() {
   return (
@@ -89,32 +88,9 @@ function App() {
         ></Route>
       </Route>
 
-      <Route path="/games" element={<AuthGuard />}>
+      <Route path="/games" element={<Games />}>
         <Route index element={<Games />} />
-        <Route path="address" element={<GameWrapper gameConfig={GameFactory.createAddressGame()} />} />
-        <Route path="armed-sum" element={<GameWrapper gameConfig={GameFactory.createArmedSumGame()} />} />
-        <Route path="com-dates" element={<GameWrapper gameConfig={GameFactory.createComDatesGame()} />} />
-        <Route path="complex-syllable" element={<GameWrapper gameConfig={GameFactory.createComplexSyllableGame()} />} />
-        <Route path="forms" element={<GameWrapper gameConfig={GameFactory.createCoordinationGame()} />} />
-        <Route path="housing" element={<GameWrapper gameConfig={GameFactory.createHousingGame()} />} />
-        <Route path="hygiene" element={<GameWrapper gameConfig={GameFactory.createHygieneGame()} />} />
-        <Route path="locations" element={<GameWrapper gameConfig={GameFactory.createLocationsGame()} />} />
-        <Route path="maze" element={<GameWrapper gameConfig={GameFactory.createMazeGame()} />} />
-        <Route path="memory" element={<GameWrapper gameConfig={GameFactory.createMemoryGame()} />} />
-        <Route path="numbers" element={<GameWrapper gameConfig={GameFactory.createNumbersGame()} />} />
-        <Route path="plants" element={<GameWrapper gameConfig={GameFactory.createPlantsGame()} />} />
-        <Route path="professions" element={<GameWrapper gameConfig={GameFactory.createProfessionsGame()} />} />
-        <Route path="punctuation" element={<GameWrapper gameConfig={GameFactory.createPunctuationGame()} />} />
-        <Route path="sensorial" element={<GameWrapper gameConfig={GameFactory.createSensorialGame()} />} />
-        <Route path="simple-syllable" element={<GameWrapper gameConfig={GameFactory.createSimpleSyllableGame()} />} />
-        <Route path="space" element={<GameWrapper gameConfig={GameFactory.createSpaceGame()} />} />
-        <Route path="stresssyllable" element={<GameWrapper gameConfig={GameFactory.createStressSyllableGame()} />} />
-        <Route path="subtraction" element={<GameWrapper gameConfig={GameFactory.createSubtractionGame()} />} />
-        <Route path="sum" element={<GameWrapper gameConfig={GameFactory.createSumGame()} />} />
-        <Route path="syllable" element={<GameWrapper gameConfig={GameFactory.createSyllableGame()} />} />
-        <Route path="syllable-division" element={<GameWrapper gameConfig={GameFactory.createSyllableDivisionGame()} />} />
-        <Route path="use-syllable" element={<GameWrapper gameConfig={GameFactory.createUseSyllableGame()} />} />
-        <Route path="vowels" element={<GameWrapper gameConfig={GameFactory.createVowelsGame()} />} />
+        <Route path=":slug" element={<GameRenderer />} />
       </Route>
 
       <Route element={<AuthGuard requireAuth />}>
