@@ -40,11 +40,12 @@ const formSchema = z
       })
       .max(32, {
         error: "Confirmação de senha deve ter no máximo 32 caracteres",
-      }),
+}),
     escolaId: z.string().optional(),
     usersIds: z.array(z.string()).optional(),
     parentesco: z
-      .string()
+      .string( { error: "Parentesco é obrigatório" })      
+      .min(2, { error: "Parentesco deve ter pelo menos 2 caracteres" })
       .max(50, { error: "Parentesco deve ter no máximo 50 caracteres" }),
   })
   .refine((data) => data.senha == data.confirmar_senha, {
