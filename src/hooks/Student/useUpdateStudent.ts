@@ -52,9 +52,6 @@ export function useUpdateStudent() {
 
       return { previousQueries };
     },
-    onSuccess: () => {
-      toast.success("Estudante atualizado com sucesso!");
-    },
     onError: (_err, _variables, context) => {
       if (context?.previousQueries) {
         context.previousQueries.forEach(([queryKey, data]) => {

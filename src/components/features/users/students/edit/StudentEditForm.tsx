@@ -8,12 +8,12 @@ import { AxiosError } from "axios";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-//import { PasswordInput } from "@/components/ui/password-input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Loader2 } from "lucide-react";
 import { IMaskInput } from "react-imask";
+import type { FilterSchoolOption, FilterStudentOption } from "@/types/filter";
 
-const formSchema = z.object({
+const createFormSchema = (isAdmin: boolean) => z.object({
   nome_completo: z
     .string({ error: "Nome completo é obrigatório" })
     .max(80, { error: "O limite suportado é de 80 caracteres" })
@@ -69,7 +69,9 @@ const formSchema = z.object({
       },
     )
     .optional(),
-  escolaId: z.string().optional(),
+  escolaId: isAdmin 
+    ? z.string({ error: "Escola é obrigatória" }).min(1, { error: "Selecione uma escola" })
+    : z.string().optional(),
 });
 
 type StudentFormProps = {
@@ -78,79 +80,107 @@ type StudentFormProps = {
 };
 
 export function StudentEditForm({ id, onSuccess }: StudentFormProps) {
-  const { studentQuery } = useStudent({ studentId: id });
+  const { user } = useUser();
+  const isAdmin = user?.perfil === "Admin";
+  const formSchema = createFormSchema(isAdmin);
+  
+  const filters: FilterStudentOption = {};
+  const schoolFilters: FilterSchoolOption = {};
+
+  if (!isAdmin) {
+    filters.escolaId = user?.escolaId as number;
+    schoolFilters.escolaId = user?.escolaId as number;
+  }
+
+  const { studentQuery } = useStudent({ studentId: id, filters });
   const { data: studentData, isLoading } = studentQuery;
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
   });
 
-  const { user } = useUser();
-  const { schoolsQuery } = useSchool({});
+  const { schoolsQuery } = useSchool({ filters: schoolFilters });
   const { data: schoolsData, isLoading: isSchoolsLoading } = schoolsQuery;
 
   const { update } = useUpdateStudent();
   const { mutateAsync: updateStudent, isPending } = update;
 
   useEffect(() => {
-    if (studentData) {
+    if (studentData && schoolsData?.data) {
+      const escolaId = schoolsData.data.find(
+        (school) => school.nome === studentData.escola
+      )?.id;
+
       form.reset({
         nome_completo: studentData.nome_completo || "",
         email: studentData.email || "",
         data_nascimento: studentData.data_nascimento
           ? (() => {
-              const date = new Date(studentData.data_nascimento);
-              const dia = String(date.getDate()).padStart(2, "0");
-              const mes = String(date.getMonth() + 1).padStart(2, "0");
-              const ano = date.getFullYear();
+              const dateStr = typeof studentData.data_nascimento === 'string' 
+                ? studentData.data_nascimento.split('T')[0]
+                : studentData.data_nascimento.toISOString().split('T')[0];
+              const [ano, mes, dia] = dateStr.split('-');
               return `${dia}/${mes}/${ano}`;
             })()
           : "",
         avatar_url: studentData.avatar_url || "",
         tema_preferido: studentData.tema_preferido || "",
-        escolaId: studentData.escolaId ? String(studentData.escolaId) : "",
+        escolaId: escolaId ? String(escolaId) : "",
       });
     }
-  }, [id, form, studentData]);
+  }, [studentData, schoolsData, form]);
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
-    const studentPayload = Object.fromEntries(
-      Object.entries({
-        nome_completo: data.nome_completo,
-        email: data.email,
-        escolaId: user?.perfil == "Admin" ? data.escolaId : undefined,
-        avatar_url: data.avatar_url?.trim() === "" ? null : data.avatar_url,
-        tema_preferido: data.tema_preferido,
-        data_nascimento: data.data_nascimento
-          ? (() => {
-              const [dia, mes, ano] = data.data_nascimento
-                .split("/")
-                .map(Number);
-              return `${ano}-${String(mes).padStart(2, "0")}-${String(dia).padStart(2, "0")}`;
-            })()
-          : undefined,
-      }),
-    );
+    const payloadEntries: Record<string, string | number | null> = {
+      nome_completo: data.nome_completo,
+      email: data.email,
+    };
+
+    if (isAdmin && data.escolaId) {
+      payloadEntries.escolaId = Number(data.escolaId);
+    } else if (!isAdmin && user?.escolaId) {
+      payloadEntries.escolaId = Number(user.escolaId);
+    }
+
+    if (data.avatar_url?.trim()) {
+      payloadEntries.avatar_url = data.avatar_url;
+    }
+
+    if (data.tema_preferido?.trim()) {
+      payloadEntries.tema_preferido = data.tema_preferido;
+    }
+
+    if (data.data_nascimento) {
+      const [dia, mes, ano] = data.data_nascimento.split("/").map(Number);
+      payloadEntries.data_nascimento = `${ano}-${String(mes).padStart(2, "0")}-${String(dia).padStart(2, "0")}`;
+    }
+
     try {
-      await updateStudent({ studentId: id, updateData: studentPayload });
+      await updateStudent({ studentId: id, updateData: payloadEntries });
 
       onSuccess();
     } catch (error) {
       if (error instanceof AxiosError) {
         const response = error.response;
 
-        response?.data?.message.map(
-          (field: { field: string; message: string[] }) => {
-            if (form.control._fields[field.field]) {
-              form.setError(field.field as keyof z.infer<typeof formSchema>, {
-                message: field.message.join(", "),
+        if (Array.isArray(response?.data?.message)) {
+          response.data.message.forEach(
+            (field: { field: string; message: string[] }) => {
+              if (form.control._fields[field.field]) {
+                form.setError(field.field as keyof z.infer<typeof formSchema>, {
+                  message: field.message.join(", "),
+                });
+              }
+              form.setError("root", {
+                message: `Erro ao atualizar conta: ${field.message.join(", ")}`,
               });
-            }
-            form.setError("root", {
-              message: `Erro ao atualizar conta: ${field.message.join(", ")}`,
-            });
-          },
-        );
+            },
+          );
+        } else {
+          form.setError("root", {
+            message: response?.data?.message || "Erro ao atualizar estudante",
+          });
+        }
       }
     }
   };
@@ -258,7 +288,8 @@ export function StudentEditForm({ id, onSuccess }: StudentFormProps) {
                   name="escolaId"
                   render={({ field }) => (
                     <Form.Select
-                      value={String(field.value)}
+                      key={`escola-${field.value || 'empty'}`}
+                      value={String(field.value || "")}
                       onChange={field.onChange}
                       label="Escola"
                       placeholder="Selecione a Escola"
