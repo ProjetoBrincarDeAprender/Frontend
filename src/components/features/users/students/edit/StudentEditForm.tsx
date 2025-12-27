@@ -99,17 +99,27 @@ export function StudentEditForm({ id, onSuccess }: StudentFormProps) {
     resolver: zodResolver(formSchema),
   });
 
-  const { schoolsQuery } = useSchool({ filters: schoolFilters });
+  const { schoolsQuery } = useSchool({ 
+    filters: isAdmin ? schoolFilters : undefined 
+  });
   const { data: schoolsData, isLoading: isSchoolsLoading } = schoolsQuery;
 
   const { update } = useUpdateStudent();
   const { mutateAsync: updateStudent, isPending } = update;
 
   useEffect(() => {
-    if (studentData && schoolsData?.data) {
-      const escolaId = schoolsData.data.find(
-        (school) => school.nome === studentData.escola
-      )?.id;
+    if (studentData) {
+      let escolaId = "";
+      
+      if (isAdmin && schoolsData?.data) {
+        escolaId = schoolsData.data.find(
+          (school) => school.nome === studentData.escola
+        )?.id ? String(schoolsData.data.find(
+          (school) => school.nome === studentData.escola
+        )?.id) : "";
+      } else if (!isAdmin) {
+        escolaId = String(user?.escolaId || "");
+      }
 
       form.reset({
         nome_completo: studentData.nome_completo || "",
@@ -125,10 +135,10 @@ export function StudentEditForm({ id, onSuccess }: StudentFormProps) {
           : "",
         avatar_url: studentData.avatar_url || "",
         tema_preferido: studentData.tema_preferido || "",
-        escolaId: escolaId ? String(escolaId) : "",
+        escolaId: escolaId,
       });
     }
-  }, [studentData, schoolsData, form]);
+  }, [studentData, schoolsData, form, isAdmin, user?.escolaId]);
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     const payloadEntries: Record<string, string | number | null> = {
