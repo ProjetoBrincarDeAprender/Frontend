@@ -4,6 +4,8 @@ import { CreateActivityForm } from "@/components/features/curriculum/activities/
 import { TableProvider } from "@/contexts/Table/provider";
 import { useState } from "react";
 import CreateQuestionsForm from "./CreateQuestionsForm";
+import { BackButton } from "@/components/utils/BackButton";
+
 
 export default function CreateActivityPage() {
   const [selectedTemplate, setSelectedTemplate] = useState<string>("");
@@ -15,6 +17,7 @@ export default function CreateActivityPage() {
   return (
     <>
       <Header />
+      <BackButton />
       <main className="mx-20 mt-40 mb-20 flex items-start gap-10">
         <div className="w-[30%]">
           <TableProvider>
