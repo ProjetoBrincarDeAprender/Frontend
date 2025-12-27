@@ -78,7 +78,6 @@ const { knowledgeAreasQuery } = useKnowledgeArea();
           : null,
       };
 
-      console.log(data);
       form.reset(data);
     }
   }, [competenceData, knowledgeAreasData, form]);
@@ -209,6 +208,7 @@ const { knowledgeAreasQuery } = useKnowledgeArea();
           name="areaId"
           render={({ field }) => (
             <Form.Select
+              key={`area-${field.value || 'empty'}`}
               label="Área de Conhecimento"
               placeholder="Selecione uma área de conhecimento"
               options={

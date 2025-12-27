@@ -55,7 +55,11 @@ export function useUpdateKnowledgeArea() {
 
       return { previousQueries };
     },
-    onSuccess: () => {
+    onSuccess: (_data, variables) => {
+      queryClient.removeQueries({ 
+        queryKey: [...KNOWLEDGE_AREA_QUERY_KEY, variables.knowledgeAreaId] 
+      });
+      queryClient.invalidateQueries({ queryKey: KNOWLEDGE_AREA_QUERY_KEY });
       toast.success("Área de conhecimento atualizada com sucesso!");
     },
     onError: (_err, _updatedKnowledgeArea, context) => {
