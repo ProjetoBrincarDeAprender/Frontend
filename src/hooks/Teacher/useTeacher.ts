@@ -9,13 +9,18 @@ async function fetchTeacherData(
   queryClient: QueryClient,
   teacherId: string | number,
 ): Promise<Teacher> {
-  const teachers: Teacher[] | undefined =
-    await queryClient.getQueryData(TEACHER_QUERY_KEY);
+  const queriesData = queryClient.getQueriesData<{ data: Teacher[]; meta: PaginationMeta }>({
+    queryKey: TEACHER_QUERY_KEY,
+  });
 
-  if (teachers) {
-    const teacher = teachers.find((s) => s.codigo_usuario === teacherId);
-    if (teacher) {
-      return teacher;
+  for (const [, data] of queriesData) {
+    if (data?.data) {
+      const teacher = data.data.find(
+        (t) => String(t.codigo_usuario) === String(teacherId)
+      );
+      if (teacher) {
+        return teacher;
+      }
     }
   }
 
