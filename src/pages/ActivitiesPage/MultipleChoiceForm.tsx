@@ -8,10 +8,12 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 import { useCreateQuestion } from "@/hooks/Question/useCreateQuestion";
+import { useUpdateQuestion } from "@/hooks/Question/useUpdateQuestion";
 import { AxiosError } from "axios";
 import { useUpdateActivity } from "@/hooks/Activity/useUpdateActivity";
 import { useDifficultyManager } from "./MultipleChoiceForm/UseDifficultyManager";
 import { useActivityQuestions } from "@/hooks/Activity/useActivityQuestions";
+import { useUser } from "@/hooks/User/useUser";
 import useActivity from "@/hooks/Activity/useActivity";
 import handleAxiosError from "@/components/features/curriculum/activities/files/HandleAxiosError";
 
@@ -34,8 +36,11 @@ export function MultipleChoiceForm({ className = "" }: { className?: string }) {
     { value: string; label: string }[]
   >([]);
 
+  const { user } = useUser();
   const { create } = useCreateQuestion();
   const { mutateAsync: createQuestion } = create;
+  const { update } = useUpdateQuestion();
+  const { mutateAsync: updateQuestionMutation } = update;
 
   const { activitiesQuery } = useActivity({});
   const { data: allActivities, isLoading: isLoadingActivities } =
@@ -53,7 +58,7 @@ export function MultipleChoiceForm({ className = "" }: { className?: string }) {
     loadExistingQuestions,
     addQuestion,
     removeQuestion,
-    updateQuestion,
+    updateQuestion: updateQuestionInForm,
     addOption,
     removeOption,
     updateOption,
@@ -76,12 +81,16 @@ export function MultipleChoiceForm({ className = "" }: { className?: string }) {
   const { data: existingQuestions } = activityQuestionsQuery;
 
   useEffect(() => {
-    const result = allActivities?.data.map((activity: any) => ({
+    const activities = allActivities?.data.filter(
+      (activity) => String(activity.usuarioCriadorId) === user?.codigo_usuario,
+    );
+
+    const options = activities?.map((activity: any) => ({
       value: activity.id.toString(),
       label: activity.titulo,
     }));
 
-    if (result) setActivityOptions(result);
+    if (options) setActivityOptions(options);
   }, [allActivities, isLoadingActivities]);
 
   // Carregar questões existentes quando uma atividade for selecionada
@@ -177,24 +186,48 @@ export function MultipleChoiceForm({ className = "" }: { className?: string }) {
             currentQuestion: question.enunciado.substring(0, 50) + "...",
           });
 
-          // Criar payload para esta questão específica
-          const questionPayload = {
-            activityId: Number(data.activityId),
-            data: {
-              content: JSON.stringify({
-                comando: data.comando,
-                enunciado: question.enunciado,
-                opcoes: question.opcoes.map((opcao) => ({
-                  texto: opcao.texto,
-                  correta: opcao.correta,
-                })),
-              }),
-              ordem: currentQuestionIndex,
-              difficultyId: difficultyId,
-            },
+          // Dados da questão
+          const questionData = {
+            content: JSON.stringify({
+              comando: data.comando,
+              enunciado: question.enunciado,
+              opcoes: question.opcoes.map((opcao) => ({
+                texto: opcao.texto,
+                correta: opcao.correta,
+              })),
+            }),
+            ordem: currentQuestionIndex,
+            difficultyId: difficultyId,
           };
-          allPayload.push(questionPayload);
-          await createQuestion(questionPayload);
+
+          // Verificar se é questão existente ou nova
+          if (
+            question.isExisting &&
+            question.id &&
+            !isNaN(Number(question.id))
+          ) {
+            // Atualizar questão existente
+            const updatePayload = {
+              questionId: Number(question.id),
+              data: questionData,
+            };
+            console.log(
+              "🔄 Atualizando questão existente:",
+              updatePayload.questionId,
+            );
+            allPayload.push(updatePayload);
+            await updateQuestionMutation(updatePayload);
+          } else {
+            // Criar nova questão
+            const createPayload = {
+              activityId: Number(data.activityId),
+              data: questionData,
+            };
+            console.log("➕ Criando nova questão");
+            allPayload.push(createPayload);
+            await createQuestion(createPayload);
+          }
+
           await new Promise((resolve) => setTimeout(resolve, 100));
         }
       }
@@ -333,7 +366,7 @@ export function MultipleChoiceForm({ className = "" }: { className?: string }) {
                           type="text"
                           value={question.enunciado}
                           onChange={(e) =>
-                            updateQuestion(
+                            updateQuestionInForm(
                               diffIndex,
                               qIndex,
                               "enunciado",
