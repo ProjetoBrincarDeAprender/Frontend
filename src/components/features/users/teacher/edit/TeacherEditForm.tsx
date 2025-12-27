@@ -49,7 +49,9 @@ export function TeacherEditForm({ id, onSuccess }: TeacherFormProps) {
     schoolFilters.escolaId = user?.escolaId as number;
   }
 
-  const { schoolsQuery } = useSchool({ filters: schoolFilters });
+  const { schoolsQuery } = useSchool({ 
+    filters: user?.perfil === "Admin" ? schoolFilters : undefined 
+  });
   const { data: schoolsReturn, isLoading: isSchoolsLoading } = schoolsQuery;
   const schoolsData = schoolsReturn?.data;
 
@@ -60,14 +62,14 @@ export function TeacherEditForm({ id, onSuccess }: TeacherFormProps) {
   const { data: teacherData, isLoading: isTeacherLoading } = teacherQuery;
 
   useEffect(() => {
-    if (teacherData && schoolsData) {
+    if (teacherData && (schoolsData || user?.perfil !== "Admin")) {
       form.reset({
         email: teacherData?.email || "",
         nome_completo: teacherData?.nome_completo || "",
         escolaId: teacherData?.escolaId ? String(teacherData.escolaId) : "",
       });
     }
-  }, [teacherData, schoolsData, form]);
+  }, [teacherData, schoolsData, form, user?.perfil]);
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     const userData = {

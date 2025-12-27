@@ -84,6 +84,7 @@ export function useSchool({
     queryKey: [...SCHOOL_QUERY_KEY, filters],
     queryFn: () => fetchAllSchools(filters),
     staleTime: 5 * 60 * 1000, // 5 minutes
+    enabled: filters !== undefined,
   });
 
   const schoolUsersQuery = useQuery<{ data: User[]; meta: PaginationMeta }>({

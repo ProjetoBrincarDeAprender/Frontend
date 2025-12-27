@@ -10,17 +10,18 @@ async function fetchStudentData(
   queryClient: QueryClient,
   studentId: string | number,
 ): Promise<Student> {
-  const studentsResponse = queryClient.getQueryData<{
-    data: Student[];
-    meta: PaginationMeta;
-  }>(STUDENTS_QUERY_KEY);
+  const queriesData = queryClient.getQueriesData<{ data: Student[]; meta: PaginationMeta }>({
+    queryKey: STUDENTS_QUERY_KEY,
+  });
 
-  if (studentsResponse?.data) {
-    const student = studentsResponse.data.find(
-      (s) => s.codigo_usuario === studentId,
-    );
-    if (student) {
-      return student;
+  for (const [, data] of queriesData) {
+    if (data?.data) {
+      const student = data.data.find(
+        (s) => String(s.codigo_usuario) === String(studentId)
+      );
+      if (student) {
+        return student;
+      }
     }
   }
 
