@@ -88,7 +88,7 @@ function App() {
         ></Route>
       </Route>
 
-      <Route path="/games" element={<Games />}>
+      <Route path="/games" element={<AuthGuard />}>
         <Route index element={<Games />} />
         <Route path=":slug" element={<GameRenderer />} />
       </Route>
