@@ -3,13 +3,14 @@ import DeleteModal from "@/components/utils/DataTable/DeleteModal";
 import {
   KNOWLEDGE_AREA_QUERY_KEY,
   useKnowledgeArea,
+  usePrefetchKnowledgeAreas,
 } from "@/hooks/KnowledgeArea/useKnowledgeArea";
 import { useTable } from "@/hooks/Table/useTable";
 import { useDelete } from "@/hooks/useDelete";
 import type { FilterKnowledgeAreaOption } from "@/types/filter";
 import type { KnowledgeArea } from "@/types/knowledgeArea";
 import type { ColumnDef } from "@tanstack/react-table";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router";
 import {
   DataTable,
@@ -83,6 +84,24 @@ export default function KnowledgeAreaTable() {
   const { data: knowledgeAreasReturn, isLoading: loading } =
     knowledgeAreasQuery;
   const knowledgeAreasData = knowledgeAreasReturn?.data;
+
+  // Prefetch next page
+  const { prefetchKnowledgeAreas } = usePrefetchKnowledgeAreas();
+  useEffect(() => {
+    const totalPages = knowledgeAreasReturn?.meta?.totalPages ?? 0;
+    if (page < totalPages) {
+      const nextPageFilters: FilterKnowledgeAreaOption = {
+        ...filters,
+        page: page + 1,
+      };
+      prefetchKnowledgeAreas(nextPageFilters);
+    }
+  }, [
+    page,
+    knowledgeAreasReturn?.meta?.totalPages,
+    filters,
+    prefetchKnowledgeAreas,
+  ]);
 
   // Handle pagination change
   const handlePaginationChange = (pagination: {

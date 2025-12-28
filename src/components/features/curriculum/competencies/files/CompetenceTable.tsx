@@ -2,6 +2,7 @@ import {
   COMPETENCE_BY_KNOWLEDGE_AREA_QUERY_KEY,
   COMPETENCE_QUERY_KEY,
   useCompetence,
+  usePrefetchCompetences,
 } from "@/hooks/Competence/useCompetence";
 import { useDelete } from "@/hooks/useDelete";
 import type { ColumnDef } from "@tanstack/react-table";
@@ -85,6 +86,19 @@ export default function CompetenceTable() {
   const { competencesQuery } = useCompetence({ filters });
   const { data: competencesReturn, isLoading: loading } = competencesQuery;
   const competencesData = competencesReturn?.data;
+
+  // Prefetch next page
+  const { prefetchCompetences } = usePrefetchCompetences();
+  useEffect(() => {
+    const totalPages = competencesReturn?.meta?.totalPages ?? 0;
+    if (page < totalPages) {
+      const nextPageFilters: FilterCompetenceOption = {
+        ...filters,
+        page: page + 1,
+      };
+      prefetchCompetences(nextPageFilters);
+    }
+  }, [page, competencesReturn?.meta?.totalPages, filters, prefetchCompetences]);
 
   const { knowledgeAreasQuery } = useKnowledgeArea();
   const { data: knowledgeAreasReturn, isLoading: isKnowledgeAreasLoading } =

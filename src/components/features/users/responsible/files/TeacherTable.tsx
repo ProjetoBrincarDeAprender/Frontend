@@ -4,11 +4,15 @@ import {
   DataTable,
   type FilterState,
 } from "@/components/utils/DataTable/DataTable";
+import { useEffect } from "react";
 import { useSearchParams } from "react-router";
 import { ResponsibleColumns } from "./TableData";
 
 import { SkeletonTable } from "@/components/ui/skeleton-table";
-import { useResponsible } from "@/hooks/Responsible/useResponsible";
+import {
+  usePrefetchResponsibles,
+  useResponsible,
+} from "@/hooks/Responsible/useResponsible";
 import type { FilterResponsibleOption } from "@/types/filter";
 import type { Responsible } from "@/types/responsible";
 import { UserPerfilEnum } from "@/types/user";
@@ -60,6 +64,24 @@ export default function ResponsibleTable() {
   const { data: responsiblesReturn, isLoading: isResponsiblesLoading } =
     responsiblesQuery;
   const responsiblesData = responsiblesReturn?.data;
+
+  // Prefetch next page
+  const { prefetchResponsibles } = usePrefetchResponsibles();
+  useEffect(() => {
+    const totalPages = responsiblesReturn?.meta?.totalPages ?? 0;
+    if (page < totalPages) {
+      const nextPageFilters: FilterResponsibleOption = {
+        ...filters,
+        page: page + 1,
+      };
+      prefetchResponsibles(nextPageFilters);
+    }
+  }, [
+    page,
+    responsiblesReturn?.meta?.totalPages,
+    filters,
+    prefetchResponsibles,
+  ]);
 
   // Handle pagination change
   const handlePaginationChange = (pagination: {

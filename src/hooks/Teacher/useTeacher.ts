@@ -9,14 +9,17 @@ async function fetchTeacherData(
   queryClient: QueryClient,
   teacherId: string | number,
 ): Promise<Teacher> {
-  const queriesData = queryClient.getQueriesData<{ data: Teacher[]; meta: PaginationMeta }>({
+  const queriesData = queryClient.getQueriesData<{
+    data: Teacher[];
+    meta: PaginationMeta;
+  }>({
     queryKey: TEACHER_QUERY_KEY,
   });
 
   for (const [, data] of queriesData) {
     if (data?.data) {
       const teacher = data.data.find(
-        (t) => String(t.codigo_usuario) === String(teacherId)
+        (t) => String(t.codigo_usuario) === String(teacherId),
       );
       if (teacher) {
         return teacher;
@@ -112,4 +115,29 @@ export function useTeacherRelations({
   });
 
   return { teacherRelationsQuery };
+}
+
+export function usePrefetchTeachers() {
+  const queryClient = useQueryClient();
+
+  const prefetchTeachers = (filters: FilterTeacherOption) => {
+    queryClient.prefetchQuery({
+      queryKey: [...TEACHER_QUERY_KEY, filters],
+      queryFn: () => fetchTeachersData(filters),
+      staleTime: 60 * 1000,
+    });
+  };
+
+  const prefetchTeacherRelations = (
+    teacherId: string | number,
+    filters: FilterStudentOption,
+  ) => {
+    queryClient.prefetchQuery({
+      queryKey: [...TEACHER_RELATIONS_QUERY_KEY, teacherId, filters],
+      queryFn: () => fetchTeacherRelations(teacherId, filters),
+      staleTime: 60 * 1000,
+    });
+  };
+
+  return { prefetchTeachers, prefetchTeacherRelations };
 }

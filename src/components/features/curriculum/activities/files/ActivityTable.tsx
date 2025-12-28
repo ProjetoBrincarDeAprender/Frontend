@@ -1,9 +1,12 @@
-import useActivity, { ACTIVITY_QUERY_KEY } from "@/hooks/Activity/useActivity";
+import useActivity, {
+  ACTIVITY_QUERY_KEY,
+  usePrefetchActivities,
+} from "@/hooks/Activity/useActivity";
 import { useTable } from "@/hooks/Table/useTable";
 import { useUser } from "@/hooks/User/useUser";
 import { useDelete } from "@/hooks/useDelete";
 import type { ColumnDef } from "@tanstack/react-table";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router";
 import {
   DataTable,
@@ -82,6 +85,19 @@ export default function ActivityTable() {
 
   const { activitiesQuery } = useActivity({ filters });
   const { data: allActivities, isLoading: loading } = activitiesQuery;
+
+  // Prefetch next page
+  const { prefetchActivities } = usePrefetchActivities();
+  useEffect(() => {
+    const totalPages = allActivities?.meta?.totalPages ?? 0;
+    if (page < totalPages) {
+      const nextPageFilters: FilterActivityOption = {
+        ...filters,
+        page: page + 1,
+      };
+      prefetchActivities(nextPageFilters);
+    }
+  }, [page, allActivities?.meta?.totalPages, filters, prefetchActivities]);
 
   // Handle pagination change
   const handlePaginationChange = (pagination: {

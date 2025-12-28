@@ -1,8 +1,9 @@
 import { SkeletonTable } from "@/components/ui/skeleton-table";
-import { useSchool } from "@/hooks/School/useSchool";
+import { usePrefetchSchools, useSchool } from "@/hooks/School/useSchool";
 import { useUser } from "@/hooks/User/useUser";
 import type { FilterSchoolOption } from "@/types/filter";
 import { UserPerfilEnum } from "@/types/user";
+import { useEffect } from "react";
 import { useSearchParams } from "react-router";
 import {
   DataTable,
@@ -56,6 +57,19 @@ export default function SchoolTable() {
   const { schoolsQuery } = useSchool({ filters });
   const { data: schoolsReturn, isLoading: isSchoolLoading } = schoolsQuery;
   const schoolsData = schoolsReturn?.data;
+
+  // Prefetch next page
+  const { prefetchSchools } = usePrefetchSchools();
+  useEffect(() => {
+    const totalPages = schoolsReturn?.meta?.totalPages ?? 0;
+    if (page < totalPages) {
+      const nextPageFilters: FilterSchoolOption = {
+        ...filters,
+        page: page + 1,
+      };
+      prefetchSchools(nextPageFilters);
+    }
+  }, [page, schoolsReturn?.meta?.totalPages, filters, prefetchSchools]);
 
   // Handle pagination change
   const handlePaginationChange = (pagination: {

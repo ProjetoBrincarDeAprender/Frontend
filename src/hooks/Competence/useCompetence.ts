@@ -153,3 +153,17 @@ export function useCompetence({
 
   return { competenceQuery, competencesQuery, competencesByKnowledgeAreaQuery };
 }
+
+export function usePrefetchCompetences() {
+  const queryClient = useQueryClient();
+
+  const prefetchCompetences = (filters: FilterCompetenceOption) => {
+    queryClient.prefetchQuery({
+      queryKey: [...COMPETENCE_QUERY_KEY, filters],
+      queryFn: () => fetchCompetences(filters),
+      staleTime: 60 * 1000,
+    });
+  };
+
+  return { prefetchCompetences };
+}

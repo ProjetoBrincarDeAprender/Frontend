@@ -84,7 +84,6 @@ export function useSchool({
     queryKey: [...SCHOOL_QUERY_KEY, filters],
     queryFn: () => fetchAllSchools(filters),
     staleTime: 5 * 60 * 1000, // 5 minutes
-    enabled: filters !== undefined,
   });
 
   const schoolUsersQuery = useQuery<{ data: User[]; meta: PaginationMeta }>({
@@ -95,4 +94,18 @@ export function useSchool({
   });
 
   return { schoolQuery, schoolsQuery, schoolUsersQuery };
+}
+
+export function usePrefetchSchools() {
+  const queryClient = useQueryClient();
+
+  const prefetchSchools = (filters: FilterSchoolOption) => {
+    queryClient.prefetchQuery({
+      queryKey: [...SCHOOL_QUERY_KEY, filters],
+      queryFn: () => fetchAllSchools(filters),
+      staleTime: 60 * 1000,
+    });
+  };
+
+  return { prefetchSchools };
 }

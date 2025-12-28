@@ -2,7 +2,7 @@ import type { DifficultyLevel } from "@/types/difficultyLevels";
 import type { FilterDifficultyLevelOption } from "@/types/filter";
 import type { PaginationMeta } from "@/types/pagination";
 import api from "@/utils/api";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 async function fetchDifficultyLevels(
   filters?: FilterDifficultyLevelOption,
@@ -54,4 +54,18 @@ export function useDifficultyLevel({
   });
 
   return { difficultyLevelQuery, difficultyLevelsQuery };
+}
+
+export function usePrefetchDifficultyLevels() {
+  const queryClient = useQueryClient();
+
+  const prefetchDifficultyLevels = (filters: FilterDifficultyLevelOption) => {
+    queryClient.prefetchQuery({
+      queryKey: [...DIFFICULTY_LEVEL_QUERY_KEY, filters],
+      queryFn: () => fetchDifficultyLevels(filters),
+      staleTime: 60 * 1000,
+    });
+  };
+
+  return { prefetchDifficultyLevels };
 }

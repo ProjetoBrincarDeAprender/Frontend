@@ -101,3 +101,17 @@ export function useResponsible({
 
   return { responsibleQuery, responsiblesQuery, responsibleStudentsQuery };
 }
+
+export function usePrefetchResponsibles() {
+  const queryClient = useQueryClient();
+
+  const prefetchResponsibles = (filters: FilterResponsibleOption) => {
+    queryClient.prefetchQuery({
+      queryKey: [...RESPONSIBLE_QUERY_KEY, filters],
+      queryFn: () => fetchResponsiblesData(filters),
+      staleTime: 60 * 1000,
+    });
+  };
+
+  return { prefetchResponsibles };
+}

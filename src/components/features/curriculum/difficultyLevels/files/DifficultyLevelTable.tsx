@@ -1,5 +1,5 @@
 import type { ColumnDef } from "@tanstack/react-table";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router";
 import {
   DataTable,
@@ -12,6 +12,7 @@ import DeleteModal from "@/components/utils/DataTable/DeleteModal";
 import {
   DIFFICULTY_LEVEL_QUERY_KEY,
   useDifficultyLevel,
+  usePrefetchDifficultyLevels,
 } from "@/hooks/DificultyLevel/useDifficultyLevel";
 import { useDelete } from "@/hooks/useDelete";
 import type { DifficultyLevel } from "@/types/difficultyLevels";
@@ -75,6 +76,24 @@ export default function DifficultyLevelTable() {
   const { data: difficultyLevelsReturn, isLoading: isDifficultyLoading } =
     difficultyLevelsQuery;
   const difficultyLevelsData = difficultyLevelsReturn?.data;
+
+  // Prefetch next page
+  const { prefetchDifficultyLevels } = usePrefetchDifficultyLevels();
+  useEffect(() => {
+    const totalPages = difficultyLevelsReturn?.meta?.totalPages ?? 0;
+    if (page < totalPages) {
+      const nextPageFilters: FilterDifficultyLevelOption = {
+        ...filters,
+        page: page + 1,
+      };
+      prefetchDifficultyLevels(nextPageFilters);
+    }
+  }, [
+    page,
+    difficultyLevelsReturn?.meta?.totalPages,
+    filters,
+    prefetchDifficultyLevels,
+  ]);
 
   const handleDeleteSelected = async () => {
     if (selectedIds.length === 0) return;

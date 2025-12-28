@@ -1,8 +1,12 @@
 import { SkeletonTable } from "@/components/ui/skeleton-table";
-import { useSchoolAdmin } from "@/hooks/SchoolAdmin/useSchoolAdmin";
+import {
+  usePrefetchSchoolAdmins,
+  useSchoolAdmin,
+} from "@/hooks/SchoolAdmin/useSchoolAdmin";
 import { useUser } from "@/hooks/User/useUser";
 import type { FilterSchoolAdminOption } from "@/types/filter";
 import { UserPerfilEnum } from "@/types/user";
+import { useEffect } from "react";
 import { useSearchParams } from "react-router";
 import {
   DataTable,
@@ -57,6 +61,24 @@ export default function SchoolUserTable() {
   const { data: schoolAdminsReturn, isLoading: isSchoolAdminsLoading } =
     schoolAdminsQuery;
   const schoolAdminsData = schoolAdminsReturn?.data;
+
+  // Prefetch next page
+  const { prefetchSchoolAdmins } = usePrefetchSchoolAdmins();
+  useEffect(() => {
+    const totalPages = schoolAdminsReturn?.meta?.totalPages ?? 0;
+    if (page < totalPages) {
+      const nextPageFilters: FilterSchoolAdminOption = {
+        ...filters,
+        page: page + 1,
+      };
+      prefetchSchoolAdmins(nextPageFilters);
+    }
+  }, [
+    page,
+    schoolAdminsReturn?.meta?.totalPages,
+    filters,
+    prefetchSchoolAdmins,
+  ]);
 
   // Handle pagination change
   const handlePaginationChange = (pagination: {

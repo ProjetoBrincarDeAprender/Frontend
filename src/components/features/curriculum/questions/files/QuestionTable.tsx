@@ -1,4 +1,8 @@
-import { QUESTION_QUERY_KEY, useQuestion } from "@/hooks/Question/useQuestion";
+import {
+  QUESTION_QUERY_KEY,
+  usePrefetchQuestions,
+  useQuestion,
+} from "@/hooks/Question/useQuestion";
 import { useUser } from "@/hooks/User/useUser";
 import { useDelete } from "@/hooks/useDelete";
 import type { ColumnDef } from "@tanstack/react-table";
@@ -89,6 +93,19 @@ export default function QuestionTable() {
 
   const { questionsQuery } = useQuestion({ filters });
   const { data: questionsData, isLoading: loading } = questionsQuery;
+
+  // Prefetch next page
+  const { prefetchQuestions } = usePrefetchQuestions();
+  useEffect(() => {
+    const totalPages = questionsData?.meta?.totalPages ?? 0;
+    if (page < totalPages) {
+      const nextPageFilters: FilterQuestionOption = {
+        ...filters,
+        page: page + 1,
+      };
+      prefetchQuestions(nextPageFilters);
+    }
+  }, [page, questionsData?.meta?.totalPages, filters, prefetchQuestions]);
 
   const { activitiesQuery } = useActivity();
   const { data: activitiesData, isLoading: activitiesLoading } =

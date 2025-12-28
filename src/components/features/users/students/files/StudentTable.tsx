@@ -1,7 +1,7 @@
 import { useTable } from "@/hooks/Table/useTable";
 import { useUser } from "@/hooks/User/useUser";
 //import { Loader2 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router";
 import {
   DataTable,
@@ -12,7 +12,11 @@ import { EditStudentModal } from "../edit/StudentEditModal";
 import { StudentColumns } from "./TableData";
 
 import { SkeletonTable } from "@/components/ui/skeleton-table";
-import { STUDENTS_QUERY_KEY, useStudent } from "@/hooks/Student/useStudent";
+import {
+  STUDENTS_QUERY_KEY,
+  usePrefetchStudents,
+  useStudent,
+} from "@/hooks/Student/useStudent";
 import { useDelete } from "@/hooks/useDelete";
 import type { FilterStudentOption } from "@/types/filter";
 
@@ -71,6 +75,19 @@ export default function StudentTable() {
   const { studentsQuery } = useStudent({ filters });
   const { data: studentsReturn, isLoading } = studentsQuery;
   const studentsData = studentsReturn?.data;
+
+  // Prefetch next page
+  const { prefetchStudents } = usePrefetchStudents();
+  useEffect(() => {
+    const totalPages = studentsReturn?.meta?.totalPages ?? 0;
+    if (page < totalPages) {
+      const nextPageFilters: FilterStudentOption = {
+        ...filters,
+        page: page + 1,
+      };
+      prefetchStudents(nextPageFilters);
+    }
+  }, [page, studentsReturn?.meta?.totalPages, filters, prefetchStudents]);
 
   // Função para deletar múltiplos alunos
   const handleDeleteSelected = async () => {

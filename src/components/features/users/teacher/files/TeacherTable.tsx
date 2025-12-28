@@ -1,7 +1,7 @@
 import { useTable } from "@/hooks/Table/useTable";
 import { useUser } from "@/hooks/User/useUser";
 //import { Loader2 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router";
 import {
   DataTable,
@@ -11,7 +11,11 @@ import { TeacherColumns } from "./TableData";
 
 import { SkeletonTable } from "@/components/ui/skeleton-table";
 import DeleteModal from "@/components/utils/DataTable/DeleteModal";
-import { TEACHER_QUERY_KEY, useTeacher } from "@/hooks/Teacher/useTeacher";
+import {
+  TEACHER_QUERY_KEY,
+  usePrefetchTeachers,
+  useTeacher,
+} from "@/hooks/Teacher/useTeacher";
 import { useDelete } from "@/hooks/useDelete";
 import type { FilterTeacherOption } from "@/types/filter";
 import { Share2 } from "lucide-react";
@@ -83,6 +87,19 @@ export default function TeacherTable() {
   });
   const { data: teachersReturn, isLoading, isFetching } = teachersQuery;
   const teachersData = teachersReturn?.data;
+
+  // Prefetch next page
+  const { prefetchTeachers } = usePrefetchTeachers();
+  useEffect(() => {
+    const totalPages = teachersReturn?.meta?.totalPages ?? 0;
+    if (page < totalPages) {
+      const nextPageFilters: FilterTeacherOption = {
+        ...filters,
+        page: page + 1,
+      };
+      prefetchTeachers(nextPageFilters);
+    }
+  }, [page, teachersReturn?.meta?.totalPages, filters, prefetchTeachers]);
 
   // Only show skeleton on initial load, not on refetch
   const showSkeleton = isLoading && !teachersReturn;
