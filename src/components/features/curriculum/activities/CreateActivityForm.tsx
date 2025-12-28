@@ -7,6 +7,7 @@ import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useUser } from "@/hooks/User/useUser";
+import { toast } from "sonner";
 import type { CompetenceWithArea } from "./common/types/activity.types";
 import handleAxiosError from "./files/HandleAxiosError";
 
@@ -77,6 +78,7 @@ export function CreateActivityForm({
     if (isActivitySuccess) {
       onSuccess();
     }
+    toast.success("Atividade criada com sucesso!");
   }, [isActivitySuccess, onSuccess]);
 
   useEffect(() => {
