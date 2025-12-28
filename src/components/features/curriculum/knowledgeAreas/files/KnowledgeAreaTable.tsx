@@ -11,7 +11,10 @@ import type { KnowledgeArea } from "@/types/knowledgeArea";
 import type { ColumnDef } from "@tanstack/react-table";
 import { useState } from "react";
 import { useSearchParams } from "react-router";
-import { DataTable } from "../../../../utils/DataTable/DataTable";
+import {
+  DataTable,
+  type FilterState,
+} from "../../../../utils/DataTable/DataTable";
 import { EditKnowledgeAreaModal } from "../edit/KnowledgeAreaEditModal";
 import { KnowledgeAreaColumns } from "./TableData";
 
@@ -41,13 +44,39 @@ export default function KnowledgeAreaTable() {
   const [searchParams, setSearchParams] = useSearchParams();
   const { setUpdating } = useTable();
 
-  // Get pagination params from URL
+  // Get pagination and filter params from URL
   const page = Number(searchParams.get("page")) || 1;
   const pageSize = Number(searchParams.get("pageSize")) || 10;
+  const search = searchParams.get("search") || "";
+  const searchBy = searchParams.get("searchBy") || "";
+
+  // Build filter state from URL params
+  const filter: FilterState | null =
+    search && searchBy ? { column: searchBy, value: search } : null;
 
   const filters: FilterKnowledgeAreaOption = {
     page,
     limit: pageSize as 10 | 25 | 50 | 100 | 500,
+  };
+
+  // Apply server-side filter from URL params
+  if (filter) {
+    filters.search = filter.value;
+    filters.searchBy = filter.column as FilterKnowledgeAreaOption["searchBy"];
+  }
+
+  // Handle filter change - update URL params
+  const handleFilterChange = (newFilter: FilterState | null) => {
+    const newParams = new URLSearchParams(searchParams);
+    if (newFilter) {
+      newParams.set("search", newFilter.value);
+      newParams.set("searchBy", newFilter.column);
+      newParams.set("page", "1"); // Reset to first page on filter
+    } else {
+      newParams.delete("search");
+      newParams.delete("searchBy");
+    }
+    setSearchParams(newParams);
   };
 
   const { knowledgeAreasQuery } = useKnowledgeArea({ filters });
@@ -60,10 +89,10 @@ export default function KnowledgeAreaTable() {
     pageIndex: number;
     pageSize: number;
   }) => {
-    setSearchParams({
-      page: String(pagination.pageIndex + 1),
-      pageSize: String(pagination.pageSize),
-    });
+    const newParams = new URLSearchParams(searchParams);
+    newParams.set("page", String(pagination.pageIndex + 1));
+    newParams.set("pageSize", String(pagination.pageSize));
+    setSearchParams(newParams);
     setSelectedIds([]);
   };
 
@@ -140,6 +169,10 @@ export default function KnowledgeAreaTable() {
             pageSize,
           }}
           onPaginationChange={handlePaginationChange}
+          filterableColumns={["nome", "descricao"]}
+          filter={filter}
+          onFilterChange={handleFilterChange}
+          manualFiltering
           renderExtra={() =>
             selectedIds.length > 0 && !loading ? (
               <button

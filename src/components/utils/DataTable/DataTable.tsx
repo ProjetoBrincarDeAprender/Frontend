@@ -10,6 +10,7 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -26,38 +27,73 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { useMemo, useState } from "react";
+import { Search, X } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
 import { DataTablePagination } from "./DataTablePagination";
 
-// Função para filtro customizado que trata IDs de forma diferente
+const columnDisplayNames: Record<string, string> = {
+  id: "ID",
+  titulo: "Título",
+  nome: "Nome",
+  nome_completo: "Nome Completo",
+  email: "Email",
+  tipo: "Tipo",
+  descricao: "Descrição",
+  content: "Conteúdo",
+  ordem: "Ordem",
+  "activity.titulo": "Atividade",
+  "competencia.nome": "Competência",
+  "nivelDificuldade.nome": "Nível",
+  "areaId.nome": "Área",
+  "area.nome": "Área",
+  created_At: "Criado em",
+  createdAt: "Criado em",
+  data_nascimento: "Data de Nascimento",
+  perfil: "Perfil",
+  escolaId: "Escola",
+  codigo_usuario: "Código",
+};
+
+const getColumnDisplayName = (columnId: string) => {
+  return (
+    columnDisplayNames[columnId] ||
+    columnId.charAt(0).toUpperCase() + columnId.slice(1).replace(/[._]/g, " ")
+  );
+};
+
 const customFilterFn = (row: any, columnId: string, filterValue: string) => {
   const cellValue = row.getValue(columnId);
 
-  // Se não há valor de filtro, mostrar tudo
   if (!filterValue) return true;
 
-  // Para colunas de ID, fazer busca "começa com"
   if (columnId === "id" || columnId.toLowerCase().includes("id")) {
     const idString = String(cellValue || "");
     const searchString = String(filterValue);
     return idString.includes(searchString);
   }
 
-  // Para outras colunas, fazer busca case-insensitive "contém"
   const stringValue = String(cellValue || "").toLowerCase();
   const searchValue = filterValue.toLowerCase();
   return stringValue.includes(searchValue);
+};
+
+export type FilterState = {
+  column: string;
+  value: string;
 };
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   renderExtra?: () => React.ReactNode;
-  // Server-side pagination props
   pageCount?: number;
   pagination?: PaginationState;
   onPaginationChange?: (pagination: PaginationState) => void;
   manualPagination?: boolean;
+  filterableColumns?: string[];
+  filter?: FilterState | null;
+  onFilterChange?: (filter: FilterState | null) => void;
+  manualFiltering?: boolean;
 }
 
 export function DataTable<TData, TValue>({
@@ -68,21 +104,40 @@ export function DataTable<TData, TValue>({
   pagination: controlledPagination,
   onPaginationChange,
   manualPagination = false,
+  filterableColumns,
+  filter: controlledFilter,
+  onFilterChange,
+  manualFiltering = false,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 
-  // Local pagination state (used when not in manual mode)
+  const [filterInputValue, setFilterInputValue] = useState(
+    controlledFilter?.value ?? "",
+  );
+  const [selectedColumn, setSelectedColumn] = useState<string>(
+    controlledFilter?.column ?? "",
+  );
+
+  useEffect(() => {
+    setFilterInputValue(controlledFilter?.value ?? "");
+    if (controlledFilter?.column) {
+      setSelectedColumn(controlledFilter.column);
+    }
+  }, [controlledFilter]);
+
   const [localPagination, setLocalPagination] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: 10,
   });
 
-  // Use controlled pagination if provided, otherwise local
   const pagination = controlledPagination || localPagination;
 
-  // Detectar colunas disponíveis automaticamente
   const availableColumns = useMemo(() => {
+    if (filterableColumns && filterableColumns.length > 0) {
+      return filterableColumns;
+    }
+
     const cols = columns
       .map((col) => {
         const colDef = col as ColumnDef<TData, TValue> & {
@@ -97,13 +152,10 @@ export function DataTable<TData, TValue>({
       );
 
     return cols;
-  }, [columns]);
+  }, [columns, filterableColumns]);
 
-  const [selectedColumn, setSelectedColumn] = useState<string>(
-    availableColumns[0] || "id",
-  );
+  const effectiveSelectedColumn = selectedColumn || availableColumns[0] || "id";
 
-  // Modificar colunas para usar filtro customizado
   const columnsWithCustomFilter = useMemo(() => {
     return columns.map((col) => {
       const colDef = col as ColumnDef<TData, TValue> & {
@@ -113,7 +165,6 @@ export function DataTable<TData, TValue>({
 
       const columnId = colDef.accessorKey || colDef.id;
 
-      // Para colunas de ID, aplicar filtro customizado
       if (
         columnId === "id" ||
         (columnId && columnId.toLowerCase().includes("id"))
@@ -136,17 +187,18 @@ export function DataTable<TData, TValue>({
     onSortingChange: setSorting,
     getSortedRowModel: getSortedRowModel(),
     onColumnFiltersChange: setColumnFilters,
-    getFilteredRowModel: getFilteredRowModel(),
+    getFilteredRowModel: manualFiltering ? undefined : getFilteredRowModel(),
     // Pagination configuration
     filterFns: {
       customFilter: customFilterFn,
     },
     state: {
       sorting,
-      columnFilters,
+      columnFilters: manualFiltering ? [] : columnFilters,
       pagination,
     },
     manualPagination,
+    manualFiltering,
     onPaginationChange: (updaterOrValue) => {
       const newPagination =
         typeof updaterOrValue === "function"
@@ -160,32 +212,30 @@ export function DataTable<TData, TValue>({
       }
     },
   });
-  const columnExists = table.getColumn(selectedColumn);
-  const effectiveSelectedColumn = columnExists
-    ? selectedColumn
-    : availableColumns[0];
-  const getColumnDisplayName = (columnId: string) => {
-    const columnMap: Record<string, string> = {
-      id: "ID",
-      titulo: "Título",
-      nome: "Nome",
-      email: "Email",
-      tipo: "Tipo",
-      descricao: "Descrição",
-      content: "Conteúdo",
-      ordem: "Ordem",
-      "activity.titulo": "Atividade",
-      "competencia.nome": "Competência",
-      "nivelDificuldade.nome": "Nível",
-      "areaId.nome": "Área",
-      created_At: "Criado em",
-      createdAt: "Criado em",
-    };
 
-    return (
-      columnMap[columnId] ||
-      columnId.charAt(0).toUpperCase() + columnId.slice(1).replace(/[._]/g, " ")
-    );
+  const handleApplyFilter = () => {
+    if (manualFiltering && onFilterChange) {
+      if (filterInputValue.trim()) {
+        const newFilter = {
+          column: effectiveSelectedColumn,
+          value: filterInputValue.trim(),
+        };
+        onFilterChange(newFilter);
+      }
+    }
+  };
+
+  const handleClearFilter = () => {
+    setFilterInputValue("");
+    if (manualFiltering && onFilterChange) {
+      onFilterChange(null);
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" && manualFiltering) {
+      handleApplyFilter();
+    }
   };
 
   return (
@@ -194,28 +244,37 @@ export function DataTable<TData, TValue>({
         <Input
           placeholder={`Filtrar por ${getColumnDisplayName(effectiveSelectedColumn)}`}
           value={
-            (table
-              .getColumn(effectiveSelectedColumn)
-              ?.getFilterValue() as string) ?? ""
+            manualFiltering
+              ? filterInputValue
+              : ((table
+                  .getColumn(effectiveSelectedColumn)
+                  ?.getFilterValue() as string) ?? "")
           }
           onChange={(event) => {
-            if (effectiveSelectedColumn) {
-              const filterValue = event.target.value;
-
-              table.setColumnFilters([
-                {
-                  id: effectiveSelectedColumn,
-                  value: filterValue,
-                },
-              ]);
+            const newValue = event.target.value;
+            if (manualFiltering) {
+              setFilterInputValue(newValue);
+            } else {
+              // Client-side filtering
+              if (effectiveSelectedColumn) {
+                table.setColumnFilters([
+                  {
+                    id: effectiveSelectedColumn,
+                    value: newValue,
+                  },
+                ]);
+              }
             }
           }}
+          onKeyDown={handleKeyDown}
           className="max-h-10 max-w-64"
         />
         <Select
           onValueChange={(value) => {
             setSelectedColumn(value);
-            table.resetColumnFilters();
+            if (!manualFiltering) {
+              table.resetColumnFilters();
+            }
           }}
           value={effectiveSelectedColumn}
         >
@@ -230,6 +289,25 @@ export function DataTable<TData, TValue>({
             ))}
           </SelectContent>
         </Select>
+        {manualFiltering && (
+          <>
+            <Button
+              variant="default"
+              size="lg"
+              onClick={handleApplyFilter}
+              disabled={!filterInputValue.trim()}
+            >
+              <Search className="h-4 w-4" />
+              Filtrar
+            </Button>
+            {(controlledFilter || filterInputValue) && (
+              <Button variant="outline" size="lg" onClick={handleClearFilter}>
+                <X className="h-4 w-4" />
+                Limpar
+              </Button>
+            )}
+          </>
+        )}
         {renderExtra && renderExtra()}
       </div>
       <div className="w-full overflow-hidden overflow-x-auto rounded-md border">
