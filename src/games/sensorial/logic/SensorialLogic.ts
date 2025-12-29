@@ -525,7 +525,7 @@ export default class SensorialLogic {
     this.gameStats.addMissCount();
 
     const apiService = new APIDataService(this.scene);
-    const uniqueQuestionIndex = this.getUniqueQuestionIndex();
+    const uniqueQuestionIndex = this.getQuestionId();
 
     apiService.sendGameData(this.activityId || 8, uniqueQuestionIndex, {
       attempts: this.gameStats.getCurrentLevelMisses(),
@@ -564,7 +564,7 @@ export default class SensorialLogic {
     this.scene.registry.remove("currentSensorialProgress");
   }
 
-  private getUniqueQuestionIndex(): number {
+  private getQuestionId(): number {
     return this.getCurrentQuestion().getQuestionId();
   }
 
@@ -603,7 +603,7 @@ export default class SensorialLogic {
     this.gameStats.addMiss();
 
     const apiService = new APIDataService(this.scene);
-    const uniqueQuestionIndex = this.getUniqueQuestionIndex();
+    const uniqueQuestionIndex = this.getQuestionId();
 
     apiService.sendGameData(this.activityId || 8, uniqueQuestionIndex, {
       attempts: this.gameStats.getCurrentLevelMisses(),

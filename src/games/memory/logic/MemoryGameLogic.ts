@@ -453,7 +453,7 @@ export class MemoryGameLogic {
 
     apiService.sendGameData(
       this.activityId || 4,
-      this.getAbsoluteQuestionIndex(),
+      this.getQuestionId(),
       levelData,
     );
   }
@@ -464,6 +464,14 @@ export class MemoryGameLogic {
   }
 
   public getAbsoluteQuestionIndex() {
+    let index = 1;
+    for (let i = 0; i < this.currentLevelIndex; i++) {
+      index += this.gameLevels[i].questions.length;
+    }
+    return index + this.currentQuestionIndex;
+  }
+
+  public getQuestionId(): number {
     return this.getCurrentQuestion().getQuestionId();
   }
 
