@@ -73,3 +73,17 @@ export function useSchoolAdmin({
 
   return { schoolAdminQuery, schoolAdminsQuery };
 }
+
+export function usePrefetchSchoolAdmins() {
+  const queryClient = useQueryClient();
+
+  const prefetchSchoolAdmins = (filters: FilterSchoolAdminOption) => {
+    queryClient.prefetchQuery({
+      queryKey: [...SCHOOL_ADMIN_QUERY_KEY, filters],
+      queryFn: () => fetchSchoolAdminsData(filters),
+      staleTime: 60 * 1000,
+    });
+  };
+
+  return { prefetchSchoolAdmins };
+}

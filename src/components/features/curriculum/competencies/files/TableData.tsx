@@ -1,3 +1,4 @@
+import { ActionsCell } from "@/components/utils/DataTable/ActionsCell";
 import {
   COMPETENCE_BY_KNOWLEDGE_AREA_QUERY_KEY,
   COMPETENCE_QUERY_KEY,
@@ -6,7 +7,6 @@ import type { Competence } from "@/types/competence";
 import type { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown } from "lucide-react";
 import { Button } from "../../../../ui/button";
-import DeleteModal from "../../../../utils/DataTable/DeleteModal";
 import { EditCompetenceModal } from "../edit/CompetenceEditModal";
 
 function truncateText(text: string, maxLength: number): string {
@@ -123,21 +123,19 @@ export const CompetenceColumns: ColumnDef<CompetenceFormatted>[] = [
   //     },
   //   },
   {
-    accessorKey: "actions",
+    id: "actions",
     header: "Ações",
     cell: ({ row }) => (
-      <div className="flex items-center justify-center gap-2">
-        <EditCompetenceModal id={row.original.id} />
-        <DeleteModal
-          route="/competence/remove"
-          id={row.original.id}
-          entity="Competência"
-          queryKey={[
-            ...COMPETENCE_QUERY_KEY,
-            ...COMPETENCE_BY_KNOWLEDGE_AREA_QUERY_KEY,
-          ]}
-        />
-      </div>
+      <ActionsCell<CompetenceFormatted>
+        row={row}
+        route="/competence/remove"
+        entity="Competência"
+        queryKey={[
+          ...COMPETENCE_QUERY_KEY,
+          ...COMPETENCE_BY_KNOWLEDGE_AREA_QUERY_KEY,
+        ]}
+        editModal={<EditCompetenceModal id={row.original.id} />}
+      />
     ),
     enableSorting: false,
   },

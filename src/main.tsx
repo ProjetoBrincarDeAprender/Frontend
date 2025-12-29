@@ -17,7 +17,7 @@ createRoot(document.getElementById("root")!).render(
           <App />
         </UserProvider>
       </BrowserRouter>
-      <ReactQueryDevtools initialIsOpen={false} />
+      <ReactQueryDevtools initialIsOpen={false} styleNonce="z-100" />
     </QueryClientProvider>
     <Toaster position="bottom-right" />
   </StrictMode>,

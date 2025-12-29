@@ -79,3 +79,17 @@ export function useKnowledgeArea({
 
   return { knowledgeAreaQuery, knowledgeAreasQuery };
 }
+
+export function usePrefetchKnowledgeAreas() {
+  const queryClient = useQueryClient();
+
+  const prefetchKnowledgeAreas = (filters: FilterKnowledgeAreaOption) => {
+    queryClient.prefetchQuery({
+      queryKey: [...KNOWLEDGE_AREA_QUERY_KEY, filters],
+      queryFn: () => fetchKnowledgeAreas(filters),
+      staleTime: 60 * 1000,
+    });
+  };
+
+  return { prefetchKnowledgeAreas };
+}

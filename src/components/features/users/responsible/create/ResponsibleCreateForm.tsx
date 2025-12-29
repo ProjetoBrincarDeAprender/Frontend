@@ -40,11 +40,11 @@ const formSchema = z
       })
       .max(32, {
         error: "Confirmação de senha deve ter no máximo 32 caracteres",
-}),
+      }),
     escolaId: z.string().optional(),
     usersIds: z.array(z.string()).optional(),
     parentesco: z
-      .string( { error: "Parentesco é obrigatório" })      
+      .string({ error: "Parentesco é obrigatório" })
       .min(2, { error: "Parentesco deve ter pelo menos 2 caracteres" })
       .max(50, { error: "Parentesco deve ter no máximo 50 caracteres" }),
   })
@@ -192,10 +192,10 @@ export function ResponsableSignUpForm({ onSuccess }: SignUpFormProps) {
   const { data: schoolsReturn, isLoading: isSchoolLoading } = schoolsQuery;
   const schoolsData = schoolsReturn?.data;
 
-  const { studentsByRelationQuery } = useStudentsRelations(
-    "responsible",
-    studentRelationsFilters,
-  );
+  const { studentsByRelationQuery } = useStudentsRelations({
+    type: "responsible",
+    filters: studentRelationsFilters,
+  });
   const { data: studentsReturn, isLoading: isStudentsLoading } =
     studentsByRelationQuery;
   const studentsData = studentsReturn?.data;

@@ -70,10 +70,10 @@ export function ResponsibleEditForm({ id, onSuccess }: ResponsibleFormProps) {
         : undefined
       : Number(user?.escolaId),
   };
-  const { studentsByRelationQuery } = useStudentsRelations(
-    "responsible",
-    studentRelationsFilters,
-  );
+  const { studentsByRelationQuery } = useStudentsRelations({
+    type: "responsible",
+    filters: studentRelationsFilters,
+  });
   const {
     data: availableStudentsReturn,
     isLoading: isLoadingAvailableStudents,

@@ -1,18 +1,21 @@
 import { SkeletonTable } from "@/components/ui/skeleton-table";
-import DeleteModal from "@/components/utils/DataTable/DeleteModal";
 import {
   KNOWLEDGE_AREA_QUERY_KEY,
   useKnowledgeArea,
+  usePrefetchKnowledgeAreas,
 } from "@/hooks/KnowledgeArea/useKnowledgeArea";
 import { useTable } from "@/hooks/Table/useTable";
 import { useDelete } from "@/hooks/useDelete";
 import type { FilterKnowledgeAreaOption } from "@/types/filter";
 import type { KnowledgeArea } from "@/types/knowledgeArea";
 import type { ColumnDef } from "@tanstack/react-table";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router";
-import { DataTable } from "../../../../utils/DataTable/DataTable";
-import { EditKnowledgeAreaModal } from "../edit/KnowledgeAreaEditModal";
+import {
+  DataTable,
+  DataTableFilter,
+  type FilterState,
+} from "../../../../utils/DataTable/DataTable";
 import { KnowledgeAreaColumns } from "./TableData";
 
 interface CellContext {
@@ -41,13 +44,44 @@ export default function KnowledgeAreaTable() {
   const [searchParams, setSearchParams] = useSearchParams();
   const { setUpdating } = useTable();
 
-  // Get pagination params from URL
+  // Get pagination and filter params from URL
   const page = Number(searchParams.get("page")) || 1;
   const pageSize = Number(searchParams.get("pageSize")) || 10;
+  const search = searchParams.get("search") || "";
+  const searchBy = searchParams.get("searchBy") || "";
 
-  const filters: FilterKnowledgeAreaOption = {
-    page,
-    limit: pageSize as 10 | 25 | 50 | 100 | 500,
+  // Build filter state from URL params
+  const filter: FilterState | null =
+    search && searchBy ? { column: searchBy, value: search } : null;
+
+  const filters: FilterKnowledgeAreaOption = useMemo(() => {
+    const baseFilters: FilterKnowledgeAreaOption = {
+      page,
+      limit: pageSize as 10 | 25 | 50 | 100 | 500,
+    };
+
+    // Apply server-side filter from URL params
+    if (filter) {
+      baseFilters.search = filter.value;
+      baseFilters.searchBy =
+        filter.column as FilterKnowledgeAreaOption["searchBy"];
+    }
+
+    return baseFilters;
+  }, [page, pageSize, filter]);
+
+  // Handle filter change - update URL params
+  const handleFilterChange = (newFilter: FilterState | null) => {
+    const newParams = new URLSearchParams(searchParams);
+    if (newFilter) {
+      newParams.set("search", newFilter.value);
+      newParams.set("searchBy", newFilter.column);
+      newParams.set("page", "1"); // Reset to first page on filter
+    } else {
+      newParams.delete("search");
+      newParams.delete("searchBy");
+    }
+    setSearchParams(newParams);
   };
 
   const { knowledgeAreasQuery } = useKnowledgeArea({ filters });
@@ -55,15 +89,33 @@ export default function KnowledgeAreaTable() {
     knowledgeAreasQuery;
   const knowledgeAreasData = knowledgeAreasReturn?.data;
 
+  // Prefetch next page
+  const { prefetchKnowledgeAreas } = usePrefetchKnowledgeAreas();
+  useEffect(() => {
+    const totalPages = knowledgeAreasReturn?.meta?.totalPages ?? 0;
+    if (page < totalPages) {
+      const nextPageFilters: FilterKnowledgeAreaOption = {
+        ...filters,
+        page: page + 1,
+      };
+      prefetchKnowledgeAreas(nextPageFilters);
+    }
+  }, [
+    page,
+    knowledgeAreasReturn?.meta?.totalPages,
+    filters,
+    prefetchKnowledgeAreas,
+  ]);
+
   // Handle pagination change
   const handlePaginationChange = (pagination: {
     pageIndex: number;
     pageSize: number;
   }) => {
-    setSearchParams({
-      page: String(pagination.pageIndex + 1),
-      pageSize: String(pagination.pageSize),
-    });
+    const newParams = new URLSearchParams(searchParams);
+    newParams.set("page", String(pagination.pageIndex + 1));
+    newParams.set("pageSize", String(pagination.pageSize));
+    setSearchParams(newParams);
     setSelectedIds([]);
   };
 
@@ -90,39 +142,7 @@ export default function KnowledgeAreaTable() {
       },
       enableSorting: false,
     },
-    ...KnowledgeAreaColumns.map((col) => {
-      if ((col as ColumnDef<KnowledgeArea>).id === "actions") {
-        return {
-          ...col,
-          cell: ({ row }: CellContext) => (
-            <div className="flex items-center justify-center gap-2">
-              <button
-                disabled={selectedIds.length > 0}
-                className={
-                  selectedIds.length > 0 ? "cursor-not-allowed opacity-50" : ""
-                }
-              >
-                <EditKnowledgeAreaModal id={row.original.id} />
-              </button>
-              <button
-                disabled={selectedIds.length > 0}
-                className={
-                  selectedIds.length > 0 ? "cursor-not-allowed opacity-50" : ""
-                }
-              >
-                <DeleteModal
-                  route="/knowledge-area/remove"
-                  id={row.original.id}
-                  entity="Área de Conhecimento"
-                  queryKey={KNOWLEDGE_AREA_QUERY_KEY}
-                />
-              </button>
-            </div>
-          ),
-        };
-      }
-      return col;
-    }),
+    ...KnowledgeAreaColumns,
   ];
 
   return (
@@ -140,31 +160,38 @@ export default function KnowledgeAreaTable() {
             pageSize,
           }}
           onPaginationChange={handlePaginationChange}
-          renderExtra={() =>
-            selectedIds.length > 0 && !loading ? (
-              <button
-                onClick={handleDeleteSelected}
-                className="ml-2 flex items-center gap-2 rounded bg-red-500 px-4 py-2 font-bold text-white transition-all hover:bg-red-700"
-                title="Excluir áreas selecionadas"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
+          renderExtra={() => (
+            <>
+              <DataTableFilter
+                filterableColumns={["nome", "descricao"]}
+                filter={filter}
+                onFilterChange={handleFilterChange}
+              />
+              {selectedIds.length > 0 && !loading && (
+                <button
+                  onClick={handleDeleteSelected}
+                  className="ml-2 flex items-center gap-2 rounded bg-red-500 px-4 py-2 font-bold text-white transition-all hover:bg-red-700"
+                  title="Excluir áreas selecionadas"
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
-                Excluir Selecionadas ({selectedIds.length})
-              </button>
-            ) : null
-          }
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
+                  Excluir Selecionadas ({selectedIds.length})
+                </button>
+              )}
+            </>
+          )}
         />
       )}
     </>

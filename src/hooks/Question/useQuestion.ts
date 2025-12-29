@@ -2,7 +2,7 @@ import type { FilterQuestionOption } from "@/types/filter";
 import type { PaginationMeta } from "@/types/pagination";
 import type { Question } from "@/types/question";
 import api from "@/utils/api";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 async function fetchQuestions(
   filters?: FilterQuestionOption,
@@ -49,4 +49,18 @@ export function useQuestion({
   });
 
   return { questionQuery, questionsQuery };
+}
+
+export function usePrefetchQuestions() {
+  const queryClient = useQueryClient();
+
+  const prefetchQuestions = (filters: FilterQuestionOption) => {
+    queryClient.prefetchQuery({
+      queryKey: [...QUESTION_QUERY_KEY, filters],
+      queryFn: () => fetchQuestions(filters),
+      staleTime: 60 * 1000,
+    });
+  };
+
+  return { prefetchQuestions };
 }
