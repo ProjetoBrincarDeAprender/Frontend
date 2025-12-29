@@ -525,7 +525,7 @@ export default class SensorialLogic {
     this.gameStats.addMissCount();
 
     const apiService = new APIDataService(this.scene);
-    const uniqueQuestionIndex = this.getUniqueQuestionIndex();
+    const uniqueQuestionIndex = this.getQuestionId();
 
     apiService.sendGameData(this.activityId || 8, uniqueQuestionIndex, {
       attempts: this.gameStats.getCurrentLevelMisses(),
@@ -565,6 +565,14 @@ export default class SensorialLogic {
   }
 
   private getUniqueQuestionIndex(): number {
+    let index = 1;
+    for (let i = 0; i < this.currentLevelIndex; i++) {
+      index += this.gameLevels[i].questions.length;
+    }
+    return index + this.currentQuestionIndex;
+  }
+
+  private getQuestionId(): number {
     return this.getCurrentQuestion().getQuestionId();
   }
 
@@ -603,7 +611,7 @@ export default class SensorialLogic {
     this.gameStats.addMiss();
 
     const apiService = new APIDataService(this.scene);
-    const uniqueQuestionIndex = this.getUniqueQuestionIndex();
+    const uniqueQuestionIndex = this.getQuestionId();
 
     apiService.sendGameData(this.activityId || 8, uniqueQuestionIndex, {
       attempts: this.gameStats.getCurrentLevelMisses(),

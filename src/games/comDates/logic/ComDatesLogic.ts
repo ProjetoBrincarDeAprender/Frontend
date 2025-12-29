@@ -270,7 +270,7 @@ export default class ComDatesLogic {
     const apiService = new APIDataService(this.scene);
 
     // Usar índice único baseado em nível e questão
-    const uniqueQuestionIndex = this.getUniqueQuestionIndex();
+    const uniqueQuestionIndex = this.getQuestionId();
 
     apiService.sendGameData(this.activityId || 7, uniqueQuestionIndex, {
       attempts: this.gameStats.getCurrentLevelMisses(),
@@ -329,7 +329,10 @@ export default class ComDatesLogic {
   }
 
   private getUniqueQuestionIndex(): number {
-    console.log(this.getCurrentQuestion().getQuestionId());
+    return this.getCurrentQuestion().getQuestionId();
+  }
+
+  private getQuestionId(): number {
     return this.getCurrentQuestion().getQuestionId();
   }
 
@@ -365,7 +368,7 @@ export default class ComDatesLogic {
 
     const apiService = new APIDataService(this.scene);
 
-    const uniqueQuestionIndex = this.getUniqueQuestionIndex();
+    const uniqueQuestionIndex = this.getQuestionId();
 
     apiService.sendGameData(this.activityId || 7, uniqueQuestionIndex, {
       attempts: this.gameStats.getCurrentLevelMisses(),

@@ -260,7 +260,7 @@ export default class SpaceLogic {
     const apiService = new APIDataService(this.scene);
 
     // Usar índice único baseado em nível e questão
-    const uniqueQuestionIndex = this.getUniqueQuestionIndex();
+    const uniqueQuestionIndex = this.getQuestionId();
 
     apiService.sendGameData(this.activityId || 3, uniqueQuestionIndex, {
       attempts: this.gameStats.getCurrentLevelMisses(),
@@ -326,6 +326,10 @@ export default class SpaceLogic {
     return index + this.currentQuestionIndex;
   }
 
+  private getQuestionId(): number {
+    return this.getCurrentQuestion().getQuestionId();
+  }
+
   goToNextLevel(): void {
     if (this.currentLevelIndex < this.gameLevels.length - 1) {
       this.currentLevelIndex++;
@@ -358,7 +362,7 @@ export default class SpaceLogic {
 
     const apiService = new APIDataService(this.scene);
 
-    const uniqueQuestionIndex = this.getUniqueQuestionIndex();
+    const uniqueQuestionIndex = this.getQuestionId();
 
     apiService.sendGameData(this.activityId || 3, uniqueQuestionIndex, {
       attempts: this.gameStats.getCurrentLevelMisses(),
