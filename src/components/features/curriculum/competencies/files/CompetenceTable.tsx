@@ -10,16 +10,14 @@ import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router";
 import {
   DataTable,
+  DataTableFilter,
   type FilterState,
 } from "../../../../utils/DataTable/DataTable";
 import { CompetenceColumns, type CompetenceFormatted } from "./TableData";
 
 import { SkeletonTable } from "@/components/ui/skeleton-table";
-import DeleteModal from "@/components/utils/DataTable/DeleteModal";
 import { useKnowledgeArea } from "@/hooks/KnowledgeArea/useKnowledgeArea";
-import type { Competence } from "@/types/competence";
 import type { FilterCompetenceOption } from "@/types/filter";
-import { EditCompetenceModal } from "../edit/CompetenceEditModal";
 
 interface CellContext {
   row: {
@@ -211,39 +209,7 @@ export default function CompetenceTable() {
       },
       enableSorting: false,
     },
-    ...CompetenceColumns.map((col) => {
-      if ((col as ColumnDef<Competence>).id === "actions") {
-        return {
-          ...col,
-          cell: ({ row }: CellContext) => (
-            <div className="flex items-center justify-center gap-2">
-              <button
-                disabled={selectedIds.length > 0}
-                className={
-                  selectedIds.length > 0 ? "cursor-not-allowed opacity-50" : ""
-                }
-              >
-                <EditCompetenceModal id={row.original.id} />
-              </button>
-              <button
-                disabled={selectedIds.length > 0}
-                className={
-                  selectedIds.length > 0 ? "cursor-not-allowed opacity-50" : ""
-                }
-              >
-                <DeleteModal
-                  route="/competence/remove"
-                  id={row.original.id}
-                  entity="Competência"
-                  queryKey={COMPETENCE_QUERY_KEY}
-                />
-              </button>
-            </div>
-          ),
-        };
-      }
-      return col;
-    }),
+    ...CompetenceColumns,
   ];
 
   return (
@@ -261,35 +227,38 @@ export default function CompetenceTable() {
             pageSize,
           }}
           onPaginationChange={handlePaginationChange}
-          filterableColumns={["nome", "descricao"]}
-          filter={filter}
-          onFilterChange={handleFilterChange}
-          manualFiltering
-          renderExtra={() =>
-            selectedIds.length > 0 && !loading ? (
-              <button
-                onClick={handleDeleteSelected}
-                className="ml-2 flex items-center gap-2 rounded bg-red-500 px-4 py-2 font-bold text-white transition-all hover:bg-red-700"
-                title="Excluir competências selecionadas"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
+          renderExtra={() => (
+            <>
+              <DataTableFilter
+                filterableColumns={["nome", "descricao"]}
+                filter={filter}
+                onFilterChange={handleFilterChange}
+              />
+              {selectedIds.length > 0 && !loading && (
+                <button
+                  onClick={handleDeleteSelected}
+                  className="ml-2 flex items-center gap-2 rounded bg-red-500 px-4 py-2 font-bold text-white transition-all hover:bg-red-700"
+                  title="Excluir competências selecionadas"
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
-                Excluir Selecionadas ({selectedIds.length})
-              </button>
-            ) : null
-          }
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
+                  Excluir Selecionadas ({selectedIds.length})
+                </button>
+              )}
+            </>
+          )}
         />
       )}
     </>

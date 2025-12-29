@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router";
 import {
   DataTable,
+  DataTableFilter,
   type FilterState,
 } from "../../../../utils/DataTable/DataTable";
 import { TeacherColumns } from "./TableData";
@@ -204,35 +205,38 @@ export default function TeacherTable() {
               pageSize,
             }}
             onPaginationChange={handlePaginationChange}
-            filterableColumns={["nome_completo", "email"]}
-            filter={filter}
-            onFilterChange={handleFilterChange}
-            manualFiltering
-            renderExtra={() =>
-              selectedIds.length > 0 && !isLoading ? (
-                <button
-                  onClick={handleDeleteSelected}
-                  className="ml-2 flex items-center gap-2 rounded bg-red-500 px-4 py-2 font-bold text-white transition-all hover:bg-red-700"
-                  title="Excluir professores selecionados"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-5 w-5"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
+            renderExtra={() => (
+              <>
+                <DataTableFilter
+                  filterableColumns={["nome_completo", "email"]}
+                  filter={filter}
+                  onFilterChange={handleFilterChange}
+                />
+                {selectedIds.length > 0 && !isLoading && (
+                  <button
+                    onClick={handleDeleteSelected}
+                    className="ml-2 flex items-center gap-2 rounded bg-red-500 px-4 py-2 font-bold text-white transition-all hover:bg-red-700"
+                    title="Excluir professores selecionados"
                   >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M6 18L18 6M6 6l12 12"
-                    />
-                  </svg>
-                  Excluir Selecionados ({selectedIds.length})
-                </button>
-              ) : null
-            }
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-5 w-5"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M6 18L18 6M6 6l12 12"
+                      />
+                    </svg>
+                    Excluir Selecionados ({selectedIds.length})
+                  </button>
+                )}
+              </>
+            )}
           />
         </div>
       )}

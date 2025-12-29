@@ -10,6 +10,7 @@ import { useEffect } from "react";
 import { useSearchParams } from "react-router";
 import {
   DataTable,
+  DataTableFilter,
   type FilterState,
 } from "../../../../utils/DataTable/DataTable";
 import { SchoolUserColumns } from "./TableData";
@@ -106,10 +107,13 @@ export default function SchoolUserTable() {
             pageSize,
           }}
           onPaginationChange={handlePaginationChange}
-          filterableColumns={["nome_completo", "email"]}
-          filter={filter}
-          onFilterChange={handleFilterChange}
-          manualFiltering
+          renderExtra={() => (
+            <DataTableFilter
+              filterableColumns={["nome_completo", "email"]}
+              filter={filter}
+              onFilterChange={handleFilterChange}
+            />
+          )}
         />
       )}
     </>

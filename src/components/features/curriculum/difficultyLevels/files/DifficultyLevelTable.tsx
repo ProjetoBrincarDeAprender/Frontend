@@ -3,12 +3,12 @@ import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router";
 import {
   DataTable,
+  DataTableFilter,
   type FilterState,
 } from "../../../../utils/DataTable/DataTable";
 import { DifficultyLevelColumns } from "./TableData";
 
 import { SkeletonTable } from "@/components/ui/skeleton-table";
-import DeleteModal from "@/components/utils/DataTable/DeleteModal";
 import {
   DIFFICULTY_LEVEL_QUERY_KEY,
   useDifficultyLevel,
@@ -17,7 +17,6 @@ import {
 import { useDelete } from "@/hooks/useDelete";
 import type { DifficultyLevel } from "@/types/difficultyLevels";
 import type { FilterDifficultyLevelOption } from "@/types/filter";
-import { EditDifficultyLevelModal } from "../edit/DifficultyLevelEditModal";
 
 interface CellContext {
   row: {
@@ -136,39 +135,7 @@ export default function DifficultyLevelTable() {
       },
       enableSorting: false,
     },
-    ...DifficultyLevelColumns.map((col) => {
-      if ((col as ColumnDef<DifficultyLevel>).id === "actions") {
-        return {
-          ...col,
-          cell: ({ row }: CellContext) => (
-            <div className="flex items-center justify-center gap-2">
-              <button
-                disabled={selectedIds.length > 0}
-                className={
-                  selectedIds.length > 0 ? "cursor-not-allowed opacity-50" : ""
-                }
-              >
-                <EditDifficultyLevelModal id={row.original.id} />
-              </button>
-              <button
-                disabled={selectedIds.length > 0}
-                className={
-                  selectedIds.length > 0 ? "cursor-not-allowed opacity-50" : ""
-                }
-              >
-                <DeleteModal
-                  route="/difficulty-level/remove"
-                  id={row.original.id}
-                  entity="Níveis de Dificuldade"
-                  queryKey={DIFFICULTY_LEVEL_QUERY_KEY}
-                />
-              </button>
-            </div>
-          ),
-        };
-      }
-      return col;
-    }),
+    ...DifficultyLevelColumns,
   ];
 
   return (
@@ -186,35 +153,38 @@ export default function DifficultyLevelTable() {
             pageSize,
           }}
           onPaginationChange={handlePaginationChange}
-          filterableColumns={["nome"]}
-          filter={filter}
-          onFilterChange={handleFilterChange}
-          manualFiltering
-          renderExtra={() =>
-            selectedIds.length > 0 && !isDifficultyLoading ? (
-              <button
-                onClick={handleDeleteSelected}
-                className="ml-2 flex items-center gap-2 rounded bg-red-500 px-4 py-2 font-bold text-white transition-all hover:bg-red-700"
-                title="Excluir níveis selecionados"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
+          renderExtra={() => (
+            <>
+              <DataTableFilter
+                filterableColumns={["nome"]}
+                filter={filter}
+                onFilterChange={handleFilterChange}
+              />
+              {selectedIds.length > 0 && !isDifficultyLoading && (
+                <button
+                  onClick={handleDeleteSelected}
+                  className="ml-2 flex items-center gap-2 rounded bg-red-500 px-4 py-2 font-bold text-white transition-all hover:bg-red-700"
+                  title="Excluir níveis selecionados"
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
-                Excluir Selecionados ({selectedIds.length})
-              </button>
-            ) : null
-          }
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
+                  Excluir Selecionados ({selectedIds.length})
+                </button>
+              )}
+            </>
+          )}
         />
       )}
     </>

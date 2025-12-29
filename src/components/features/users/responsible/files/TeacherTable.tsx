@@ -2,6 +2,7 @@ import { useUser } from "@/hooks/User/useUser";
 //import { Loader2 } from "lucide-react";
 import {
   DataTable,
+  DataTableFilter,
   type FilterState,
 } from "@/components/utils/DataTable/DataTable";
 import { useEffect } from "react";
@@ -109,10 +110,13 @@ export default function ResponsibleTable() {
             pageSize,
           }}
           onPaginationChange={handlePaginationChange}
-          filterableColumns={["nome_completo", "email"]}
-          filter={filter}
-          onFilterChange={handleFilterChange}
-          manualFiltering
+          renderExtra={() => (
+            <DataTableFilter
+              filterableColumns={["nome_completo", "email"]}
+              filter={filter}
+              onFilterChange={handleFilterChange}
+            />
+          )}
         />
       )}
     </>

@@ -6,7 +6,7 @@ import {
 import { useUser } from "@/hooks/User/useUser";
 import { useDelete } from "@/hooks/useDelete";
 import type { ColumnDef } from "@tanstack/react-table";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router";
 import {
   DataTable,
@@ -18,6 +18,7 @@ import { SkeletonTable } from "@/components/ui/skeleton-table";
 import useActivity from "@/hooks/Activity/useActivity";
 import type { Activity } from "@/types/activity";
 import type { FilterQuestionOption } from "@/types/filter";
+import { QuestionFilters } from "./QuestionFilters";
 
 interface CellContext {
   row: {
@@ -59,23 +60,29 @@ export default function QuestionTable() {
   const searchBy = searchParams.get("searchBy") || "";
 
   // Build filter state from URL params
-  const filter: FilterState | null =
-    search && searchBy ? { column: searchBy, value: search } : null;
+  const filter: FilterState | null = useMemo(
+    () => (search && searchBy ? { column: searchBy, value: search } : null),
+    [search, searchBy],
+  );
 
-  const filters: FilterQuestionOption = {
-    page,
-    limit: pageSize as 10 | 25 | 50 | 100 | 500,
-  };
+  const filters: FilterQuestionOption = useMemo(() => {
+    const baseFilters: FilterQuestionOption = {
+      page,
+      limit: pageSize as 10 | 25 | 50 | 100 | 500,
+    };
 
-  if (user?.perfil === "Professor") {
-    filters.activitiesIds = filteredActivities;
-  }
+    if (user?.perfil === "Professor") {
+      baseFilters.activitiesIds = filteredActivities;
+    }
 
-  // Apply server-side filter from URL params
-  if (filter) {
-    filters.search = filter.value;
-    filters.searchBy = filter.column as FilterQuestionOption["searchBy"];
-  }
+    // Apply server-side filter from URL params
+    if (filter) {
+      baseFilters.search = filter.value;
+      baseFilters.searchBy = filter.column as FilterQuestionOption["searchBy"];
+    }
+
+    return baseFilters;
+  }, [page, pageSize, user?.perfil, filteredActivities, filter]);
 
   // Handle filter change - update URL params
   const handleFilterChange = (newFilter: FilterState | null) => {
@@ -203,8 +210,6 @@ export default function QuestionTable() {
           };
         });
 
-      console.log(enrichedQuestions);
-
       setFormattedQuestions(enrichedQuestions);
     }
   }, [
@@ -256,35 +261,38 @@ export default function QuestionTable() {
             pageSize,
           }}
           onPaginationChange={handlePaginationChange}
-          filterableColumns={["ordem"]}
-          filter={filter}
-          onFilterChange={handleFilterChange}
-          manualFiltering
-          renderExtra={() =>
-            selectedIds.length > 0 && !loading ? (
-              <button
-                onClick={handleDeleteSelected}
-                className="ml-2 flex items-center gap-2 rounded bg-red-500 px-4 py-2 font-bold text-white transition-all hover:bg-red-700"
-                title="Excluir questões selecionadas"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
+          renderExtra={() => (
+            <>
+              <QuestionFilters
+                filter={filter}
+                onFilterChange={handleFilterChange}
+                className="mr-2"
+              />
+              {selectedIds.length > 0 && !loading && (
+                <button
+                  onClick={handleDeleteSelected}
+                  className="ml-2 flex items-center gap-2 rounded bg-red-500 px-4 py-2 font-bold text-white transition-all hover:bg-red-700"
+                  title="Excluir questões selecionadas"
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
-                Excluir Selecionadas ({selectedIds.length})
-              </button>
-            ) : null
-          }
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
+                  Excluir Selecionadas ({selectedIds.length})
+                </button>
+              )}
+            </>
+          )}
         />
       )}
     </>

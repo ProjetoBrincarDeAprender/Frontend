@@ -1,5 +1,4 @@
 import { SkeletonTable } from "@/components/ui/skeleton-table";
-import DeleteModal from "@/components/utils/DataTable/DeleteModal";
 import {
   KNOWLEDGE_AREA_QUERY_KEY,
   useKnowledgeArea,
@@ -10,13 +9,13 @@ import { useDelete } from "@/hooks/useDelete";
 import type { FilterKnowledgeAreaOption } from "@/types/filter";
 import type { KnowledgeArea } from "@/types/knowledgeArea";
 import type { ColumnDef } from "@tanstack/react-table";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router";
 import {
   DataTable,
+  DataTableFilter,
   type FilterState,
 } from "../../../../utils/DataTable/DataTable";
-import { EditKnowledgeAreaModal } from "../edit/KnowledgeAreaEditModal";
 import { KnowledgeAreaColumns } from "./TableData";
 
 interface CellContext {
@@ -55,16 +54,21 @@ export default function KnowledgeAreaTable() {
   const filter: FilterState | null =
     search && searchBy ? { column: searchBy, value: search } : null;
 
-  const filters: FilterKnowledgeAreaOption = {
-    page,
-    limit: pageSize as 10 | 25 | 50 | 100 | 500,
-  };
+  const filters: FilterKnowledgeAreaOption = useMemo(() => {
+    const baseFilters: FilterKnowledgeAreaOption = {
+      page,
+      limit: pageSize as 10 | 25 | 50 | 100 | 500,
+    };
 
-  // Apply server-side filter from URL params
-  if (filter) {
-    filters.search = filter.value;
-    filters.searchBy = filter.column as FilterKnowledgeAreaOption["searchBy"];
-  }
+    // Apply server-side filter from URL params
+    if (filter) {
+      baseFilters.search = filter.value;
+      baseFilters.searchBy =
+        filter.column as FilterKnowledgeAreaOption["searchBy"];
+    }
+
+    return baseFilters;
+  }, [page, pageSize, filter]);
 
   // Handle filter change - update URL params
   const handleFilterChange = (newFilter: FilterState | null) => {
@@ -138,39 +142,7 @@ export default function KnowledgeAreaTable() {
       },
       enableSorting: false,
     },
-    ...KnowledgeAreaColumns.map((col) => {
-      if ((col as ColumnDef<KnowledgeArea>).id === "actions") {
-        return {
-          ...col,
-          cell: ({ row }: CellContext) => (
-            <div className="flex items-center justify-center gap-2">
-              <button
-                disabled={selectedIds.length > 0}
-                className={
-                  selectedIds.length > 0 ? "cursor-not-allowed opacity-50" : ""
-                }
-              >
-                <EditKnowledgeAreaModal id={row.original.id} />
-              </button>
-              <button
-                disabled={selectedIds.length > 0}
-                className={
-                  selectedIds.length > 0 ? "cursor-not-allowed opacity-50" : ""
-                }
-              >
-                <DeleteModal
-                  route="/knowledge-area/remove"
-                  id={row.original.id}
-                  entity="Área de Conhecimento"
-                  queryKey={KNOWLEDGE_AREA_QUERY_KEY}
-                />
-              </button>
-            </div>
-          ),
-        };
-      }
-      return col;
-    }),
+    ...KnowledgeAreaColumns,
   ];
 
   return (
@@ -188,35 +160,38 @@ export default function KnowledgeAreaTable() {
             pageSize,
           }}
           onPaginationChange={handlePaginationChange}
-          filterableColumns={["nome", "descricao"]}
-          filter={filter}
-          onFilterChange={handleFilterChange}
-          manualFiltering
-          renderExtra={() =>
-            selectedIds.length > 0 && !loading ? (
-              <button
-                onClick={handleDeleteSelected}
-                className="ml-2 flex items-center gap-2 rounded bg-red-500 px-4 py-2 font-bold text-white transition-all hover:bg-red-700"
-                title="Excluir áreas selecionadas"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
+          renderExtra={() => (
+            <>
+              <DataTableFilter
+                filterableColumns={["nome", "descricao"]}
+                filter={filter}
+                onFilterChange={handleFilterChange}
+              />
+              {selectedIds.length > 0 && !loading && (
+                <button
+                  onClick={handleDeleteSelected}
+                  className="ml-2 flex items-center gap-2 rounded bg-red-500 px-4 py-2 font-bold text-white transition-all hover:bg-red-700"
+                  title="Excluir áreas selecionadas"
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
-                Excluir Selecionadas ({selectedIds.length})
-              </button>
-            ) : null
-          }
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
+                  Excluir Selecionadas ({selectedIds.length})
+                </button>
+              )}
+            </>
+          )}
         />
       )}
     </>

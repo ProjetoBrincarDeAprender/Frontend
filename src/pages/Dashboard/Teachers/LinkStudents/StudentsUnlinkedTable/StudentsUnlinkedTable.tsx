@@ -1,6 +1,7 @@
 import { SkeletonTable } from "@/components/ui/skeleton-table";
 import {
   DataTable,
+  DataTableFilter,
   type FilterState,
 } from "@/components/utils/DataTable/DataTable";
 import {
@@ -261,10 +262,13 @@ export function StudentsUnlinkedTable({
             pageSize,
           }}
           onPaginationChange={handlePaginationChange}
-          filterableColumns={["nome_completo", "email"]}
-          filter={filter}
-          onFilterChange={handleFilterChange}
-          manualFiltering
+          renderExtra={() => (
+            <DataTableFilter
+              filterableColumns={["nome_completo", "email"]}
+              filter={filter}
+              onFilterChange={handleFilterChange}
+            />
+          )}
         />
       )}
     </>

@@ -1,9 +1,9 @@
+import { ActionsCell } from "@/components/utils/DataTable/ActionsCell";
 import { KNOWLEDGE_AREA_QUERY_KEY } from "@/hooks/KnowledgeArea/useKnowledgeArea";
 import type { KnowledgeArea } from "@/types/knowledgeArea";
 import type { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown } from "lucide-react";
 import { Button } from "../../../../ui/button";
-import DeleteModal from "../../../../utils/DataTable/DeleteModal";
 import { EditKnowledgeAreaModal } from "../edit/KnowledgeAreaEditModal";
 
 function truncateText(text: string, maxLength: number): string {
@@ -80,15 +80,13 @@ export const KnowledgeAreaColumns: ColumnDef<KnowledgeArea>[] = [
     id: "actions",
     header: "Ações",
     cell: ({ row }) => (
-      <div className="flex items-center justify-center gap-2">
-        <EditKnowledgeAreaModal id={row.original.id} />
-        <DeleteModal
-          route="/knowledge-area/remove"
-          id={row.original.id}
-          entity="Área de Conhecimento"
-          queryKey={KNOWLEDGE_AREA_QUERY_KEY}
-        />
-      </div>
+      <ActionsCell<KnowledgeArea>
+        row={row}
+        route="/knowledge-area/remove"
+        entity="Área de conhecimento"
+        queryKey={KNOWLEDGE_AREA_QUERY_KEY}
+        editModal={<EditKnowledgeAreaModal id={row.original.id} />}
+      />
     ),
     enableSorting: false,
   },

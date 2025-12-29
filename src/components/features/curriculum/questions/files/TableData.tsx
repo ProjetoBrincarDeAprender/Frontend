@@ -1,8 +1,8 @@
+import { ActionsCell } from "@/components/utils/DataTable/ActionsCell";
 import { QUESTION_QUERY_KEY } from "@/hooks/Question/useQuestion";
 import type { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown } from "lucide-react";
 import { Button } from "../../../../ui/button";
-import DeleteModal from "../../../../utils/DataTable/DeleteModal";
 import { QuestionViewModal } from "../view/QuestionViewModal";
 
 export type QuestionFormatted = {
@@ -129,15 +129,13 @@ export const QuestionColumns: ColumnDef<QuestionFormatted>[] = [
     id: "actions",
     header: "Ações",
     cell: ({ row }) => (
-      <div className="flex items-center justify-center gap-2">
-        <QuestionViewModal id={row.original.id} />
-        <DeleteModal
-          route="/question/remove"
-          id={row.original.id}
-          entity="Questão"
-          queryKey={QUESTION_QUERY_KEY}
-        />
-      </div>
+      <ActionsCell<QuestionFormatted>
+        row={row}
+        route="/question/remove"
+        entity="Questão"
+        queryKey={QUESTION_QUERY_KEY}
+        editModal={<QuestionViewModal id={row.original.id} />}
+      />
     ),
     enableSorting: false,
   },
