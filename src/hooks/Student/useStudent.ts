@@ -1,4 +1,7 @@
-import type { FilterStudentOption } from "@/types/filter";
+import type {
+  FilterStudentOption,
+  FilterStudentRelationsOption,
+} from "@/types/filter";
 import type { PaginationMeta } from "@/types/pagination";
 import type { Student } from "@/types/student";
 import api from "@/utils/api";
@@ -10,17 +13,21 @@ async function fetchStudentData(
   queryClient: QueryClient,
   studentId: string | number,
 ): Promise<Student> {
-  const studentsResponse = queryClient.getQueryData<{
+  const queriesData = queryClient.getQueriesData<{
     data: Student[];
     meta: PaginationMeta;
-  }>(STUDENTS_QUERY_KEY);
+  }>({
+    queryKey: STUDENTS_QUERY_KEY,
+  });
 
-  if (studentsResponse?.data) {
-    const student = studentsResponse.data.find(
-      (s) => s.codigo_usuario === studentId,
-    );
-    if (student) {
-      return student;
+  for (const [, data] of queriesData) {
+    if (data?.data) {
+      const student = data.data.find(
+        (s) => String(s.codigo_usuario) === String(studentId),
+      );
+      if (student) {
+        return student;
+      }
     }
   }
 
@@ -54,11 +61,11 @@ async function fetchStudentsData(
 
 async function fetchStudentsByRelation(
   type: string,
-  filter?: FilterStudentOption,
+  filters?: FilterStudentRelationsOption,
 ): Promise<{ data: Student[]; meta: PaginationMeta }> {
   try {
     const params = new URLSearchParams(
-      filter as Record<string, string>,
+      filters as Record<string, string>,
     ).toString();
 
     const response = await api.get(`/student/list/relations/${type}?${params}`);
@@ -96,10 +103,13 @@ export function useStudent({
   return { studentQuery, studentsQuery };
 }
 
-export function useStudentsRelations(
-  type: string,
-  filters?: FilterStudentOption,
-) {
+export function useStudentsRelations({
+  type,
+  filters,
+}: {
+  type: string;
+  filters?: FilterStudentRelationsOption;
+}) {
   const studentsByRelationQuery = useQuery<{
     data: Student[];
     meta: PaginationMeta;
@@ -110,4 +120,29 @@ export function useStudentsRelations(
   });
 
   return { studentsByRelationQuery };
+}
+
+export function usePrefetchStudents() {
+  const queryClient = useQueryClient();
+
+  const prefetchStudents = (filters: FilterStudentOption) => {
+    queryClient.prefetchQuery({
+      queryKey: [...STUDENTS_QUERY_KEY, filters],
+      queryFn: () => fetchStudentsData(filters),
+      staleTime: 60 * 1000, // 1 minute
+    });
+  };
+
+  const prefetchStudentsRelations = (
+    type: string,
+    filters: FilterStudentRelationsOption,
+  ) => {
+    queryClient.prefetchQuery({
+      queryKey: [...STUDENTS_QUERY_KEY, "relations", type, filters],
+      queryFn: () => fetchStudentsByRelation(type, filters),
+      staleTime: 60 * 1000,
+    });
+  };
+
+  return { prefetchStudents, prefetchStudentsRelations };
 }

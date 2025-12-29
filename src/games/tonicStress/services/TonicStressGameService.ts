@@ -9,7 +9,7 @@ export interface InteractionData {
 }
 
 export class TonicStressGameService {
-  private static readonly ACTIVITY_ID = 5;
+  private static readonly ACTIVITY_ID = 14;
   private startTime: number = 0;
   private attempts: number = 0;
   private hintsUsed: boolean = false;

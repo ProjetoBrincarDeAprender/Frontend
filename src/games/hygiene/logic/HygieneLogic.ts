@@ -471,7 +471,7 @@ export default class HygieneLogic {
     const apiService = new APIDataService(this.scene);
 
     // Usar índice único baseado em nível e questão
-    const uniqueQuestionIndex = this.getUniqueQuestionIndex();
+    const uniqueQuestionIndex = this.getQuestionId();
 
     apiService.sendGameData(this.activityId || 6, uniqueQuestionIndex, {
       attempts: this.gameStats.getCurrentLevelMisses(),
@@ -529,7 +529,7 @@ export default class HygieneLogic {
     });
   }
 
-  private getUniqueQuestionIndex(): number {
+  private getQuestionId(): number {
     return this.getCurrentQuestion().getQuestionId();
   }
 
@@ -565,7 +565,7 @@ export default class HygieneLogic {
 
     const apiService = new APIDataService(this.scene);
 
-    const uniqueQuestionIndex = this.getUniqueQuestionIndex();
+    const uniqueQuestionIndex = this.getQuestionId();
 
     apiService.sendGameData(this.activityId || 6, uniqueQuestionIndex, {
       attempts: this.gameStats.getCurrentLevelMisses(),

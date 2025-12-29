@@ -89,6 +89,8 @@ export function useDifficultyManager(): UseDifficultyManagerReturn {
   }, []);
 
   const loadExistingQuestions = useCallback((questions: any[]) => {
+    console.log("📚 Carregando questões existentes:", questions.length);
+
     if (!questions || questions.length === 0) {
       setDifficulties([{ difficulty: "Fácil", questions: [] }]);
       return;
@@ -162,6 +164,15 @@ export function useDifficultyManager(): UseDifficultyManagerReturn {
       newDifficulties.push({ difficulty: "Fácil", questions: [] });
     }
 
+    console.log(
+      "✅ Questões carregadas por dificuldade:",
+      newDifficulties.map((d) => ({
+        difficulty: d.difficulty,
+        questionsCount: d.questions.length,
+        existingQuestions: d.questions.filter((q) => q.isExisting).length,
+      })),
+    );
+
     setDifficulties(newDifficulties);
   }, []);
 
@@ -229,7 +240,14 @@ export function useDifficultyManager(): UseDifficultyManagerReturn {
             ? {
                 ...diff,
                 questions: diff.questions.map((q, qIdx) =>
-                  qIdx === questionIndex ? { ...q, [field]: value } : q,
+                  qIdx === questionIndex
+                    ? {
+                        ...q,
+                        [field]: value,
+                        // Se era uma questão existente e está sendo modificada, manter a flag isExisting
+                        // para que seja atualizada e não criada novamente
+                      }
+                    : q,
                 ),
               }
             : diff,
@@ -312,6 +330,7 @@ export function useDifficultyManager(): UseDifficultyManagerReturn {
                             ? { ...opt, [field]: value }
                             : opt,
                         ),
+                        // Manter a flag isExisting para questões modificadas
                       }
                     : q,
                 ),

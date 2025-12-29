@@ -2,20 +2,22 @@ import {
   COMPETENCE_BY_KNOWLEDGE_AREA_QUERY_KEY,
   COMPETENCE_QUERY_KEY,
   useCompetence,
+  usePrefetchCompetences,
 } from "@/hooks/Competence/useCompetence";
 import { useDelete } from "@/hooks/useDelete";
 import type { ColumnDef } from "@tanstack/react-table";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router";
-import { DataTable } from "../../../../utils/DataTable/DataTable";
+import {
+  DataTable,
+  DataTableFilter,
+  type FilterState,
+} from "../../../../utils/DataTable/DataTable";
 import { CompetenceColumns, type CompetenceFormatted } from "./TableData";
 
 import { SkeletonTable } from "@/components/ui/skeleton-table";
-import DeleteModal from "@/components/utils/DataTable/DeleteModal";
 import { useKnowledgeArea } from "@/hooks/KnowledgeArea/useKnowledgeArea";
-import type { Competence } from "@/types/competence";
 import type { FilterCompetenceOption } from "@/types/filter";
-import { EditCompetenceModal } from "../edit/CompetenceEditModal";
 
 interface CellContext {
   row: {
@@ -44,18 +46,57 @@ export default function CompetenceTable() {
 
   const [searchParams, setSearchParams] = useSearchParams();
 
-  // Get pagination params from URL
+  // Get pagination and filter params from URL
   const page = Number(searchParams.get("page")) || 1;
   const pageSize = Number(searchParams.get("pageSize")) || 10;
+  const search = searchParams.get("search") || "";
+  const searchBy = searchParams.get("searchBy") || "";
+
+  // Build filter state from URL params
+  const filter: FilterState | null =
+    search && searchBy ? { column: searchBy, value: search } : null;
 
   const filters: FilterCompetenceOption = {
     page,
     limit: pageSize as 10 | 25 | 50 | 100 | 500,
   };
 
+  // Apply server-side filter from URL params
+  if (filter) {
+    filters.search = filter.value;
+    filters.searchBy = filter.column as FilterCompetenceOption["searchBy"];
+  }
+
+  // Handle filter change - update URL params
+  const handleFilterChange = (newFilter: FilterState | null) => {
+    const newParams = new URLSearchParams(searchParams);
+    if (newFilter) {
+      newParams.set("search", newFilter.value);
+      newParams.set("searchBy", newFilter.column);
+      newParams.set("page", "1"); // Reset to first page on filter
+    } else {
+      newParams.delete("search");
+      newParams.delete("searchBy");
+    }
+    setSearchParams(newParams);
+  };
+
   const { competencesQuery } = useCompetence({ filters });
   const { data: competencesReturn, isLoading: loading } = competencesQuery;
   const competencesData = competencesReturn?.data;
+
+  // Prefetch next page
+  const { prefetchCompetences } = usePrefetchCompetences();
+  useEffect(() => {
+    const totalPages = competencesReturn?.meta?.totalPages ?? 0;
+    if (page < totalPages) {
+      const nextPageFilters: FilterCompetenceOption = {
+        ...filters,
+        page: page + 1,
+      };
+      prefetchCompetences(nextPageFilters);
+    }
+  }, [page, competencesReturn?.meta?.totalPages, filters, prefetchCompetences]);
 
   const { knowledgeAreasQuery } = useKnowledgeArea();
   const { data: knowledgeAreasReturn, isLoading: isKnowledgeAreasLoading } =
@@ -67,10 +108,10 @@ export default function CompetenceTable() {
     pageIndex: number;
     pageSize: number;
   }) => {
-    setSearchParams({
-      page: String(pagination.pageIndex + 1),
-      pageSize: String(pagination.pageSize),
-    });
+    const newParams = new URLSearchParams(searchParams);
+    newParams.set("page", String(pagination.pageIndex + 1));
+    newParams.set("pageSize", String(pagination.pageSize));
+    setSearchParams(newParams);
     setSelectedIds([]);
   };
 
@@ -168,39 +209,7 @@ export default function CompetenceTable() {
       },
       enableSorting: false,
     },
-    ...CompetenceColumns.map((col) => {
-      if ((col as ColumnDef<Competence>).id === "actions") {
-        return {
-          ...col,
-          cell: ({ row }: CellContext) => (
-            <div className="flex items-center justify-center gap-2">
-              <button
-                disabled={selectedIds.length > 0}
-                className={
-                  selectedIds.length > 0 ? "cursor-not-allowed opacity-50" : ""
-                }
-              >
-                <EditCompetenceModal id={row.original.id} />
-              </button>
-              <button
-                disabled={selectedIds.length > 0}
-                className={
-                  selectedIds.length > 0 ? "cursor-not-allowed opacity-50" : ""
-                }
-              >
-                <DeleteModal
-                  route="/competence/remove"
-                  id={row.original.id}
-                  entity="Competência"
-                  queryKey={COMPETENCE_QUERY_KEY}
-                />
-              </button>
-            </div>
-          ),
-        };
-      }
-      return col;
-    }),
+    ...CompetenceColumns,
   ];
 
   return (
@@ -218,31 +227,38 @@ export default function CompetenceTable() {
             pageSize,
           }}
           onPaginationChange={handlePaginationChange}
-          renderExtra={() =>
-            selectedIds.length > 0 && !loading ? (
-              <button
-                onClick={handleDeleteSelected}
-                className="ml-2 flex items-center gap-2 rounded bg-red-500 px-4 py-2 font-bold text-white transition-all hover:bg-red-700"
-                title="Excluir competências selecionadas"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
+          renderExtra={() => (
+            <>
+              <DataTableFilter
+                filterableColumns={["nome", "descricao"]}
+                filter={filter}
+                onFilterChange={handleFilterChange}
+              />
+              {selectedIds.length > 0 && !loading && (
+                <button
+                  onClick={handleDeleteSelected}
+                  className="ml-2 flex items-center gap-2 rounded bg-red-500 px-4 py-2 font-bold text-white transition-all hover:bg-red-700"
+                  title="Excluir competências selecionadas"
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
-                Excluir Selecionadas ({selectedIds.length})
-              </button>
-            ) : null
-          }
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
+                  Excluir Selecionadas ({selectedIds.length})
+                </button>
+              )}
+            </>
+          )}
         />
       )}
     </>

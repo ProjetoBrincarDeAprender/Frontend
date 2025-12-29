@@ -330,10 +330,7 @@ export default class PlantsLogic {
 
     const apiService = new APIDataService(this.scene);
 
-    // Usar índice único baseado em nível e questão
-    const uniqueQuestionIndex = this.getUniqueQuestionIndex();
-
-    apiService.sendGameData(this.activityId || 5, uniqueQuestionIndex, {
+    apiService.sendGameData(this.activityId || 5, this.getQuestionId(), {
       attempts: this.gameStats.getCurrentLevelMisses(),
       timeSpent: this.gameStats.getCurrentLevelTimeSpent(this.scene.time.now),
       isCorrect: true,
@@ -389,12 +386,8 @@ export default class PlantsLogic {
     });
   }
 
-  private getUniqueQuestionIndex(): number {
-    let index = 1;
-    for (let i = 0; i < this.currentLevelIndex; i++) {
-      index += this.gameLevels[i].questions.length;
-    }
-    return index + this.currentQuestionIndex;
+  private getQuestionId(): number {
+    return this.getCurrentQuestion().getQuestionId();
   }
 
   goToNextLevel(): void {
@@ -429,9 +422,7 @@ export default class PlantsLogic {
 
     const apiService = new APIDataService(this.scene);
 
-    const uniqueQuestionIndex = this.getUniqueQuestionIndex();
-
-    apiService.sendGameData(this.activityId || 5, uniqueQuestionIndex, {
+    apiService.sendGameData(this.activityId || 5, this.getQuestionId(), {
       attempts: this.gameStats.getCurrentLevelMisses(),
       timeSpent: this.gameStats.getCurrentLevelTimeSpent(this.scene.time.now),
       isCorrect: false,

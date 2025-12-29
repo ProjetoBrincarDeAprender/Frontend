@@ -95,3 +95,17 @@ export function useSchool({
 
   return { schoolQuery, schoolsQuery, schoolUsersQuery };
 }
+
+export function usePrefetchSchools() {
+  const queryClient = useQueryClient();
+
+  const prefetchSchools = (filters: FilterSchoolOption) => {
+    queryClient.prefetchQuery({
+      queryKey: [...SCHOOL_QUERY_KEY, filters],
+      queryFn: () => fetchAllSchools(filters),
+      staleTime: 60 * 1000,
+    });
+  };
+
+  return { prefetchSchools };
+}

@@ -15,7 +15,7 @@ export interface InteractionData {
 
 export class ProfessionsGameService {
   private apiService: APIDataService;
-  private static readonly ACTIVITY_ID = 3; // ID específico para o jogo de profissões
+  private static readonly ACTIVITY_ID = 16; // ID específico para o jogo de profissões
   private static readonly DEFAULT_STUDENT_ID = 10130001; // ID padrão quando não há aluno logado
   private startTime: number = 0;
   private attempts: number = 0;

@@ -1,15 +1,23 @@
 import { useTable } from "@/hooks/Table/useTable";
 import { useUser } from "@/hooks/User/useUser";
 //import { Loader2 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router";
-import { DataTable } from "../../../../utils/DataTable/DataTable";
+import {
+  DataTable,
+  DataTableFilter,
+  type FilterState,
+} from "../../../../utils/DataTable/DataTable";
 import DeleteModal from "../../../../utils/DataTable/DeleteModal";
 import { EditStudentModal } from "../edit/StudentEditModal";
 import { StudentColumns } from "./TableData";
 
 import { SkeletonTable } from "@/components/ui/skeleton-table";
-import { STUDENTS_QUERY_KEY, useStudent } from "@/hooks/Student/useStudent";
+import {
+  STUDENTS_QUERY_KEY,
+  usePrefetchStudents,
+  useStudent,
+} from "@/hooks/Student/useStudent";
 import { useDelete } from "@/hooks/useDelete";
 import type { FilterStudentOption } from "@/types/filter";
 
@@ -26,9 +34,15 @@ export default function StudentTable() {
   const { setUpdating } = useTable();
   const { user } = useUser();
 
-  // Get pagination params from URL
+  // Get pagination and filter params from URL
   const page = Number(searchParams.get("page")) || 1;
   const pageSize = Number(searchParams.get("pageSize")) || 10;
+  const search = searchParams.get("search") || "";
+  const searchBy = searchParams.get("searchBy") || "";
+
+  // Build filter state from URL params
+  const filter: FilterState | null =
+    search && searchBy ? { column: searchBy, value: search } : null;
 
   const filters: FilterStudentOption = {
     page,
@@ -39,9 +53,42 @@ export default function StudentTable() {
     filters.escolaId = Number(user?.escolaId);
   }
 
+  // Apply server-side filter from URL params
+  if (filter) {
+    filters.search = filter.value;
+    filters.searchBy = filter.column as FilterStudentOption["searchBy"];
+  }
+
+  // Handle filter change - update URL params
+  const handleFilterChange = (newFilter: FilterState | null) => {
+    const newParams = new URLSearchParams(searchParams);
+    if (newFilter) {
+      newParams.set("search", newFilter.value);
+      newParams.set("searchBy", newFilter.column);
+      newParams.set("page", "1"); // Reset to first page on filter
+    } else {
+      newParams.delete("search");
+      newParams.delete("searchBy");
+    }
+    setSearchParams(newParams);
+  };
+
   const { studentsQuery } = useStudent({ filters });
   const { data: studentsReturn, isLoading } = studentsQuery;
   const studentsData = studentsReturn?.data;
+
+  // Prefetch next page
+  const { prefetchStudents } = usePrefetchStudents();
+  useEffect(() => {
+    const totalPages = studentsReturn?.meta?.totalPages ?? 0;
+    if (page < totalPages) {
+      const nextPageFilters: FilterStudentOption = {
+        ...filters,
+        page: page + 1,
+      };
+      prefetchStudents(nextPageFilters);
+    }
+  }, [page, studentsReturn?.meta?.totalPages, filters, prefetchStudents]);
 
   // Função para deletar múltiplos alunos
   const handleDeleteSelected = async () => {
@@ -58,10 +105,10 @@ export default function StudentTable() {
     pageIndex: number;
     pageSize: number;
   }) => {
-    setSearchParams({
-      page: String(pagination.pageIndex + 1), // Convert from 0-based to 1-based
-      pageSize: String(pagination.pageSize),
-    });
+    const newParams = new URLSearchParams(searchParams);
+    newParams.set("page", String(pagination.pageIndex + 1)); // Convert from 0-based to 1-based
+    newParams.set("pageSize", String(pagination.pageSize));
+    setSearchParams(newParams);
     setSelectedIds([]); // Clear selections on page change
   };
 
@@ -139,31 +186,38 @@ export default function StudentTable() {
             pageSize,
           }}
           onPaginationChange={handlePaginationChange}
-          renderExtra={() =>
-            selectedIds.length > 0 && !isLoading ? (
-              <button
-                onClick={handleDeleteSelected}
-                className="ml-2 flex items-center gap-2 rounded bg-red-500 px-4 py-2 font-bold text-white transition-all hover:bg-red-700"
-                title="Excluir alunos selecionados"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
+          renderExtra={() => (
+            <>
+              <DataTableFilter
+                filterableColumns={["nome_completo", "email"]}
+                filter={filter}
+                onFilterChange={handleFilterChange}
+              />
+              {selectedIds.length > 0 && !isLoading && (
+                <button
+                  onClick={handleDeleteSelected}
+                  className="ml-2 flex items-center gap-2 rounded bg-red-500 px-4 py-2 font-bold text-white transition-all hover:bg-red-700"
+                  title="Excluir alunos selecionados"
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
-                Excluir Selecionados ({selectedIds.length})
-              </button>
-            ) : null
-          }
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
+                  Excluir Selecionados ({selectedIds.length})
+                </button>
+              )}
+            </>
+          )}
         />
       )}
     </>

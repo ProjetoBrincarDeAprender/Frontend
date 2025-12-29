@@ -87,7 +87,7 @@ export class MemoryGameScene extends PreloadScene {
 
     apiService.sendGameData(
       this.activityId || 4,
-      this.logic.getAbsoluteQuestionIndex(),
+      this.logic.getQuestionId(),
       gameData,
     );
   }
