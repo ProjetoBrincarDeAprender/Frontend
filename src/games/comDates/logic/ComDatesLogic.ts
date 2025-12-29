@@ -328,10 +328,6 @@ export default class ComDatesLogic {
     });
   }
 
-  private getUniqueQuestionIndex(): number {
-    return this.getCurrentQuestion().getQuestionId();
-  }
-
   private getQuestionId(): number {
     return this.getCurrentQuestion().getQuestionId();
   }

@@ -386,14 +386,6 @@ export default class PlantsLogic {
     });
   }
 
-  private getUniqueQuestionIndex(): number {
-    let index = 1;
-    for (let i = 0; i < this.currentLevelIndex; i++) {
-      index += this.gameLevels[i].questions.length;
-    }
-    return index + this.currentQuestionIndex;
-  }
-
   private getQuestionId(): number {
     return this.getCurrentQuestion().getQuestionId();
   }
