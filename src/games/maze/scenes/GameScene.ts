@@ -22,7 +22,9 @@ export default class MazeGameScene extends Phaser.Scene {
   private apiService!: MazeApiService;
   private levelStartTime: number = 0;
   private currentAttempts: number = 0;
-  private activityId: number = 2; // ID da atividade do jogo do labirinto
+  private activityId: number = 12; // ID da atividade do jogo labirinto das formas
+  // Mapeamento de questionIds por fase (índice 0 = questão 1, índice 1 = questão 2, índice 2 = questão 3)
+  private readonly levelQuestionIds = [213, 214, 215];
 
   constructor() {
     super({ key: "MazeGameScene" });
@@ -634,7 +636,7 @@ export default class MazeGameScene extends Phaser.Scene {
     const timeSpent = Math.floor((currentTime - this.levelStartTime) / 1000); // em segundos
 
     const gameData = {
-      questionId: this.currentLevelIndex + 1, // Níveis começam em 1
+      questionId: this.levelQuestionIds[this.currentLevelIndex], // IDs: 213, 214, 215
       attempts: this.currentAttempts,
       timeSpent: timeSpent,
       isCorrect: false, // Erro ao colidir com parede
@@ -649,7 +651,7 @@ export default class MazeGameScene extends Phaser.Scene {
     const timeSpent = Math.floor((currentTime - this.levelStartTime) / 1000);
 
     const gameData = {
-      questionId: this.currentLevelIndex + 1,
+      questionId: this.levelQuestionIds[this.currentLevelIndex], // IDs: 213, 214, 215
       attempts: this.currentAttempts,
       timeSpent: timeSpent,
       isCorrect: true, // Sucesso ao chegar no alvo!
