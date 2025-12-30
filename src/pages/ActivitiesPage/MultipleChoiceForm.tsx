@@ -1,26 +1,26 @@
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Plus, Trash2 } from "lucide-react";
-import { useState, useEffect } from "react";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
+import handleAxiosError from "@/components/features/curriculum/activities/files/HandleAxiosError";
 import { Form } from "@/components/forms/Root";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { cn } from "@/lib/utils";
+import useActivity from "@/hooks/Activity/useActivity";
+import {
+  ACTIVITY_QUESTIONS_QUERY_KEY,
+  useActivityQuestions,
+} from "@/hooks/Activity/useActivityQuestions";
+import { useUpdateActivity } from "@/hooks/Activity/useUpdateActivity";
 import { useCreateQuestion } from "@/hooks/Question/useCreateQuestion";
 import { useUpdateQuestion } from "@/hooks/Question/useUpdateQuestion";
-import { AxiosError } from "axios";
-import { useUpdateActivity } from "@/hooks/Activity/useUpdateActivity";
-import { useDifficultyManager } from "./MultipleChoiceForm/UseDifficultyManager";
-import {
-  useActivityQuestions,
-  ACTIVITY_QUESTIONS_QUERY_KEY,
-} from "@/hooks/Activity/useActivityQuestions";
 import { useUser } from "@/hooks/User/useUser";
-import useActivity from "@/hooks/Activity/useActivity";
-import handleAxiosError from "@/components/features/curriculum/activities/files/HandleAxiosError";
+import { cn } from "@/lib/utils";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useQueryClient } from "@tanstack/react-query";
+import { AxiosError } from "axios";
+import { Plus, Trash2 } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
 import { toast } from "sonner";
+import { z } from "zod";
+import { useDifficultyManager } from "./MultipleChoiceForm/UseDifficultyManager";
 
 const formSchema = z.object({
   activityId: z.string().min(1, { message: "Selecione uma atividade" }),
@@ -227,7 +227,11 @@ export function MultipleChoiceForm({ className = "" }: { className?: string }) {
             // Criar nova questão
             const createPayload = {
               activityId: Number(data.activityId),
-              data: questionData,
+              data: {
+                ...questionData,
+                creatorId: Number(user?.codigo_usuario),
+                escolaId: Number(user?.escolaId),
+              },
             };
             console.log("➕ Criando nova questão");
             allPayload.push(createPayload);
