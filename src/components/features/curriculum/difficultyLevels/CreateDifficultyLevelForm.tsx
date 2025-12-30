@@ -1,5 +1,6 @@
 import { Form } from "@/components/forms/Root";
 import { useCreateDifficultyLevel } from "@/hooks/DificultyLevel/useCreateDifficultyLevel";
+import { useUser } from "@/hooks/User/useUser";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AxiosError } from "axios";
 import { Loader2 } from "lucide-react";
@@ -24,6 +25,8 @@ interface CreateDifficultyLevelFormProps {
 export function CreateDifficultyLevelForm({
   onSuccess,
 }: CreateDifficultyLevelFormProps) {
+  const { user } = useUser();
+
   const { create } = useCreateDifficultyLevel();
   const {
     mutateAsync: createDifficultyLevel,
@@ -47,6 +50,8 @@ export function CreateDifficultyLevelForm({
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     const payload = {
       name: data.name.trim(),
+      creatorId: Number(user!.codigo_usuario),
+      escolaId: Number(user!.escolaId),
     };
 
     try {

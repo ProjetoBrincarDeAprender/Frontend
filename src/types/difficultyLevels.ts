@@ -6,4 +6,6 @@ export type DifficultyLevel = {
 
 export type DifficultyLevelFormData = {
   name: string;
+  escolaId?: number | null;
+  creatorId: number;
 };

@@ -1,5 +1,6 @@
 import { Form } from "@/components/forms/Root";
 import { useCreateKnowledgeArea } from "@/hooks/KnowledgeArea/useCreateKnowledgeArea";
+import { useUser } from "@/hooks/User/useUser";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AxiosError } from "axios";
 import { Loader2 } from "lucide-react";
@@ -34,6 +35,8 @@ export function CreateKnowledgeAreaForm({
     },
   });
 
+  const { user } = useUser();
+
   const { create: createKnowledgeAreaMutation } = useCreateKnowledgeArea();
   const {
     mutateAsync: createKnowledgeArea,
@@ -52,6 +55,8 @@ export function CreateKnowledgeAreaForm({
     const payload = {
       nome: data.name,
       description: data.description || "",
+      creatorId: Number(user!.codigo_usuario),
+      escolaId: Number(user!.escolaId),
     };
 
     try {
