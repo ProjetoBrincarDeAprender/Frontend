@@ -70,7 +70,12 @@ export function useUpdateCompetence() {
 
       return { previousQueries, previousKAQueries };
     },
-    onSuccess: () => {
+    onSuccess: (_data, variables) => {
+      queryClient.removeQueries({ 
+        queryKey: [...COMPETENCE_QUERY_KEY, variables.competenceId] 
+      });
+      queryClient.invalidateQueries({ queryKey: COMPETENCE_QUERY_KEY });
+      queryClient.invalidateQueries({ queryKey: COMPETENCE_BY_KNOWLEDGE_AREA_QUERY_KEY });
       toast.success("Competência atualizada com sucesso!");
     },
     onError: (_err, _updatedCompetence, context) => {
@@ -86,8 +91,14 @@ export function useUpdateCompetence() {
       }
       toast.error("Erro ao atualizar competência!");
     },
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: COMPETENCE_QUERY_KEY });
+    onSettled: (_data, _error, variables) => {
+      // Invalidate only specific queries to avoid unnecessary refetches
+      queryClient.invalidateQueries({
+        queryKey: [...COMPETENCE_QUERY_KEY, variables.competenceId],
+      });
+      queryClient.invalidateQueries({
+        queryKey: [...COMPETENCE_QUERY_KEY, undefined],
+      });
       queryClient.invalidateQueries({
         queryKey: COMPETENCE_BY_KNOWLEDGE_AREA_QUERY_KEY,
       });

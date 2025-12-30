@@ -40,8 +40,9 @@ export function CreateCompetenceForm({ onSuccess }: CreateCompetenceFormProps) {
     isPending: isCompetencePending,
   } = create;
   const { knowledgeAreasQuery } = useKnowledgeArea();
-  const { data: knowledgeAreasData, isLoading: isKnowledgeAreasLoading } =
+  const { data: knowledgeAreasReturn, isLoading: isKnowledgeAreasLoading } =
     knowledgeAreasQuery;
+  const knowledgeAreasData = knowledgeAreasReturn?.data;
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -58,8 +59,9 @@ export function CreateCompetenceForm({ onSuccess }: CreateCompetenceFormProps) {
   const { competencesByKnowledgeAreaQuery } = useCompetence({
     knowledgeAreaId: selectedAreaId ? Number(selectedAreaId) : undefined,
   });
-  const { data: competencesData, isLoading: isCompetencesLoading } =
+  const { data: competencesReturn, isLoading: isCompetencesLoading } =
     competencesByKnowledgeAreaQuery;
+  const competencesData = competencesReturn?.data;
 
   useEffect(() => {
     if (isCompetenceSuccess) {

@@ -1,17 +1,24 @@
-import { QUESTION_QUERY_KEY, useQuestion } from "@/hooks/Question/useQuestion";
+import {
+  QUESTION_QUERY_KEY,
+  usePrefetchQuestions,
+  useQuestion,
+} from "@/hooks/Question/useQuestion";
 import { useUser } from "@/hooks/User/useUser";
 import { useDelete } from "@/hooks/useDelete";
 import type { ColumnDef } from "@tanstack/react-table";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router";
-import { DataTable } from "../../../../utils/DataTable/DataTable";
+import {
+  DataTable,
+  type FilterState,
+} from "../../../../utils/DataTable/DataTable";
 import { QuestionColumns, type QuestionFormatted } from "./TableData";
 
 import { SkeletonTable } from "@/components/ui/skeleton-table";
-import DeleteModal from "@/components/utils/DataTable/DeleteModal";
 import useActivity from "@/hooks/Activity/useActivity";
 import type { Activity } from "@/types/activity";
-import type { Question } from "@/types/question";
+import type { FilterQuestionOption } from "@/types/filter";
+import { QuestionFilters } from "./QuestionFilters";
 
 interface CellContext {
   row: {
@@ -43,52 +50,127 @@ export default function QuestionTable() {
     }
   }, [isQuestionError]);
 
-  const [searchParams, _] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [filteredActivities, setFilteredActivities] = useState<number[]>([]);
 
-  const { questionsQuery } = useQuestion({});
+  // Get pagination and filter params from URL
+  const page = Number(searchParams.get("page")) || 1;
+  const pageSize = Number(searchParams.get("pageSize")) || 10;
+  const search = searchParams.get("search") || "";
+  const searchBy = searchParams.get("searchBy") || "";
+
+  // Build filter state from URL params
+  const filter: FilterState | null = useMemo(
+    () => (search && searchBy ? { column: searchBy, value: search } : null),
+    [search, searchBy],
+  );
+
+  const filters: FilterQuestionOption = useMemo(() => {
+    const baseFilters: FilterQuestionOption = {
+      page,
+      limit: pageSize as 10 | 25 | 50 | 100 | 500,
+    };
+
+    if (user?.perfil === "Professor") {
+      baseFilters.activitiesIds = filteredActivities;
+    }
+
+    // Apply server-side filter from URL params
+    if (filter) {
+      baseFilters.search = filter.value;
+      baseFilters.searchBy = filter.column as FilterQuestionOption["searchBy"];
+    }
+
+    return baseFilters;
+  }, [page, pageSize, user?.perfil, filteredActivities, filter]);
+
+  // Handle filter change - update URL params
+  const handleFilterChange = (newFilter: FilterState | null) => {
+    const newParams = new URLSearchParams(searchParams);
+    if (newFilter) {
+      newParams.set("search", newFilter.value);
+      newParams.set("searchBy", newFilter.column);
+      newParams.set("page", "1"); // Reset to first page on filter
+    } else {
+      newParams.delete("search");
+      newParams.delete("searchBy");
+    }
+    setSearchParams(newParams);
+  };
+
+  const { questionsQuery } = useQuestion({ filters });
   const { data: questionsData, isLoading: loading } = questionsQuery;
+
+  // Prefetch next page
+  const { prefetchQuestions } = usePrefetchQuestions();
+  useEffect(() => {
+    const totalPages = questionsData?.meta?.totalPages ?? 0;
+    if (page < totalPages) {
+      const nextPageFilters: FilterQuestionOption = {
+        ...filters,
+        page: page + 1,
+      };
+      prefetchQuestions(nextPageFilters);
+    }
+  }, [page, questionsData?.meta?.totalPages, filters, prefetchQuestions]);
 
   const { activitiesQuery } = useActivity();
   const { data: activitiesData, isLoading: activitiesLoading } =
     activitiesQuery;
+
+  // Handle pagination change
+  const handlePaginationChange = (pagination: {
+    pageIndex: number;
+    pageSize: number;
+  }) => {
+    const newParams = new URLSearchParams(searchParams);
+    newParams.set("page", String(pagination.pageIndex + 1));
+    newParams.set("pageSize", String(pagination.pageSize));
+    setSearchParams(newParams);
+    setSelectedIds([]);
+  };
 
   const [formattedQuestions, setFormattedQuestions] = useState<
     QuestionFormatted[]
   >([]);
 
   useEffect(() => {
-    if (questionsData && activitiesData) {
-      let filteredActivities = activitiesData;
+    if (questionsData?.data && activitiesData?.data) {
+      let filteredActivities = activitiesData.data;
 
       if (user?.perfil === "Professor") {
         const userEscolaId = user?.escolaId;
         const userCodigo = user?.codigo_usuario;
 
-        filteredActivities = activitiesData.filter((activity: Activity) => {
-          if (!activity.usuarioCriadorId) {
+        filteredActivities = activitiesData.data.filter(
+          (activity: Activity) => {
+            if (!activity.usuarioCriadorId) {
+              return false;
+            }
+
+            const criadorId = String(activity.usuarioCriadorId);
+
+            if (userCodigo && criadorId === userCodigo) {
+              return true;
+            }
+
+            if (userEscolaId && activity.escolaId === userEscolaId) {
+              return true;
+            }
+
             return false;
-          }
-
-          const criadorId = String(activity.usuarioCriadorId);
-
-          if (userCodigo && criadorId === userCodigo) {
-            return true;
-          }
-
-          if (userEscolaId && activity.escolaId === userEscolaId) {
-            return true;
-          }
-
-          return false;
-        });
+          },
+        );
       }
+
+      setFilteredActivities(filteredActivities.map((activity) => activity.id));
 
       const activitiesMap = new Map<number, Activity>();
       filteredActivities.forEach((activity: Activity) => {
         activitiesMap.set(activity.id, activity);
       });
 
-      const enrichedQuestions: QuestionFormatted[] = questionsData
+      const enrichedQuestions: QuestionFormatted[] = questionsData.data
         .filter((question) => activitiesMap.has(question.atividade_id))
         .map((question) => {
           let content = "";
@@ -126,12 +208,17 @@ export default function QuestionTable() {
               : undefined,
             createdAt: question.created_At || "",
           };
-        },
-      );
+        });
 
       setFormattedQuestions(enrichedQuestions);
     }
-  }, [questionsData, activitiesData, user?.perfil, user?.codigo_usuario, user?.escolaId]);
+  }, [
+    questionsData,
+    activitiesData,
+    user?.perfil,
+    user?.codigo_usuario,
+    user?.escolaId,
+  ]);
 
   const columnsWithCheckbox: ColumnDef<QuestionFormatted>[] = [
     {
@@ -156,56 +243,7 @@ export default function QuestionTable() {
       },
       enableSorting: false,
     },
-    ...QuestionColumns.map((col) => {
-      if ((col as ColumnDef<Question>).id === "actions") {
-        return {
-          ...col,
-          cell: ({ row }: CellContext) => {
-            const isOwner =
-              user?.perfil === "Admin" ||
-              String(row.original.usuarioCriadorId) === user?.codigo_usuario;
-            const isDisabled = selectedIds.length > 0 || !isOwner;
-
-            return (
-              <div className="flex items-center justify-center gap-2">
-                <button
-                  disabled={isDisabled}
-                  className={
-                    isDisabled ? "cursor-not-allowed opacity-50" : ""
-                  }
-                  title={
-                    !isOwner
-                      ? "Você não pode editar questões de outros usuários"
-                      : ""
-                  }
-                >
-                  {/* <EditQuestionModal id={row.original.id} /> */}
-                </button>
-                <button
-                  disabled={isDisabled}
-                  className={
-                    isDisabled ? "cursor-not-allowed opacity-50" : ""
-                  }
-                  title={
-                    !isOwner
-                      ? "Você não pode excluir questões de outros usuários"
-                      : ""
-                  }
-                >
-                  <DeleteModal
-                    route="/question/remove"
-                    id={row.original.id}
-                    entity="Questão"
-                    queryKey={QUESTION_QUERY_KEY}
-                  />
-                </button>
-              </div>
-            );
-          },
-        };
-      }
-      return col;
-    }),
+    ...QuestionColumns.map((col) => col),
   ];
 
   return (
@@ -216,34 +254,45 @@ export default function QuestionTable() {
         <DataTable
           columns={columnsWithCheckbox}
           data={formattedQuestions ?? []}
-          page={
-            searchParams.get("page") ? parseInt(searchParams.get("page")!) : 0
-          }
-          renderExtra={() =>
-            selectedIds.length > 0 && !loading ? (
-              <button
-                onClick={handleDeleteSelected}
-                className="ml-2 flex items-center gap-2 rounded bg-red-500 px-4 py-2 font-bold text-white transition-all hover:bg-red-700"
-                title="Excluir questões selecionadas"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
+          manualPagination
+          pageCount={questionsData?.meta.totalPages}
+          pagination={{
+            pageIndex: page - 1,
+            pageSize,
+          }}
+          onPaginationChange={handlePaginationChange}
+          renderExtra={() => (
+            <>
+              <QuestionFilters
+                filter={filter}
+                onFilterChange={handleFilterChange}
+                className="mr-2"
+              />
+              {selectedIds.length > 0 && !loading && (
+                <button
+                  onClick={handleDeleteSelected}
+                  className="ml-2 flex items-center gap-2 rounded bg-red-500 px-4 py-2 font-bold text-white transition-all hover:bg-red-700"
+                  title="Excluir questões selecionadas"
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
-                Excluir Selecionadas ({selectedIds.length})
-              </button>
-            ) : null
-          }
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
+                  Excluir Selecionadas ({selectedIds.length})
+                </button>
+              )}
+            </>
+          )}
         />
       )}
     </>

@@ -1,12 +1,12 @@
 import { Footer } from "@/components/Footer/Footer";
 import { Header } from "@/components/Header/Header";
+import { Button } from "@/components/ui/button";
 import { useUser } from "@/hooks/User/useUser";
 import StudentCard from "@/pages/Dashboard/Responsible/ResponsibleDashboard/components/studentCard/StudentCard";
 import api from "@/utils/api";
+import { Activity, BookOpen, HelpCircle, Target } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
-import { BookOpen, Target, Activity, HelpCircle } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import saturn from "../../../../assets/saturn.svg";
 import { LateralMenu } from "../../../../components/sideBar/sideBar";
 
@@ -24,7 +24,7 @@ export function TeacherDashboard() {
         const students = await api.get(
           `/teacher/list/${user?.codigo_usuario}/students`,
         );
-        setResponse(students.data);
+        setResponse(students.data.data);
       } catch (error) {
         console.error("Erro ao buscar alunos do professor:", error);
       }
@@ -37,56 +37,69 @@ export function TeacherDashboard() {
     <div className="flex min-h-screen flex-col bg-neutral-200 pt-28 text-gray-800">
       <Header />
       <LateralMenu username={username} />
-      
-      
+
       {/* Seção de Boas-vindas */}
-      <div className="w-full px-4 sm:px-6 lg:px-78 pt-8 mb-6">
+      <div className="mb-6 w-full px-4 pt-8 sm:px-6 lg:px-78">
         <div className="flex items-center gap-4">
           <img className="max-w-16 sm:max-w-24" src={saturn} alt="Saturn" />
           <div className="flex flex-col gap-2">
-            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold">Bem vindo, {username}</h1>
+            <h1 className="text-2xl font-bold sm:text-3xl lg:text-4xl">
+              Bem vindo, {username}
+            </h1>
           </div>
         </div>
       </div>
 
       {/* Seção de Ações do Professor */}
-      <div className="w-full px-4 sm:px-6 lg:px-72 mb-8">
+      <div className="mb-8 w-full px-4 sm:px-6 lg:px-72">
         <div className="p-4 sm:p-6">
-          <h2 className="text-xl sm:text-2xl font-semibold text-gray-800 mb-4 sm:mb-6">Ações do Professor</h2>
-          
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+          <h2 className="mb-4 text-xl font-semibold text-gray-800 sm:mb-6 sm:text-2xl">
+            Ações do Professor
+          </h2>
+
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-4">
             <Button
-              onClick={() => navigate("/dashboard/teacher/curriculum/knowledge-areas")}
-              className="bg-blue-600 hover:bg-blue-700 cursor-pointer text-white h-auto py-3 sm:py-4 flex flex-col items-center gap-2 text-sm sm:text-base"
+              onClick={() =>
+                navigate("/dashboard/teacher/curriculum/knowledge-areas")
+              }
+              className="flex h-auto cursor-pointer flex-col items-center gap-2 bg-blue-600 py-3 text-sm text-white hover:bg-blue-700 sm:py-4 sm:text-base"
             >
               <BookOpen className="h-5 w-5 sm:h-6 sm:w-6" />
-              <span className="font-medium text-center">Áreas de Conhecimento</span>
+              <span className="text-center font-medium">
+                Áreas de Conhecimento
+              </span>
             </Button>
-            
+
             <Button
-              onClick={() => navigate("/dashboard/teacher/curriculum/competences")}
-              className="bg-green-600 hover:bg-green-700 cursor-pointer text-white h-auto py-3 sm:py-4 flex flex-col items-center gap-2 text-sm sm:text-base"
+              onClick={() =>
+                navigate("/dashboard/teacher/curriculum/competences")
+              }
+              className="flex h-auto cursor-pointer flex-col items-center gap-2 bg-green-600 py-3 text-sm text-white hover:bg-green-700 sm:py-4 sm:text-base"
             >
               <Target className="h-5 w-5 sm:h-6 sm:w-6" />
-              <span className="font-medium text-center">Competências</span>
+              <span className="text-center font-medium">Competências</span>
             </Button>
 
             <Button
-              onClick={() => navigate("/dashboard/teacher/curriculum/activities")}
-              className="bg-purple-600 hover:bg-purple-700 cursor-pointer text-white h-auto py-3 sm:py-4 flex flex-col items-center gap-2 text-sm sm:text-base"
+              onClick={() =>
+                navigate("/dashboard/teacher/curriculum/activities")
+              }
+              className="flex h-auto cursor-pointer flex-col items-center gap-2 bg-purple-600 py-3 text-sm text-white hover:bg-purple-700 sm:py-4 sm:text-base"
             >
               <Activity className="h-5 w-5 sm:h-6 sm:w-6" />
-              <span className="font-medium text-center">Atividades</span>
+              <span className="text-center font-medium">Atividades</span>
             </Button>
 
             <Button
-              onClick={() => navigate("/dashboard/teacher/curriculum/questions")}
-              className="bg-orange-600 hover:bg-orange-700 cursor-pointer text-white h-auto py-3 sm:py-4 flex flex-col items-center gap-2 text-sm sm:text-base"
+              onClick={() =>
+                navigate("/dashboard/teacher/curriculum/questions")
+              }
+              className="flex h-auto cursor-pointer flex-col items-center gap-2 bg-orange-600 py-3 text-sm text-white hover:bg-orange-700 sm:py-4 sm:text-base"
             >
               <HelpCircle className="h-5 w-5 sm:h-6 sm:w-6" />
-              <span className="font-medium text-center">Questões</span>
+              <span className="text-center font-medium">Questões</span>
             </Button>
-            
+
             {/* <Button
               onClick={() => navigate("/dashboard/teacher/curriculum/difficulty-levels/create")}
               className="bg-orange-600 hover:bg-orange-700 text-white h-auto py-3 sm:py-4 flex flex-col items-center gap-2 text-sm sm:text-base"
@@ -100,7 +113,9 @@ export function TeacherDashboard() {
 
       {/* Alunos */}
       <main className="min-h-96 flex-1 px-78">
-        <h2 className="text-xl sm:text-2xl font-semibold text-gray-800 mb-4 sm:mb-6">Aluno(s)</h2>
+        <h2 className="mb-4 text-xl font-semibold text-gray-800 sm:mb-6 sm:text-2xl">
+          Aluno(s)
+        </h2>
 
         {response.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 text-center">
@@ -129,7 +144,7 @@ export function TeacherDashboard() {
           )
         )}
       </main>
-      
+
       <Footer />
     </div>
   );

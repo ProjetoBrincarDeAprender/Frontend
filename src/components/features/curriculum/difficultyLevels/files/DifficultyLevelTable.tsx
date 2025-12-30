@@ -1,18 +1,22 @@
 import type { ColumnDef } from "@tanstack/react-table";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router";
-import { DataTable } from "../../../../utils/DataTable/DataTable";
+import {
+  DataTable,
+  DataTableFilter,
+  type FilterState,
+} from "../../../../utils/DataTable/DataTable";
 import { DifficultyLevelColumns } from "./TableData";
 
 import { SkeletonTable } from "@/components/ui/skeleton-table";
-import DeleteModal from "@/components/utils/DataTable/DeleteModal";
 import {
   DIFFICULTY_LEVEL_QUERY_KEY,
   useDifficultyLevel,
+  usePrefetchDifficultyLevels,
 } from "@/hooks/DificultyLevel/useDifficultyLevel";
 import { useDelete } from "@/hooks/useDelete";
 import type { DifficultyLevel } from "@/types/difficultyLevels";
-import { EditDifficultyLevelModal } from "../edit/DifficultyLevelEditModal";
+import type { FilterDifficultyLevelOption } from "@/types/filter";
 
 interface CellContext {
   row: {
@@ -30,9 +34,65 @@ export default function DifficultyLevelTable() {
   });
   const { mutateAsync: multiDelete } = multiDeleteMutation;
 
-  const { difficultyLevelsQuery } = useDifficultyLevel();
-  const { data: difficultyLevelsData, isLoading: isDifficultyLoading } =
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  // Get pagination and filter params from URL
+  const page = Number(searchParams.get("page")) || 1;
+  const pageSize = Number(searchParams.get("pageSize")) || 10;
+  const search = searchParams.get("search") || "";
+  const searchBy = searchParams.get("searchBy") || "";
+
+  // Build filter state from URL params
+  const filter: FilterState | null =
+    search && searchBy ? { column: searchBy, value: search } : null;
+
+  const filters: FilterDifficultyLevelOption = {
+    page,
+    limit: pageSize as 10 | 25 | 50 | 100 | 500,
+  };
+
+  // Apply server-side filter from URL params
+  if (filter) {
+    filters.search = filter.value;
+    filters.searchBy = filter.column as FilterDifficultyLevelOption["searchBy"];
+  }
+
+  // Handle filter change - update URL params
+  const handleFilterChange = (newFilter: FilterState | null) => {
+    const newParams = new URLSearchParams(searchParams);
+    if (newFilter) {
+      newParams.set("search", newFilter.value);
+      newParams.set("searchBy", newFilter.column);
+      newParams.set("page", "1"); // Reset to first page on filter
+    } else {
+      newParams.delete("search");
+      newParams.delete("searchBy");
+    }
+    setSearchParams(newParams);
+  };
+
+  const { difficultyLevelsQuery } = useDifficultyLevel({ filters });
+  const { data: difficultyLevelsReturn, isLoading: isDifficultyLoading } =
     difficultyLevelsQuery;
+  const difficultyLevelsData = difficultyLevelsReturn?.data;
+
+  // Prefetch next page
+  const { prefetchDifficultyLevels } = usePrefetchDifficultyLevels();
+  useEffect(() => {
+    const totalPages = difficultyLevelsReturn?.meta?.totalPages ?? 0;
+    if (page < totalPages) {
+      const nextPageFilters: FilterDifficultyLevelOption = {
+        ...filters,
+        page: page + 1,
+      };
+      prefetchDifficultyLevels(nextPageFilters);
+    }
+  }, [
+    page,
+    difficultyLevelsReturn?.meta?.totalPages,
+    filters,
+    prefetchDifficultyLevels,
+  ]);
 
   const handleDeleteSelected = async () => {
     if (selectedIds.length === 0) return;
@@ -40,7 +100,17 @@ export default function DifficultyLevelTable() {
     setSelectedIds([]);
   };
 
-  const [searchParams, _] = useSearchParams();
+  // Handle pagination change
+  const handlePaginationChange = (pagination: {
+    pageIndex: number;
+    pageSize: number;
+  }) => {
+    const newParams = new URLSearchParams(searchParams);
+    newParams.set("page", String(pagination.pageIndex + 1));
+    newParams.set("pageSize", String(pagination.pageSize));
+    setSearchParams(newParams);
+    setSelectedIds([]);
+  };
 
   const columnsWithCheckbox: ColumnDef<DifficultyLevel>[] = [
     {
@@ -65,39 +135,7 @@ export default function DifficultyLevelTable() {
       },
       enableSorting: false,
     },
-    ...DifficultyLevelColumns.map((col) => {
-      if ((col as ColumnDef<DifficultyLevel>).id === "actions") {
-        return {
-          ...col,
-          cell: ({ row }: CellContext) => (
-            <div className="flex items-center justify-center gap-2">
-              <button
-                disabled={selectedIds.length > 0}
-                className={
-                  selectedIds.length > 0 ? "cursor-not-allowed opacity-50" : ""
-                }
-              >
-                <EditDifficultyLevelModal id={row.original.id} />
-              </button>
-              <button
-                disabled={selectedIds.length > 0}
-                className={
-                  selectedIds.length > 0 ? "cursor-not-allowed opacity-50" : ""
-                }
-              >
-                <DeleteModal
-                  route="/difficulty-level/remove"
-                  id={row.original.id}
-                  entity="Níveis de Dificuldade"
-                  queryKey={DIFFICULTY_LEVEL_QUERY_KEY}
-                />
-              </button>
-            </div>
-          ),
-        };
-      }
-      return col;
-    }),
+    ...DifficultyLevelColumns,
   ];
 
   return (
@@ -108,34 +146,45 @@ export default function DifficultyLevelTable() {
         <DataTable
           columns={columnsWithCheckbox}
           data={difficultyLevelsData ?? []}
-          page={
-            searchParams.get("page") ? parseInt(searchParams.get("page")!) : 0
-          }
-          renderExtra={() =>
-            selectedIds.length > 0 && !isDifficultyLoading ? (
-              <button
-                onClick={handleDeleteSelected}
-                className="ml-2 flex items-center gap-2 rounded bg-red-500 px-4 py-2 font-bold text-white transition-all hover:bg-red-700"
-                title="Excluir níveis selecionados"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
+          manualPagination
+          pageCount={difficultyLevelsReturn?.meta.totalPages}
+          pagination={{
+            pageIndex: page - 1,
+            pageSize,
+          }}
+          onPaginationChange={handlePaginationChange}
+          renderExtra={() => (
+            <>
+              <DataTableFilter
+                filterableColumns={["nome"]}
+                filter={filter}
+                onFilterChange={handleFilterChange}
+              />
+              {selectedIds.length > 0 && !isDifficultyLoading && (
+                <button
+                  onClick={handleDeleteSelected}
+                  className="ml-2 flex items-center gap-2 rounded bg-red-500 px-4 py-2 font-bold text-white transition-all hover:bg-red-700"
+                  title="Excluir níveis selecionados"
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
-                Excluir Selecionados ({selectedIds.length})
-              </button>
-            ) : null
-          }
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
+                  Excluir Selecionados ({selectedIds.length})
+                </button>
+              )}
+            </>
+          )}
         />
       )}
     </>

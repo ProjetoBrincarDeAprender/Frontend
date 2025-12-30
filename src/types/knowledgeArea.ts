@@ -3,6 +3,8 @@ export type KnowledgeArea = {
   nome: string;
   descricao: string;
   createdAt: string;
+  usuarioCriadorId: number;
+  escolaId: number | null;
 };
 
 export type KnowledgeAreaFormData = {

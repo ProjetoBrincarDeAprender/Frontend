@@ -36,18 +36,20 @@ export function EditCompetenceForm({ id, onSuccess }: EditCompetenceFormProps) {
     isLoading: isCompetenceLoading,
     isError: isCompetenceError,
   } = competenceQuery;
-  const { knowledgeAreasQuery } = useKnowledgeArea();
+const { knowledgeAreasQuery } = useKnowledgeArea();
   const {
-    data: knowledgeAreasData,
+    data: knowledgeAreasReturn,
     isLoading: isKnowledgeAreasLoading,
     isError: isKnowledgeAreasError,
   } = knowledgeAreasQuery;
+  const knowledgeAreasData = knowledgeAreasReturn?.data;
   const { competencesQuery } = useCompetence();
   const {
-    data: competencesData,
+    data: competencesReturn,
     isLoading: isCompetencesLoading,
     isError: isCompetencesError,
   } = competencesQuery;
+  const competencesData = competencesReturn?.data;
   const { update: updateCompetenceMutation } = useUpdateCompetence();
   const {
     mutateAsync: updateCompetence,
@@ -76,7 +78,6 @@ export function EditCompetenceForm({ id, onSuccess }: EditCompetenceFormProps) {
           : null,
       };
 
-      console.log(data);
       form.reset(data);
     }
   }, [competenceData, knowledgeAreasData, form]);
@@ -207,6 +208,7 @@ export function EditCompetenceForm({ id, onSuccess }: EditCompetenceFormProps) {
           name="areaId"
           render={({ field }) => (
             <Form.Select
+              key={`area-${field.value || 'empty'}`}
               label="Área de Conhecimento"
               placeholder="Selecione uma área de conhecimento"
               options={
@@ -227,6 +229,7 @@ export function EditCompetenceForm({ id, onSuccess }: EditCompetenceFormProps) {
           name="prerequisiteId"
           render={({ field }) => (
             <Form.Select
+              key={`prerequisite-${field.value || 'empty'}`}
               label="Competência Pre-requisito (Opcional)"
               placeholder="Selecione uma competência pre-requisito"
               options={[

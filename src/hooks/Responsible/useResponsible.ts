@@ -1,5 +1,7 @@
 import type { FilterResponsibleOption } from "@/types/filter";
+import type { PaginationMeta } from "@/types/pagination";
 import type { Responsible } from "@/types/responsible";
+import type { Student } from "@/types/student";
 import api from "@/utils/api";
 import { QueryClient, useQuery, useQueryClient } from "@tanstack/react-query";
 
@@ -7,11 +9,13 @@ async function fetchResponsibleData(
   queryClient: QueryClient,
   responsibleId: string | number,
 ): Promise<Responsible> {
-  const responsibles: Responsible[] | undefined =
-    await queryClient.getQueryData(RESPONSIBLE_QUERY_KEY);
+  const responsiblesResponse = queryClient.getQueryData<{
+    data: Responsible[];
+    meta: PaginationMeta;
+  }>(RESPONSIBLE_QUERY_KEY);
 
-  if (responsibles) {
-    const responsible = responsibles.find(
+  if (responsiblesResponse?.data) {
+    const responsible = responsiblesResponse.data.find(
       (s) => s.codigo_usuario === responsibleId,
     );
     if (responsible) {
@@ -30,7 +34,7 @@ async function fetchResponsibleData(
 
 async function fetchResponsiblesData(
   filters?: FilterResponsibleOption,
-): Promise<Responsible[]> {
+): Promise<{ data: Responsible[]; meta: PaginationMeta }> {
   try {
     const filter =
       "?" + new URLSearchParams(filters as Record<string, string>).toString();
@@ -45,7 +49,7 @@ async function fetchResponsiblesData(
 
 async function fetchResponsibleStudents(
   responsibleId: string | number,
-): Promise<Responsible[]> {
+): Promise<{ data: Student[]; meta: PaginationMeta }> {
   try {
     const response = await api.get(
       `/responsible/list/${responsibleId}/students`,
@@ -76,13 +80,19 @@ export function useResponsible({
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
 
-  const responsiblesQuery = useQuery({
+  const responsiblesQuery = useQuery<{
+    data: Responsible[];
+    meta: PaginationMeta;
+  }>({
     queryKey: [...RESPONSIBLE_QUERY_KEY, filters],
     queryFn: () => fetchResponsiblesData(filters),
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
 
-  const responsibleStudentsQuery = useQuery({
+  const responsibleStudentsQuery = useQuery<{
+    data: Student[];
+    meta: PaginationMeta;
+  }>({
     queryKey: [...RESPONSIBLE_STUDENTS_QUERY_KEY, responsibleId],
     queryFn: () => fetchResponsibleStudents(responsibleId!),
     staleTime: 5 * 60 * 1000, // 5 minutes
@@ -90,4 +100,18 @@ export function useResponsible({
   });
 
   return { responsibleQuery, responsiblesQuery, responsibleStudentsQuery };
+}
+
+export function usePrefetchResponsibles() {
+  const queryClient = useQueryClient();
+
+  const prefetchResponsibles = (filters: FilterResponsibleOption) => {
+    queryClient.prefetchQuery({
+      queryKey: [...RESPONSIBLE_QUERY_KEY, filters],
+      queryFn: () => fetchResponsiblesData(filters),
+      staleTime: 60 * 1000,
+    });
+  };
+
+  return { prefetchResponsibles };
 }

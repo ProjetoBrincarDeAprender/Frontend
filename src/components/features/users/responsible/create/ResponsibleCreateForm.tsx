@@ -44,7 +44,8 @@ const formSchema = z
     escolaId: z.string().optional(),
     usersIds: z.array(z.string()).optional(),
     parentesco: z
-      .string()
+      .string({ error: "Parentesco é obrigatório" })
+      .min(2, { error: "Parentesco deve ter pelo menos 2 caracteres" })
       .max(50, { error: "Parentesco deve ter no máximo 50 caracteres" }),
   })
   .refine((data) => data.senha == data.confirmar_senha, {
@@ -188,14 +189,16 @@ export function ResponsableSignUpForm({ onSuccess }: SignUpFormProps) {
   }
 
   const { schoolsQuery } = useSchool({ filters: schoolFilters });
-  const { data: schoolsData, isLoading: isSchoolLoading } = schoolsQuery;
+  const { data: schoolsReturn, isLoading: isSchoolLoading } = schoolsQuery;
+  const schoolsData = schoolsReturn?.data;
 
-  const { studentsByRelationQuery } = useStudentsRelations(
-    "responsible",
-    studentRelationsFilters,
-  );
-  const { data: studentsData, isLoading: isStudentsLoading } =
+  const { studentsByRelationQuery } = useStudentsRelations({
+    type: "responsible",
+    filters: studentRelationsFilters,
+  });
+  const { data: studentsReturn, isLoading: isStudentsLoading } =
     studentsByRelationQuery;
+  const studentsData = studentsReturn?.data;
 
   const isLoading = isAdmin
     ? isSchoolLoading || isStudentsLoading

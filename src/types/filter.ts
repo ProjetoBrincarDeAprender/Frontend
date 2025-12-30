@@ -8,42 +8,54 @@ export type FilterOption = {
   sortOrder?: "asc" | "desc";
 };
 
-export type FilterStudentOption = FilterOption & {
+export type FilterUserOption = FilterOption & {
   type?: string;
   escolaId?: number;
+  searchBy?: "nome_completo" | "email";
+};
+
+export type FilterStudentOption = FilterUserOption & {
   dataNascStart?: string | Date;
   dataNascEnd?: string | Date;
   temaPreferido?: string;
   responsibleId?: number | null;
 };
 
-export type FilterStudentRelationsOption = FilterOption & {
+export type FilterStudentRelationsOption = FilterUserOption & {
   isNull?: boolean;
-  escolaId?: number;
 };
 
-export type FilterTeacherOption = FilterOption & {
-  escolaId?: number;
-};
+export type FilterTeacherOption = FilterUserOption & {};
 
-export type FilterResponsibleOption = FilterOption & {
-  escolaId?: number;
-};
+export type FilterResponsibleOption = FilterUserOption & {};
+
+export type FilterSchoolAdminOption = FilterUserOption & {};
 
 export type FilterSchoolOption = FilterOption & {
   escolaId?: number;
+  searchBy?: "nome" | "localizacao" | "telefone" | "email" | "id";
 };
 
-export type FilterSchoolAdminOption = FilterOption & {
+export type FilterActivityOption = FilterOption & {
+  competenceId?: number;
+  creatorId?: number;
   escolaId?: number;
+  searchBy?: "id" | "titulo" | "tipo";
 };
 
-export type FilterActivityOption = FilterOption & {};
+export type FilterQuestionOption = FilterOption & {
+  activitiesIds?: number[];
+  searchBy?: "id" | "ordem" | "atividade_id";
+};
 
-export type FilterQuestionOption = FilterOption & {};
+export type FilterDifficultyLevelOption = FilterOption & {
+  searchBy?: "nome" | "id";
+};
 
-export type FilterDifficultyLevelOption = FilterOption & {};
+export type FilterCompetenceOption = FilterOption & {
+  searchBy?: "id" | "nome" | "descricao";
+};
 
-export type FilterCompetenceOption = FilterOption & {};
-
-export type FilterKnowledgeAreaOption = FilterOption & {};
+export type FilterKnowledgeAreaOption = FilterOption & {
+  searchBy?: "id" | "nome" | "descricao";
+};

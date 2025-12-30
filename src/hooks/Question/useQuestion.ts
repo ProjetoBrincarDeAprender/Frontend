@@ -1,11 +1,12 @@
 import type { FilterQuestionOption } from "@/types/filter";
+import type { PaginationMeta } from "@/types/pagination";
 import type { Question } from "@/types/question";
 import api from "@/utils/api";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 async function fetchQuestions(
   filters?: FilterQuestionOption,
-): Promise<Question[]> {
+): Promise<{ data: Question[]; meta: PaginationMeta }> {
   try {
     const params = new URLSearchParams(filters as Record<string, string>);
 
@@ -42,10 +43,24 @@ export function useQuestion({
     enabled: !!questionId,
   });
 
-  const questionsQuery = useQuery({
+  const questionsQuery = useQuery<{ data: Question[]; meta: PaginationMeta }>({
     queryKey: [...QUESTION_QUERY_KEY, filters],
     queryFn: () => fetchQuestions(filters),
   });
 
   return { questionQuery, questionsQuery };
+}
+
+export function usePrefetchQuestions() {
+  const queryClient = useQueryClient();
+
+  const prefetchQuestions = (filters: FilterQuestionOption) => {
+    queryClient.prefetchQuery({
+      queryKey: [...QUESTION_QUERY_KEY, filters],
+      queryFn: () => fetchQuestions(filters),
+      staleTime: 60 * 1000,
+    });
+  };
+
+  return { prefetchQuestions };
 }

@@ -1,9 +1,8 @@
+import { ActionsCell } from "@/components/utils/DataTable/ActionsCell";
 import { ACTIVITY_QUERY_KEY } from "@/hooks/Activity/useActivity";
-// import type { Activity } from "@/types/activity";
 import type { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown } from "lucide-react";
 import { Button } from "../../../../ui/button";
-import DeleteModal from "../../../../utils/DataTable/DeleteModal";
 import { EditActivityModal } from "../edit/ActivityEditModal";
 
 export type Activity = {
@@ -84,15 +83,13 @@ export const ActivityColumns: ColumnDef<Activity>[] = [
     id: "actions",
     header: "Ações",
     cell: ({ row }) => (
-      <div className="flex items-center justify-center gap-2">
-        <EditActivityModal id={row.original.id} />
-        <DeleteModal
-          route="/activity/remove"
-          id={row.original.id}
-          entity="Atividade"
-          queryKey={ACTIVITY_QUERY_KEY}
-        />
-      </div>
+      <ActionsCell<Activity>
+        row={row}
+        route="/activity/remove"
+        entity="Atividade"
+        queryKey={ACTIVITY_QUERY_KEY}
+        editModal={<EditActivityModal id={row.original.id} />}
+      />
     ),
     enableSorting: false,
   },

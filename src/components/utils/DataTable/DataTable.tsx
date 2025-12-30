@@ -1,22 +1,13 @@
 import {
   type ColumnDef,
-  type ColumnFiltersState,
   flexRender,
   getCoreRowModel,
-  getFilteredRowModel,
   getSortedRowModel,
+  type PaginationState,
   type SortingState,
   useReactTable,
 } from "@tanstack/react-table";
 
-import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import {
   Table,
   TableBody,
@@ -25,119 +16,70 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import { DataTablePagination } from "./DataTablePagination";
+
+export { DataTableFilter, type FilterState } from "./DataTableFilter";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
-  page?: number;
   renderExtra?: () => React.ReactNode;
+  pageCount?: number;
+  pagination?: PaginationState;
+  onPaginationChange?: (pagination: PaginationState) => void;
+  manualPagination?: boolean;
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
   renderExtra,
+  pageCount,
+  pagination: controlledPagination,
+  onPaginationChange,
+  manualPagination = false,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-  
-  // Detectar colunas disponíveis automaticamente
-  const availableColumns = useMemo(() => {
-    const cols = columns
-      .map((col) => {
-        const colDef = col as ColumnDef<TData, TValue> & {
-          accessorKey?: string;
-          id?: string;
-        };
-        return colDef.accessorKey || colDef.id;
-      })
-      .filter((id): id is string => Boolean(id) && id !== "actions" && id !== "select");
-    
-    return cols;
-  }, [columns]);
-  
-  const [selectedColumn, setSelectedColumn] = useState<string>(
-    availableColumns[0] || "id"
-  );
+
+  const [localPagination, setLocalPagination] = useState<PaginationState>({
+    pageIndex: 0,
+    pageSize: 10,
+  });
+
+  const pagination = controlledPagination || localPagination;
 
   const table = useReactTable({
     data,
+    pageCount: manualPagination ? pageCount : undefined,
     columns,
     getCoreRowModel: getCoreRowModel(),
     onSortingChange: setSorting,
     getSortedRowModel: getSortedRowModel(),
-    onColumnFiltersChange: setColumnFilters,
-    getFilteredRowModel: getFilteredRowModel(),
     state: {
       sorting,
-      columnFilters,
+      pagination,
+    },
+    manualPagination,
+    onPaginationChange: (updaterOrValue) => {
+      const newPagination =
+        typeof updaterOrValue === "function"
+          ? updaterOrValue(pagination)
+          : updaterOrValue;
+
+      if (onPaginationChange) {
+        onPaginationChange(newPagination);
+      } else {
+        setLocalPagination(newPagination);
+      }
     },
   });
-  const columnExists = table.getColumn(selectedColumn);
-  const effectiveSelectedColumn = columnExists ? selectedColumn : availableColumns[0];
-  const getColumnDisplayName = (columnId: string) => {
-    const columnMap: Record<string, string> = {
-      id: "ID",
-      titulo: "Título",
-      nome: "Nome",
-      email: "Email",
-      tipo: "Tipo",
-      descricao: "Descrição",
-      content: "Conteúdo",
-      ordem: "Ordem",
-      "activity.titulo": "Atividade",
-      "competencia.nome": "Competência",
-      "nivelDificuldade.nome": "Nível",
-      "areaId.nome": "Área",
-      created_At: "Criado em",
-      createdAt: "Criado em",
-    };
-    
-    return columnMap[columnId] || columnId.charAt(0).toUpperCase() + columnId.slice(1).replace(/[._]/g, " ");
-  };
 
   return (
     <div>
-      <div className="flex items-center gap-2 py-4">
-        <Input
-          placeholder={`Filtrar por ${getColumnDisplayName(effectiveSelectedColumn)}`}
-          value={
-            (table.getColumn(effectiveSelectedColumn)?.getFilterValue() as string) ?? ""
-          }
-          onChange={(event) => {
-            if (effectiveSelectedColumn) {
-              table.setColumnFilters([
-                {
-                  id: effectiveSelectedColumn,
-                  value: event.target.value,
-                },
-              ]);
-            }
-          }}
-          className="max-h-10 max-w-64"
-        />
-        <Select
-          onValueChange={(value) => {
-            setSelectedColumn(value);
-            table.resetColumnFilters();
-          }}
-          value={effectiveSelectedColumn}
-        >
-          <SelectTrigger className="w-48">
-            <SelectValue placeholder="Selecione uma coluna" />
-          </SelectTrigger>
-          <SelectContent>
-            {availableColumns.map((columnId) => (
-              <SelectItem key={columnId} value={columnId}>
-                {getColumnDisplayName(columnId)}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-        {renderExtra && renderExtra()}
-      </div>
+      {renderExtra && (
+        <div className="flex items-center gap-2 py-4">{renderExtra()}</div>
+      )}
       <div className="w-full overflow-hidden overflow-x-auto rounded-md border">
         <Table className="custom-table bg-blue-50">
           <TableHeader className="bg-blue-200">

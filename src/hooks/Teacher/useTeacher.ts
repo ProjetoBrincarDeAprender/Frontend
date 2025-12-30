@@ -1,4 +1,5 @@
 import type { FilterStudentOption, FilterTeacherOption } from "@/types/filter";
+import type { PaginationMeta } from "@/types/pagination";
 import type { Student } from "@/types/student";
 import type { Teacher } from "@/types/teacher";
 import api from "@/utils/api";
@@ -8,13 +9,21 @@ async function fetchTeacherData(
   queryClient: QueryClient,
   teacherId: string | number,
 ): Promise<Teacher> {
-  const teachers: Teacher[] | undefined =
-    await queryClient.getQueryData(TEACHER_QUERY_KEY);
+  const queriesData = queryClient.getQueriesData<{
+    data: Teacher[];
+    meta: PaginationMeta;
+  }>({
+    queryKey: TEACHER_QUERY_KEY,
+  });
 
-  if (teachers) {
-    const teacher = teachers.find((s) => s.codigo_usuario === teacherId);
-    if (teacher) {
-      return teacher;
+  for (const [, data] of queriesData) {
+    if (data?.data) {
+      const teacher = data.data.find(
+        (t) => String(t.codigo_usuario) === String(teacherId),
+      );
+      if (teacher) {
+        return teacher;
+      }
     }
   }
 
@@ -30,7 +39,7 @@ async function fetchTeacherData(
 
 async function fetchTeachersData(
   filters?: FilterTeacherOption,
-): Promise<Teacher[]> {
+): Promise<{ data: Teacher[]; meta: PaginationMeta }> {
   try {
     const filter =
       "?" + new URLSearchParams(filters as Record<string, string>).toString();
@@ -47,7 +56,7 @@ async function fetchTeachersData(
 async function fetchTeacherRelations(
   teacherId: string | number,
   filters: FilterStudentOption,
-): Promise<Student[]> {
+): Promise<{ data: Student[]; meta: PaginationMeta }> {
   try {
     const params = new URLSearchParams(
       filters as Record<string, string>,
@@ -56,7 +65,7 @@ async function fetchTeacherRelations(
     const response = await api.get(
       `/teacher/list/${teacherId}/students?${params}`,
     );
-    return response.data as Student[];
+    return response.data;
   } catch (error) {
     console.log(error);
     throw error;
@@ -82,7 +91,7 @@ export function useTeacher({
     enabled: !!teacherId,
   });
 
-  const teachersQuery = useQuery<Teacher[]>({
+  const teachersQuery = useQuery<{ data: Teacher[]; meta: PaginationMeta }>({
     queryKey: [...TEACHER_QUERY_KEY, filters],
     queryFn: () => fetchTeachersData(filters),
   });
@@ -97,10 +106,38 @@ export function useTeacherRelations({
   teacherId: string | number;
   filters: FilterStudentOption;
 }) {
-  const teacherRelationsQuery = useQuery<Student[]>({
+  const teacherRelationsQuery = useQuery<{
+    data: Student[];
+    meta: PaginationMeta;
+  }>({
     queryKey: [...TEACHER_RELATIONS_QUERY_KEY, teacherId, filters],
     queryFn: () => fetchTeacherRelations(teacherId!, filters || {}),
   });
 
   return { teacherRelationsQuery };
+}
+
+export function usePrefetchTeachers() {
+  const queryClient = useQueryClient();
+
+  const prefetchTeachers = (filters: FilterTeacherOption) => {
+    queryClient.prefetchQuery({
+      queryKey: [...TEACHER_QUERY_KEY, filters],
+      queryFn: () => fetchTeachersData(filters),
+      staleTime: 60 * 1000,
+    });
+  };
+
+  const prefetchTeacherRelations = (
+    teacherId: string | number,
+    filters: FilterStudentOption,
+  ) => {
+    queryClient.prefetchQuery({
+      queryKey: [...TEACHER_RELATIONS_QUERY_KEY, teacherId, filters],
+      queryFn: () => fetchTeacherRelations(teacherId, filters),
+      staleTime: 60 * 1000,
+    });
+  };
+
+  return { prefetchTeachers, prefetchTeacherRelations };
 }

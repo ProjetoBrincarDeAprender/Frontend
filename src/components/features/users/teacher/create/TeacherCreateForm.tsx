@@ -56,7 +56,8 @@ export default function TeacherSignUpForm({ onSuccess }: SignUpFormProps) {
   });
   const { user } = useUser();
   const { schoolsQuery } = useSchool({});
-  const { data: schoolsData, isLoading: isLoadingSchools } = schoolsQuery;
+  const { data: schoolsReturn, isLoading: isLoadingSchools } = schoolsQuery;
+  const schoolsData = schoolsReturn?.data;
 
   const { create: createTeacherMutation } = useCreateTeacher();
   const {

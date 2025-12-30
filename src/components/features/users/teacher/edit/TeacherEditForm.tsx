@@ -4,7 +4,7 @@ import { useSchool } from "@/hooks/School/useSchool";
 import { useTeacher } from "@/hooks/Teacher/useTeacher";
 import { useUpdateTeacher } from "@/hooks/Teacher/useUpdateTeacher";
 import { useUser } from "@/hooks/User/useUser";
-import type { FilterTeacherOption } from "@/types/filter";
+import type { FilterSchoolOption, FilterTeacherOption } from "@/types/filter";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AxiosError } from "axios";
 import { Loader2 } from "lucide-react";
@@ -42,13 +42,18 @@ export function TeacherEditForm({ id, onSuccess }: TeacherFormProps) {
     updateTeacherMutation;
 
   const filters: FilterTeacherOption = {};
+  const schoolFilters: FilterSchoolOption = {};
 
   if (user?.perfil !== "Admin") {
     filters.escolaId = user?.escolaId as number;
+    schoolFilters.escolaId = user?.escolaId as number;
   }
 
-  const { schoolsQuery } = useSchool({ filters: filters });
-  const { data: schoolsData, isLoading: isSchoolsLoading } = schoolsQuery;
+  const { schoolsQuery } = useSchool({ 
+    filters: user?.perfil === "Admin" ? schoolFilters : undefined 
+  });
+  const { data: schoolsReturn, isLoading: isSchoolsLoading } = schoolsQuery;
+  const schoolsData = schoolsReturn?.data;
 
   const { teacherQuery } = useTeacher({
     teacherId: id,
@@ -57,14 +62,14 @@ export function TeacherEditForm({ id, onSuccess }: TeacherFormProps) {
   const { data: teacherData, isLoading: isTeacherLoading } = teacherQuery;
 
   useEffect(() => {
-    if (teacherData && schoolsData) {
+    if (teacherData && (schoolsData || user?.perfil !== "Admin")) {
       form.reset({
         email: teacherData?.email || "",
         nome_completo: teacherData?.nome_completo || "",
         escolaId: teacherData?.escolaId ? String(teacherData.escolaId) : "",
       });
     }
-  }, [teacherData, schoolsData, form]);
+  }, [teacherData, schoolsData, form, user?.perfil]);
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     const userData = {

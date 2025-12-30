@@ -1,4 +1,5 @@
 import type { FilterSchoolAdminOption } from "@/types/filter";
+import type { PaginationMeta } from "@/types/pagination";
 import type { SchoolAdmin } from "@/types/school";
 import api from "@/utils/api";
 import { QueryClient, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -7,12 +8,13 @@ async function fetchSchoolAdminData(
   queryClient: QueryClient,
   schoolAdminId: string | number,
 ) {
-  const schoolAdmins: SchoolAdmin[] | undefined = queryClient.getQueryData(
-    SCHOOL_ADMIN_QUERY_KEY,
-  );
+  const schoolAdminsResponse = queryClient.getQueryData<{
+    data: SchoolAdmin[];
+    meta: PaginationMeta;
+  }>(SCHOOL_ADMIN_QUERY_KEY);
 
-  if (schoolAdmins) {
-    const schoolAdmin = schoolAdmins.find(
+  if (schoolAdminsResponse?.data) {
+    const schoolAdmin = schoolAdminsResponse.data.find(
       (admin) => admin.codigo_usuario === schoolAdminId,
     );
     if (schoolAdmin) {
@@ -29,7 +31,9 @@ async function fetchSchoolAdminData(
   }
 }
 
-async function fetchSchoolAdminsData(filters: FilterSchoolAdminOption) {
+async function fetchSchoolAdminsData(
+  filters: FilterSchoolAdminOption,
+): Promise<{ data: SchoolAdmin[]; meta: PaginationMeta }> {
   try {
     const params = new URLSearchParams(filters as Record<string, string>);
     const response = await api.get(`/school-admin/list?${params.toString()}`);
@@ -58,11 +62,28 @@ export function useSchoolAdmin({
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
 
-  const schoolAdminsQuery = useQuery({
+  const schoolAdminsQuery = useQuery<{
+    data: SchoolAdmin[];
+    meta: PaginationMeta;
+  }>({
     queryKey: [...SCHOOL_ADMIN_QUERY_KEY, filters],
     queryFn: () => fetchSchoolAdminsData(filters!),
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
 
   return { schoolAdminQuery, schoolAdminsQuery };
+}
+
+export function usePrefetchSchoolAdmins() {
+  const queryClient = useQueryClient();
+
+  const prefetchSchoolAdmins = (filters: FilterSchoolAdminOption) => {
+    queryClient.prefetchQuery({
+      queryKey: [...SCHOOL_ADMIN_QUERY_KEY, filters],
+      queryFn: () => fetchSchoolAdminsData(filters),
+      staleTime: 60 * 1000,
+    });
+  };
+
+  return { prefetchSchoolAdmins };
 }

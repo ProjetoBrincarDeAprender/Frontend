@@ -1,28 +1,5 @@
 import { Route, Routes } from "react-router";
-import AddressGame from "./components/features/games/AddressGame";
-import ArmedSumGame from "./components/features/games/ArmedSumGame";
-import { ComDatesGame } from "./components/features/games/ComDatesGame";
-import ComplexSyllableGame from "./components/features/games/ComplexSyllableGame";
-import { CoordinationGame } from "./components/features/games/CoordinationGame";
-import HousingGame from "./components/features/games/HousingGame";
-import { HygieneGame } from "./components/features/games/HygieneGame";
-import LocationsGame from "./components/features/games/LocationsGame";
-import { MazeGame } from "./components/features/games/MazeGame";
-import { MemoryGame } from "./components/features/games/MemoryGame";
-import NumbersGame from "./components/features/games/NumbersGame";
-import { PlantsGame } from "./components/features/games/PlantsGame";
-import ProfessionsGame from "./components/features/games/ProfessionsGame";
-import PunctuationGame from "./components/features/games/PunctuationGame";
-import { SensorialGame } from "./components/features/games/SensorialGame";
-import SimpleSyllableGame from "./components/features/games/SimpleSyllableGame";
-import { SpaceGame } from "./components/features/games/SpaceGame";
-import StressSyllable from "./components/features/games/StressSyllable";
-import SubtractionGame from "./components/features/games/SubtractionGame";
-import SumGame from "./components/features/games/SumGame";
-import SyllableDivisionGame from "./components/features/games/SyllableDivisionGame";
-import SyllableGame from "./components/features/games/SyllableGame";
-import UseSyllableGame from "./components/features/games/UseSyllableGame";
-import VowelsGame from "./components/features/games/VowelsGame";
+
 import { AuthGuard } from "./guards/AuthGuard";
 import { Calm } from "./pages/Calm/Calm";
 import Dashboard from "./pages/Dashboard/Admin/Dashboard";
@@ -48,6 +25,8 @@ import { Profile } from "./pages/Profile/Profile";
 import { RecoverPassword } from "./pages/RecoverPassword/RecoverPassword";
 import { SendPasswordToken } from "./pages/SendPasswordToken/SendPasswordToken";
 import { UserPerfilEnum } from "./types/user";
+import CreateActivityPage from "./pages/ActivitiesPage/CreateActivityPage";
+import GameRenderer from "./pages/Games/GameRenderer";
 
 function App() {
   return (
@@ -87,7 +66,12 @@ function App() {
       {/* Rotas específicas do Professor */}
       <Route
         path="/dashboard/teacher"
-        element={<AuthGuard requireAuth role={[UserPerfilEnum.TEACHER, UserPerfilEnum.ADMIN]} />}
+        element={
+          <AuthGuard
+            requireAuth
+            role={[UserPerfilEnum.TEACHER, UserPerfilEnum.ADMIN]}
+          />
+        }
       >
         <Route index element={<TeacherDashboard />} />
         <Route path="curriculum/knowledge-areas" element={<KnowledgeAreas />} />
@@ -98,34 +82,15 @@ function App() {
           element={<DifficultyLevels />}
         />
         <Route path="curriculum/questions" element={<Questions />} />
+        <Route
+          path="curriculum/activities/create"
+          element={<CreateActivityPage />}
+        ></Route>
       </Route>
 
       <Route path="/games" element={<AuthGuard />}>
         <Route index element={<Games />} />
-        <Route path="vowels" element={<VowelsGame />} />
-        <Route path="memory" element={<MemoryGame />} />
-        <Route path="sum" element={<SumGame />} />
-        <Route path="subtraction" element={<SubtractionGame />} />
-        <Route path="numbers" element={<NumbersGame />} />
-        <Route path="housing" element={<HousingGame />} />
-        <Route path="forms" element={<CoordinationGame />} />
-        <Route path="maze" element={<MazeGame />} />
-        <Route path="space" element={<SpaceGame />} />
-        <Route path="professions" element={<ProfessionsGame />} />
-        <Route path="use-syllable" element={<UseSyllableGame />} />
-        <Route path="simple-syllable" element={<SimpleSyllableGame />} />
-        <Route path="plants" element={<PlantsGame />} />
-        <Route path="locations" element={<LocationsGame />} />
-        <Route path="address" element={<AddressGame />} />
-        <Route path="hygiene" element={<HygieneGame />} />
-        <Route path="syllable" element={<SyllableGame />} />
-        <Route path="stresssyllable" element={<StressSyllable />} />
-        <Route path="com-dates" element={<ComDatesGame />} />
-        <Route path="sensorial" element={<SensorialGame />} />
-        <Route path="armed-sum" element={<ArmedSumGame />} />
-        <Route path="syllable-division" element={<SyllableDivisionGame />} />
-        <Route path="complex-syllable" element={<ComplexSyllableGame />} />
-        <Route path="punctuation" element={<PunctuationGame />} />
+        <Route path=":slug" element={<GameRenderer />} />
       </Route>
 
       <Route element={<AuthGuard requireAuth />}>

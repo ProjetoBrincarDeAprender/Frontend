@@ -1,9 +1,9 @@
+import { ActionsCell } from "@/components/utils/DataTable/ActionsCell";
 import { QUESTION_QUERY_KEY } from "@/hooks/Question/useQuestion";
 import type { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown } from "lucide-react";
 import { Button } from "../../../../ui/button";
-import DeleteModal from "../../../../utils/DataTable/DeleteModal";
-import { EditQuestionModal } from "../edit/QuestionEditModal";
+import { QuestionViewModal } from "../view/QuestionViewModal";
 
 export type QuestionFormatted = {
   id: number;
@@ -31,37 +31,37 @@ export const QuestionColumns: ColumnDef<QuestionFormatted>[] = [
       </Button>
     ),
   },
-  {
-    accessorKey: "content",
-    header: ({ column }) => (
-      <Button
-        variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-      >
-        Conteúdo
-        <ArrowUpDown className="ml-2 h-4 w-4" />
-      </Button>
-    ),
-    cell: ({ row }) => {
-      const content = row.original.content;
+  // {
+  //   accessorKey: "content",
+  //   header: ({ column }) => (
+  //     <Button
+  //       variant="ghost"
+  //       onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+  //     >
+  //       Conteúdo
+  //       <ArrowUpDown className="ml-2 h-4 w-4" />
+  //     </Button>
+  //   ),
+  //   cell: ({ row }) => {
+  //     const content = row.original.content;
 
-      if (!content) {
-        return (
-          <div className="max-w-xs">
-            <span className="text-gray-500">Sem conteúdo</span>
-          </div>
-        );
-      }
+  //     if (!content) {
+  //       return (
+  //         <div className="max-w-100%">
+  //           <span className="text-gray-500">Sem conteúdo</span>
+  //         </div>
+  //       );
+  //     }
 
-      return (
-        <div className="max-w-xs">
-          <span className="block truncate" title={content}>
-            {content}
-          </span>
-        </div>
-      );
-    },
-  },
+  //     return (
+  //       <div className="max-w-100%">
+  //         <span className="block truncate" title={content}>
+  //           {content}
+  //         </span>
+  //       </div>
+  //     );
+  //   },
+  // },
   {
     accessorKey: "ordem",
     header: ({ column }) => (
@@ -98,7 +98,7 @@ export const QuestionColumns: ColumnDef<QuestionFormatted>[] = [
     cell: ({ row }) => {
       const activityTitle = row.original.activity?.titulo;
       return (
-        <div className="max-w-xs">
+        <div className="max-w-100%">
           <span
             className="block truncate"
             title={activityTitle || `Atividade ${row.original.activityId}`}
@@ -129,15 +129,13 @@ export const QuestionColumns: ColumnDef<QuestionFormatted>[] = [
     id: "actions",
     header: "Ações",
     cell: ({ row }) => (
-      <div className="flex items-center justify-center gap-2">
-        <EditQuestionModal id={row.original.id} />
-        <DeleteModal
-          route="/question/remove"
-          id={row.original.id}
-          entity="Questão"
-          queryKey={QUESTION_QUERY_KEY}
-        />
-      </div>
+      <ActionsCell<QuestionFormatted>
+        row={row}
+        route="/question/remove"
+        entity="Questão"
+        queryKey={QUESTION_QUERY_KEY}
+        editModal={<QuestionViewModal id={row.original.id} />}
+      />
     ),
     enableSorting: false,
   },
