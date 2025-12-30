@@ -1,12 +1,12 @@
 import { Form } from "@/components/forms/Root";
 import { useCreateActivity } from "@/hooks/Activity/useCreateActivity";
 import { useCompetence } from "@/hooks/Competence/useCompetence";
+import { useUser } from "@/hooks/User/useUser";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { useUser } from "@/hooks/User/useUser";
 import type { CompetenceWithArea } from "./common/types/activity.types";
 import handleAxiosError from "./files/HandleAxiosError";
 
@@ -96,7 +96,7 @@ export function CreateActivityForm({
       creatorId:
         Number(user?.codigo_usuario) || ACTIVITY_CONFIG.DEFAULT_CREATOR_ID,
       maxQuestions: ACTIVITY_CONFIG.DEFAULT_MAX_QUESTIONS,
-      escolaId: ACTIVITY_CONFIG.DEFAULT_SCHOOL_ID,
+      escolaId: Number(user?.escolaId) || ACTIVITY_CONFIG.DEFAULT_SCHOOL_ID,
     };
 
     try {

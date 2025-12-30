@@ -13,4 +13,6 @@ export type QuestionFormData = {
   content: string;
   ordem: number;
   difficultyId: number;
+  escolaId?: number | null;
+  creatorId: number;
 };

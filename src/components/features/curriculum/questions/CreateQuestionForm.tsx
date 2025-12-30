@@ -1,8 +1,9 @@
 import { Form } from "@/components/forms/Root";
 import { Skeleton } from "@/components/ui/skeleton";
 import useActivity from "@/hooks/Activity/useActivity";
-import { useCreateQuestion } from "@/hooks/Question/useCreateQuestion";
 import { useDifficultyLevel } from "@/hooks/DificultyLevel/useDifficultyLevel";
+import { useCreateQuestion } from "@/hooks/Question/useCreateQuestion";
+import { useUser } from "@/hooks/User/useUser";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AxiosError } from "axios";
 import { Loader2 } from "lucide-react";
@@ -44,6 +45,7 @@ interface ActivityApiResponse {
 }
 
 export function CreateQuestionForm({ onSuccess }: CreateQuestionFormProps) {
+  const { user } = useUser();
   const { create } = useCreateQuestion();
   const { activitiesQuery } = useActivity();
   const { data: activitiesReturn, isLoading: isActivitiesLoading } =
@@ -95,6 +97,8 @@ export function CreateQuestionForm({ onSuccess }: CreateQuestionFormProps) {
         content: JSON.stringify({ texto: data.content }),
         ordem: data.ordem,
         difficultyId: Number(data.difficultyId),
+        creatorId: Number(user!.codigo_usuario),
+        escolaId: Number(user!.escolaId),
       };
 
       await create.mutateAsync({
@@ -318,12 +322,13 @@ export function CreateQuestionForm({ onSuccess }: CreateQuestionFormProps) {
                     value={field.value || ""}
                     disabled={create.isPending || isDifficultyLevelsLoading}
                   />
-                  {difficultyLevels.length === 0 && !isDifficultyLevelsLoading && (
-                    <div className="rounded border border-amber-200 bg-amber-50 p-3 text-sm text-amber-600">
-                      ⚠️ Nenhum nível de dificuldade encontrado. Verifique se
-                      existem níveis cadastrados.
-                    </div>
-                  )}
+                  {difficultyLevels.length === 0 &&
+                    !isDifficultyLevelsLoading && (
+                      <div className="rounded border border-amber-200 bg-amber-50 p-3 text-sm text-amber-600">
+                        ⚠️ Nenhum nível de dificuldade encontrado. Verifique se
+                        existem níveis cadastrados.
+                      </div>
+                    )}
                 </div>
               )}
             />

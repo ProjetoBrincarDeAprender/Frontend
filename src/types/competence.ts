@@ -11,4 +11,6 @@ export type CompetenceFormData = {
   name: string;
   description?: string;
   prerequisiteIds?: number;
+  escolaId?: number | null;
+  creatorId: number;
 };
