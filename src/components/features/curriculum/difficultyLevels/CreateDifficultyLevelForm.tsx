@@ -51,7 +51,7 @@ export function CreateDifficultyLevelForm({
     const payload = {
       name: data.name.trim(),
       creatorId: Number(user!.codigo_usuario),
-      escolaId: Number(user!.escolaId),
+      escolaId: user!.escolaId,
     };
 
     try {

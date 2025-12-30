@@ -56,7 +56,7 @@ export function CreateKnowledgeAreaForm({
       nome: data.name,
       description: data.description || "",
       creatorId: Number(user!.codigo_usuario),
-      escolaId: Number(user!.escolaId),
+      escolaId: user!.escolaId,
     };
 
     try {

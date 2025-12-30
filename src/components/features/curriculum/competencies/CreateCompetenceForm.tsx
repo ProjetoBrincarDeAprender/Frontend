@@ -80,7 +80,7 @@ export function CreateCompetenceForm({ onSuccess }: CreateCompetenceFormProps) {
       prerequisiteId:
         data.prerequisiteId === 0 ? undefined : data.prerequisiteId,
       creatorId: Number(user!.codigo_usuario),
-      escolaId: Number(user!.escolaId),
+      escolaId: user!.escolaId,
     };
 
     try {

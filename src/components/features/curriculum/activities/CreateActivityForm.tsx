@@ -96,7 +96,7 @@ export function CreateActivityForm({
       creatorId:
         Number(user?.codigo_usuario) || ACTIVITY_CONFIG.DEFAULT_CREATOR_ID,
       maxQuestions: ACTIVITY_CONFIG.DEFAULT_MAX_QUESTIONS,
-      escolaId: Number(user?.escolaId) || ACTIVITY_CONFIG.DEFAULT_SCHOOL_ID,
+      escolaId: user?.escolaId || ACTIVITY_CONFIG.DEFAULT_SCHOOL_ID,
     };
 
     try {
