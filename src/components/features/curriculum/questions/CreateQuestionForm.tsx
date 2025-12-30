@@ -98,7 +98,7 @@ export function CreateQuestionForm({ onSuccess }: CreateQuestionFormProps) {
         ordem: data.ordem,
         difficultyId: Number(data.difficultyId),
         creatorId: Number(user!.codigo_usuario),
-        escolaId: Number(user!.escolaId),
+        escolaId: user!.escolaId,
       };
 
       await create.mutateAsync({
