@@ -1,6 +1,7 @@
 import { Form } from "@/components/forms/Root";
 import { useCreateActivity } from "@/hooks/Activity/useCreateActivity";
 import { useCompetence } from "@/hooks/Competence/useCompetence";
+import { useUser } from "@/hooks/User/useUser";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AxiosError } from "axios";
 import { Loader2 } from "lucide-react";
@@ -42,6 +43,8 @@ const activityTypes = [
 ];
 
 export function CreateActivityForm({ onSuccess }: CreateActivityFormProps) {
+  const { user } = useUser();
+
   const { create } = useCreateActivity();
   const {
     mutateAsync: createActivity,
@@ -84,7 +87,8 @@ export function CreateActivityForm({ onSuccess }: CreateActivityFormProps) {
       content: JSON.stringify({ texto: data.content }),
       nivel_dificuldade_inicial: 1,
       quantQuestoes: 0,
-      creatorId: 0,
+      creatorId: Number(user!.codigo_usuario),
+      escolaId: Number(user!.escolaId),
     };
 
     try {

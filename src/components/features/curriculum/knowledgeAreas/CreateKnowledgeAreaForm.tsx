@@ -1,5 +1,6 @@
 import { Form } from "@/components/forms/Root";
 import { useCreateKnowledgeArea } from "@/hooks/KnowledgeArea/useCreateKnowledgeArea";
+import { useUser } from "@/hooks/User/useUser";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AxiosError } from "axios";
 import { Loader2 } from "lucide-react";
@@ -34,6 +35,8 @@ export function CreateKnowledgeAreaForm({
     },
   });
 
+  const { user } = useUser();
+
   const { create: createKnowledgeAreaMutation } = useCreateKnowledgeArea();
   const {
     mutateAsync: createKnowledgeArea,
@@ -52,6 +55,8 @@ export function CreateKnowledgeAreaForm({
     const payload = {
       nome: data.name,
       description: data.description || "",
+      creatorId: Number(user!.codigo_usuario),
+      escolaId: Number(user!.escolaId),
     };
 
     try {
@@ -113,7 +118,7 @@ export function CreateKnowledgeAreaForm({
               </label>
               <textarea
                 {...field}
-                className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex min-h-[80px] w-full resize-none rounded-md border px-3 py-2 text-sm focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+                className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex min-h-20 w-full resize-none rounded-md border px-3 py-2 text-sm focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
                 placeholder="Descreva os objetivos e escopo desta área de conhecimento... (opcional)"
                 rows={4}
                 disabled={isCreating}

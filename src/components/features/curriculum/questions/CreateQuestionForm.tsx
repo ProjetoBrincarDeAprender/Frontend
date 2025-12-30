@@ -1,6 +1,7 @@
 import { Form } from "@/components/forms/Root";
 import useActivity from "@/hooks/Activity/useActivity";
 import { useCreateQuestion } from "@/hooks/Question/useCreateQuestion";
+import { useUser } from "@/hooks/User/useUser";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AxiosError } from "axios";
 import { Loader2 } from "lucide-react";
@@ -47,6 +48,7 @@ interface ActivityApiResponse {
 }
 
 export function CreateQuestionForm({ onSuccess }: CreateQuestionFormProps) {
+  const { user } = useUser();
   const { create } = useCreateQuestion();
   const { activitiesQuery } = useActivity();
   const [difficultyLevels, setDifficultyLevels] = useState<DifficultyLevel[]>(
@@ -110,6 +112,8 @@ export function CreateQuestionForm({ onSuccess }: CreateQuestionFormProps) {
         content: JSON.stringify({ texto: data.content }),
         ordem: data.ordem,
         difficultyId: Number(data.difficultyId),
+        creatorId: Number(user!.codigo_usuario),
+        escolaId: Number(user!.escolaId),
       };
 
       await create.mutateAsync({

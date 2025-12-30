@@ -2,6 +2,7 @@ import { Form } from "@/components/forms/Root";
 import { useCompetence } from "@/hooks/Competence/useCompetence";
 import { useCreateCompetence } from "@/hooks/Competence/useCreateCompetence";
 import { useKnowledgeArea } from "@/hooks/KnowledgeArea/useKnowledgeArea";
+import { useUser } from "@/hooks/User/useUser";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AxiosError } from "axios";
 import { Loader2 } from "lucide-react";
@@ -30,6 +31,8 @@ interface CreateCompetenceFormProps {
 }
 
 export function CreateCompetenceForm({ onSuccess }: CreateCompetenceFormProps) {
+  const { user } = useUser();
+
   const { create } = useCreateCompetence();
   const {
     mutateAsync: createCompetence,
@@ -74,6 +77,8 @@ export function CreateCompetenceForm({ onSuccess }: CreateCompetenceFormProps) {
       description: data.description || "",
       prerequisiteId:
         data.prerequisiteId === 0 ? undefined : data.prerequisiteId,
+      creatorId: Number(user!.codigo_usuario),
+      escolaId: Number(user!.escolaId),
     };
 
     try {
