@@ -52,7 +52,7 @@ export class GameScene extends Phaser.Scene {
 
     // Recuperar userId e activityId do registry (similar ao jogo de soma)
     this.userId = this.registry.get("subUserId") || "10130001";
-    this.activityId = this.registry.get("subActivityId") || 2;
+    this.activityId = this.registry.get("subActivityId") || 59;
   }
 
   private registerStandardScenes(): void {
