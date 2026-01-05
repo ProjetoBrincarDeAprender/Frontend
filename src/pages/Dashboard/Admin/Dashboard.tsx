@@ -5,6 +5,9 @@ import { Link, useNavigate } from "react-router";
 import { Footer } from "@/components/Footer/Footer";
 import { Header } from "@/components/Header/Header";
 import { useUser } from "@/hooks/User/useUser";
+import { useTeacher } from "@/hooks/Teacher/useTeacher";
+import { useStudent } from "@/hooks/Student/useStudent";
+import { useSchool } from "@/hooks/School/useSchool";
 import { LateralMenu } from "../../../components/sideBar/sideBar";
 import { InfoBadge } from "../../../components/utils/InfoBadge/InfoBadge";
 import { Button } from "@/components/ui/button";
@@ -20,8 +23,15 @@ import "./Dashboard.css";
 export default function Dashboard() {
   const { user } = useUser();
   const navigate = useNavigate();
+  const { teachersQuery } = useTeacher({});
+  const { studentsQuery } = useStudent({});
+  const { schoolsQuery } = useSchool({});
 
   const username = user?.nome_completo || "Usuário";
+
+  const formatCount = (value: number) => {
+    return value.toString().padStart(3, "0");
+  };
 
   return (
     <>
@@ -39,17 +49,29 @@ export default function Dashboard() {
           <div className="mt-16 flex justify-center gap-8">
             <InfoBadge
               label="Prof. Ativos"
-              value="Em breve..."
+              value={
+                teachersQuery.isLoading
+                  ? "..."
+                  : formatCount(teachersQuery.data?.meta?.total ?? 0)
+              }
               variant="blue"
             />
             <InfoBadge
               label="Alunos Ativos"
-              value="Em breve..."
+              value={
+                studentsQuery.isLoading
+                  ? "..."
+                  : formatCount(studentsQuery.data?.meta?.total ?? 0)
+              }
               variant="yellow"
             />
             <InfoBadge
               label="Escolas Ativas"
-              value="Em breve..."
+              value={
+                schoolsQuery.isLoading
+                  ? "..."
+                  : formatCount(schoolsQuery.data?.meta?.total ?? 0)
+              }
               variant="red"
             />
           </div>
@@ -84,50 +106,62 @@ export default function Dashboard() {
                 </Link>
                 <Link
                   to="/dashboard/schoolusers"
-                  className="blue bg-yellow hover:bg-purplish-blue hover:text-yellow flex min-h-[60px] justify-center gap-8 rounded-2xl px-8 py-4 text-center font-bold uppercase shadow-xl transition duration-200 min-w-40"
+                  className="blue bg-yellow hover:bg-purplish-blue hover:text-yellow flex min-h-[60px] min-w-40 justify-center gap-8 rounded-2xl px-8 py-4 text-center font-bold uppercase shadow-xl transition duration-200"
                 >
                   Cadastrar Adm Escola
                 </Link>
               </>
             )}
           </div>
-          
+
           {/* Seção de Gestão de Aprendizagem */}
-          <h1 className="font-1 mt-16 text-2xl font-bold">Gestão de Aprendizagem</h1>
-          <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <h1 className="font-1 mt-16 text-2xl font-bold">
+            Gestão de Aprendizagem
+          </h1>
+          <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <Button
-              onClick={() => navigate("/dashboard/teacher/curriculum/knowledge-areas")}
-              className="bg-blue-600 hover:bg-blue-700 cursor-pointer text-white h-auto py-4 flex flex-col items-center gap-2"
+              onClick={() =>
+                navigate("/dashboard/teacher/curriculum/knowledge-areas")
+              }
+              className="flex h-auto cursor-pointer flex-col items-center gap-2 bg-blue-600 py-4 text-white hover:bg-blue-700"
             >
               <BookOpen className="h-6 w-6" />
-              <span className="font-medium text-center">Áreas de Conhecimento</span>
+              <span className="text-center font-medium">
+                Áreas de Conhecimento
+              </span>
             </Button>
-            
+
             <Button
-              onClick={() => navigate("/dashboard/teacher/curriculum/competences")}
-              className="bg-green-600 hover:bg-green-700 cursor-pointer text-white h-auto py-4 flex flex-col items-center gap-2"
+              onClick={() =>
+                navigate("/dashboard/teacher/curriculum/competences")
+              }
+              className="flex h-auto cursor-pointer flex-col items-center gap-2 bg-green-600 py-4 text-white hover:bg-green-700"
             >
               <Target className="h-6 w-6" />
-              <span className="font-medium text-center">Competências</span>
+              <span className="text-center font-medium">Competências</span>
             </Button>
 
             <Button
-              onClick={() => navigate("/dashboard/teacher/curriculum/activities")}
-              className="bg-purple-600 hover:bg-purple-700 cursor-pointer text-white h-auto py-4 flex flex-col items-center gap-2"
+              onClick={() =>
+                navigate("/dashboard/teacher/curriculum/activities")
+              }
+              className="flex h-auto cursor-pointer flex-col items-center gap-2 bg-purple-600 py-4 text-white hover:bg-purple-700"
             >
               <Activity className="h-6 w-6" />
-              <span className="font-medium text-center">Atividades</span>
+              <span className="text-center font-medium">Atividades</span>
             </Button>
 
             <Button
-              onClick={() => navigate("/dashboard/teacher/curriculum/questions")}
-              className="bg-orange-600 hover:bg-orange-700 cursor-pointer text-white h-auto py-4 flex flex-col items-center gap-2"
+              onClick={() =>
+                navigate("/dashboard/teacher/curriculum/questions")
+              }
+              className="flex h-auto cursor-pointer flex-col items-center gap-2 bg-orange-600 py-4 text-white hover:bg-orange-700"
             >
               <HelpCircle className="h-6 w-6" />
-              <span className="font-medium text-center">Questões</span>
+              <span className="text-center font-medium">Questões</span>
             </Button>
           </div>
-          
+
           <div className="mt-16 flex justify-around rounded-2xl bg-slate-300 py-8 shadow-2xl">
             <div className="bg-purplish-blue-dark rounded-2xl">
               <div className="font-1 bg-purplish-blue m-3 rounded-md p-1 text-center text-lg font-bold text-gray-100">
