@@ -15,15 +15,23 @@ export default class CoordinationGameScene extends PreloadScene {
   private apiService?: APIDataService;
   // Controla tempo desde o início da cena
   private sceneStartTime = 0;
-  // Incremental para gerar questionId único por peça
-  private globalQuestionCounter = 0;
   // Mapa de tentativas por questionId
   private attemptCounts: Record<number, number> = {};
-  // Id da atividade (ajuste conforme necessário no backend)
-  private readonly activityId = 5;
+  // Id da atividade (jogo das formas)
+  private readonly activityId = 11;
+  // Mapeamento de questionIds por fase (índice 0 = fase 1, índice 1 = fase 2, índice 2 = fase 3)
+  private readonly phaseQuestionIds = [208, 211, 212];
 
   constructor() {
     super({ key: "CoordinationGameScene" });
+  }
+
+  /**
+   * Método estático para resetar o registro do nível do jogo.
+   * Chamado quando o jogador clica em "Reiniciar" na tela de nível concluído.
+   */
+  public static resetRegistry(scene: Phaser.Scene): void {
+    scene.registry.set("coordNextLevel", null);
   }
 
   init(data: { startLevel?: number } = {}) {
@@ -520,10 +528,12 @@ export default class CoordinationGameScene extends PreloadScene {
       piece.setData("isPlaced", false);
       piece.setData("returned", false);
       piece.setData("isShaking", false);
-      // Atribui questionId único para esta peça
-      const questionId = this.globalQuestionCounter++;
+      // Atribui questionId baseado na fase atual (208 para fase 1, 211 para fase 2, 212 para fase 3)
+      const questionId = this.phaseQuestionIds[this.currentLevelIndex];
       piece.setData("questionId", questionId);
-      this.attemptCounts[questionId] = 0;
+      if (!this.attemptCounts[questionId]) {
+        this.attemptCounts[questionId] = 0;
+      }
 
       // Cursor amigável
       piece.on("pointerover", () => this.input.setDefaultCursor("grab"));

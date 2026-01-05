@@ -44,9 +44,27 @@ function getCurrentUser(): { id: number | string; name?: string } {
 
 export class ArmedSumDataManager {
   private currentLevelData: ArmedSumLevelData | null = null;
-  private activityId: number = 4;
+  private activityId: number = 60; // ID da atividade do jogo de conta armada
   private apiService: APIDataService;
   private levelsCompleted: number = 0;
+  // Mapeamento de questionIds por nível (índice 0 = nível 1, índice 1 = nível 2, etc.)
+  private readonly levelQuestionIds = [
+    235, // Nível 1
+    236, // Nível 2
+    237, // Nível 3
+    238, // Nível 4
+    239, // Nível 5
+    240, // Nível 6
+    241, // Nível 7
+    242, // Nível 8
+    243, // Nível 9
+    244, // Nível 10
+    245, // Nível 11
+    246, // Nível 12
+    247, // Nível 13
+    248, // Nível 14
+    249, // Nível 15
+  ];
 
   constructor(scene: Phaser.Scene, activityId?: number) {
     if (activityId) {
@@ -142,13 +160,17 @@ export class ArmedSumDataManager {
       userName: user.name || "Usuário Anônimo",
     };
 
+    // Obtém o questionId do mapeamento (levelData.level começa em 1, então subtraímos 1 para o índice)
+    const questionId =
+      this.levelQuestionIds[levelData.level - 1] || levelData.level;
+
     return {
       studentId:
         typeof user.id === "number"
           ? user.id
           : parseInt(user.id.toString()) || 10130001,
       activityId: this.activityId,
-      questionId: levelData.level,
+      questionId: questionId,
       answer: JSON.stringify(levelResult),
       timeSpent: Math.round(levelData.timeSpent * 1000),
       attempts: levelData.userAnswers.length,

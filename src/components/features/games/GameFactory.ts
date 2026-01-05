@@ -166,6 +166,8 @@ export class GameFactory {
   }
 
   static createCoordinationGame(): Phaser.Types.Core.GameConfig {
+    // Instanciar a cena do jogo para poder usar o método de reset
+    const gameScene = new CoordinationGameScene();
     const scenes = [
       // Tela inicial padronizada mantendo o background do jogo de formas
       StartScene.create(
@@ -174,13 +176,20 @@ export class GameFactory {
         "formsBg",
         "JOGO DAS FORMAS",
       ),
-      CoordinationGameScene,
+      gameScene,
       // Tela de nível completo padronizada mantendo o background
       LevelCompletedScene.create(
         "CoordinationGameScene",
         "StartScene",
         "/assets/forms/bg.png",
         "formsBg",
+        undefined, // dudaImagePath
+        undefined, // dudaImageKey
+        undefined, // levelTitle
+        () => {
+          // Reset do nível ao voltar ao menu
+          CoordinationGameScene.resetRegistry(gameScene);
+        },
       ),
       // Tela final comum com customização para o jogo de formas
       EndScene.create(
@@ -306,6 +315,8 @@ export class GameFactory {
   }
 
   static createMazeGame(): Phaser.Types.Core.GameConfig {
+    // Instanciar a cena do jogo para poder usar o método de reset
+    const gameScene = new MazeGameScene();
     const scenes = [
       StartScene.create(
         "MazeGameScene",
@@ -313,7 +324,7 @@ export class GameFactory {
         "mazeBg",
         "JOGO DO LABIRINTO",
       ),
-      MazeGameScene,
+      gameScene,
       LevelCompletedScene.create(
         "MazeGameScene",
         "StartScene",
@@ -322,6 +333,10 @@ export class GameFactory {
         "/assets/common/duda/dudaClap.png",
         "dudaClap",
         "NÍVEL CONCLUÍDO!",
+        () => {
+          // Reset do nível ao voltar ao menu
+          MazeGameScene.resetRegistry(gameScene);
+        },
       ),
       EndScene.create(
         "StartScene",

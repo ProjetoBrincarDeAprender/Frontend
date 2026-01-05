@@ -46,8 +46,26 @@ function getCurrentUser(): { id: number | string; name?: string } {
 export class SubtractionGameDataManager {
   private gameSession: SubtractionGameSession;
   private currentLevelData: SubtractionLevelData | null = null;
-  private activityId: number = 2; // Usando o mesmo activityId do jogo de soma por enquanto
+  private activityId: number = 59; // ID da atividade do jogo de subtração
   private apiService: APIDataService;
+  // Mapeamento de questionIds por nível (índice 0 = nível 1, índice 1 = nível 2, etc.)
+  private readonly levelQuestionIds = [
+    220, // Nível 1
+    221, // Nível 2
+    222, // Nível 3
+    223, // Nível 4
+    224, // Nível 5
+    225, // Nível 6
+    226, // Nível 7
+    227, // Nível 8
+    228, // Nível 9
+    229, // Nível 10
+    230, // Nível 11
+    231, // Nível 12
+    232, // Nível 13
+    233, // Nível 14
+    234, // Nível 15
+  ];
 
   constructor(userId: string, scene: Phaser.Scene, activityId?: number) {
     // Garantir que sempre temos um userId válido
@@ -182,13 +200,17 @@ export class SubtractionGameDataManager {
       userName: user.name || "Usuário Anônimo",
     };
 
+    // Obtém o questionId do mapeamento (levelData.level começa em 1, então subtraímos 1 para o índice)
+    const questionId =
+      this.levelQuestionIds[levelData.level - 1] || levelData.level;
+
     return {
       studentId:
         typeof user.id === "number"
           ? user.id
           : parseInt(user.id.toString()) || 10130001,
       activityId: this.activityId,
-      questionId: levelData.level,
+      questionId: questionId,
       answer: JSON.stringify(levelResult),
       timeSpent: Math.round(levelData.timeSpent * 1000),
       attempts: levelData.userAnswers.length,
@@ -277,7 +299,7 @@ export class SubtractionGameDataManager {
     return {
       studentId: parseInt(this.gameSession.userId.toString()),
       activityId: this.activityId,
-      questionId: 1,
+      questionId: this.levelQuestionIds[0], // ID 220 para o resumo do jogo
       answer: JSON.stringify(gameResult),
       timeSpent: Math.round(totalTime * 1000),
       attempts: this.gameSession.totalWrongAnswers + 1,
