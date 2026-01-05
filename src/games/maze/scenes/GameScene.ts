@@ -30,6 +30,14 @@ export default class MazeGameScene extends Phaser.Scene {
     super({ key: "MazeGameScene" });
   }
 
+  /**
+   * Método estático para resetar o registro do nível do jogo.
+   * Chamado quando o jogador clica em "Reiniciar" na tela de nível concluído.
+   */
+  public static resetRegistry(scene: Phaser.Scene): void {
+    scene.registry.set("mazeNextLevel", null);
+  }
+
   init(data: { startLevel?: number } = {}) {
     // Permite iniciar pelo próximo nível salvo no Registry quando vindo da cena comum
     const regNext = this.registry.get("mazeNextLevel");

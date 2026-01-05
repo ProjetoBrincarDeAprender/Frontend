@@ -315,6 +315,8 @@ export class GameFactory {
   }
 
   static createMazeGame(): Phaser.Types.Core.GameConfig {
+    // Instanciar a cena do jogo para poder usar o método de reset
+    const gameScene = new MazeGameScene();
     const scenes = [
       StartScene.create(
         "MazeGameScene",
@@ -322,7 +324,7 @@ export class GameFactory {
         "mazeBg",
         "JOGO DO LABIRINTO",
       ),
-      MazeGameScene,
+      gameScene,
       LevelCompletedScene.create(
         "MazeGameScene",
         "StartScene",
@@ -331,6 +333,10 @@ export class GameFactory {
         "/assets/common/duda/dudaClap.png",
         "dudaClap",
         "NÍVEL CONCLUÍDO!",
+        () => {
+          // Reset do nível ao voltar ao menu
+          MazeGameScene.resetRegistry(gameScene);
+        },
       ),
       EndScene.create(
         "StartScene",
