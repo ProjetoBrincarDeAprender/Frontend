@@ -142,8 +142,6 @@ export function Profile() {
                     {user.nome_completo.charAt(0).toUpperCase()}
                   </div>
                 </div>
-                {/* Indicador online */}
-                <div className="absolute right-2 bottom-2 h-5 w-5 rounded-full border-4 border-[#150e45] bg-emerald-400 sm:h-6 sm:w-6" />
               </div>
             </div>
 
