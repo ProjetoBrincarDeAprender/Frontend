@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -49,6 +50,10 @@ export function ChangePasswordModal({
 
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
+    defaultValues: {
+      senhaAntiga: "",
+      novaSenha: "",
+    },
   });
 
   const handleOpenChange = (isOpen: boolean) => {
@@ -84,6 +89,9 @@ export function ChangePasswordModal({
             <DialogTitle className="text-xl font-bold">
               Alterar Senha
             </DialogTitle>
+            <DialogDescription className="text-az0/70">
+              Digite sua senha atual e a nova senha desejada.
+            </DialogDescription>
           </DialogHeader>
 
           <Form.Wrapper className="bg-transparent p-0">
@@ -94,6 +102,7 @@ export function ChangePasswordModal({
                 render={({ field }) => (
                   <Form.PasswordInput
                     {...field}
+                    value={field.value ?? ""}
                     label="Senha Antiga"
                     placeholder="Digite sua senha antiga"
                   />
@@ -105,6 +114,7 @@ export function ChangePasswordModal({
                 render={({ field }) => (
                   <Form.PasswordInput
                     {...field}
+                    value={field.value ?? ""}
                     label="Nova Senha"
                     placeholder="Digite sua nova senha"
                   />
@@ -136,6 +146,9 @@ export function ChangePasswordModal({
       <DialogContent className="bg-am2 text-az0 sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle className="text-xl font-bold">Alterar Senha</DialogTitle>
+          <DialogDescription className="text-az0/70">
+            Digite sua senha atual e a nova senha desejada.
+          </DialogDescription>
         </DialogHeader>
 
         <Form.Wrapper className="bg-transparent p-0">
@@ -146,6 +159,7 @@ export function ChangePasswordModal({
               render={({ field }) => (
                 <Form.PasswordInput
                   {...field}
+                  value={field.value ?? ""}
                   label="Senha Antiga"
                   placeholder="Digite sua senha antiga"
                 />
@@ -157,6 +171,7 @@ export function ChangePasswordModal({
               render={({ field }) => (
                 <Form.PasswordInput
                   {...field}
+                  value={field.value ?? ""}
                   label="Nova Senha"
                   placeholder="Digite sua nova senha"
                 />
