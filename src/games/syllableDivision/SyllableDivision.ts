@@ -147,7 +147,7 @@ export default class SyllableDivision extends Phaser.Scene {
   addDropzones(): void {
     const dropzones: Phaser.GameObjects.Container[] = [];
 
-    this.syllabes.forEach(() => {
+    this.syllabes.forEach((_value, index) => {
       const rectangle = this.add.rectangle(
         0,
         0,
@@ -171,6 +171,7 @@ export default class SyllableDivision extends Phaser.Scene {
       container.setSize(this.DROPZONE_SIZE, this.DROPZONE_SIZE);
       container.setInteractive();
       container.input!.dropZone = true;
+      container.setData("index", index);
       dropzones.push(container);
     });
     this.dropzones = dropzones;
@@ -199,7 +200,7 @@ export default class SyllableDivision extends Phaser.Scene {
   addOptions(): void {
     const options: Phaser.GameObjects.Container[] = [];
 
-    this.syllabes.forEach((syllabe) => {
+    this.syllabes.forEach((syllabe, index) => {
       const text = this.add
         .text(0, 0, syllabe, {
           fontFamily: "Arial",
@@ -216,6 +217,7 @@ export default class SyllableDivision extends Phaser.Scene {
       const container = this.add.container(0, 0, [rectangle, text]);
       container.setSize(this.OPTION_SIZE, this.OPTION_SIZE);
       container.setInteractive({ draggable: true });
+      container.setData("index", index);
       options.push(container);
     });
     this.options = options;
@@ -266,19 +268,7 @@ export default class SyllableDivision extends Phaser.Scene {
         dropped: boolean,
       ) => {
         if (!dropped) {
-          gameObject.x = gameObject.input!.dragStartX;
-          gameObject.y = gameObject.input!.dragStartY;
-          this.sound.play("incorrect");
-          this.effectManager.growup(gameObject, "bounce.out", 1.2, 200);
-          this.effectManager.changeColor({
-            gameObject: gameObject.getByName("text"),
-            color: 0xff0000,
-            duration: 400,
-          });
-          gameObject.disableInteractive();
-          this.time.delayedCall(501, () => {
-            gameObject.setInteractive();
-          });
+          this.incorrectDrop(gameObject);
         }
       },
     );
@@ -305,10 +295,33 @@ export default class SyllableDivision extends Phaser.Scene {
     );
   }
 
+  incorrectDrop(gameObject: Phaser.GameObjects.Container): void {
+    gameObject.x = gameObject.input!.dragStartX;
+    gameObject.y = gameObject.input!.dragStartY;
+    this.sound.play("incorrect");
+    this.effectManager.growup(gameObject, "bounce.out", 1.2, 200);
+    this.effectManager.changeColor({
+      gameObject: gameObject.getByName("text"),
+      color: 0xff0000,
+      duration: 400,
+    });
+    gameObject.disableInteractive();
+    this.time.delayedCall(501, () => {
+      gameObject.setInteractive();
+    });
+  }
+
   handleDrop(
     gameObject: Phaser.GameObjects.Container,
     dropZone: Phaser.GameObjects.Container,
   ): void {
+    const gameObjectIndex = gameObject.getData("index");
+    const dropZoneIndex = dropZone.getData("index");
+    if (gameObjectIndex !== dropZoneIndex) {
+      this.incorrectDrop(gameObject);
+      return;
+    }
+
     gameObject.setPosition(dropZone.x, dropZone.y);
     if (gameObject.input) gameObject.input.enabled = false;
     dropZone.destroy();
