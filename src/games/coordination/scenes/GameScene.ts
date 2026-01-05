@@ -26,6 +26,14 @@ export default class CoordinationGameScene extends PreloadScene {
     super({ key: "CoordinationGameScene" });
   }
 
+  /**
+   * Método estático para resetar o registro do nível do jogo.
+   * Chamado quando o jogador clica em "Reiniciar" na tela de nível concluído.
+   */
+  public static resetRegistry(scene: Phaser.Scene): void {
+    scene.registry.set("coordNextLevel", null);
+  }
+
   init(data: { startLevel?: number } = {}) {
     // Permite continuar do próximo nível usando Registry quando vindo da cena comum
     const regNext = this.registry.get("coordNextLevel");
