@@ -27,7 +27,8 @@ export class APIDataService {
   ) {
     const userPayload = this.getUser();
 
-    console.log(userPayload);
+    console.log("=== DEBUG API ===");
+    console.log("userPayload:", userPayload);
 
     if (userPayload === undefined) {
       console.error("Dados do usuário não encontrados na cena.");
@@ -35,6 +36,7 @@ export class APIDataService {
     }
 
     if (userPayload?.perfil != "Aluno") {
+      console.log("Usuário não é aluno, não enviando dados");
       return;
     }
 
@@ -49,6 +51,9 @@ export class APIDataService {
         answer: gameStats.answer,
         neededHint: gameStats.neededHint,
       };
+
+      console.log("Payload completo:", JSON.stringify(payload, null, 2));
+      console.log("URL:", "/adaptiveSystem/interaction/register");
 
       const response = await api.post(
         "/adaptiveSystem/interaction/register",
@@ -71,6 +76,7 @@ export class APIDataService {
           error.response?.status,
           error.message,
         );
+        console.error("Detalhes do erro:", error.response?.data);
       }
       if (error instanceof Error) {
         console.error("Erro durante processamento:", error.message);

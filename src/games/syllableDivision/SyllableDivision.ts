@@ -1,6 +1,7 @@
 import { AudioManager } from "../common/managers/AudioManager";
 import Phaser from "phaser";
 import EffectManager from "../clickedButton/logic/EffectManager";
+import { APIDataService } from "../common/services/APIData.service";
 
 export interface SyllableDivisionConfig {
   DROPZONE_MARGIN?: number;
@@ -17,8 +18,10 @@ export interface SyllableDivisionConfig {
 }
 
 export default class SyllableDivision extends Phaser.Scene {
+  private ACTIVITY_ID = 26;
   private DROPZONE_MARGIN: number;
   private DROPZONE_SIZE: number;
+  private INITIAL_QUESTION_ID = 251;
   private OPTION_SIZE: number;
   private OPTION_FONT_SIZE: number;
   private config: SyllableDivisionConfig;
@@ -27,6 +30,8 @@ export default class SyllableDivision extends Phaser.Scene {
   private image: Phaser.GameObjects.Image | null;
   private options: Phaser.GameObjects.Container[] = [];
   private syllabes: string[];
+  private levelStartTime: number = 0;
+  private levelAttempts: number = 0;
 
   constructor(config: SyllableDivisionConfig) {
     super({ key: "SyllableDivision" });
@@ -299,6 +304,7 @@ export default class SyllableDivision extends Phaser.Scene {
     gameObject.x = gameObject.input!.dragStartX;
     gameObject.y = gameObject.input!.dragStartY;
     this.sound.play("incorrect");
+    this.levelAttempts++;
     this.effectManager.growup(gameObject, "bounce.out", 1.2, 200);
     this.effectManager.changeColor({
       gameObject: gameObject.getByName("text"),
@@ -309,6 +315,30 @@ export default class SyllableDivision extends Phaser.Scene {
     this.time.delayedCall(501, () => {
       gameObject.setInteractive();
     });
+  }
+
+  async postarDadosApi(isCorrect: boolean): Promise<void> {
+    const apiService = new APIDataService(this);
+    const timeSpent = Date.now() - this.levelStartTime;
+    const currentLevel = this.registry.get("actualLevel");
+
+    const levelData = {
+      attempts: this.levelAttempts + 1,
+      timeSpent: timeSpent,
+      isCorrect: isCorrect,
+      answer: String(this.config.levels[currentLevel].join("-")),
+      neededHint: false,
+    };
+
+    try {
+      await apiService.sendGameData(
+        this.ACTIVITY_ID,
+        currentLevel + this.INITIAL_QUESTION_ID,
+        levelData,
+      );
+    } catch (error) {
+      console.error("Erro ao enviar dados do jogo:", error);
+    }
   }
 
   handleDrop(
@@ -336,6 +366,7 @@ export default class SyllableDivision extends Phaser.Scene {
     });
 
     if (this.dropzones.length === 0) {
+      this.postarDadosApi(true);
       this.endLevel();
     }
   }
@@ -345,6 +376,8 @@ export default class SyllableDivision extends Phaser.Scene {
     if (this.syllabes.length === 0) {
       this.scene.start("EndScene");
     } else {
+      this.levelStartTime = Date.now();
+      this.levelAttempts = 0;
       this.addImage();
       this.addInteractableComponents();
     }
