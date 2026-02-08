@@ -157,7 +157,7 @@ export default function TeacherTable() {
                 <EditTeacherModal id={+row.original.codigo_usuario} />
               </button>
               <a
-                className={`rounded-sm px-3 py-2 shadow-sm transition ${selectedIds.length > 0 ? "cursor-not-allowed bg-blue-300 opacity-50" : "bg-blue-400 hover:bg-blue-500"}`}
+                className={`rounded-sm px-4 py-2 shadow-sm transition ${selectedIds.length > 0 ? "cursor-not-allowed bg-blue-300 opacity-50" : "bg-blue-400 hover:bg-blue-500"}`}
                 href={
                   selectedIds.length > 0
                     ? undefined
