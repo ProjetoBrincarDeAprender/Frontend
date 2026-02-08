@@ -19,7 +19,6 @@ const formSchema = z.object({
 
 export default function SignInForm() {
   const [showPassword, setShowPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
   const { login, profile } = useAuth();
   const { mutateAsync: loginUser, isPending } = login;
   const { data: profileData } = profile;
@@ -36,12 +35,9 @@ export default function SignInForm() {
     if (profileData) {
       registerUser(profileData);
     }
-  }, [profileData]);
+  }, [profileData, registerUser]);
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
-    if (isLoading) return;
-    setIsLoading(true);
-
     try {
       await loginUser({ login: data.login, senha: data.senha });
 

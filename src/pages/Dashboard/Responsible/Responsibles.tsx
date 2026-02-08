@@ -8,14 +8,21 @@ import saturn from "../../../assets/saturn.svg";
 import { RegisterResponsableModal } from "@/components/features/users/responsible/create/ResponsibleCreateModal";
 import ResponsibleTable from "@/components/features/users/responsible/files/TeacherTable";
 import { TableProvider } from "@/contexts/Table/provider";
+import { DesktopWarningDialog } from "@/components/features/users/common/DesktopWarningDialog";
+import { useDesktopWarning } from "@/hooks/useMobileDetection";
 
 export function Responsibles() {
   const { user } = useUser();
+  const { showWarning, setShowWarning } = useDesktopWarning();
 
   const username = user?.nome_completo || "Usuário";
 
   return (
     <>
+      <DesktopWarningDialog
+        isOpen={showWarning}
+        onClose={() => setShowWarning(false)}
+      />
       <Header />
       <LateralMenu username={username} />
       <main className="font-1 h-full bg-neutral-200 px-32 pt-32 pb-32 text-gray-800">

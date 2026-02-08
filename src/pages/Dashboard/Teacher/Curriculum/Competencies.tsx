@@ -7,13 +7,20 @@ import CompetenceTable from "@/components/features/curriculum/competencies/files
 import { TableProvider } from "@/contexts/Table/provider";
 import { Link } from "react-router";
 import saturn from "../../../../assets/saturn.svg";
+import { DesktopWarningDialog } from "@/components/features/users/common/DesktopWarningDialog";
+import { useDesktopWarning } from "@/hooks/useMobileDetection";
 
 export function Competencies() {
   const { user } = useUser();
+  const { showWarning, setShowWarning } = useDesktopWarning();
   const username = user?.nome_completo || "Usuário";
 
   return (
     <>
+      <DesktopWarningDialog
+        isOpen={showWarning}
+        onClose={() => setShowWarning(false)}
+      />
       <Header />
       <LateralMenu username={username} />
       <main className="font-1 h-full bg-neutral-200 px-32 pt-32 pb-32 text-gray-800">

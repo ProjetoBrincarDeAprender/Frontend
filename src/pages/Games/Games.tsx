@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 import { Card, type CardProps } from "../../components/utils/Card/Card";
-import gamesData from "./games.json";
 import api from "../../utils/api";
+import gamesData from "./games.json";
 
+import { DesktopWarningDialog } from "@/components/features/users/common/DesktopWarningDialog";
 import { Footer } from "@/components/Footer/Footer";
 import { Header } from "@/components/Header/Header";
 import { BackButton } from "@/components/utils/BackButton";
+import { useDesktopWarning } from "@/hooks/useMobileDetection";
 import { BiSearch } from "react-icons/bi";
 import "./Games.css";
 
@@ -74,6 +76,7 @@ export function Games() {
   const [selectedArea, setSelectedArea] = useState<KnowledgeArea>("TODOS");
   const [_activities, _setActivities] = useState<ActivityData[]>([]);
   const [_loading, _setLoading] = useState<boolean>(true);
+  const { showWarning, setShowWarning } = useDesktopWarning();
 
   useEffect(() => {
     const fetchActivities = async () => {
@@ -115,7 +118,13 @@ export function Games() {
   const getGameArea = (gameTitle: string): KnowledgeArea => {
     const title = gameTitle.toLowerCase();
 
-    if (title.includes("vogais") || title.includes("sílaba") || title.includes("silábica") ||title.includes("tônica") ||title.includes("frases")) {
+    if (
+      title.includes("vogais") ||
+      title.includes("sílaba") ||
+      title.includes("silábica") ||
+      title.includes("tônica") ||
+      title.includes("frases")
+    ) {
       return "PORTUGUES";
     }
     if (
@@ -127,7 +136,13 @@ export function Games() {
     ) {
       return "MATEMATICA";
     }
-    if (title.includes("moradia") || title.includes("profissões") || title.includes("rua") || title.includes("localiza")|| title.includes("data") ) {
+    if (
+      title.includes("moradia") ||
+      title.includes("profissões") ||
+      title.includes("rua") ||
+      title.includes("localiza") ||
+      title.includes("data")
+    ) {
       return "GEOGRAFIA";
     }
     if (
@@ -140,7 +155,8 @@ export function Games() {
     if (
       title.includes("espaço") ||
       title.includes("ciclo") ||
-      title.includes("planta") || title.includes("higiene")
+      title.includes("planta") ||
+      title.includes("higiene")
     ) {
       return "CIENCIAS";
     }
@@ -179,6 +195,10 @@ export function Games() {
 
   return (
     <>
+      <DesktopWarningDialog
+        isOpen={showWarning}
+        onClose={() => setShowWarning(false)}
+      />
       <Header />
       <BackButton />
       <main className="bg-slate-200 pt-48">
@@ -221,7 +241,7 @@ export function Games() {
                 onClick={() => handleAreaFilter(area.id)}
                 className={` ${area.color} ${
                   selectedArea === area.id
-                    ? "outline-4 outline-offset-1 outline-solid outline-purplish-blue ring-opacity-80 scale-105 transform-gpu shadow-xl"
+                    ? "outline-purplish-blue ring-opacity-80 scale-105 transform-gpu shadow-xl outline-4 outline-offset-1 outline-solid"
                     : "hover:scale-105 hover:shadow-lg"
                 } font-1 border-purplish-blue border-opacity-60 hover:border-opacity-100 flex min-h-[60px] transform items-center justify-center rounded-2xl border-2 px-6 py-4 text-2xl text-white backdrop-blur-sm transition-all duration-300 ease-in-out hover:cursor-pointer hover:shadow-blue-800/25 active:scale-95 sm:text-base lg:text-lg`}
               >

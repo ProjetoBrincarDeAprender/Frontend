@@ -6,13 +6,20 @@ import { CreateKnowledgeAreaModal } from "@/components/features/curriculum/knowl
 import KnowledgeAreaTable from "@/components/features/curriculum/knowledgeAreas/files/KnowledgeAreaTable";
 import { TableProvider } from "@/contexts/Table/provider";
 import saturn from "../../../../assets/saturn.svg";
+import { DesktopWarningDialog } from "@/components/features/users/common/DesktopWarningDialog";
+import { useDesktopWarning } from "@/hooks/useMobileDetection";
 
 export default function KnowledgeAreas() {
   const { user } = useUser();
+  const { showWarning, setShowWarning } = useDesktopWarning();
   const username = user?.nome_completo || "Usuário";
 
   return (
     <>
+      <DesktopWarningDialog
+        isOpen={showWarning}
+        onClose={() => setShowWarning(false)}
+      />
       <Header />
       <LateralMenu username={username} />
       <main className="font-1 h-full bg-neutral-200 px-32 pt-32 pb-32 text-gray-800">
