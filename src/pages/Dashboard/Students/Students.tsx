@@ -8,13 +8,20 @@ import saturn from "../../../assets/saturn.svg";
 
 import { RegisterStudentModal } from "@/components/features/users/students/create/StudentCreateModal";
 import { TableProvider } from "@/contexts/Table/provider";
+import { DesktopWarningDialog } from "@/components/features/users/common/DesktopWarningDialog";
+import { useDesktopWarning } from "@/hooks/useMobileDetection";
 
 export function Students() {
   const { user } = useUser();
+  const { showWarning, setShowWarning } = useDesktopWarning();
 
   const username = user?.nome_completo || "Usuário";
   return (
     <>
+      <DesktopWarningDialog
+        isOpen={showWarning}
+        onClose={() => setShowWarning(false)}
+      />
       <Header />
       <LateralMenu username={username} />
       <main className="font-1 h-full bg-neutral-200 px-32 pt-32 pb-32 text-gray-800">

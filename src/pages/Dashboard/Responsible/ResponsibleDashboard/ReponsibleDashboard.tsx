@@ -5,10 +5,13 @@ import StudentCard from "@/pages/Dashboard/Responsible/ResponsibleDashboard/comp
 import api from "@/utils/api";
 import { useEffect, useState } from "react";
 import saturn from "../../../../assets/saturn.svg";
+import { DesktopWarningDialog } from "@/components/features/users/common/DesktopWarningDialog";
+import { useDesktopWarning } from "@/hooks/useMobileDetection";
 
 export function ResponsibleDashboard() {
   const { user } = useUser();
   const [response, setResponse] = useState<any>([]);
+  const { showWarning, setShowWarning } = useDesktopWarning();
   const username = user?.nome_completo || "Usuário";
 
   useEffect(() => {
@@ -31,6 +34,10 @@ export function ResponsibleDashboard() {
 
   return (
     <div className="flex h-fit flex-col bg-neutral-200 pt-28 text-gray-800">
+      <DesktopWarningDialog
+        isOpen={showWarning}
+        onClose={() => setShowWarning(false)}
+      />
       <Header />
       <section className="mb-10 h-full px-78 pt-8">
         <div className="flex items-center gap-4">

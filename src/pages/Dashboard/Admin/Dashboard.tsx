@@ -4,20 +4,22 @@ import { Link, useNavigate } from "react-router";
 // componentes do site
 import { Footer } from "@/components/Footer/Footer";
 import { Header } from "@/components/Header/Header";
-import { useUser } from "@/hooks/User/useUser";
-import { useTeacher } from "@/hooks/Teacher/useTeacher";
-import { useStudent } from "@/hooks/Student/useStudent";
+import { Button } from "@/components/ui/button";
 import { useSchool } from "@/hooks/School/useSchool";
+import { useStudent } from "@/hooks/Student/useStudent";
+import { useTeacher } from "@/hooks/Teacher/useTeacher";
+import { useUser } from "@/hooks/User/useUser";
+import { Activity, BookOpen, HelpCircle, Target } from "lucide-react";
 import { LateralMenu } from "../../../components/sideBar/sideBar";
 import { InfoBadge } from "../../../components/utils/InfoBadge/InfoBadge";
-import { Button } from "@/components/ui/button";
-import { BookOpen, Target, Activity, HelpCircle } from "lucide-react";
 
 // imagens
 // import graphic from "../../../assets/graphic.svg";
 import saturn from "../../../assets/saturn.svg";
 
 // estilos
+import { DesktopWarningDialog } from "@/components/features/users/common/DesktopWarningDialog";
+import { useDesktopWarning } from "@/hooks/useMobileDetection";
 import "./Dashboard.css";
 
 export default function Dashboard() {
@@ -27,6 +29,8 @@ export default function Dashboard() {
   const { studentsQuery } = useStudent({});
   const { schoolsQuery } = useSchool({});
 
+  const { showWarning, setShowWarning } = useDesktopWarning();
+
   const username = user?.nome_completo || "Usuário";
 
   const formatCount = (value: number) => {
@@ -35,6 +39,10 @@ export default function Dashboard() {
 
   return (
     <>
+      <DesktopWarningDialog
+        isOpen={showWarning}
+        onClose={() => setShowWarning(false)}
+      />
       <Header />
       <LateralMenu username={username} />
       <main className="flex h-fit flex-col bg-neutral-200 pt-28 text-gray-800">

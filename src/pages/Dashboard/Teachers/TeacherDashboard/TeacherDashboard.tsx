@@ -9,11 +9,14 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import saturn from "../../../../assets/saturn.svg";
 import { LateralMenu } from "../../../../components/sideBar/sideBar";
+import { DesktopWarningDialog } from "@/components/features/users/common/DesktopWarningDialog";
+import { useDesktopWarning } from "@/hooks/useMobileDetection";
 
 export function TeacherDashboard() {
   const { user } = useUser();
   const navigate = useNavigate();
   const [response, setResponse] = useState<any>([]);
+  const { showWarning, setShowWarning } = useDesktopWarning();
   const username = user?.nome_completo || "Usuário";
 
   useEffect(() => {
@@ -35,6 +38,10 @@ export function TeacherDashboard() {
 
   return (
     <div className="flex min-h-screen flex-col bg-neutral-200 pt-28 text-gray-800">
+      <DesktopWarningDialog
+        isOpen={showWarning}
+        onClose={() => setShowWarning(false)}
+      />
       <Header />
       <LateralMenu username={username} />
 
