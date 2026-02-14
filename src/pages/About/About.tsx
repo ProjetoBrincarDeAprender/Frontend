@@ -106,9 +106,7 @@ export function About() {
           </div>
         </div>
 
-        {/* Seção de Missão */}
         <div className="relative w-full bg-am1 py-8 sm:py-10 md:py-12 lg:py-16 xl:py-20 2xl:py-24 px-4 overflow-hidden">
-          {/* Telescópio */}
           <div className="flex justify-center mb-4 sm:mb-5 md:mb-6 xl:mb-8">
             <img 
               src={telescopio} 
@@ -117,12 +115,10 @@ export function About() {
             />
           </div>
 
-          {/* Frase */}
           <h2 className="font-1 text-white text-center text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl 2xl:text-5xl font-black uppercase px-4 sm:px-8 md:px-16 lg:px-32 xl:px-40 2xl:px-48 max-w-7xl mx-auto leading-tight sm:leading-snug md:leading-normal xl:leading-normal 2xl:leading-relaxed drop-shadow-lg mb-8 sm:mb-12 md:mb-16 lg:mb-20 xl:mb-24 2xl:mb-28">
             Incentivar o verdadeiro potencial de uma criança em um ambiente amoroso e seguro
           </h2>
 
-          {/* Nuvem */}
           <div className="absolute bottom-0 left-0 right-0 w-full">
             <img 
               src={nuvem} 
