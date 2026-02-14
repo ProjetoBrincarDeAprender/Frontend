@@ -27,6 +27,7 @@ import { SendPasswordToken } from "./pages/SendPasswordToken/SendPasswordToken";
 import { UserPerfilEnum } from "./types/user";
 import CreateActivityPage from "./pages/ActivitiesPage/CreateActivityPage";
 import GameRenderer from "./pages/Games/GameRenderer";
+import { About } from "./pages/About/About";
 
 function App() {
   return (
@@ -34,6 +35,7 @@ function App() {
       <Route index element={<Home />} />
       <Route path="/logout" element={<Logout />} />
       <Route path="/login" element={<LoginForm />} />
+      <Route path="/about" element={<About />} />
       <Route path="/get-password-token" element={<SendPasswordToken />} />
       <Route path="/recover-password" element={<RecoverPassword />} />
 
