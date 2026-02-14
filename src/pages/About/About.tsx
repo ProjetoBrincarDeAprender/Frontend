@@ -8,6 +8,7 @@ import nuvem from "@/assets/nuvem.svg";
 import foguete from "@/assets/rocket.svg";
 import alunosApae from "@/assets/alunos-apae.svg";
 import aceleraI from "@/assets/acelera-i.svg";
+import telescopio from "@/assets/telescopio.svg";
 
 export function About() {
   return (
@@ -102,6 +103,32 @@ export function About() {
 
             <img src={estrela} className="hidden md:block absolute -left-10 bottom-0 h-8 w-8 md:h-10 md:w-10 rotate-45" alt="Estrela" />
             <img src={estrela} className="hidden md:block absolute right-10 md:right-20 -bottom-10 h-4 w-4 md:h-6 md:w-6" alt="Estrela" />
+          </div>
+        </div>
+
+        {/* Seção de Missão */}
+        <div className="relative w-full bg-am1 py-8 sm:py-10 md:py-12 lg:py-16 px-4 overflow-hidden">
+          {/* Telescópio */}
+          <div className="flex justify-center mb-4 sm:mb-5 md:mb-6">
+            <img 
+              src={telescopio} 
+              alt="Telescópio" 
+              className="h-12 w-12 sm:h-16 sm:w-16 md:h-20 md:w-20 lg:h-24 lg:w-24 object-contain"
+            />
+          </div>
+
+          {/* Frase */}
+          <h2 className="font-1 text-white text-center text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-black uppercase px-4 sm:px-8 md:px-16 lg:px-32 max-w-6xl mx-auto leading-tight sm:leading-snug md:leading-normal drop-shadow-lg mb-8 sm:mb-12 md:mb-16 lg:mb-22">
+            Incentivar o verdadeiro potencial de uma criança em um ambiente amoroso e seguro
+          </h2>
+
+          {/* Nuvem */}
+          <div className="absolute bottom-0 left-0 right-0 w-full">
+            <img 
+              src={nuvem} 
+              alt="Nuvens" 
+              className="w-full h-auto object-cover"
+            />
           </div>
         </div>
       </div>
