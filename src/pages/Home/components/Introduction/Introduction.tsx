@@ -12,9 +12,12 @@ interface IntroductionProps {
 export function Introduction({ className = "" }: IntroductionProps) {
   return (
     <section
-      className={`${className} font-1 container flex justify-around self-center pt-32`}
+      className={`${className} font-1 home-introduction relative flex justify-around pt-32`}
     >
-      <div className="flex flex-col gap-8 self-center">
+      <svg className="absolute top-0 left-0 z-10 h-full" viewBox="0 0 900 500">
+        <polygon points="0,0 900,0 0,900" fill="#302579" />
+      </svg>
+      <div className="relative z-20 flex flex-col gap-8 self-center">
         <h1 className="text-5xl leading-tight font-bold">
           Transforme o aprendizado em
           <br />
@@ -36,8 +39,8 @@ export function Introduction({ className = "" }: IntroductionProps) {
           </Button>
         </div>
       </div>
-      <div className="self-center">
-        <img src={girl} alt="" className="block max-h-[31.25rem]" />
+      <div className="relative z-20 self-center">
+        <img src={girl} alt="duda" className="block max-h-[31.25rem]" />
       </div>
     </section>
   );
