@@ -81,7 +81,7 @@ export default function AboutGames() {
                     previewContent={`/assets/common/media/videos/${preview}`}
                     previewType={previewType as "image" | "video"}
                   />
-                  <div className="flex h-full w-full flex-col gap-4">
+                  <div className="flex h-full w-full flex-col gap-2 lg:gap-4">
                     <div className="flex flex-wrap gap-2">
                       {badges.map((badge) => (
                         <GameCard.Badge

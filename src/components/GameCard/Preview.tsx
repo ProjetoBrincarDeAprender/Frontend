@@ -1,3 +1,4 @@
+import { Skeleton } from "@/components/ui/skeleton";
 import { useRef, useState } from "react";
 import { twMerge } from "tailwind-merge";
 
@@ -14,6 +15,24 @@ export default function GameCardPreview({
 }: GameCardPreviewProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [isImageLoaded, setIsImageLoaded] = useState(false);
+  const [isVideoLoaded, setIsVideoLoaded] = useState(false);
+
+  const handleImageLoad = () => {
+    setIsImageLoaded(true);
+  };
+
+  const handleImageError = () => {
+    setIsImageLoaded(true); // Hide skeleton even on error
+  };
+
+  const handleVideoLoad = () => {
+    setIsVideoLoaded(true);
+  };
+
+  const handleVideoError = () => {
+    setIsVideoLoaded(true); // Hide skeleton even on error
+  };
 
   const handleMouseEnter = () => {
     if (videoRef.current) {
@@ -53,11 +72,21 @@ export default function GameCardPreview({
         className="peer absolute top-0 left-0 z-10 aspect-video size-full inset-shadow-xs data-[type=video]:hidden"
         data-type={previewType}
       />
+
+      {/* Skeleton loading state */}
+      <Skeleton
+        className="absolute inset-0 z-20 aspect-video h-full w-full data-[loaded=true]:hidden"
+        data-loaded={previewType === "image" ? isImageLoaded : isVideoLoaded}
+      />
+
       {previewType == "image" ? (
         <img
-          className="aspect-video object-cover text-center transition-transform duration-300 ease-in-out peer-hover:scale-110"
+          className="aspect-video object-cover text-center transition-transform duration-300 ease-in-out peer-hover:scale-110 data-[loaded=false]:opacity-0 data-[loaded=true]:opacity-100"
           src={previewContent}
           alt="Preview"
+          onLoad={handleImageLoad}
+          onError={handleImageError}
+          data-loaded={isImageLoaded}
         />
       ) : (
         <video
@@ -67,7 +96,10 @@ export default function GameCardPreview({
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
           onClick={handleClick}
-          className="aspect-video cursor-pointer object-cover"
+          onLoadedData={handleVideoLoad}
+          onError={handleVideoError}
+          className="aspect-video cursor-pointer object-cover data-[loaded=false]:opacity-0 data-[loaded=true]:opacity-100"
+          data-loaded={isVideoLoaded}
         />
       )}
     </div>
