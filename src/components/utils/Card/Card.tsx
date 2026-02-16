@@ -35,7 +35,7 @@ export function Card({
 
   return (
     <div
-      className={`card-${variant} font-2 z-2 m-auto flex h-96 w-64 flex-col rounded-4xl p-2 text-center font-medium shadow-2xl`}
+      className={`card-${variant} font-2 z-2 m-auto flex h-96 w-64 flex-col rounded-4xl text-center font-medium shadow-2xl`}
     >
       <header className="h-1/2 w-full overflow-hidden rounded-3xl">
         <img
@@ -48,13 +48,17 @@ export function Card({
         <h1 className="text-2xl font-bold">{title}</h1>
         {competency && (
           <div className="px-2 text-left">
-            <p className="text-xs text-gray-600 font-semibold mb-0.5">Competência:</p>
-            <p className="text-xs text-gray-700 line-clamp-2">{competency}</p>
+            <p className="mb-0.5 text-xs font-semibold text-gray-600">
+              Competência:
+            </p>
+            <p className="line-clamp-2 text-xs text-gray-700">{competency}</p>
           </div>
         )}
         {knowledgeArea && !competency && (
           <div className="px-2">
-            <p className="text-sm text-gray-600 font-semibold">Área: {knowledgeArea}</p>
+            <p className="text-sm font-semibold text-gray-600">
+              Área: {knowledgeArea}
+            </p>
           </div>
         )}
         <a
@@ -62,7 +66,7 @@ export function Card({
           onClick={handleClick}
           aria-disabled={disabled}
           tabIndex={disabled ? -1 : 0}
-          className={`mt-auto mb-4 mx-auto rounded-xl px-4 py-2 transition ${disabled ? "pointer-events-auto cursor-not-allowed opacity-60" : ""}`}
+          className={`mx-auto mt-auto mb-4 rounded-xl px-4 py-2 transition ${disabled ? "pointer-events-auto cursor-not-allowed opacity-60" : ""}`}
         >
           {disabled === true ? "Em breve" : "Jogar"}
         </a>
