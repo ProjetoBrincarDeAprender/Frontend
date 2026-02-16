@@ -17,7 +17,7 @@ export function Introduction({ className = "" }: IntroductionProps) {
         <section
           className={`${className} font-1 home-introduction relative mx-auto flex max-w-[1400px] items-center justify-between px-12 py-20`}
         >
-          <div className="relative z-20 flex flex-col gap-8 self-center">
+          <div className="intro-text relative z-20 flex flex-col gap-8 self-center">
             <h1 className="text-5xl leading-tight font-bold">
               Transforme o aprendizado em
               <br />
@@ -32,7 +32,7 @@ export function Introduction({ className = "" }: IntroductionProps) {
               <br /> Jogos feitos para ensinar, incluir e evoluir junto com
               você.
             </p>
-            <div className="mt-8">
+            <div className="intro-btn mt-8">
               <Button className="!shadow-3xl h-16 w-48 items-center self-start rounded-xl border-4 border-transparent text-center text-xl font-bold hover:border-yellow-400 hover:!bg-blue-900">
                 <Joystick className="mr-2 h-16 w-16" />{" "}
                 <span className="block text-4xl font-bold tracking-wider">
@@ -42,11 +42,15 @@ export function Introduction({ className = "" }: IntroductionProps) {
             </div>
           </div>
           <div className="relative z-20 flex items-end justify-end">
-            <img src={girl} alt="duda" className="block max-h-[31.25rem]" />
+            <img
+              src={girl}
+              alt="duda"
+              className="intro-girl block max-h-[31.25rem]"
+            />
           </div>
         </section>
       </div>
-      <div className="relative h-full w-full">
+      <div className="intro-bg relative h-full w-full">
         <img
           src={bg}
           alt="Background"

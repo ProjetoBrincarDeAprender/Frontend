@@ -4,6 +4,7 @@
   width: 100%;
   min-height: 550px;
   overflow: hidden;
+  padding-top: 6.75rem;
 }
 
 .intro-box {
@@ -26,15 +27,110 @@
   height: 100%;
 }
 
+/* Tablet */
+@media (max-width: 1024px) {
+  .blend-container {
+    min-height: 480px;
+    padding-top: 6rem;
+  }
+
+  .home-introduction {
+    padding: 3rem 2rem;
+  }
+
+  .home-introduction h1 {
+    font-size: 2.25rem;
+  }
+
+  .home-introduction .intro-girl {
+    max-height: 22rem;
+  }
+}
+
+/* Mobile */
 @media (max-width: 768px) {
+  .blend-container {
+    min-height: auto;
+    padding-top: 6.75rem;
+    flex-direction: column;
+  }
+
+  /* Make intro-box flow normally so it determines container height */
+  .intro-box {
+    position: relative;
+    background: linear-gradient(
+      0deg,
+      rgba(0, 0, 139, 0.95) 0%,
+      rgba(0, 76, 153, 0.92) 50%,
+      rgba(70, 130, 180, 0.85) 100%
+    );
+  }
+
+  /* Put bg image behind everything */
+  .intro-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+  }
+
   .home-introduction {
     flex-direction: column;
     gap: 2rem;
     padding: 2rem 1.5rem;
     text-align: center;
+    align-items: center;
+    justify-content: center;
   }
 
   .home-introduction > div {
     max-width: 100%;
+  }
+
+  .home-introduction h1 {
+    font-size: 1.75rem;
+    line-height: 1.3;
+  }
+
+  .home-introduction h1 br {
+    display: none;
+  }
+
+  .home-introduction p {
+    font-size: 0.95rem;
+  }
+
+  .home-introduction p br {
+    display: none;
+  }
+
+  .home-introduction .intro-girl {
+    max-height: 14rem;
+  }
+
+  .home-introduction .intro-text {
+    align-items: center;
+  }
+
+  .home-introduction .intro-btn {
+    align-self: center;
+  }
+}
+
+/* Small mobile */
+@media (max-width: 480px) {
+  .home-introduction {
+    padding: 2rem 1rem;
+    gap: 1.5rem;
+  }
+
+  .home-introduction h1 {
+    font-size: 1.5rem;
+  }
+
+  .home-introduction .intro-girl {
+    max-height: 11rem;
   }
 }
