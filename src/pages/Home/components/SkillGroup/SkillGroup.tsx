@@ -4,8 +4,6 @@ import "./SkillGroup.css";
 import apaeImage from "../../../../assets/alunos-apae.svg";
 import aceleraiImage from "../../../../assets/acelera-i.svg";
 
-import cloud from "../../../../assets/nuvem.svg";
-
 interface SkillGroupProps {
   className?: string;
 }
