@@ -16,7 +16,7 @@ export default function GameCardBadge({
   return (
     <div
       className={twJoin(
-        "rounded-full px-5 py-1 text-sm text-nowrap shadow md:text-base",
+        "rounded-full px-5 py-1 text-sm text-nowrap shadow lg:text-base",
         bgColor,
         className,
       )}
