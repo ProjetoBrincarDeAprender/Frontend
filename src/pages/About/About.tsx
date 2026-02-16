@@ -16,21 +16,33 @@ export function About() {
     <>
       <Header />
       <div className="bg-purple-primary relative mt-80 justify-items-center pb-0">
-        <img src={lua} className="absolute bottom-115 left-80" />
-        <img src={saturno} className="absolute right-120 bottom-120 h-30" />
-        <img src={estrela} className="absolute top-20 right-160" />
-        <img src={pipa} className="absolute top-20 right-40 rotate-310" />
+        <img
+          src={lua}
+          className="absolute h-0 sm:-top-6 sm:left-20 sm:h-10 md:-top-8 md:left-20 lg:-top-10 lg:left-60 xl:-top-10 xl:left-60 2xl:-top-10 2xl:left-80"
+        />
+        <img
+          src={saturno}
+          className="absolute h-0 sm:-top-20 sm:right-20 sm:h-15 md:-top-35 md:right-30 md:h-20 lg:-top-20 lg:right-60 xl:-top-30 xl:right-90 xl:h-20 2xl:-top-40 2xl:right-120 2xl:h-30"
+        />
+        <img
+          src={estrela}
+          className="absolute h-0 sm:right-60 sm:bottom-25 sm:h-10 md:right-70 md:bottom-40 lg:right-100 lg:bottom-40 xl:right-100 xl:bottom-40 2xl:right-160 2xl:bottom-60"
+        />
+        <img
+          src={pipa}
+          className="absolute h-0 rotate-310 sm:right-8 sm:bottom-45 sm:h-30 md:right-10 md:bottom-60 lg:right-30 lg:bottom-40 xl:right-20 xl:bottom-50 2xl:right-40 2xl:bottom-100"
+        />
         <h1 className="font-1 text-6xl font-black uppercase">Quem somos</h1>
-        <img src={nuvem} className="mt-40 block" />
+        <img src={nuvem} className="mt-40 block w-full" />
       </div>
 
       <div className="bg-cloud-white -mt-1 justify-items-center text-gray-900">
-        <h2 className="font-1 text-purplish-blue mt-20 mb-20 text-2xl">
+        <h2 className="font-1 text-purplish-blue mt-20 mb-20 text-2xl lg:text-4xl 2xl:text-5xl">
           Conheça um pouco do nosso
           <span className="text-purplish-blue-dark font-bold"> trabalho!</span>
         </h2>
 
-        <p className="font-2 mb-40 px-40 text-center text-lg leading-loose">
+        <p className="font-2 text-center text-lg leading-loose sm:mb-20 sm:px-10 lg:mb-40 lg:px-40 lg:text-2xl 2xl:text-2xl">
           O 'Brincar de Aprender' é um espaço educacional feito especialmente
           para pessoas com Síndrome de Down. É uma plataforma onde elas podem
           aprender de forma divertida com vários joguinhos para que aprendam de
@@ -46,10 +58,12 @@ export function About() {
           necessário em sua jornada educacional.
         </p>
 
-        <div className="mb-40 grid w-full grid-cols-2 justify-center gap-30 px-60">
+        <div className="grid w-full justify-center gap-30 sm:mb-20 sm:px-10 lg:mb-40 lg:px-60 xl:grid-cols-1 2xl:grid-cols-2">
           <div className="">
-            <h3 className="text-purplish-blue mb-4 text-xl">Abordagem</h3>
-            <p className="ch-10 text-lg">
+            <h3 className="text-purplish-blue mb-4 text-center text-xl lg:text-4xl 2xl:text-5xl">
+              Abordagem
+            </h3>
+            <p className="ch-10 text-center text-lg leading-loose text-gray-900 lg:text-2xl 2xl:text-2xl">
               Transforme o aprendizado em uma aventura com o Brincar de
               Aprender! Nosso espaço educacional oferece jogos e atividades
               interativas em diversas áreas de conhecimento, adaptados para
@@ -61,12 +75,15 @@ export function About() {
             </p>
           </div>
           <div className="border-purplish-blue relative rounded-3xl border-10 bg-white p-8 text-center shadow-xl">
-            <img src={meteoros} className="absolute bottom-50 left-124 w-35" />
+            <img
+              src={meteoros}
+              className="absolute -top-20 -right-10 w-0 sm:w-35"
+            />
             <div className="mb-6">
-              <h3 className="text-purplish-blue-dark mb-3 text-xl font-bold">
+              <h3 className="text-purplish-blue-dark mb-3 text-xl font-bold lg:text-3xl 2xl:text-4xl">
                 O Problema
               </h3>
-              <p className="text-base leading-relaxed text-gray-900">
+              <p className="text-base leading-relaxed text-gray-900 lg:text-2xl 2xl:text-2xl">
                 Falta de recursos educacionais personalizados, levando pais e
                 escolas a improvisar com ferramentas genéricas que geram
                 frustração.
@@ -74,10 +91,10 @@ export function About() {
             </div>
             <hr className="border-purplish-blue my-4 border-t-2" />
             <div>
-              <h3 className="text-purplish-blue-dark mb-3 text-xl font-bold">
+              <h3 className="text-purplish-blue-dark mb-3 text-xl font-bold lg:text-3xl 2xl:text-4xl">
                 Nossa solução
               </h3>
-              <p className="text-base leading-relaxed text-gray-900">
+              <p className="text-base leading-relaxed text-gray-900 lg:text-2xl 2xl:text-2xl">
                 Ambiente lúdico com design simples, feedback imediato e ritmo
                 adaptável.
               </p>
@@ -179,7 +196,7 @@ export function About() {
           </div>
         </div>
 
-        <div className="bg-am1 relative w-full overflow-hidden px-4 py-8 sm:py-10 md:py-12 lg:py-16 xl:py-20 2xl:py-24">
+        <div className="bg-am1 relative w-full overflow-hidden pt-8 sm:pt-10 md:pt-12 lg:pt-16 xl:pt-20 2xl:pt-24">
           <div className="mb-4 flex justify-center sm:mb-5 md:mb-6 xl:mb-8">
             <img
               src={telescopio}
@@ -188,12 +205,12 @@ export function About() {
             />
           </div>
 
-          <h2 className="font-1 mx-auto mb-8 max-w-7xl px-4 text-center text-lg leading-tight font-black text-white uppercase drop-shadow-lg sm:mb-12 sm:px-8 sm:text-xl sm:leading-snug md:mb-16 md:px-16 md:text-2xl md:leading-normal lg:mb-20 lg:px-32 lg:text-3xl xl:mb-24 xl:px-40 xl:text-4xl xl:leading-normal 2xl:mb-28 2xl:px-48 2xl:text-5xl 2xl:leading-relaxed">
+          <h2 className="font-1 mx-auto mb-8 max-w-7xl px-4 text-center text-lg leading-tight font-black text-white uppercase drop-shadow-lg sm:mb-12 sm:px-8 sm:text-xl sm:leading-snug md:mb-16 md:px-16 md:text-2xl md:leading-normal lg:mb-4 lg:px-32 lg:text-3xl xl:mb-4 xl:px-40 xl:text-4xl xl:leading-normal 2xl:mb-4 2xl:px-48 2xl:text-5xl 2xl:leading-relaxed">
             Incentivar o verdadeiro potencial de uma criança em um ambiente
             amoroso e seguro
           </h2>
 
-          <div className="absolute right-0 bottom-0 left-0 w-full">
+          <div className="w-full">
             <img
               src={nuvem}
               alt="Nuvens"
