@@ -1,6 +1,8 @@
 import { Route, Routes } from "react-router";
 
 import { AuthGuard } from "./guards/AuthGuard";
+import AboutGames from "./pages/AboutGames/AboutGames";
+import CreateActivityPage from "./pages/ActivitiesPage/CreateActivityPage";
 import { Calm } from "./pages/Calm/Calm";
 import Dashboard from "./pages/Dashboard/Admin/Dashboard";
 import { ResponsibleDashboard } from "./pages/Dashboard/Responsible/ResponsibleDashboard/ReponsibleDashboard";
@@ -17,6 +19,7 @@ import { LinkStudents } from "./pages/Dashboard/Teachers/LinkStudents/LinkStuden
 import TeacherDashboard from "./pages/Dashboard/Teachers/TeacherDashboard/TeacherDashboard";
 import { Teachers } from "./pages/Dashboard/Teachers/Teachers";
 import { NotFound } from "./pages/Errors/NotFound/NotFound";
+import GameRenderer from "./pages/Games/GameRenderer";
 import { Games } from "./pages/Games/Games";
 import { Home } from "./pages/Home/Home";
 import { default as LoginForm } from "./pages/Login/Login";
@@ -25,13 +28,12 @@ import { Profile } from "./pages/Profile/Profile";
 import { RecoverPassword } from "./pages/RecoverPassword/RecoverPassword";
 import { SendPasswordToken } from "./pages/SendPasswordToken/SendPasswordToken";
 import { UserPerfilEnum } from "./types/user";
-import CreateActivityPage from "./pages/ActivitiesPage/CreateActivityPage";
-import GameRenderer from "./pages/Games/GameRenderer";
 
 function App() {
   return (
     <Routes>
       <Route index element={<Home />} />
+      <Route path="/about-games" element={<AboutGames />} />
       <Route path="/logout" element={<Logout />} />
       <Route path="/login" element={<LoginForm />} />
       <Route path="/get-password-token" element={<SendPasswordToken />} />

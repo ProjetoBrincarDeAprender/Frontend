@@ -29,12 +29,6 @@
   --font-2: "Roboto";
 }
 
-.logo {
-  /* Tamanho da Logo no Header */
-  height: 5rem;
-  width: auto;
-}
-
 body {
   margin: 0;
   padding: 0;
