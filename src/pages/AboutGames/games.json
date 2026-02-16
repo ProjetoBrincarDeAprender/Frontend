@@ -1,0 +1,601 @@
+{
+  "games": [
+    {
+      "id": 0,
+      "title": "Jogo da Soma",
+      "description": "Desenvolve o raciocínio matemático somando números com ajuda do material dourado pedagógico. Nele o aluno utiliza reconhecimento visual para clicar na resposta correta, associando quantidades e sua representação numérica.",
+      "preview": "jogoDaSoma.mp4",
+      "previewType": "video",
+      "badges": [
+        {
+          "id": 0,
+          "name": "Matemática",
+          "bgColor": "bg-amber-400",
+          "textColor": "text-amber-800"
+        },
+        {
+          "id": 1,
+          "name": "Números",
+          "bgColor": "bg-blue-400",
+          "textColor": "text-blue-800"
+        }
+      ],
+      "gameUrl": "/jogo-da-soma"
+    },
+    {
+      "id": 1,
+      "title": "Jogo do Labirinto",
+      "description": "Neste jogo de raciocínio espacial e coordenação motora fina, o objetivo é traçar uma rota segura através de um labirinto colorido, desviando de obstáculos que estimulam a atenção e o foco.",
+      "preview": "jogoDoLabirinto.mp4",
+      "previewType": "video",
+      "badges": [
+        {
+          "id": 0,
+          "name": "Cognição",
+          "bgColor": "bg-purple-400",
+          "textColor": "text-purple-800"
+        },
+        {
+          "id": 1,
+          "name": "Geometria",
+          "bgColor": "bg-amber-400",
+          "textColor": "text-amber-800"
+        }
+      ],
+      "gameUrl": "/jogo-do-labirinto"
+    },
+    {
+      "id": 2,
+      "title": "Jogo das Vogais",
+      "description": "Essencial para a alfabetização, este jogo trabalha a ordem alfabética e a memória sequencia com o reconhecimento das vogais (a, e, i, o u). O desafio é analisar as opções disponíveis e clicar na vogal exata que completa a ordem.",
+      "preview": "jogoDasVogais.mp4",
+      "previewType": "video",
+      "badges": [
+        {
+          "id": 0,
+          "name": "Português",
+          "bgColor": "bg-red-400",
+          "textColor": "text-red-800"
+        },
+        {
+          "id": 1,
+          "name": "Alfabetização",
+          "bgColor": "bg-amber-400",
+          "textColor": "text-amber-800"
+        }
+      ],
+      "gameUrl": "/jogo-das-vogais"
+    },
+    {
+      "id": 3,
+      "title": "Criando Sílabas",
+      "description": "Voltado para a fase inicial da alfabetização, trabalha a construção das famílias silábicas simples através da combinação entre consoantes e vogais. Utiliza suportes sonoros e visuais para validar a composição, sendo fundamental para o desenvolvimento da consciência fonêmica e da mecânica de leitura.",
+      "preview": "jogoCriandoSilabas.mp4",
+      "previewType": "video",
+      "badges": [
+        {
+          "id": 0,
+          "name": "Construção Silábica",
+          "bgColor": "bg-emerald-400",
+          "textColor": "text-emerald-800"
+        },
+        {
+          "id": 1,
+          "name": "Alfabetização",
+          "bgColor": "bg-cyan-400",
+          "textColor": "text-cyan-800"
+        }
+      ],
+      "gameUrl": "/criando-silabas"
+    },
+    {
+      "id": 4,
+      "title": "Jogo da Classificação Silábica",
+      "description": "Foca na análise métrica e estrutura das palavras, desafiando o aluno a realizar a contagem e classificação (monossílaba, dissílaba, etc). Exercita a consciência fonológica e percepção rítmica, essenciais para a leitura fluente e escrita organizada.",
+      "preview": "jogoDaClassificacaoSilabica.mp4",
+      "previewType": "video",
+      "badges": [
+        {
+          "id": 0,
+          "name": "Análise",
+          "bgColor": "bg-red-400",
+          "textColor": "text-red-800"
+        },
+        {
+          "id": 1,
+          "name": "Métrica",
+          "bgColor": "bg-fuchsia-400",
+          "textColor": "text-fuchsia-800"
+        },
+        {
+          "id": 2,
+          "name": "Alfabetização",
+          "bgColor": "bg-cyan-400",
+          "textColor": "text-cyan-800"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "title": "Jogo da Classificação Tônica",
+      "description": "Foca no desenvolvimento da consciência fonológica e regras de acentuação. O aluno deve identificar a sílaba pronunciada com maior intensidade e classificá-la como oxítona, paroxítona ou proparoxítona, estimulando a percepção rítmica da fala.",
+      "preview": "jogoDaClassificacaoTonica.mp4",
+      "previewType": "video",
+      "badges": [
+        {
+          "id": 0,
+          "name": "Fonética",
+          "bgColor": "bg-red-400",
+          "textColor": "text-red-800"
+        },
+        {
+          "id": 1,
+          "name": "Linguagem",
+          "bgColor": "bg-rose-400",
+          "textColor": "text-rose-800"
+        }
+      ],
+      "gameUrl": "/jogo-da-classificacao-tonica"
+    },
+    {
+      "id": 6,
+      "title": "Jogo da Conta Armada",
+      "description": "Visa a formalização do pensamento matemático através de algoritmos estruturados. Auxilia na compreensão do valor posicional e na organização espacial dos números, exercitando regras de agrupamento e reagrupamento.",
+      "preview": "jogoDaContaArmada.mp4",
+      "previewType": "video",
+      "badges": [
+        {
+          "id": 0,
+          "name": "Matemática",
+          "bgColor": "bg-blue-400",
+          "textColor": "text-blue-800"
+        },
+        {
+          "id": 1,
+          "name": "Raciocínio Lógico",
+          "bgColor": "bg-sky-400",
+          "textColor": "text-sky-800"
+        }
+      ],
+      "gameUrl": "/jogo-da-conta-armada"
+    },
+    {
+      "id": 7,
+      "title": "Jogo da Higiene",
+      "description": "Promove a saúde e autonomia ensinando princípios de higiene pessoal. O aluno identifica elementos corretos para contextos práticos com auxílio visual da mascote, fortalecendo a formação de hábitos saudáveis e prevenção.",
+      "preview": "jogoDaHigiene.mp4",
+      "previewType": "video",
+      "badges": [
+        {
+          "id": 0,
+          "name": "Saúde",
+          "bgColor": "bg-lime-400",
+          "textColor": "text-lime-800"
+        },
+        {
+          "id": 1,
+          "name": "Autocuidado",
+          "bgColor": "bg-green-400",
+          "textColor": "text-green-800"
+        }
+      ],
+      "gameUrl": "/jogo-da-higiene"
+    },
+    {
+      "id": 8,
+      "title": "Jogo da Memória",
+      "description": "Ferramenta para o fortalecimento da memória de curto prazo e atenção sustentada. Ao buscar pares entre diversos elementos, o aluno exercita a discriminação visual e retenção de informações espaciais, promovendo foco e paciência.",
+      "preview": "jogoDaMemoria.mp4",
+      "previewType": "video",
+      "badges": [
+        {
+          "id": 0,
+          "name": "Cognição",
+          "bgColor": "bg-rose-400",
+          "textColor": "text-rose-800"
+        },
+        {
+          "id": 1,
+          "name": "Memória",
+          "bgColor": "bg-amber-400",
+          "textColor": "text-amber-800"
+        }
+      ],
+      "gameUrl": "/jogo-da-memoria"
+    },
+    {
+      "id": 9,
+      "title": "Jogo das Datas Comemorativas",
+      "description": "Promove a compreensão temporal e reconhecimento de marcos históricos do calendário brasileiro. Associa datas, textos e imagens de celebrações como Dia das Mães e Dia do Índio, estimulando o repertório sociocultural.",
+      "preview": "jogoDasDatasComemorativas.mp4",
+      "previewType": "video",
+      "badges": [
+        {
+          "id": 0,
+          "name": "História",
+          "bgColor": "bg-orange-400",
+          "textColor": "text-orange-800"
+        },
+        {
+          "id": 1,
+          "name": "Cultura",
+          "bgColor": "bg-red-400",
+          "textColor": "text-red-800"
+        }
+      ],
+      "gameUrl": "/jogo-das-datas-comemorativas"
+    },
+    {
+      "id": 10,
+      "title": "Jogo da Sequência de Números",
+      "description": "Fortalece o raciocínio lógico através da identificação de padrões numéricos. O aluno analisa progressões para encontrar números omitidos, desenvolvendo noções de sucessor, antecessor e pensamento estratégico.",
+      "preview": "jogoDaSequenciaDeNumeros.mp4",
+      "previewType": "video",
+      "badges": [
+        {
+          "id": 0,
+          "name": "Matemática",
+          "bgColor": "bg-blue-400",
+          "textColor": "text-blue-800"
+        },
+        {
+          "id": 1,
+          "name": "Raciocínio Lógico",
+          "bgColor": "bg-purple-400",
+          "textColor": "text-purple-800"
+        }
+      ],
+      "gameUrl": "/jogo-da-sequencia-de-numeros"
+    },
+    {
+      "id": 11,
+      "title": "Jogo das Formas",
+      "description": "Baseado no conceito de encaixe, trabalha o reconhecimento de figuras geométricas e percepção visual. Desenvolve a coordenação motora fina e raciocínio espacial através da identificação de simetria, tamanho e formato.",
+      "preview": "jogoDasFormas.mp4",
+      "previewType": "video",
+      "badges": [
+        {
+          "id": 0,
+          "name": "Cognição",
+          "bgColor": "bg-teal-400",
+          "textColor": "text-teal-800"
+        },
+        {
+          "id": 1,
+          "name": "Geometria",
+          "bgColor": "bg-amber-400",
+          "textColor": "text-amber-800"
+        },
+        {
+          "id": 2,
+          "name": "Coordenação Motora",
+          "bgColor": "bg-blue-400",
+          "textColor": "text-blue-800"
+        }
+      ],
+      "gameUrl": "/jogo-das-formas"
+    },
+    {
+      "id": 12,
+      "title": "Jogo das Localizações",
+      "description": "Trabalha a percepção espacial e conceitos relacionais (frente, atrás, em cima). Essencial para o raciocínio lógico-espacial, domínio de preposições de lugar e interpretação de descrições textuais.",
+      "preview": "jogoDasLocalizacoes.mp4",
+      "previewType": "video",
+      "badges": [
+        {
+          "id": 0,
+          "name": "Orientação Espacial",
+          "bgColor": "bg-indigo-400",
+          "textColor": "text-indigo-800"
+        },
+        {
+          "id": 1,
+          "name": "Raciocínio Lógico",
+          "bgColor": "bg-purple-400",
+          "textColor": "text-purple-800"
+        }
+      ],
+      "gameUrl": "/jogo-das-localizacoes"
+    },
+    {
+      "id": 13,
+      "title": "Jogo das Plantas",
+      "description": "Introduz as ciências da natureza explorando a anatomia vegetal (raízes, caule, flores) e espécies conhecidas. Estimula a observação do meio ambiente e o reconhecimento da biodiversidade.",
+      "preview": "jogoDasPlantas.mp4",
+      "previewType": "video",
+      "badges": [
+        {
+          "id": 0,
+          "name": "Ciências",
+          "bgColor": "bg-teal-400",
+          "textColor": "text-teal-800"
+        },
+        {
+          "id": 1,
+          "name": "Natureza",
+          "bgColor": "bg-green-400",
+          "textColor": "text-green-800"
+        }
+      ],
+      "gameUrl": "/jogo-das-plantas"
+    },
+    {
+      "id": 14,
+      "title": "Jogo das Profissões",
+      "description": "Apresenta o universo das ocupações e o papel social de cada profissional. Através da correlação entre termos e imagens, estimula a ampliação do vocabulário e o reconhecimento da divisão do trabalho na comunidade.",
+      "preview": "jogoDasProfissoes.mp4",
+      "previewType": "video",
+      "badges": [
+        {
+          "id": 0,
+          "name": "Sociedade",
+          "bgColor": "bg-amber-400",
+          "textColor": "text-amber-800"
+        },
+        {
+          "id": 1,
+          "name": "Repertório Cultural",
+          "bgColor": "bg-yellow-400",
+          "textColor": "text-yellow-800"
+        }
+      ],
+      "gameUrl": "/jogo-das-profissoes"
+    },
+    {
+      "id": 15,
+      "title": "Jogo das Ruas e Bairros",
+      "description": "Promove a compreensão do espaço urbano, diferenciando ruas, avenidas e bairros. Estimula o raciocínio geográfico, percepção de pertencimento e noções de localização e cidadania.",
+      "preview": "jogoDasRuasBairros.mp4",
+      "previewType": "video",
+      "badges": [
+        {
+          "id": 0,
+          "name": "Geografia",
+          "bgColor": "bg-green-400",
+          "textColor": "text-green-800"
+        },
+        {
+          "id": 1,
+          "name": "Espaço Urbano",
+          "bgColor": "bg-orange-400",
+          "textColor": "text-orange-800"
+        }
+      ],
+      "gameUrl": "/jogo-das-ruas-e-bairros"
+    },
+    {
+      "id": 16,
+      "title": "Sílabas Complexas",
+      "description": "Foca no aprimoramento da fluência leitora através do estudo de dígrafos e estruturas silábicas não canônicas. Exercita a discriminação auditiva fina e auxilia na superação de dificuldades ortográficas complexas.",
+      "preview": "jogoDasSilabasComplexas.mp4",
+      "previewType": "video",
+      "badges": [
+        {
+          "id": 0,
+          "name": "Linguagem",
+          "bgColor": "bg-pink-400",
+          "textColor": "text-pink-800"
+        },
+        {
+          "id": 1,
+          "name": "Fonologia",
+          "bgColor": "bg-orange-400",
+          "textColor": "text-orange-800"
+        },
+        {
+          "id": 2,
+          "name": "Alfabetização",
+          "bgColor": "bg-cyan-400",
+          "textColor": "text-cyan-800"
+        }
+      ],
+      "gameUrl": "/silabas-complexas"
+    },
+    {
+      "id": 17,
+      "title": "Jogo da Subtração",
+      "description": "Desenvolve o raciocínio lógico-matemático utilizando material dourado para facilitar a compreensão de retirada de quantidades. Auxilia na transição do pensamento concreto para a representação numérica abstrata.",
+      "preview": "jogoDaSubtracao.mp4",
+      "previewType": "video",
+      "badges": [
+        {
+          "id": 0,
+          "name": "Matemática",
+          "bgColor": "bg-blue-400",
+          "textColor": "text-blue-800"
+        },
+        {
+          "id": 1,
+          "name": "Números",
+          "bgColor": "bg-indigo-400",
+          "textColor": "text-indigo-800"
+        }
+      ],
+      "gameUrl": "/jogo-da-subtracao"
+    },
+    {
+      "id": 18,
+      "title": "Pontuando Frases",
+      "description": "Desafia o aluno a aplicar sinais de pontuação em contextos frasais, unindo suporte sonoro e expressões faciais da mascote para indicar entonação e intenção, fundamentais para a fluência de leitura.",
+      "preview": "jogoDePontuandoFrases.mp4",
+      "previewType": "video",
+      "badges": [
+        {
+          "id": 0,
+          "name": "Sintaxe",
+          "bgColor": "bg-fuchsia-400",
+          "textColor": "text-fuchsia-800"
+        },
+        {
+          "id": 1,
+          "name": "Gramática",
+          "bgColor": "bg-rose-400",
+          "textColor": "text-rose-800"
+        },
+        {
+          "id": 2,
+          "name": "Alfabetização",
+          "bgColor": "bg-cyan-400",
+          "textColor": "text-cyan-800"
+        },
+        {
+          "id": 3,
+          "name": "Linguagem",
+          "bgColor": "bg-pink-400",
+          "textColor": "text-pink-800"
+        }
+      ],
+      "gameUrl": "/pontuando-frases"
+    },
+    {
+      "id": 19,
+      "title": "Dividindo Sílabas",
+      "description": "Foca na análise estrutural das palavras e segmentação ativa. Através da mecânica de arrastar, exercita a percepção rítmica e correta separação de fonemas, auxiliando na fluência de leitura e escrita.",
+      "preview": "jogoDividindoSilabas.mp4",
+      "previewType": "video",
+      "badges": [
+        {
+          "id": 0,
+          "name": "Análise",
+          "bgColor": "bg-teal-400",
+          "textColor": "text-teal-800"
+        },
+        {
+          "id": 1,
+          "name": "Segmentação",
+          "bgColor": "bg-amber-400",
+          "textColor": "text-amber-800"
+        },
+        {
+          "id": 2,
+          "name": "Linguagem",
+          "bgColor": "bg-pink-400",
+          "textColor": "text-pink-800"
+        },
+        {
+          "id": 3,
+          "name": "Alfabetização",
+          "bgColor": "bg-cyan-400",
+          "textColor": "text-cyan-800"
+        }
+      ],
+      "gameUrl": "/dividindo-silabas"
+    },
+    {
+      "id": 20,
+      "title": "Jogo do Espaço",
+      "description": "Introduz conceitos de astronomia e características do Sistema Solar. Estimula a curiosidade científica e compreensão de escala espacial, identificando planetas, cometas e estrelas de forma dinâmica.",
+      "preview": "jogoDoEspaco.mp4",
+      "previewType": "video",
+      "badges": [
+        {
+          "id": 0,
+          "name": "Ciências",
+          "bgColor": "bg-teal-400",
+          "textColor": "text-teal-800"
+        },
+        {
+          "id": 1,
+          "name": "Astronomia",
+          "bgColor": "bg-violet-400",
+          "textColor": "text-violet-800"
+        }
+      ],
+      "gameUrl": "/jogo-do-espaco"
+    },
+    {
+      "id": 21,
+      "title": "Jogo do Labirinto",
+      "description": "Refina a coordenação visomotora e controle inibitório ao guiar uma esfera sem tocar nas paredes. Exige precisão, paciência e planejamento espacial, exercitando a estabilidade muscular e persistência.",
+      "preview": "jogoDoLabirinto.mp4",
+      "previewType": "video",
+      "badges": [
+        {
+          "id": 0,
+          "name": "Coordenação Motora",
+          "bgColor": "bg-blue-400",
+          "textColor": "text-blue-800"
+        },
+        {
+          "id": 1,
+          "name": "Atenção",
+          "bgColor": "bg-amber-400",
+          "textColor": "text-amber-800"
+        },
+        {
+          "id": 2,
+          "name": "Foco",
+          "bgColor": "bg-red-400",
+          "textColor": "text-red-800"
+        }
+      ],
+      "gameUrl": "/jogo-do-labirinto-coordenacao"
+    },
+    {
+      "id": 22,
+      "title": "Jogo dos Tipos de Moradia",
+      "description": "Explora a diversidade sociocultural e arquitetônica (ocas, iglus, prédios). Utiliza associação de imagens e textos para ampliar o vocabulário e a compreensão sobre adaptações ao meio ambiente.",
+      "preview": "jogoDosTiposDeMoradia.mp4",
+      "previewType": "video",
+      "badges": [
+        {
+          "id": 0,
+          "name": "História",
+          "bgColor": "bg-orange-400",
+          "textColor": "text-orange-800"
+        },
+        {
+          "id": 1,
+          "name": "Sociedade",
+          "bgColor": "bg-amber-400",
+          "textColor": "text-amber-800"
+        }
+      ],
+      "gameUrl": "/jogo-dos-tipos-de-moradia"
+    },
+    {
+      "id": 23,
+      "title": "Jogo Sensorial",
+      "description": "Utiliza estimulação auditiva para desenvolvimento do repertório sonoro e percepção ambiental. Com interface relaxante, auxilia na regulação emocional, foco atencional e diferenciação de intensidades.",
+      "preview": "jogoSensorial.mp4",
+      "previewType": "video",
+      "badges": [
+        {
+          "id": 0,
+          "name": "Percepção Auditiva",
+          "bgColor": "bg-emerald-400",
+          "textColor": "text-emerald-800"
+        },
+        {
+          "id": 1,
+          "name": "Sensorial",
+          "bgColor": "bg-blue-400",
+          "textColor": "text-blue-800"
+        }
+      ],
+      "gameUrl": "/jogo-sensorial"
+    },
+    {
+      "id": 24,
+      "title": "Usando Sílabas",
+      "description": "Propõe a construção de palavras através da segmentação silábica e estímulo visual. Estimula o reconhecimento auditivo, associação grafofonêmica e memorização da escrita convencional.",
+      "preview": "jogoUsandoSilabas.mp4",
+      "previewType": "video",
+      "badges": [
+        {
+          "id": 0,
+          "name": "Alfabetização",
+          "bgColor": "bg-cyan-400",
+          "textColor": "text-cyan-800"
+        },
+        {
+          "id": 1,
+          "name": "Linguagem",
+          "bgColor": "bg-pink-400",
+          "textColor": "text-pink-800"
+        }
+      ],
+      "gameUrl": "/usando-silabas"
+    }
+  ]
+}

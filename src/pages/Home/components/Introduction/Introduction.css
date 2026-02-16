@@ -4,7 +4,7 @@
   width: 100%;
   min-height: 550px;
   overflow: hidden;
-  padding-top: 6.75rem;
+  padding-top: 4.5rem;
 }
 
 .intro-box {
@@ -31,7 +31,7 @@
 @media (max-width: 1024px) {
   .blend-container {
     min-height: 480px;
-    padding-top: 6rem;
+    padding-top: 4.5rem;
   }
 
   .home-introduction {
@@ -51,7 +51,7 @@
 @media (max-width: 768px) {
   .blend-container {
     min-height: auto;
-    padding-top: 6.75rem;
+    padding-top: 4.5rem;
     flex-direction: column;
   }
 
