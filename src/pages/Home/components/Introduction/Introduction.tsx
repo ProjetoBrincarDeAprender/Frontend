@@ -5,12 +5,15 @@ import bg from "../../../../assets/homePage/backgroundMain.png";
 
 import "./Introduction.css";
 import { Joystick } from "lucide-react";
+import { useNavigate } from "react-router";
 
 interface IntroductionProps {
   className?: string;
 }
 
 export function Introduction({ className = "" }: IntroductionProps) {
+  const navigate = useNavigate();
+
   return (
     <div className="blend-container">
       <div className="intro-box">
@@ -33,7 +36,10 @@ export function Introduction({ className = "" }: IntroductionProps) {
               você.
             </p>
             <div className="intro-btn mt-8">
-              <Button className="!shadow-3xl h-16 w-48 items-center self-start rounded-xl border-4 border-transparent text-center text-xl font-bold hover:border-yellow-400 hover:!bg-blue-900">
+              <Button
+                onClick={() => navigate("/games")}
+                className="!shadow-3xl h-16 w-48 cursor-pointer items-center self-start rounded-xl border-4 border-transparent text-center text-xl font-bold hover:border-yellow-400 hover:!bg-blue-900"
+              >
                 <Joystick className="mr-2 h-16 w-16" />{" "}
                 <span className="block text-4xl font-bold tracking-wider">
                   Jogar
