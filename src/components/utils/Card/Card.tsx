@@ -35,16 +35,16 @@ export function Card({
 
   return (
     <div
-      className={`card-${variant} font-2 z-2 m-auto flex h-auto min-h-[280px] w-full max-w-[16rem] flex-col rounded-4xl text-center font-medium shadow-2xl sm:min-h-[24rem]`}
+      className={`card-${variant} font-2 z-2 m-auto flex h-[280px] w-full max-w-[16rem] flex-col rounded-4xl text-center font-medium shadow-2xl sm:h-[24rem]`}
     >
-      <header className="aspect-square w-full overflow-hidden rounded-3xl sm:aspect-auto sm:h-1/2">
+      <header className="h-1/2 w-full shrink-0 overflow-hidden rounded-t-4xl">
         <img
           src={image}
           alt="game logo"
           className="h-full w-full object-cover transition-transform duration-300 ease-in-out hover:scale-105"
         />
       </header>
-      <main className="flex flex-1 flex-col justify-start gap-2 py-3 sm:py-4">
+      <main className="flex h-1/2 shrink-0 flex-col items-center justify-center gap-2 py-3 sm:py-4">
         <h1 className="text-lg font-bold sm:text-2xl">{title}</h1>
         {competency && (
           <div className="px-2 text-left">
