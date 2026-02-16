@@ -75,8 +75,8 @@ export default function AboutGames() {
           />
           {gamesData &&
             gamesData.games.map(
-              ({ badges, description, id, title, preview, previewType }) => (
-                <GameCard.Wrapper key={id}>
+              ({ badges, description, title, preview, previewType }) => (
+                <GameCard.Wrapper key={title}>
                   <GameCard.Preview
                     previewContent={`/assets/common/media/videos/${preview}`}
                     previewType={previewType as "image" | "video"}

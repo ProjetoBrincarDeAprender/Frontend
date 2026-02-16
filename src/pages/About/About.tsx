@@ -1,21 +1,21 @@
-import { Header } from "@/components/Header/Header";
-import { Footer } from "@/components/Footer/Footer";
+import aceleraI from "@/assets/acelera-i.svg";
+import alunosApae from "@/assets/alunos-apae.svg";
+import meteoros from "@/assets/meteoros.svg";
 import lua from "@/assets/moon1.png";
+import nuvem from "@/assets/nuvem.svg";
+import pipa from "@/assets/pipa.svg";
+import foguete from "@/assets/rocket.svg";
 import saturno from "@/assets/saturn.svg";
 import estrela from "@/assets/star.svg";
-import pipa from "@/assets/pipa.svg";
-import nuvem from "@/assets/nuvem.svg";
-import foguete from "@/assets/rocket.svg";
-import alunosApae from "@/assets/alunos-apae.svg";
-import aceleraI from "@/assets/acelera-i.svg";
 import telescopio from "@/assets/telescopio.svg";
-import meteoros from "@/assets/meteoros.svg";
+import { Footer } from "@/components/Footer/Footer";
+import { Header } from "@/components/Header/Header";
 
 export function About() {
   return (
     <>
       <Header />
-      <div className="bg-purple-primary relative mt-80 justify-items-center pb-0">
+      <div className="bg-purple-primary relative mt-80 w-full justify-items-center pb-0 text-center">
         <img
           src={lua}
           className="absolute h-0 sm:-top-6 sm:left-20 sm:h-10 md:-top-8 md:left-20 lg:-top-10 lg:left-60 xl:-top-10 xl:left-60 2xl:-top-10 2xl:left-80"
@@ -36,7 +36,7 @@ export function About() {
         <img src={nuvem} className="mt-40 block w-full" />
       </div>
 
-      <div className="bg-cloud-white -mt-1 justify-items-center text-gray-900">
+      <div className="bg-cloud-white -mt-1 justify-items-center text-center text-gray-900">
         <h2 className="font-1 text-purplish-blue mt-20 mb-20 text-2xl lg:text-4xl 2xl:text-5xl">
           Conheça um pouco do nosso
           <span className="text-purplish-blue-dark font-bold"> trabalho!</span>
