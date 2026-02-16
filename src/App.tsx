@@ -1,6 +1,7 @@
 import { Route, Routes } from "react-router";
 
 import { AuthGuard } from "./guards/AuthGuard";
+import { About } from "./pages/About/About";
 import AboutGames from "./pages/AboutGames/AboutGames";
 import CreateActivityPage from "./pages/ActivitiesPage/CreateActivityPage";
 import { Calm } from "./pages/Calm/Calm";
@@ -36,6 +37,7 @@ function App() {
       <Route path="/about-games" element={<AboutGames />} />
       <Route path="/logout" element={<Logout />} />
       <Route path="/login" element={<LoginForm />} />
+      <Route path="/about" element={<About />} />
       <Route path="/get-password-token" element={<SendPasswordToken />} />
       <Route path="/recover-password" element={<RecoverPassword />} />
 

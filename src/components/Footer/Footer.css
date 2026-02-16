@@ -73,12 +73,20 @@
   }
 }
 
-@media (max-width: 800px) {
-  .footer-logo-decoration,
+@media (max-width: 768px) {
+  .footer-pipa-decoration {
+    width: 3.5rem;
+    height: 2.5rem;
+  }
   .footer-star-center,
-  .footer-star-bottom,
-  .footer-pipa,
+  .footer-star-bottom {
+    width: 1rem;
+    height: 1rem;
+  }
   .footer-laco {
-    display: none;
+    width: 1.5rem;
+    height: 2rem;
+    bottom: 2%;
+    right: 3%;
   }
 }

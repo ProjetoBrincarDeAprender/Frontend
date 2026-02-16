@@ -1,5 +1,8 @@
-import { Card } from "../../../../components/utils/Card/Card";
+import { NewsCard } from "./components/NewsCard";
 import "./SkillGroup.css";
+
+import apaeImage from "../../../../assets/alunos-apae.svg";
+import aceleraiImage from "../../../../assets/acelera-i.svg";
 
 interface SkillGroupProps {
   className?: string;
@@ -7,16 +10,25 @@ interface SkillGroupProps {
 
 export function SkillGroup({ className = "" }: SkillGroupProps) {
   return (
-    <section className={`${className} bg-[#D9D9D9] py-32`}>
-      <div className="text-center">
+    <section className={`${className} bg-[#D9D9D9] py-20`}>
+      <div className="mb-12 text-center">
         <h2 className="title-skillgroup font-1 text-4xl font-bold text-gray-800">
-          HABILIDADES DESENVOLVIDAS
+          NOTÍCIAS
         </h2>
       </div>
-      <div className="flex px-8 py-16">
-        <Card title="Em Breve" variant="skill" disabled />
-        <Card title="Em Breve" variant="skill" disabled />
-        <Card title="Em Breve" variant="skill" disabled />
+      <div className="mx-auto flex max-w-[1100px] flex-wrap justify-center gap-12 px-8 max-sm:flex-col max-sm:items-center max-sm:gap-8">
+        <NewsCard
+          imageUrl={apaeImage}
+          title="PARCERIA COM A APAE"
+          description="Parceria com a Associação de Pais e Amigos dos Excepcionais (APAE). Nossa primeira visita foi emocionante!"
+          href="about"
+        />
+        <NewsCard
+          imageUrl={aceleraiImage}
+          title="1º LUGAR NO ACELERA-I"
+          description="Premiado como aquele de maior potencial de impacto!"
+          href="about"
+        />
       </div>
     </section>
   );

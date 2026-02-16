@@ -6,6 +6,8 @@
 @theme {
   /* Cores */
 
+  --color-cloud-white: #f6f6f6; /* Branco Nuvem */
+
   --color-yellow: #fecb32; /* Amarelo */
 
   --color-purplish-blue: #302579; /* Azul arroxeado */
