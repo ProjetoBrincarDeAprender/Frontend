@@ -1,18 +1,40 @@
-.home-introduction {
+.blend-container {
+  display: flex;
   position: relative;
+  width: 100%;
+  min-height: 550px;
   overflow: hidden;
 }
 
-.home-introduction::before {
-  content: "";
+.intro-box {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    rgba(0, 0, 139, 0.95) 0%,
+    rgba(0, 76, 153, 0.9) 40%,
+    rgba(70, 130, 180, 0.7) 70%,
+    transparent 100%
+  );
   position: absolute;
+  z-index: 10;
   top: 0;
   left: 0;
-  right: 0;
-  bottom: 0;
-  background: url("../../../../../public/assets/simpleSyllableGame/images/backgroundMain.png")
-    no-repeat center;
-  background-size: cover;
-  filter: blur(4px) brightness(0.6);
-  z-index: 0;
+}
+
+.home-introduction {
+  height: 100%;
+}
+
+@media (max-width: 768px) {
+  .home-introduction {
+    flex-direction: column;
+    gap: 2rem;
+    padding: 2rem 1.5rem;
+    text-align: center;
+  }
+
+  .home-introduction > div {
+    max-width: 100%;
+  }
 }
