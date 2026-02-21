@@ -16,9 +16,24 @@ export function PopularGames({ className = "" }: PopularGamesProps) {
         DESTAQUES
       </h2>
       <div className="flex flex-wrap items-stretch justify-center gap-4 px-4 py-10 max-[380px]:flex-col max-[380px]:items-center sm:gap-6 sm:px-8 sm:py-16">
-        <Card image={formImage} title="Jogo das Formas" variant="game" />
-        <Card image={complexImage} title="Sílabas Complexas" variant="game" />
-        <Card image={sumImage} title="Jogo da Soma" variant="game" />
+        <Card
+          image={formImage}
+          gameIdUrl="forms"
+          title="Jogo das Formas"
+          variant="game"
+        />
+        <Card
+          image={complexImage}
+          gameIdUrl="complex-syllable"
+          title="Sílabas Complexas"
+          variant="game"
+        />
+        <Card
+          image={sumImage}
+          gameIdUrl="sum"
+          title="Jogo da Soma"
+          variant="game"
+        />
       </div>
     </section>
   );

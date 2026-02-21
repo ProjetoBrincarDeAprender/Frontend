@@ -37,7 +37,7 @@ export function Introduction({ className = "" }: IntroductionProps) {
             </p>
             <div className="intro-btn mt-8">
               <Button
-                onClick={() => navigate("/games")}
+                onClick={() => navigate("/about-games")}
                 className="!shadow-3xl h-16 w-48 cursor-pointer items-center self-start rounded-xl border-4 border-transparent text-center text-xl font-bold hover:border-yellow-400 hover:!bg-blue-900"
               >
                 <Joystick className="mr-2 h-16 w-16" />{" "}
