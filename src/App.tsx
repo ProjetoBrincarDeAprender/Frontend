@@ -29,6 +29,8 @@ import { Profile } from "./pages/Profile/Profile";
 import { RecoverPassword } from "./pages/RecoverPassword/RecoverPassword";
 import { SendPasswordToken } from "./pages/SendPasswordToken/SendPasswordToken";
 import { UserPerfilEnum } from "./types/user";
+import { APAE } from "./pages/SuccessStories/APAE";
+import { AceleraI } from "./pages/SuccessStories/AceleraI";
 
 function App() {
   return (
@@ -40,6 +42,8 @@ function App() {
       <Route path="/about" element={<About />} />
       <Route path="/get-password-token" element={<SendPasswordToken />} />
       <Route path="/recover-password" element={<RecoverPassword />} />
+      <Route path="/apae" element={<APAE />} />
+      <Route path="/acelera-i" element={<AceleraI />} />
 
       {/* URL apenas de testes */}
       <Route path="/responsibledashboard" element={<ResponsibleDashboard />} />
