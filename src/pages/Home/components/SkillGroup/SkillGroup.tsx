@@ -2,7 +2,7 @@ import { NewsCard } from "./components/NewsCard";
 import "./SkillGroup.css";
 
 import apaeImage from "../../../../assets/alunos-apae.svg";
-import aceleraiImage from "../../../../assets/acelera-i.svg";
+import aceleraiImage from "../../../../assets/equipe-acelerai.jpeg";
 
 interface SkillGroupProps {
   className?: string;

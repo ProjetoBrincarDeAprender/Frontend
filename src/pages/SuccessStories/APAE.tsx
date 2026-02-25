@@ -1,4 +1,5 @@
 import alunosApae from "@/assets/alunos-apae.svg";
+import equipeApae from "@/assets/equipe-apae.jpeg";
 import lua from "@/assets/moon1.png";
 import nuvem from "@/assets/nuvem.svg";
 import pipa from "@/assets/pipa.svg";
@@ -62,7 +63,7 @@ export function APAE() {
               experiência.
             </p>
           </div>
-          <div className="col-span-2 w-full sm:px-0">
+          <div className="w-full sm:px-0">
             <p className="font-2 text-md leading-loose sm:text-justify md:text-lg xl:text-xl 2xl:text-2xl">
               Os resultados foram emocionantes! Ficamos muito felizes com a
               recepção dos alunos ao ver a nossa equipe. Além disso, os alunos
@@ -73,6 +74,11 @@ export function APAE() {
               uma experiência de aprendizado imersiva e envolvente.
             </p>
           </div>
+          <img
+            src={equipeApae}
+            className="h-auto w-full rounded-md object-cover sm:h-[250px] sm:w-[290px] md:h-[300px] md:w-[350px] xl:h-[350px] xl:w-[420px] 2xl:h-[400px] 2xl:w-[480px]"
+            alt="Equipe APAE"
+          />
         </div>
 
         <div className="bg-am1 relative w-full overflow-hidden pt-8 sm:pt-10 md:pt-12 lg:pt-16 xl:pt-20 2xl:pt-24">

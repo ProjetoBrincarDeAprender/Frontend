@@ -1,4 +1,5 @@
-import aceleraI from "@/assets/acelera-i.svg";
+import aceleraI from "@/assets/equipe-acelerai.jpeg";
+import aceleraI2 from "@/assets/avaliacao-acelerai.jpeg";
 import lua from "@/assets/moon1.png";
 import nuvem from "@/assets/nuvem.svg";
 import pipa from "@/assets/pipa.svg";
@@ -32,7 +33,7 @@ export function AceleraI() {
         <h1 className="font-1 text-4xl font-black uppercase">
           Casos de Sucesso
         </h1>
-        <h1 className="font-1 text-6xl font-black uppercase">APAE</h1>
+        <h1 className="font-1 text-6xl font-black uppercase">Acelera-I</h1>
 
         <img src={nuvem} className="mt-40 block w-full" />
       </div>
@@ -52,27 +53,32 @@ export function AceleraI() {
               impulsionar ideias excepcionais e transformá-las em oportunidades
               reais. Em meio a tantas grandiosas ideias, tivemos a honra de ser
               reconhecidos pelo nosso potencial de impacto na sociedade. Essa
-              vitória foi mais do que um reconhecimento: ela reforçou  nossa
+              vitória foi mais do que um reconhecimento: ela reforçou nossa
               missão de tornar a educação mais lúdica, criativa e acessível para
               as crianças. O programa Acelera-i nos proporcionou não apenas
               visibilidade, mas também networking com outros participantes que
               proporcionaram conhecimentos essenciais para expandir nosso
-              projeto. Durante os meses de aceleração, tivemos a oportunidade de
-              refinar nossa proposta de valor, aprimorar nossos processos
-              pedagógicos e desenvolver estratégias para alcançar ainda mais
-              alunos.
+              projeto.
             </p>
           </div>
-          <div className="col-span-2 w-full sm:px-0">
+          <div className="w-full sm:px-0">
             <p className="font-2 text-md leading-loose sm:text-justify md:text-lg xl:text-xl 2xl:text-2xl">
-              A jornada foi intensa e desafiadora, mas cada etapa nos preparou
-              melhor para enfrentar os desafios do setor educacional. A
-              conquista do primeiro lugar validou nossa abordagem inovadora e
-              nos motivou a continuar investindo em soluções que transformam o
-              aprendizado em uma experiência verdadeiramente envolvente e
-              significativa para todos os alunos.
+              Durante os meses de aceleração, tivemos a oportunidade de refinar
+              nossa proposta de valor, aprimorar nossos processos pedagógicos e
+              desenvolver estratégias para alcançar ainda mais alunos. A jornada
+              foi intensa e desafiadora, mas cada etapa nos preparou melhor para
+              enfrentar os desafios do setor educacional. A conquista do
+              primeiro lugar validou nossa abordagem inovadora e nos motivou a
+              continuar investindo em soluções que transformam o aprendizado em
+              uma experiência verdadeiramente envolvente e significativa para
+              todos os alunos.
             </p>
           </div>
+          <img
+            src={aceleraI2}
+            className="h-auto w-full rounded-md object-cover sm:h-[250px] sm:w-[290px] md:h-[300px] md:w-[350px] xl:h-[350px] xl:w-[420px] 2xl:h-[400px] 2xl:w-[480px]"
+            alt="Acelera I"
+          />
         </div>
 
         <div className="bg-am1 relative w-full overflow-hidden pt-8 sm:pt-10 md:pt-12 lg:pt-16 xl:pt-20 2xl:pt-24">
