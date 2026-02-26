@@ -1,4 +1,4 @@
-import aceleraI from "@/assets/acelera-i.svg";
+import aceleraI from "@/assets/equipe-acelerai.jpeg";
 import alunosApae from "@/assets/alunos-apae.svg";
 import meteoros from "@/assets/meteoros.svg";
 import lua from "@/assets/moon1.png";
