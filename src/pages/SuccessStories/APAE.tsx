@@ -50,17 +50,16 @@ export function APAE() {
             <p className="font-2 text-md leading-loose sm:text-justify md:text-lg xl:text-xl 2xl:text-2xl">
               Recentemente, implementamos o piloto do "Brincar de Aprender" com
               os alunos da Associação de Pais e Amigos do Excepcionais (APAE).
-              Os participantes acessaram a versão inicial dos nossos jogos de
+              Os alunos acessaram a versão inicial dos nossos jogos de
               matemática, português e cognição. Os jogos apresentados foram:
               "Sequência dos Números", "Jogo da Soma", "Jogo das Vogais", e
-              "Jogo da Memória". Com esses jogos em mente, foi criada uma breve
-              explicação de uso geral da plataforma enquanto a tela de um
-              computador era projetada para os alunos. Em seguida, foi resolvida
-              a primeira atividade de cada um dos jogos para que ficasse claro
-              qual era o objetivo dos alunos. A partir disso, todos os alunos
-              tiveram acesso aos jogos, e a equipe de desenvolvimento ficou
-              disponível para tirar dúvidas e auxiliar os alunos durante a
-              experiência.
+              "Jogo da Memória". Foi criada uma breve explicação de uso geral da
+              plataforma enquanto a tela de um computador era projetada para os
+              alunos. Em seguida, foi resolvida a primeira atividade de cada um
+              dos jogos para que ficasse claro qual era o objetivo dos alunos. A
+              partir disso, todos os alunos tiveram acesso aos jogos, e a equipe
+              de desenvolvimento ficou disponível para tirar dúvidas e auxiliar
+              os alunos durante a experiência.
             </p>
           </div>
           <div className="w-full sm:px-0">
