@@ -1,5 +1,5 @@
-import "./Card.css";
 import defaultImage from "../../../assets/cardplaceholder.svg";
+import "./Card.css";
 
 export interface CardProps {
   title: string;
@@ -23,7 +23,7 @@ export function Card({
   const linkHref = disabled
     ? undefined
     : variant === "game" || variant === "future"
-      ? `/games/${gameIdUrl}`
+      ? `/about-games#${gameIdUrl}`
       : `skills/${gameIdUrl}`;
 
   const handleClick: React.MouseEventHandler<HTMLAnchorElement> = (e) => {
