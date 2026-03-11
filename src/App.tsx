@@ -1,5 +1,6 @@
-import { Route, Routes } from "react-router";
+import { Route, Routes, useLocation } from "react-router";
 
+import { useEffect } from "react";
 import { AuthGuard } from "./guards/AuthGuard";
 import { About } from "./pages/About/About";
 import AboutGames from "./pages/AboutGames/AboutGames";
@@ -33,6 +34,25 @@ import { APAE } from "./pages/SuccessStories/APAE";
 import { AceleraI } from "./pages/SuccessStories/AceleraI";
 
 function App() {
+  const { pathname, hash, key } = useLocation();
+
+  useEffect(() => {
+    if (hash === "") {
+      return window.scrollTo(0, 0);
+    }
+
+    setTimeout(() => {
+      const id = hash.replace("#", "");
+      const element = document.getElementById(id);
+      if (element) {
+        element.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+      }
+    });
+  }, [pathname, hash, key]);
+
   return (
     <Routes>
       <Route index element={<Home />} />
