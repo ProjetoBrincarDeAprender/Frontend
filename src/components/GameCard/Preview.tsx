@@ -80,8 +80,8 @@ export default function GameCardPreview({
       />
 
       <span
-        className="peer absolute inset-0 z-20 flex h-full w-full items-center justify-center opacity-100 data-[shown=true]:opacity-0"
-        data-shown={previewType === "video" && isPlaying}
+        className="peer absolute inset-0 z-20 flex h-full w-full items-center justify-center opacity-0 data-[shown=true]:opacity-100"
+        data-shown={previewType === "video" ? !isPlaying : false}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
         onClick={handleClick}
