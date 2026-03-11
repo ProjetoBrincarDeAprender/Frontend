@@ -504,34 +504,6 @@
       "gameUrl": "/jogo-do-espaco"
     },
     {
-      "id": 21,
-      "title": "Jogo do Labirinto",
-      "description": "Refina a coordenação visomotora e controle inibitório ao guiar uma esfera sem tocar nas paredes. Exige precisão, paciência e planejamento espacial, exercitando a estabilidade muscular e persistência.",
-      "preview": "jogoDoLabirinto.mp4",
-      "previewType": "video",
-      "badges": [
-        {
-          "id": 0,
-          "name": "Coordenação Motora",
-          "bgColor": "bg-blue-400",
-          "textColor": "text-blue-800"
-        },
-        {
-          "id": 1,
-          "name": "Atenção",
-          "bgColor": "bg-amber-400",
-          "textColor": "text-amber-800"
-        },
-        {
-          "id": 2,
-          "name": "Foco",
-          "bgColor": "bg-red-400",
-          "textColor": "text-red-800"
-        }
-      ],
-      "gameUrl": "/jogo-do-labirinto-coordenacao"
-    },
-    {
       "id": 22,
       "title": "Jogo dos Tipos de Moradia",
       "description": "Explora a diversidade sociocultural e arquitetônica (ocas, iglus, prédios). Utiliza associação de imagens e textos para ampliar o vocabulário e a compreensão sobre adaptações ao meio ambiente.",

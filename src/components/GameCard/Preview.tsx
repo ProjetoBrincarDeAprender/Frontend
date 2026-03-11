@@ -1,4 +1,5 @@
 import { Skeleton } from "@/components/ui/skeleton";
+import { Play } from "lucide-react";
 import { useRef, useState } from "react";
 import { twMerge } from "tailwind-merge";
 
@@ -73,11 +74,20 @@ export default function GameCardPreview({
         data-type={previewType}
       />
 
-      {/* Skeleton loading state */}
       <Skeleton
         className="absolute inset-0 z-20 aspect-video h-full w-full data-[loaded=true]:hidden"
         data-loaded={previewType === "image" ? isImageLoaded : isVideoLoaded}
       />
+
+      <span
+        className="peer absolute inset-0 z-20 flex h-full w-full items-center justify-center opacity-100 data-[shown=true]:opacity-0"
+        data-shown={previewType === "video" && isPlaying}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+        onClick={handleClick}
+      >
+        <Play className="h-20 w-20" fill="white" stroke="white" />
+      </span>
 
       {previewType == "image" ? (
         <img
