@@ -6,26 +6,21 @@ export interface CardProps {
   gameIdUrl?: string;
   image?: string;
   variant?: "game" | "skill" | "future";
+  href?: string;
   disabled?: boolean;
   competency?: string;
   knowledgeArea?: string;
 }
 
 export function Card({
-  gameIdUrl,
   title,
   image = defaultImage,
   variant = "game",
   disabled = false,
   competency,
   knowledgeArea,
+  href,
 }: CardProps) {
-  const linkHref = disabled
-    ? undefined
-    : variant === "game" || variant === "future"
-      ? `/about-games#${gameIdUrl}`
-      : `skills/${gameIdUrl}`;
-
   const handleClick: React.MouseEventHandler<HTMLAnchorElement> = (e) => {
     if (disabled) {
       e.preventDefault();
@@ -62,7 +57,7 @@ export function Card({
           </div>
         )}
         <a
-          href={linkHref}
+          href={href}
           onClick={handleClick}
           aria-disabled={disabled}
           tabIndex={disabled ? -1 : 0}

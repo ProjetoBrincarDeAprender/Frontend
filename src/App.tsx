@@ -29,9 +29,9 @@ import Logout from "./pages/Logout/Logout";
 import { Profile } from "./pages/Profile/Profile";
 import { RecoverPassword } from "./pages/RecoverPassword/RecoverPassword";
 import { SendPasswordToken } from "./pages/SendPasswordToken/SendPasswordToken";
-import { UserPerfilEnum } from "./types/user";
-import { APAE } from "./pages/SuccessStories/APAE";
 import { AceleraI } from "./pages/SuccessStories/AceleraI";
+import { APAE } from "./pages/SuccessStories/APAE";
+import { UserPerfilEnum } from "./types/user";
 
 function App() {
   const { pathname, hash, key } = useLocation();
@@ -50,7 +50,7 @@ function App() {
           block: "start",
         });
       }
-    });
+    }, 100);
   }, [pathname, hash, key]);
 
   return (
