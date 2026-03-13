@@ -275,7 +275,7 @@ export function Games() {
           {filteredGames.map((game) => (
             <Card
               key={game.gameIdUrl}
-              gameIdUrl={game.gameIdUrl}
+              href={`/games/${game.gameIdUrl}`}
               title={game.title}
               variant="game"
               {...(game.image ? { image: game.image } : {})}
